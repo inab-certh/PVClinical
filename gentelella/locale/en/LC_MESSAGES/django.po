@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-22 16:11+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/password_validators.py:13
+msgid "Αδύναμο συνθηματικό."
+msgstr "Weak password"
+
+#: app/password_validators.py:18
+msgid ""
+"Το συνθηματικό σας πρέπει να περιέχει, τουλάχιστον 1 αριθμό, 1 κεφαλαίο "
+"γράμμα και 1 μη αλφαριθμητικό χαρακτήρα (σύμβολο)."
+msgstr "Your password must contain at least 1 number, 1 capital letter "
+"and 1 non-alphanumeric character (symbol)"
+
+#: app/templates/app/financing.html:3
+msgid "/static/images/ack_GR.png"
+msgstr "/static/images/ack_EN.png"
+
+#: app/templates/app/financing.html:3
+msgid "Λογότυπο Δράσης ΕΡΕΥΝΩ–ΔΗΜΙΟΥΡΓΩ–ΚΑΙΝΟΤΟΜΩ"
+msgstr " RESEARCH – CREATE - INNOVATE logo"
+
+#: app/templates/app/financing.html:5
+msgid ""
+"To έργο υλοποιείται στο πλαίσιο της Δράσης ΕΡΕΥΝΩ–ΔΗΜΙΟΥΡΓΩ–ΚΑΙΝΟΤΟΜΩ και "
+"συγχρηματοδοτείται από την Ευρωπαϊκή Ένωση και εθνικούς πόρους μέσω του Ε.Π. "
+"Ανταγωνιστικότητα, Επιχειρηματικότητα &amp; Καινοτομία (ΕΠΑνΕΚ) (κωδικός "
+"έργου: T1ΕΔΚ-03789)."
+msgstr ""
+"Co‐financed by the European Regional Development Fund of the European Union "
+"andGreek national funds through the Operational Program Competitiveness, "
+"Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
+"(project code: Τ1EDK-03789)"
+
+#: app/templates/registration/logged_out.html:5
+msgid "Έγινε Αποσύνδεση"
+msgstr "Logged out successfully"
+
+#: app/templates/registration/logged_out.html:9
+msgid "Έγινε αποσύνδεση!"
+msgstr "Logged out successfully!"
+
+#: app/templates/registration/logged_out.html:10
+msgid "Πατήστε εδώ για επανασύνδεση"
+msgstr "Please press here to log in again to your account"
+
+#: app/templates/registration/login.html:4
+msgid "Σελίδα Εισαγωγής"
+msgstr "Login page"
+
+#: app/templates/registration/login.html:13
+msgid "Παρακαλώ κάντε εισαγωγή στο σύστημα για να δείτε αυτήν τη σελίδα."
+msgstr "Please login to view this page"
+
+#: app/templates/registration/login.html:20
+msgid "Στοιχεία Εισόδου"
+msgstr "Login Data"
+
+#: app/templates/registration/login.html:23
+msgid "Είσοδος"
+msgstr "Login"
+
+#: app/templates/registration/login.html:24
+msgid "Ξεχάσατε τον κωδικό σας;"
+msgstr "Forgot password?"
+
+#: app/templates/registration/password_change_done.html:4
+msgid "Έκβαση Αλλαγής Συνθηματικού"
+msgstr "Password Change Status"
+
+#: app/templates/registration/password_change_done.html:8
+#: app/templates/registration/password_reset_complete.html:7
+msgid "Το συνθηματικό σας άλλαξε επιτυχώς!"
+msgstr "Your account password has been changed successfully!"
+
+#: app/templates/registration/password_change_done.html:9
+#: app/templates/registration/password_reset_complete.html:8
+msgid "Επανασύνδεση"
+msgstr "Reconnect"
+
+#: app/templates/registration/password_change_done.html:12
+msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
+msgstr "Direct Access to this Location is not allowed"
+
+#: app/templates/registration/password_change_form.html:6
+#: app/templates/registration/password_change_form.html:8
+msgid "Αλλαγή Συνθηματικού"
+msgstr "Change Password"
+
+#: app/templates/registration/password_change_form.html:17
+#: app/templates/registration/password_reset_confirm.html:15
+msgid "Αλλαγή"
+msgstr "Change"
+
+#: app/templates/registration/password_reset_complete.html:4
+#: app/templates/registration/password_reset_confirm.html:4
+msgid "Επιβεβαίωση Επαναφοράς Συνθηματικού"
+msgstr "Confirm Password Reset"
+
+#: app/templates/registration/password_reset_confirm.html:21
+msgid "Η επαναφορά συνθηματικού απέτυχε"
+msgstr "Password reset failed"
+
+#: app/templates/registration/password_reset_confirm.html:22
+msgid ""
+"Ο σύνδεσμος επαναφοράς ήταν μη έγκυρος, ενδεχομένως επειδή είχε ήδη "
+"χρησιμοποιηθεί παλιότερα."
+msgstr "Not a valid safelink, maybe has already been used before."
+
+#: app/templates/registration/password_reset_confirm.html:23
+msgid "Παρακαλώ ζητήστε νέα"
+msgstr "Please ask for a new"
+
+#: app/templates/registration/password_reset_confirm.html:23
+msgid "επαναφορά συνθηματικού"
+msgstr "password reset"
+
+#: app/templates/registration/password_reset_done.html:7
+msgid "Επιτυχής αποστολή συνδέσμου επαναφοράς συνθηματικού!"
+msgstr "A password reset safelink has been sent successfully!"
+
+#: app/templates/registration/password_reset_done.html:8
+msgid ""
+"Αποστείλαμε, στην ηλεκτρονική σας διεύθυνση email, οδηγίες σχετικά με την "
+"επαναφορά του συνθηματικού σας.\n"
+"\tΑν δεν τις παραλάβετε εντός λίγων λεπτών, παρακαλώ ελέγξτε τον φάκελο "
+"ανεπιθύμητης αλληλογραφίας (spam folder)."
+msgstr ""
+"We have sent you an email with instructions on how to reset your password. \n"
+"\tIn case you don't receive our message within a few minutes in your inbox, "
+"please check your spam folder."
+
+#: app/templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"Υπήρξε αίτημα επαναφοράς συνθηματικού για το email %(email)s. Παρακαλώ "
+"πατήστε στον ακόλουθο σύνδεσμο:"
+msgstr ""
+"There was a password reset request for email %(email)s. Please click on the "
+"following link:"
+
+#: app/templates/registration/password_reset_form.html:4
+#: app/templates/registration/password_reset_form.html:13
+msgid "Επαναφορά Συνθηματικού"
+msgstr "Password Reset"
+
+#: app/templates/registration/password_reset_form.html:6
+msgid "Διεύθυνση Αποστολής"
+msgstr "Send To"
+
+#: gentelella/settings.py:135
+msgid "Greek"
+msgstr "Ελληνικά"
+
+#: gentelella/settings.py:136
+msgid "English"
+msgstr "Αγγλικά"

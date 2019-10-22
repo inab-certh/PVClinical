@@ -1,0 +1,78 @@
+.logo-block img {
+    margin-top: 1.2rem;
+    margin-left: -0.7rem;
+}
+
+#pv-logo-txt, #clinical-logo-txt {
+    font-size: 30px;
+    font-weight: 350;
+}
+
+#pv-logo-txt {
+    color: #2b5763;
+}
+
+#clinical-logo-txt {
+    color: #bf2b27;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.mt-2 {
+    margin-top: 2rem;
+}
+
+.mt-3 {
+    margin-top: 3rem;
+}
+
+.mt-4 {
+    margin-top: 4rem;
+}
+
+.mt-5 {
+    margin-top: 5rem;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+.mb-2 {
+    margin-bottom: 2rem;
+}
+
+.mb-3 {
+    margin-bottom: 3rem;
+}
+
+.mb-4 {
+    margin-bottom: 4rem;
+}
+
+.mb-5 {
+    margin-bottom: 5rem;
+}
+
+.login_content h1:before,
+.login_content h1:after {
+    content: "";
+    height: 1px;
+    position: absolute;
+    top: 10px;
+    width: 0;
+}
+
+.login_content>form>h1 {
+   width: 100%;
+   text-align: center;
+   border-bottom: 1px solid #7e7e7e;
+   line-height: 0.1em;
+   margin: 10px 0 20px;
+}
+
+.login_content>form>h1>span {
+    background: #F7F7F7;
+    padding:0 10px;
+}

@@ -1,0 +1,12 @@
+{% extends "app/base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block title %} {% trans "Έγινε Αποσύνδεση" %}{% endblock %}
+
+{% block content %}
+	<div class="logged-out my-4 text-center">
+		<p>{% trans "Έγινε αποσύνδεση!" %}</p>
+  		<a href="{% url 'login'%}">{% trans "Πατήστε εδώ για επανασύνδεση" %}</a>
+	</div>
+{% endblock %}

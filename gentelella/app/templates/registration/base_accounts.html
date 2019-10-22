@@ -1,0 +1,77 @@
+{% extends "app/base_site.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- Animate.css -->
+  <link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+
+{% block body_class %}login{% endblock body_class %}
+
+{% block body %}
+    <div>
+        <!--<a class="hiddenanchor" id="signup"></a>-->
+        <!--<a class="hiddenanchor" id="signin"></a>-->
+        {% if form %}
+            <div class="login_wrapper">
+                {% block extra_checks %}{% endblock %}
+                <div class="animate form login_form mt-2">
+                    <section class="login_content">
+                        <form class="ma-form" method="post" action={% block form_action %}""{% endblock %} autocomplete="off" novalidate>
+                            {% csrf_token %}
+
+                            {% block form_title %}{% endblock %}
+                            <!--{{ form|crispy }}-->
+                            {% if form.non_field_errors %}
+                              <div class="alert alert-block alert-error">
+                                {% for err in form.non_field_errors %}
+                                <li>
+                                  {{ err }}
+                                </li>
+
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+
+                                <div>
+                                  <input type="{{ field.field.widget.input_type}}" class="form-control" name="{{ field.name }}" placeholder="{{ field.label }}" required="" />
+                                </div>
+
+                                <small id="hint_id_new_password1" class="form-text text-muted text-left">
+                                    {{ field.help_text }}
+                                </small>
+                            {% endfor %}
+
+                            <div>
+                                {% block submit_btn %}{% endblock %}
+                            </div>
+
+
+                            {% include "app/copyright.html" %}
+                            {% include "app/financing.html" %}
+
+                            {% block extra_fields %}{% endblock %}
+                        </form>
+                    </section>
+                </div>
+            </div>
+        {% else %}
+            <div class="reset-div mt-5 col-sm-4 col-sm-offset-4 text-center">
+                {% block no_form %}{% endblock %}
+                {% include "app/copyright.html" %}
+                {% include "app/financing.html" %}
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock body %}
+
