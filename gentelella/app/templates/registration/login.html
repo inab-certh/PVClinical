@@ -6,8 +6,7 @@
 {% block extra_checks %}
     {% if next %}
         {% if user.is_authenticated %}
-            <p id="message_container" class="error text-center">{% trans "Ο λογαριασμός σας δεν έχει δικαίωμα πρόσβασης σε αυτήν τη σελίδα. Για να συνεχίσετε,
-            παρακαλώ κάντε εισαγωγή στο σύστημα με ένα εγκεκριμένο λογαριασμό." %}
+            <p id="message_container" class="error text-center">{% trans "Ο λογαριασμός σας δεν έχει δικαίωμα πρόσβασης σε αυτήν τη σελίδα. Για να συνεχίσετε, παρακαλώ κάντε εισαγωγή στο σύστημα με ένα εγκεκριμένο λογαριασμό." %}
             </p>
         {% else %}
             <p id="message_container" class="error text-center">{% trans "Παρακαλώ κάντε εισαγωγή στο σύστημα για να δείτε αυτήν τη σελίδα." %}</p>
@@ -17,7 +16,7 @@
 
 {% block form_action %}"{% url 'login' %}"{% endblock %}
 
-{% block form_title %}<h1><span>{% trans "Στοιχεία Εισόδου" %}</span></h1>{% endblock %}
+{% block form_title %}<h1 class="mt-4"><span>{% trans "Στοιχεία Εισόδου" %}</span></h1>{% endblock %}
 
 {% block submit_btn %}
     <button class="btn btn-primary submit" method="post" action="{% url 'login' %}">

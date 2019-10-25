@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 16:11+0300\n"
+"POT-Creation-Date: 2019-10-23 13:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,8 +26,9 @@ msgstr "Weak password"
 msgid ""
 "Το συνθηματικό σας πρέπει να περιέχει, τουλάχιστον 1 αριθμό, 1 κεφαλαίο "
 "γράμμα και 1 μη αλφαριθμητικό χαρακτήρα (σύμβολο)."
-msgstr "Your password must contain at least 1 number, 1 capital letter "
-"and 1 non-alphanumeric character (symbol)"
+msgstr ""
+"Your password must contain at least 1 number, 1 capital letter and 1 non-"
+"alphanumeric character (symbol)"
 
 #: app/templates/app/financing.html:3
 msgid "/static/images/ack_GR.png"
@@ -65,19 +66,28 @@ msgstr "Please press here to log in again to your account"
 msgid "Σελίδα Εισαγωγής"
 msgstr "Login page"
 
-#: app/templates/registration/login.html:13
+#: app/templates/registration/login.html:9
+msgid ""
+"Ο λογαριασμός σας δεν έχει δικαίωμα πρόσβασης σε αυτήν τη σελίδα. Για να "
+"συνεχίσετε, παρακαλώ κάντε εισαγωγή στο σύστημα με ένα εγκεκριμένο "
+"λογαριασμό."
+msgstr ""
+"Your account does not have permission to access this page."
+"To continue, please login with an account having the proper permissions."
+
+#: app/templates/registration/login.html:12
 msgid "Παρακαλώ κάντε εισαγωγή στο σύστημα για να δείτε αυτήν τη σελίδα."
 msgstr "Please login to view this page"
 
-#: app/templates/registration/login.html:20
+#: app/templates/registration/login.html:19
 msgid "Στοιχεία Εισόδου"
 msgstr "Login Data"
 
-#: app/templates/registration/login.html:23
+#: app/templates/registration/login.html:24
 msgid "Είσοδος"
 msgstr "Login"
 
-#: app/templates/registration/login.html:24
+#: app/templates/registration/login.html:26
 msgid "Ξεχάσατε τον κωδικό σας;"
 msgstr "Forgot password?"
 
@@ -165,10 +175,10 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: gentelella/settings.py:135
+#: gentelella/settings.py:136
 msgid "Greek"
 msgstr "Ελληνικά"
 
-#: gentelella/settings.py:136
+#: gentelella/settings.py:137
 msgid "English"
 msgstr "Αγγλικά"

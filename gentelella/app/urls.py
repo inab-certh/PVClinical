@@ -9,4 +9,6 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='index'),
+    # Permission denied
+    path('denied', views.unauthorized, name='unauthorized'),
 ]

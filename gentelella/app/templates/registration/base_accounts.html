@@ -20,7 +20,7 @@
         {% if form %}
             <div class="login_wrapper">
                 {% block extra_checks %}{% endblock %}
-                <div class="animate form login_form mt-2">
+                <div class="animate form login_form mt-4">
                     <section class="login_content">
                         <form class="ma-form" method="post" action={% block form_action %}""{% endblock %} autocomplete="off" novalidate>
                             {% csrf_token %}
