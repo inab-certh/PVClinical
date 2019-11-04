@@ -59,7 +59,7 @@
         {% get_language_info_list for LANGUAGES as languages %}
         <div class="dropdown pull-right">
             <div class="btn dropdown-toggle" data-toggle="dropdown">
-              <span class="flag-icon flag-icon-{% lang_to_flag cur_lang.code %}"></span> {{ cur_lang.name_local }}
+              <span id="curLang" class="flag-icon flag-icon-{% lang_to_flag cur_lang.code %}" data-lang="{{ cur_lang.name }}"></span> {{ cur_lang.name_local }}
               <span class="caret"></span>
             </div>
 
@@ -67,7 +67,7 @@
                 <li role="separator" class="divider"></li>
                 {% for language in languages %}
                     <li onclick="$('#language').val('{{language.code}}'); $('#languageForm').submit()">
-                        <a href="#">
+                        <a>
                           <span class="flag-icon flag-icon-{% lang_to_flag language.code %}"></span> {{ language.name_local }}
                         </a>
                     </li>
@@ -141,9 +141,12 @@
         <script src="/static/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
         <!-- starrr -->
         <script src="/static/vendors/starrr/dist/starrr.js"></script>
+        <!-- Custom Theme Scripts -->
+        <script src="/static/build/js/custom.js"></script>
+        <!-- Translations for datatables -->
+        <script src="/static/build/js/datatables-translate.js"></script>
       {% endblock %}
-      <!-- Custom Theme Scripts -->
-      <script src="/static/build/js/custom.js"></script>
+
 
   </body>
 

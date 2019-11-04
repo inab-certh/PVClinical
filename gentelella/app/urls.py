@@ -9,6 +9,8 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='index'),
+    path('add-edit-scenario', views.add_edit_scenario, name='add_edit_scenario'),
+    path('add-edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='add_edit_scenario'),
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]

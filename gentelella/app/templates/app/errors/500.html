@@ -1,0 +1,32 @@
+{% extends 'patients/base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %} Εσωτερικό σφάλμα συστήματος {% endblock %}
+{% block headext %}<script src="{% static 'patients/js/no-more-button.js' %}"></script>{% endblock %}
+
+{% block content %}
+	<div class="text-center col-6 offset-3">
+		<h1> Συνέβη κάποιο εσωτερικό σφάλμα συστήματος!</h1>
+		{% with request.resolver_match.kwargs.pat_visit_id as pat_visit_id %}
+			{% if pat_visit_id %}
+				<p>Σε περίπτωση που το σφάλμα συνέβη κατά την προσπάθεια προσπέλασης καρτέλας ενός ασθενούς, παρακαλώ βεβαιωθείτε ότι
+					η καρτέλα με τα <b>Δεδομένα εγγραφής</b> του συγκεκριμένου χρήστη είναι επαρκώς συμπληρωμένη!</p>
+				<a class="btn btn-secondary col-4" type="button" href={% url 'pmenu' pat_visit_id %}>
+					<i class="fas fa-backspace"></i>
+					<span class="d-none d-xl-block">
+						Επιστροφή
+					</span>
+				</a>
+			{% else %}
+				<a class="btn btn-secondary col-4" type="button" href="{{ request.META.HTTP_REFERER }}">
+					<i class="fas fa-backspace"></i>
+					<span class="d-none d-xl-block">
+						Επιστροφή
+					</span>
+				</a>
+			{% endif %}
+		{% endwith %}
+
+	</div>
+{% endblock %}

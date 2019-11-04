@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 
 
 def is_in_group(user, group):
@@ -54,3 +55,23 @@ def choices_max_length(tpl):
     lst = dict(tpl).keys()
     return len(max(lst, key=len))
 
+
+def delete_db_rec(obj):
+    """ Delete object from db
+    """
+    if not obj.pk:
+        resp_status = 404
+        resp_message = _("Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!"
+                         " Δεν υπάρχει η αντίστοιχη καταχώριση ακόμη στο σύστημα!")
+    else:
+        deleted = obj.delete()
+        if deleted and deleted[0]:
+            resp_status = 200
+            resp_message = _("Η διαγραφή ολοκληρώθηκε επιτυχώς!")
+
+        else:
+            resp_status = 400
+            resp_message = _("Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!")
+
+    return HttpResponse(content=resp_message,
+                        status=resp_status)

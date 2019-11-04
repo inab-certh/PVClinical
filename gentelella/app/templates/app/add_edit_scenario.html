@@ -1,0 +1,24 @@
+{% extends 'app/form_base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load custom_tags %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block formcontent %}
+	<h1> {{ form_title }} </h1>
+		{% for field in form %}
+			{% if field|field_type == 'RadioSelect' or field|field_type == 'CheckboxSelectMultiple' %}
+					
+					<div class="{%if field.errors %}border-error{% endif %}">{{ field|as_crispy_field }}</div>
+					{% for error in field.errors %}
+						<p id="error_1_{{field.id_for_label}}" class="field-error"><strong>{{ error }}</strong></p>
+					{% endfor %}
+				{% else %}
+					{{ field|as_crispy_field }}
+				{% endif %}		
+		{% endfor %}
+
+{% endblock %}

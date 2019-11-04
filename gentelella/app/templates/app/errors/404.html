@@ -1,0 +1,29 @@
+{% extends 'patients/base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %} Η σελίδα που αναζητάτε δεν βρέθηκε! {% endblock %}
+{% block headext %}<script src="{% static 'patients/js/no-more-button.js' %}"></script>{% endblock %}
+
+{% block content %}
+	<div class="text-center col-6 offset-3">
+		<h1> Δεν είναι δυνατή η εύρεση της σελίδας που αναζητάτε.</h1>
+		{% with request.resolver_match.kwargs.pat_visit_id as pat_visit_id %}
+			{% if pat_visit_id %}
+				<a class="btn btn-secondary col-4" type="button" href={% url 'pmenu' pat_visit_id %}>
+					<i class="fas fa-backspace"></i>
+					<span class="d-none d-xl-block">
+						Επιστροφή
+					</span>
+				</a>
+			{% else %}
+				<a class="btn btn-secondary col-4" type="button" href="{{ request.META.HTTP_REFERER }}">
+					<i class="fas fa-backspace"></i>
+					<span class="d-none d-xl-block">
+						Επιστροφή
+					</span>
+				</a>
+			{% endif %}
+		{% endwith %}
+	</div>
+{% endblock %}

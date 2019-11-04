@@ -1,0 +1,108 @@
+{% extends 'app/base_site.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %} {{title}} {% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+	<script type="text/javascript">
+	$(function() {
+		$('#confirmBtn').click(function() {
+			$.ajax({
+				url: "{{ request.path }}", method: 'DELETE', 
+				beforeSend: function(xhr) {
+			        xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
+			    } 
+
+			}) 	.always(function(){
+					$('#confirmModal').modal('hide');
+				})
+				.done(function(data) {
+					$('[class="modal-title"]').text('Επιτυχής διαγραφή!');
+					$('[class="modal-body"]').text(data);
+
+					/* Info modal is already open */
+					$('#infoModal').on('hidden.bs.modal', function (e) {
+						window.location.replace("/pmenu/{{patient_id}}{% if pat_visit_id %}/{{pat_visit_id}}{% endif %}");
+						//location.reload();
+					});
+					
+					$("#dismissBtn").on("click", function () {
+						$('#infoModal').modal('hide');
+					});
+
+				})
+				.fail(function(resp){
+					$('[class="modal-title"]').text('Αποτυχία διαγραφής!');
+					$('[class="modal-body"]').text(resp.responseText);
+					$('#infoModal').on('hidden.bs.modal', function (e) {
+						location.reload();
+					});
+				}); 
+		});
+	});
+	</script>
+{% endblock %}
+
+{% block content %}
+	<div class="right_col" role="main">
+    <!-- top tiles -->
+		<div class="row tile_count">
+		  <div class="col-4 col-offset-6">
+			  <div class="x_panel">
+				<div class="x_title">
+	<form action="" method="post" class="ma-form col-sm-4 offset-sm-4"  id="first-section" autocomplete="off" novalidate>
+		{% csrf_token %}
+		{% if messages %}
+			{% for message in messages %}
+				<div id="message_container" {% if message.tags %} class="{{message.tags}}" {% endif %}>
+					{{message}}
+				</div>
+			{% endfor %}
+		{% endif %}
+
+		{% block formcontent %}
+		{% endblock %}
+
+		<div class="btn-group col-12 mt-4" role="group" aria-label="Toolbar buttons">
+			<button class="btn btn-primary col-4" type="submit">
+			<i class="fa fa-save"></i>
+			<span class="d-none d-xl-block">
+				Αποθήκευση
+			</span>
+				
+		    </button>
+		    
+		    <button class="btn btn-danger col-4 d-{{visibility}}" {{delete_switch}} data-toggle="modal" 
+		    		data-target="#confirmModal" type="button"> 
+			    	<i class="fa fa-eraser"></i>
+			    	<span class="d-none d-xl-block">
+		    		 	Διαγραφή
+		    		 </span>
+		    </button>
+		    
+		    
+			<a class="btn btn-secondary col-4" type="button"
+				{% if pat_visit_id %} href={% url 'pmenu' patient_id pat_visit_id %}
+				{% elif patient_id %} href={% url 'pmenu' patient_id %}
+				{% else %} href={% url 'add_edit_scenario' %}
+				{% endif %}>
+		    	<i class="fas fa-backspace"></i>
+		    	<span class="d-none d-xl-block">
+		    		Επιστροφή
+		    	</span>
+	    	</a>
+	    					  
+		    	
+    	</div>
+    </form>
+				</div>
+			  </div>
+		  </div>
+		</div>
+	</div>
+	{% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title="Επιβεβαίωση διαγραφής" modal_body="Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" main_btn="Επιβεβαίωση" dismiss_btn="Ακύρωση" data_target="#infoModal" %}
+	{% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn="Εντάξει" %}
+
+{% endblock %}

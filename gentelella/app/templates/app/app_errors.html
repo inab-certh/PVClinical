@@ -1,0 +1,19 @@
+{% extends 'app/base_site.html' %}
+{% load staticfiles %}
+
+{% block title %} {{window_title}} {% endblock %}
+
+{% block content %}
+	<div class="right_col" role="main">
+    <!-- top tiles -->
+		<div class="row tile_count">
+		  <div class="col-4 col-offset-6">
+			  <div class="x_panel">
+				<div class="x_title">
+					<div class="exceptions-errors"><h1>{{ exception }}</h1></div>
+				</div>
+			  </div>
+		  </div>
+		</div>
+	</div>
+{% endblock %}

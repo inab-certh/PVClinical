@@ -14,3 +14,8 @@ register = template.Library()
 def lang_to_flag(context, lang=None, *args, **kwargs):
     lang_flag_dict = {"el": "gr", "en": "gb"}
     return lang_flag_dict.get(lang)
+
+
+@register.filter(name='field_type')
+def field_type(field):
+    return field.field.widget.__class__.__name__
