@@ -38,14 +38,14 @@
         <link href="/static/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
         <!-- JQVMap -->
         <link href="/static/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+
+        <!-- Custom Theme Style -->
+        <link href="/static/build/css/custom.css" rel="stylesheet">
+        <link href="/static/vendors/flag-icon-css/css/flag-icon.min.css" rel="stylesheet" type="text/css">
+        <link href="/static/build/css/pv_dash.css" rel="stylesheet">
+        <link href="{{ form.media.css }}" rel="stylesheet">
       {% endblock stylesheets %}
-      <!-- Custom Theme Style -->
-      <link href="/static/build/css/custom.css" rel="stylesheet">
-      <link href="/static/vendors/flag-icon-css/css/flag-icon.min.css" rel="stylesheet" type="text/css">
-      <link href="/static/build/css/pv_dash.css" rel="stylesheet">
-
     {% endblock head %}
-
   </head>
 
   <body class="{% block body_class %}nav-md {% endblock body_class %}">
@@ -145,8 +145,9 @@
         <script src="/static/build/js/custom.js"></script>
         <!-- Translations for datatables -->
         <script src="/static/build/js/datatables-translate.js"></script>
+        <!-- Select 2 css -->
+        <script src="{{ form.media.js }}"></script>
       {% endblock %}
-
 
   </body>
 

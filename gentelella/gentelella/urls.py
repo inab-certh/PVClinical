@@ -27,6 +27,7 @@ from app.views import index
 
 urlpatterns = [
     path('i18n/', include('django_translation_flags.urls')),
+    url(r'^select2/', include('django_select2.urls')),
     url(r'^admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
 

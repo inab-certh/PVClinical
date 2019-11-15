@@ -1,2 +1,10 @@
-Django==2.1
+Django==2.2.6
+django-appconf==1.0.3
+django-crispy-forms==1.7.2
+django-select2==7.1.1
+django-translation-flags==1.0.6
+mysql==0.0.2
+mysqlclient==1.4.4
 pytz==2018.9
+six==1.12.0
+sqlparse==0.3.0
