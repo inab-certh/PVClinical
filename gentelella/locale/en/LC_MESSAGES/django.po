@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-23 13:18+0300\n"
+"POT-Creation-Date: 2019-11-18 15:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,65 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/errors_redirects.py:17
+#: app/templates/registration/password_change_done.html:12
+msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
+msgstr "Direct Access to this Location is not allowed"
+
+#: app/helper_modules.py:64
+msgid ""
+"Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί! Δεν υπάρχει η "
+"αντίστοιχη καταχώριση ακόμη στο σύστημα!"
+msgstr ""
+"Unfortunately this deletion, could not be completed! Such recorddoes not "
+"exist in the system yet!"
+
+#: app/helper_modules.py:70
+#, fuzzy
+#| msgid "Το συνθηματικό σας άλλαξε επιτυχώς!"
+msgid "Η διαγραφή ολοκληρώθηκε επιτυχώς!"
+msgstr "Your account password has been changed successfully!"
+
+#: app/helper_modules.py:74
+msgid "Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!"
+msgstr "Unfortunately this deletion, could not be completed!"
+
+#: app/models.py:21
+msgid "Υπό δημιουργία"
+msgstr "Creating"
+
+#: app/models.py:22
+msgid "Τρέχει"
+msgstr "Running"
+
+#: app/models.py:23
+msgid "Ολοκληρώθηκε"
+msgstr "Completed"
+
+#: app/models.py:26
+msgid "Κατάσταση: "
+msgstr "Status"
+
+#: app/models.py:50
+msgid "Όνομα φαρμάκου"
+msgstr "Drug name"
+
+#: app/models.py:61
+msgid "Κωδικοποίηση φαρμάκου"
+msgstr "Drug code"
+
+#: app/models.py:69 app/models.py:73 app/models.py:114 app/models.py:118
+msgid "Δεν μπορούν και τα δύο πεδία να είναι κενά"
+msgstr "At least one of the two fields should be filled in"
+
+#: app/models.py:95
+msgid "Όνομα πάθησης"
+msgstr "Disease name"
+
+#: app/models.py:106
+msgid "Κωδικοποίηση πάθησης"
+msgstr "Disease code"
 
 #: app/password_validators.py:13
 msgid "Αδύναμο συνθηματικό."
@@ -50,6 +109,67 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
+#: app/templates/app/index.html:22
+msgid "Προσωπικά Σενάρια Διερεύνησης"
+msgstr "My Investigation Scenarios"
+
+#: app/templates/app/index.html:22
+msgid "Χρήστη"
+msgstr "User"
+
+#: app/templates/app/index.html:42
+msgid ""
+"Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε ήδη δημιουργήσει. "
+"Επίσης, μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το κουμπί "
+"προσθήκης σεναρίων, που βρίσκεται κάτω από τον πίνακα σεναρίων."
+msgstr "The following table shows the scenarios that you have already created. "
+"You can also create a new scenario, by selecting the \"Add Scenario\" button "
+"at the bottom of this table."
+
+#: app/templates/app/index.html:47 app/views.py:87 app/views.py:115
+msgid "Σενάριο"
+msgstr "Scenario"
+
+#: app/templates/app/index.html:48
+msgid "Φάρμακο/Φάρμακα"
+msgstr "Drug/Drugs"
+
+#: app/templates/app/index.html:49
+msgid "Πάθηση/Παθήσεις"
+msgstr "Disease/Diseases"
+
+#: app/templates/app/index.html:50
+msgid "Κατάσταση"
+msgstr "Condition"
+
+#: app/templates/app/index.html:51
+msgid "Ημ/νία καταχώρισης"
+msgstr "Creation Date"
+
+#: app/templates/app/index.html:52
+msgid "Επεξεργασία"
+msgstr "Edit"
+
+#: app/templates/app/index.html:53
+msgid "Προβολή"
+msgstr "View"
+
+#: app/templates/app/index.html:54
+msgid "Διαγραφή"
+msgstr "Delete"
+
+#: app/templates/app/index.html:113
+msgid "Προσθήκη σεναρίου"
+msgstr "Add Scenario"
+
+#: app/templates/app/sidebar.html:38
+msgid "ΕΠΙΛΟΓΕΣ"
+msgstr "OPTIONS"
+
+#: app/templates/app/sidebar.html:47
+msgid "Σενάρια Διερεύνησης"
+msgstr "Investigation Scenarios"
+
 #: app/templates/registration/logged_out.html:5
 msgid "Έγινε Αποσύνδεση"
 msgstr "Logged out successfully"
@@ -72,8 +192,8 @@ msgid ""
 "συνεχίσετε, παρακαλώ κάντε εισαγωγή στο σύστημα με ένα εγκεκριμένο "
 "λογαριασμό."
 msgstr ""
-"Your account does not have permission to access this page."
-"To continue, please login with an account having the proper permissions."
+"Your account does not have permission to access this page.To continue, "
+"please login with an account having the proper permissions."
 
 #: app/templates/registration/login.html:12
 msgid "Παρακαλώ κάντε εισαγωγή στο σύστημα για να δείτε αυτήν τη σελίδα."
@@ -104,10 +224,6 @@ msgstr "Your account password has been changed successfully!"
 #: app/templates/registration/password_reset_complete.html:8
 msgid "Επανασύνδεση"
 msgstr "Reconnect"
-
-#: app/templates/registration/password_change_done.html:12
-msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
-msgstr "Direct Access to this Location is not allowed"
 
 #: app/templates/registration/password_change_form.html:6
 #: app/templates/registration/password_change_form.html:8
@@ -175,10 +291,24 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: gentelella/settings.py:136
-msgid "Greek"
-msgstr "Ελληνικά"
+#: app/views.py:88
+msgid "Νέο Σενάριο"
+msgstr "New Scenario"
 
-#: gentelella/settings.py:137
-msgid "English"
-msgstr "Αγγλικά"
+#: app/views.py:99
+msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
+msgstr "System update completed successfully!"
+
+#: app/views.py:106
+msgid ""
+"Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
+"προσπαθήστε ξανά!"
+msgstr "System update failed due to insertion errors. Please try again!"
+
+#: gentelella/settings.py:148
+msgid "Ελληνικά"
+msgstr "Greek"
+
+#: gentelella/settings.py:149
+msgid "Αγγλικά"
+msgstr "English"

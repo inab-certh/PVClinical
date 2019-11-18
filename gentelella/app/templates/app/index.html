@@ -19,7 +19,7 @@
       <div class="col-4 col-offset-6">
           <div class="x_panel">
             <div class="x_title">
-              <h2>{% trans "Προσωπικά Σενάρια Διερεύνησης" %}<small>{% trans "Χρήστη"%}</small></h2>
+              <h2>{% trans "Προσωπικά Σενάρια Διερεύνησης" %}<small>{{ user.groups.all|join:"," }}</small></h2>
               <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -39,8 +39,7 @@
             </div>
             <div class="x_content">
               <p class="text-muted font-13 m-b-30">
-                {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε δημιουργήσει.
-                Επίσης μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το κουμπί προσθήκης σεναρίων που βρίσκεται κάτω από τον πίνακα σεναρίων." %}
+                {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε ήδη δημιουργήσει. Επίσης, μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το κουμπί προσθήκης σεναρίων, που βρίσκεται κάτω από τον πίνακα σεναρίων." %}
               </p>
               <table class="table table-striped table-bordered dt-responsive dt-multilingual nowrap" cellspacing="0" width="100%">
                 <thead>
