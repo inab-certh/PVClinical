@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-18 15:54+0200\n"
+"POT-Creation-Date: 2019-11-19 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,18 +113,15 @@ msgstr ""
 msgid "Προσωπικά Σενάρια Διερεύνησης"
 msgstr "My Investigation Scenarios"
 
-#: app/templates/app/index.html:22
-msgid "Χρήστη"
-msgstr "User"
-
 #: app/templates/app/index.html:42
 msgid ""
-"Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε ήδη δημιουργήσει. "
-"Επίσης, μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το κουμπί "
-"προσθήκης σεναρίων, που βρίσκεται κάτω από τον πίνακα σεναρίων."
-msgstr "The following table shows the scenarios that you have already created. "
-"You can also create a new scenario, by selecting the \"Add Scenario\" button "
-"at the bottom of this table."
+"Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε ήδη "
+"δημιουργήσει. Επίσης, μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το "
+"κουμπί προσθήκης σεναρίων, που βρίσκεται κάτω από τον πίνακα σεναρίων."
+msgstr ""
+"The following table shows the scenarios that you have already created. You "
+"can also create a new scenario, by selecting the \"Add Scenario\" button at "
+"the bottom of this table."
 
 #: app/templates/app/index.html:47 app/views.py:87 app/views.py:115
 msgid "Σενάριο"
@@ -169,6 +166,10 @@ msgstr "OPTIONS"
 #: app/templates/app/sidebar.html:47
 msgid "Σενάρια Διερεύνησης"
 msgstr "Investigation Scenarios"
+
+#: app/templates/app/top_navigation.html:22
+msgid "Αποσύνδεση"
+msgstr "Logout"
 
 #: app/templates/registration/logged_out.html:5
 msgid "Έγινε Αποσύνδεση"
@@ -312,3 +313,6 @@ msgstr "Greek"
 #: gentelella/settings.py:149
 msgid "Αγγλικά"
 msgstr "English"
+
+#~ msgid "Χρήστη"
+#~ msgstr "User"

@@ -3,6 +3,11 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
 {% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
@@ -43,6 +48,7 @@
 		});
 	});
 	</script>
+
 {% endblock %}
 
 {% block content %}

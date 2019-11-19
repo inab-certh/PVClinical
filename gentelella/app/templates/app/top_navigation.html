@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div class="nav_menu">
   <nav>
     <div class="nav toggle">
@@ -19,7 +21,7 @@
             </a>
           </li>
           <li><a href="javascript:;">Help</a></li>
-          <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out pull-right"></i> Αποσύνδεση </a></li>
+          <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out pull-right"></i> {% trans "Αποσύνδεση" %} </a></li>
         </ul>
       </li>
 

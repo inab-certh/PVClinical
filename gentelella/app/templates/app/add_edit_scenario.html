@@ -5,6 +5,18 @@
 {% load crispy_forms_field %}
 {% load custom_tags %}
 
+{% block stylesheets %}
+  {{ block.super }}
+  {{ form.media.css }}
+{% endblock stylesheets %}
+
+
+{% block javascripts %}
+    {{ block.super }}
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+{% endblock %}
+
 {% block title %} {{title}} {% endblock %}
 
 {% block formcontent %}

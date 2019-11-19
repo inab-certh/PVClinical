@@ -110,7 +110,7 @@
               </table>
             </div>
           </div>
-        <a href="/" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
+        <a href="{% url 'add_edit_scenario' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
         </div>
       <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
         <!--<span class="count_top"><i class="fa fa-user"></i> Total Users</span>-->
@@ -824,21 +824,5 @@
   <!--<script src="/static/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>-->
   <!--<script src="/static/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>-->
 
-  <!-- Datatables -->
-  <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <script src="/static/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-  <script src="/static/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
-  <script src="/static/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
-  <script src="/static/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
-  <script src="/static/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
-  <script src="/static/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-  <script src="/static/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
-  <script src="/static/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-  <script src="/static/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
-  <script src="/static/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
-  <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
-  <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
-  <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
 {% endblock javascripts %}
 

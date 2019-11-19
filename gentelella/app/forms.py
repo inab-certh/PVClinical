@@ -4,6 +4,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.utils.safestring import mark_safe
+from django_select2.forms import Select2TagWidget
+from django.utils.translation import gettext_lazy as _
+
 
 from app.models import Drug
 from app.models import Condition
@@ -57,15 +60,31 @@ class CustomModelForm(forms.ModelForm):
 
 
 class ScenarioForm(forms.Form):
-    pass
-    # drugs = ModelMultipleChoiceField(queryset=Thing.objects.all(), widget=Select2MultipleWidget)
+    # class Meta:
+    #     model = Scenario
+    #     fields = ['drugs',
+    #               'conditions',]
+    #
+    #     labels = {
+    #         'drugs': _('Φάρμακα:'),
+    #         'conditions': _('Παθήσεις:'),
+    #     }
+    #
+    #     widgets = {
+    #         'drugs': Select2MultipleWidget(
+    #             attrs={
+    #             }
+    #         ),
+    #         'conditions': Select2MultipleWidget(
+    #             attrs={
+    #             }
+    #         )
+    #     }
+    # pass
+    drugs = forms.ModelMultipleChoiceField(queryset=Drug.objects.all(), widget=Select2TagWidget)
     #
     # drug = forms.CharField(required=True)
-
-
-
-
-
+    conditions = forms.ModelMultipleChoiceField(queryset=Condition.objects.all(), widget=Select2TagWidget)
 
     #     labels = {
     #         '': '',
@@ -84,9 +103,10 @@ class ScenarioForm(forms.Form):
     #         },)
     #     }
     #
-    # def __init__(self, *args, **kwargs):
-    #     super(ScenarioForm, self).__init__(*args, **kwargs)
-    #     self.instance = kwargs.pop('instance', None)
+    def __init__(self, instance=None, *args, **kwargs):
+        super(ScenarioForm, self).__init__(*args, **kwargs)
+        self.instance = instance
+        print(instance)
         # self.fields['pat_id'].widget.attrs['readonly'] = True
     #
     # def is_valid(self):
