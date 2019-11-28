@@ -62,7 +62,7 @@
                         <table>
                           {% for d in scenario.drugs %}
                             <tr>
-                              <td>{{ d }}</td>
+                              <td>{% firstof d.name d.code %}</td>
                             </tr>
                           {% endfor %}
                         </table>
@@ -72,7 +72,7 @@
                         <table>
                           {% for c in scenario.conditions %}
                             <tr>
-                              <td>{{ c }}</td>
+                              <td>{% firstof c.name c.code %}</td>
                             </tr>
                           {% endfor %}
                         </table>

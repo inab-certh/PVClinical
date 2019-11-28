@@ -1,5 +1,8 @@
 import datetime
 
+from functools import reduce
+from itertools import chain
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
@@ -11,6 +14,19 @@ from django.utils.translation import gettext_lazy as _
 from app.models import Drug
 from app.models import Condition
 from app.models import Scenario
+from app.models import Status
+
+from app.retrieve_meddata import get_drugs
+from app.retrieve_meddata import get_conditions
+
+
+class CustomSelect2TagWidget(Select2TagWidget):
+    """ Class allowing data-tokens with spaces"""
+    def build_attrs(self, *args, **kwargs):
+        self.attrs.setdefault('data-token-separators', [","])
+        # self.attrs.setdefault('data-width', '50%')
+        self.attrs.setdefault('data-tags', 'true')
+        return super().build_attrs(*args, **kwargs)
 
 
 class CustomModelForm(forms.ModelForm):
@@ -27,6 +43,24 @@ class CustomModelForm(forms.ModelForm):
                     'data-content': help_text,
                     'data-placement': 'right',
                     'data-container': 'body'})
+
+
+# class CustomForm(forms.Form):
+#
+#     def __init__(self, *args, **kwargs):
+#         super(CustomForm, self).__init__(*args, **kwargs)
+#
+#         for field in self.fields:
+#             help_text = self.fields[field].help_text
+#             self.fields[field].help_text = None
+#             if help_text != '':
+#                 self.fields[field].widget.attrs.update({
+#                     'class': 'has-popover',
+#                     'data-content': help_text,
+#                     'data-placement': 'right',
+#                     'data-container': 'body'})
+
+
 #
 #
 # class ListTextWidget(forms.TextInput):
@@ -71,69 +105,83 @@ class ScenarioForm(forms.Form):
     #     }
     #
     #     widgets = {
-    #         'drugs': Select2MultipleWidget(
+    #         'drugs': Select2TagWidget(
     #             attrs={
     #             }
     #         ),
-    #         'conditions': Select2MultipleWidget(
+    #         'conditions': Select2TagWidget(
     #             attrs={
     #             }
     #         )
     #     }
-    # pass
-    drugs = forms.ModelMultipleChoiceField(queryset=Drug.objects.all(), widget=Select2TagWidget)
-    #
-    # drug = forms.CharField(required=True)
-    conditions = forms.ModelMultipleChoiceField(queryset=Condition.objects.all(), widget=Select2TagWidget)
 
-    #     labels = {
-    #         '': '',
-    #     }
-    #     widgets = {
-    #         'adult': forms.RadioSelect(attrs={
-    #             'class': 'list-inline',
-    #         },),
-    #
-    #
-    #         'ma_subscription_date': forms.DateInput(attrs={
-    #            'min': '-150y',
-    #            'max': '+0d',
-    #            'placeholder': 'Επιλέξτε ημερομηνία',
-    #            'class': 'datepicker',
-    #         },)
-    #     }
-    #
-    def __init__(self, instance=None, *args, **kwargs):
+    # pass
+    all_drugs = get_drugs()
+    all_conditions = get_conditions()
+    # all_synonyms = list(chain(get_synonyms(all_drugs)))
+
+    # all_synonyms = reduce(lambda syns1, syns2: syns1+syns2, map(lambda d: d.synonyms.all(), all_drugs))
+
+    title = forms.CharField(label=_("Τίτλος Σεναρίου"), required=True)
+    drugs_by_name = forms.MultipleChoiceField(choices=[(d.name, d.name) for d in all_drugs], required=False,
+                                              label=_("Ονόματα φαρμάκων:"), widget=CustomSelect2TagWidget)
+    conditions_by_name = forms.MultipleChoiceField(choices=[(c.name, c.name) for c in all_conditions], required=False,
+                                                   label=_("Ονόματα παθήσεων:"), widget=CustomSelect2TagWidget)
+
+    drugs_by_code = forms.MultipleChoiceField(choices=[(d.code, d.code) for d in all_drugs], required=False,
+                                              label=_("Κωδικοί φαρμάκων:"), widget=Select2TagWidget)
+    conditions_by_code = forms.MultipleChoiceField(choices=[(c.code, c.code) for c in all_conditions], required=False,
+                                                   label=_("Κωδικοί παθήσεων:"), widget=Select2TagWidget)
+
+    # drug_synonyms = forms.ChoiceField(choices=[("","")]+all_synonyms, required=False, label=_("Συνώνυμα:"))
+
+    status = forms.ChoiceField(choices=Status.status_choices, required=False, label=_("Κατάσταση σεναρίου:"))
+
+    # drugs_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
+    # conditions_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
+
+
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop("instance")
         super(ScenarioForm, self).__init__(*args, **kwargs)
-        self.instance = instance
-        print(instance)
-        # self.fields['pat_id'].widget.attrs['readonly'] = True
+
     #
-    # def is_valid(self):
-    #     """ Overriding-extending is_valid module
-    #     """
-    #     super(ScenarioForm, self).is_valid()
-    #
-    #     # Extend registration validation,
-    #     # ma_subscription_date cannot be greater than birth_date
-    #     if self.cleaned_data.get('') and 'birth_year'\
-    #             in self.cleaned_data and\
-    #         self.cleaned_data.get('ma_subscription_date').year <\
-    #             self.cleaned_data.get('birth_year'):
-    #         self.add_error('ma_subscription_date', "Η ημερομηνία εγγραφής του ασθενούς,\
-    #         δεν μπορεί να είναι προγενέστερη της ημερομηνίας γέννησης")
-    #
-    #     return not self._errors
+    def is_valid(self):
+        """ Overriding-extending is_valid module
+        """
+        super(ScenarioForm, self).is_valid()
+
+        # At least one of drugs_by_code or drugs_by_name has to be filled in
+        if (not self.cleaned_data.get("drugs_by_name")) and not self.cleaned_data.get("drugs_by_code"):
+            self.add_error(None, _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε φάρμακα βάσει ονόματος\
+                                              είτε φάρμακα βάσει κωδικού, πρέπει να συμπληρωθεί!"))
+
+        # At least one of drugs_by_code or drugs_by_name has to be filled in
+        if (not self.cleaned_data.get("conditions_by_name")) and not self.cleaned_data.get("conditions_by_code"):
+            self.add_error(None,
+                           _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε παθήσεις βάσει ονόματος\
+                             είτε παθήσεις βάσει κωδικού, πρέπει να συμπληρωθεί!"))
+
+        return not self._errors
     # #
-    # def save(self, commit=True):
-    #     """ Overriding-extending save module
-    #     """
-    #     tmp_pat = super(RegisterForm, self).save(commit)
-    #     if tmp_pat:
-    #         initial_care_center = self.instance.pat_id[:3]
-    #         filtered_centers = Center.objects.filter(code=initial_care_center)
-    #         if filtered_centers:
-    #             tmp_pat.care_centers.add(filtered_centers[0])
-    #
-    #         tmp_pat.care_centers.add(self.cleaned_data.get('care_center'))
-    #         tmp_pat.save()
+
+    def clean(self):
+        print("By code:")
+        print(self.data.get("drugs_by_code"))
+        print("By name:")
+        print(self.data.get("drugs_by_name"))
+        return self.cleaned_data
+
+
+    def save(self, commit=True):
+        """ Overriding-extending save module
+        """
+        print("Save")
+        # drugs = [Drug.objects.get_or_create() for d in self.drugs_by_name+self.drugs_by_code]
+        # conditions = [Condition.objects.get_or_create(name=c) for c in self.drugs_by_name] + [Condition.objects.get_or_create(code=c) for c in self.drugs_by_code]
+        # d_n, created =
+        # d_c, created = Drug.objects.get_or_create()
+        #
+        # self.instance.title = self.title
+        # self.instance.drugs = self.drugs_by_name + self.drugs_by_code
+        # self.instance.conditions = self.conditions_by_name + self.conditions_by_code

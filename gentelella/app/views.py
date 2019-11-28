@@ -21,20 +21,48 @@ from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
 
+from app.models import Drug
+from app.models import Condition
 from app.models import Scenario
+from app.models import Status
 
 from app.forms import ScenarioForm
-# from app.models import Status, Drug, Condition
+
+
+def get_synonyms(request):
+    """ Get all the synonyms for a list of drugs
+    :param request: The request from which the list of drugs to search for synonyms will be retrieved
+    :return: The list of synonyms for the drugs' list
+    """
+
+    drugs = eval(request.GET.get("drugs", None))
+
+    # Replace with real service
+    all_synonyms = {"Omeprazole":["Esomeprazole"], "Esomeprazole": ["Omeprazole"],
+                    "Etybenzatropine": ["Benzatropine"], "Benzatropine": ["Etybenzatropine"]}
+    synonyms = [all_synonyms[d] for d in drugs if d in all_synonyms.keys()]
+    data={}
+    data["synonyms"] = synonyms
+    return JsonResponse(data)
 
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
-    # sc = Scenario.objects.create(owner=request.user, status=Status.objects.get(status="CREATING"))
+    # sc = Scenario.objects.create(title="Test title 1", owner=request.user, status=Status.objects.get(status="CREATING"))
     # tdrugs = [Drug.objects.create(name="Omeprazole"),
     #           Drug.objects.create(code="A24AB12"),
     #           Drug.objects.create(name="Omeprazol"),
-    #           Drug.objects.create(code="A24AB11")]
+    #           Drug.objects.create(code="A24AB11"),
+    #           Drug.objects.create(code="N02BE01"),
+    #           Drug.objects.create(name="Etybenzatropine", code="N04AC30"),
+    #           Drug.objects.create(name="Benzatropine", code="N04AC01")]
+    #
+    # d1 = Drug.objects.get(code="N04AC30")
+    # d2 = Drug.objects.get(code="N04AC01")
+    #
+    # d1.synonyms.add(d2)
+    # d2.synonyms.add(d1)
     #
     # sc.drugs.add(*tdrugs)
     #
@@ -48,6 +76,7 @@ def index(request):
     # "owner": request.user.username
     # }
 
+
     scenarios = []
     for sc in Scenario.objects.all():
         drugs = [d for d in sc.drugs.all()]
@@ -59,8 +88,6 @@ def index(request):
                           "timestamp": sc.timestamp
                           }
                          )
-
-
 
     template = loader.get_template('app/index.html')
 
@@ -84,15 +111,16 @@ def add_edit_scenario(request, scenario_id=None):
     else:
         scenario = Scenario()
 
-    delete_switch, form_title = ("enabled", "{} {}".format(_("Σενάριο"), scenario_id)) if scenario.id else\
-        ("disabled", "{}".format(_("Νέο Σενάριο")))
+
+    delete_switch = "enabled" if scenario.id else "disabled"
 
 
     if request.method == 'POST':
         scform = ScenarioForm(request.POST,
-                           instance=scenario, label_suffix='')
+                              instance=scenario, label_suffix='')
 
         if scform.is_valid():
+            print("valid")
             scform.save()
             messages.success(
                 request,
@@ -113,7 +141,6 @@ def add_edit_scenario(request, scenario_id=None):
 
     context = {
         'title': _("Σενάριο"),
-        'form_title': form_title,
         'delete_switch': delete_switch,
         'form': scform,
     }

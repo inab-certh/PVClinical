@@ -1,6 +1,7 @@
 from django.urls import path, re_path
 from app import views
 
+
 urlpatterns = [
     # Matches any html file - to be used for gentella
     # Avoid using your .html in your resources.
@@ -11,6 +12,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('add-edit-scenario', views.add_edit_scenario, name='add_edit_scenario'),
     path('add-edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='add_edit_scenario'),
+    path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]

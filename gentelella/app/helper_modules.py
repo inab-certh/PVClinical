@@ -75,3 +75,16 @@ def delete_db_rec(obj):
 
     return HttpResponse(content=resp_message,
                         status=resp_status)
+
+
+def atc_by_level(level, codes):
+    """ Return all drugs' code (atc) part by the specified level
+    :param level: the level of the (atc) code to be retrieved
+    :param codes: the drug (atc) codes
+    :return: code (atc) part specified by the level
+    """
+
+    level_chars = {1:1, 2:3, 3:4, 4:5, 5:6}
+
+    return [code[0:level_chars[level]] for code in codes]
+

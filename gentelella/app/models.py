@@ -36,7 +36,6 @@ class Status(models.Model):
         ordering = ['id',]
 
 
-
 class Drug(models.Model):
     """ Drug (name or code)
     """
@@ -63,6 +62,8 @@ class Drug(models.Model):
                                 ),
                             ])
 
+    # synonyms = models.ManyToManyField("self", default=None, blank=True, related_name="drugs")
+
     def clean(self):
         super().clean()
         if not self.name and not self.code:
@@ -73,8 +74,8 @@ class Drug(models.Model):
             raise Exception(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
         super(Drug, self).save(*args, **kwargs)
 
-    def __str__(self):
-        return "{}".format(self.name or self.code)
+    # def __str__(self):
+    #     return "{}".format(self.name or self.code)
 
     class Meta:
         constraints = [
@@ -118,8 +119,8 @@ class Condition(models.Model):
             raise Exception(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
         super(Condition, self).save(*args, **kwargs)
 
-    def __str__(self):
-        return "{}".format(self.name or self.code)
+    # def __str__(self):
+    #     return "{}".format(self.name or self.code)
 
 
     class Meta:
@@ -132,11 +133,19 @@ class Scenario(models.Model):
     """ Scenario consisting of a drug-disease pair
     """
 
+    title = models.CharField(max_length=50, null=True, blank=True, default="",
+                             validators=[RegexValidator(
+                                 regex='^[\w\-,\(\) ]*$',
+                                 message=_('Τίτλος Σεναρίου'),
+                                 code='invalid_title',),])
+
     # Drug name or code
-    drugs = models.ManyToManyField(Drug, default=None, related_name="drugs")
+    drugs = models.ManyToManyField(Drug, default=None,
+                                   verbose_name="drugs", related_name="drugs")
 
     # MedDRA name or code
-    conditions = models.ManyToManyField(Condition, default=None, related_name="conditions")
+    conditions = models.ManyToManyField(Condition, default=None,
+                                        verbose_name="conditions", related_name="conditions")
 
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
 
@@ -146,7 +155,5 @@ class Scenario(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["drugs", "conditions", "owner"], name="unique_scenario")
+            models.UniqueConstraint(fields=["title", "owner"], name="unique_scenario")
         ]
-
-

@@ -3,6 +3,53 @@
     margin-left: -0.7rem;
 }
 
+.form-h1 {
+    font-size: 3rem!important;
+}
+
+.select2-results__option .wrap:before{
+    font-family:fontAwesome;
+    color: #ffffff;
+    content:"\f096";
+    width:25px;
+    height:25px;
+    padding-right: 10px;
+
+}
+.select2-results__option[aria-selected=true] .wrap:before{
+    content:"\f14a";
+}
+
+/* Custom theme colors */
+.left_col, body, .nav_title, .sidebar-footer>a{
+    /*background: #286090!important;*/
+    /*background: #204d74;!important;*/
+    /*background: #4B5F71;!important;*/
+    /*background: rgb(41, 41, 41);!important;*/
+    /*background: black;!important;*/
+    background: #19242F;!important;
+
+ }
+
+.sidebar-footer {
+    /*background: #1ABB9C!important;I*/
+    background: #269abc!important;
+    /*background: #2b5763!important;*/
+}
+
+.bg-green {
+    background: #269abc!important;
+    /*background: #2b5763!important;*/
+    /*border: #2b5763!important;*/
+}
+
+li.active {
+    border-right-color: #269abc!important;
+    /*border-right-color: #2b5763!important;*/
+}
+/* custom theme colors */
+
+
 #pv-logo-txt, #clinical-logo-txt {
     font-size: 30px;
     font-weight: 350;
@@ -75,4 +122,27 @@
 .login_content>form>h1>span {
     background: #F7F7F7;
     padding:0 10px;
+}
+
+.scAccordion .collapse .select2-container {
+    width: 100%!important;
+}
+
+#message_container.success,  #message_container.error{
+	font-weight: bold;
+	font-size: large;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+#message_container.success {
+	color: #2b5763;
+}
+
+#message_container.error {
+	color: #bf2b27;
+}
+
+#scTitleDiv .invalid-feedback {
+    font-size: 13px;
 }
