@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 
@@ -40,7 +42,7 @@ def get_synonyms(request):
     # Replace with real service
     all_synonyms = {"Omeprazole":["Esomeprazole"], "Esomeprazole": ["Omeprazole"],
                     "Etybenzatropine": ["Benzatropine"], "Benzatropine": ["Etybenzatropine"]}
-    synonyms = [all_synonyms[d] for d in drugs if d in all_synonyms.keys()]
+    synonyms = list(chain.from_iterable([all_synonyms[d] for d in drugs if d in all_synonyms.keys()]))
     data={}
     data["synonyms"] = synonyms
     return JsonResponse(data)

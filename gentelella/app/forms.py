@@ -137,6 +137,7 @@ class ScenarioForm(forms.Form):
 
     status = forms.ChoiceField(choices=Status.status_choices, required=False, label=_("Κατάσταση σεναρίου:"))
 
+
     # drugs_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
     # conditions_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
 
