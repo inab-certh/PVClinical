@@ -123,15 +123,43 @@ class ScenarioForm(forms.Form):
     # all_synonyms = reduce(lambda syns1, syns2: syns1+syns2, map(lambda d: d.synonyms.all(), all_drugs))
 
     title = forms.CharField(label=_("Τίτλος Σεναρίου"), required=True)
-    drugs_by_name = forms.MultipleChoiceField(choices=[(d.name, d.name) for d in all_drugs], required=False,
-                                              label=_("Ονόματα φαρμάκων:"), widget=CustomSelect2TagWidget)
-    conditions_by_name = forms.MultipleChoiceField(choices=[(c.name, c.name) for c in all_conditions], required=False,
-                                                   label=_("Ονόματα παθήσεων:"), widget=CustomSelect2TagWidget)
 
-    drugs_by_code = forms.MultipleChoiceField(choices=[(d.code, d.code) for d in all_drugs], required=False,
-                                              label=_("Κωδικοί φαρμάκων:"), widget=Select2TagWidget)
-    conditions_by_code = forms.MultipleChoiceField(choices=[(c.code, c.code) for c in all_conditions], required=False,
-                                                   label=_("Κωδικοί παθήσεων:"), widget=Select2TagWidget)
+    drugs_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
+        d.name, " - {}".format(d.code) if d.code else ""),)*2 for d in all_drugs],
+                                              required=False,
+                                              label=_("Φάρμακα:"),
+                                              widget=CustomSelect2TagWidget)
+    conditions_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
+        c.name, " - {}".format(c.code) if c.code else ""),)*2 for c in all_conditions],
+                                                   required=False,
+                                                   label=_("Παθήσεις:"),
+                                                   widget=CustomSelect2TagWidget)
+
+
+
+    # drugs_by_name = forms.MultipleChoiceField(choices=[(d.name, "{}{}".format(
+    #     d.name, " - {}".format(d.code) if d.code else "")) for d in all_drugs],
+    #                                           required=False,
+    #                                           label=_("Φάρμακα:"),
+    #                                           widget=CustomSelect2TagWidget)
+    # conditions_by_name = forms.MultipleChoiceField(choices=[(c.name, "{}{}".format(
+    #     c.name, " - {}".format(c.code) if c.code else "")) for c in all_conditions],
+    #                                                required=False,
+    #                                                label=_("Παθήσεις:"),
+    #                                                widget=CustomSelect2TagWidget)
+
+    #
+    # drugs_by_code = forms.MultipleChoiceField(choices=[(d.code, "{}{}".format(
+    #     d.code, " - {}".format(d.name) if d.name else "")) for d in all_drugs],
+    #                                           required=False,
+    #                                           label=_("Κωδικοί φαρμάκων:"),
+    #                                           widget=Select2TagWidget)
+    #
+    # conditions_by_code = forms.MultipleChoiceField(choices=[(c.code, "{}{}".format(
+    #     c.code, " - {}".format(c.name) if c.name else "")) for c in all_conditions],
+    #                                                required=False,
+    #                                                label=_("Κωδικοί παθήσεων:"),
+    #                                                widget=Select2TagWidget)
 
     # drug_synonyms = forms.ChoiceField(choices=[("","")]+all_synonyms, required=False, label=_("Συνώνυμα:"))
 

@@ -16,113 +16,7 @@
 
 	<!-- Select 2 css -->
 	{{ form.media.js }}
-
-
-    <script>
-        $("[name='drugs_by_name']").change(function () {
-            $.ajax({
-                url: $("#drugsNameCollapsible").attr("data-synonyms-url"),
-                data: {"drugs": JSON.stringify($(this).val())},
-                dataType: 'json',
-                success: function (data) {
-                    var options_arr = [];
-                    var li_arr = $("[name='drugs_by_name']").parent().children(
-                        ".select2").find("li.select2-selection__choice");
-
-                    var selected_drugs = li_arr.map(function () {
-                        return $(this).attr("title");
-                    }).toArray();
-
-                    // Remove common values in synonyms and selected drugs from synonyms array
-                    var valid_synonyms = data.synonyms.filter(function(val) {
-                        return selected_drugs.indexOf(val) == -1;
-                    });
-
-
-                    valid_synonyms.forEach(function (syn, index, valid_synonyms) {
-                        options_arr.push(new Option(syn, syn))
-                        // $("#drugsSynonyms").html(options_arr);
-                    })
-
-                    // for (var i = 0; i<valid_synonyms.length; i++) {
-                    //     options_arr.push(new Option(valid_synonyms[i], valid_synonyms[i]))
-                    // }
-                    $("#drugsSynonyms").html(options_arr);
-
-                  },
-                  error: function (data) {
-                    console.log("error "+data);
-                }
-
-            });
-        });
-        //
-        // });
-
-        $("#drugsSynonyms").select2MultiCheckboxes({
-            templateSelection: function(selected, total) {
-                console.log(selected);
-                return selected.join(", ");
-            }
-        });
-
-        // $("#drugsSynonyms").change(function() {
-        //     var options = Array.from($("#drugsSynonyms option"));
-        //     var checked = [];
-        //     var unchecked = [];
-        //
-        //     options.forEach(opt => {
-        //         if (opt.className === 'checked') {
-        //             checked.push(opt.value)
-        //         } else {
-        //             unchecked.push(opt.value)
-        //         }
-        //     });
-        //     // check console: View -> Developer Tools
-        //     console.log('CHECKED:',checked);
-        //     console.log('UNCHECKED',unchecked);
-        // });
-
-        function moveToSelectedDrugs() {
-            var selected_str = $("#select2-drugsSynonyms-container");
-
-            // var
-            // checked = .split(", ");
-            console.log(selected_str);
-
-            // $("#drugsSynonyms").select2MultiCheckboxes({
-
-            // }
-            // var options = Array.from($("#drugsSynonyms option"));
-            // var checked = [];
-            //
-            // console.log("Options: ",options);
-            // console.log("Checked: "+$("#drugsSynonyms "))
-            //
-            // options.forEach(opt => {
-            //     if (opt.className === 'checked') {
-            //         checked.push(opt.value)
-            //     }
-            //
-            // });
-            //
-            // console.log("Buttoned: ",checked)
-            //
-            // checked.forEach( ch => {
-            //     var drugs_selected_ul = $("[name='drugs_by_name']").parent().children(
-            //             ".select2").find("li.select2-selection__choice").parent();
-            //
-
-                // drugs_selected_ul.append(
-                //     <li class="select2-selection__choice" title=ch.value><span class="select2-selection__choice__remove" role="presentation">×</span>Etybenzatropine</li>
-                //     "<li class='select2-selection__choice' title=ch.value>ch.value</li>");
-            //
-            // })
-
-        }
-
-    </script>
-
+    <script src='{% static "build/js/scenario.js" %}'></script>
 
 {% endblock %}
 
@@ -135,60 +29,70 @@
 
     <div class="mt-3">{{ form.status|as_crispy_field }}</div>
     <div class="mt-5">
-        <h1>{% trans "Φαρμακα" %}</h1>
+        <!--<h1>{% trans "Φαρμακα" %}</h1>-->
 
         <div id="drugsAccordion" class="scAccordion">
             <div class="panel">
-                <div class="panel-body btn-primary" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsNameCollapsible">
-                    {% trans "Βάσει ονόματος" %}
+                <div class="panel-body btn-dark collapsed" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsNameCollapsible">
+                    {% trans "Αναζήτηση φαρμάκων" %}
                 </div>
                 <div class="well collapse" id="drugsNameCollapsible" data-synonyms-url="{% url 'drugs_synonyms' %}">
                     <div class="row">
-                        {{ form.drugs_by_name|as_crispy_field }}
-                        <div class="text-center">
-                            <button type="button" class="btn btn-outline" onclick="moveToSelectedDrugs()"><i class="fa fa-arrow-up fa-2x"></i></button>
+                        <div class="col-xs-12">
+                            {{ form.drugs_fld|as_crispy_field }}
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline" onclick="moveToSelectedDrugs()"><i class="fa fa-arrow-up fa-2x"></i></button>
+                            </div>
+
+                            <div class="row">
+                                <div class="center-block synonymsEntity">
+                                    <label for="#drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
+                                    <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        <div class="row">
-                            <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple>
-                            </select>
+                        <div class="col-xs-4">
+
                         </div>
 
 
                     </div>
                 </div>
             </div>
-            <div class="panel">
-                <div class="panel-body btn-dark" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsCodeCollapsible">
-                    {% trans "Βάσει κωδικού" %}
-                </div>
-                <div class="well collapse" id="drugsCodeCollapsible">
-                    {{ form.drugs_by_code|as_crispy_field }}
-                </div>
-            </div>
+            <!--<div class="panel">-->
+                <!--<div class="panel-body btn-dark" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsCodeCollapsible">-->
+                    <!--{% trans "Βάσει κωδικού" %}-->
+                <!--</div>-->
+                <!--<div class="well collapse" id="drugsCodeCollapsible">-->
+                     <!--form.drugs_by_code|as_crispy_field -->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </div>
 
     <div class="mt-5">
-        <h1>{% trans "Παθήσεις" %}</h1>
+        <!--<h1>{% trans "Παθήσεις" %}</h1>-->
 
         <div id="conditionsAccordion" class="scAccordion">
             <div class="panel">
-                <div class="panel-body btn-primary" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsNameCollapsible">
-                    {% trans "Βάσει ονόματος" %}
+                <div class="panel-body btn-primary collapsed" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsNameCollapsible">
+                    {% trans "Αναζήτηση παθήσεων" %}
                 </div>
                 <div class="well collapse" id="conditionsNameCollapsible">
-                    {{ form.conditions_by_name|as_crispy_field }}
+                    {{ form.conditions_fld|as_crispy_field }}
                 </div>
             </div>
-            <div class="panel">
-                <div class="panel-body btn-dark" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsCodeCollapsible">
-                    {% trans "Βάσει κωδικού" %}
-                </div>
-                <div class="well collapse" id="conditionsCodeCollapsible">
-                    {{ form.conditions_by_code|as_crispy_field }}
-                </div>
-            </div>
+            <!--<div class="panel">-->
+                <!--<div class="panel-body btn-dark" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsCodeCollapsible">-->
+                    <!--{% trans "Βάσει κωδικού" %}-->
+                <!--</div>-->
+                <!--<div class="well collapse" id="conditionsCodeCollapsible">-->
+                    <!--form.conditions_by_code|as_crispy_field -->
+                <!--</div>-->
+            <!--</div>-->
         </div>
 
     </div>
