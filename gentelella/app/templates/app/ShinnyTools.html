@@ -1,0 +1,43 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Fixed Sidebar {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- jQuery custom content scroller -->
+  <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+{% endblock stylesheets %}
+
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="row my-1">
+    <div class="col col-sm-2">
+        <div class="dropdown ml-3"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Drug</button>
+            <div role="menu" class="dropdown-menu"><a role="presentation" class="dropdown-item" href="#">First Item</a><a role="presentation" class="dropdown-item" href="#">Second Item</a><a role="presentation" class="dropdown-item" href="#">Third Item</a></div>
+        </div>
+    </div>
+    <div class="col col-sm-2">
+        <div class="dropdown ml-3"><button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Event</button>
+            <div role="menu" class="dropdown-menu"><a role="presentation" class="dropdown-item" href="#">First Item</a><a role="presentation" class="dropdown-item" href="#">Second Item</a><a role="presentation" class="dropdown-item" href="#">Third Item</a></div>
+        </div>
+    </div>
+</div>
+    <div class="container-fluid d-flex flex-column" style="margin-top: 10px;">
+    <div class="row iframe-row">
+        <div class="col">
+            <div><iframe src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name" width="100%" height="360" style="  border: none;
+  overflow: hidden;
+" frameborder="0"></iframe></div>
+        </div>
+    </div>
+</div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- jQuery custom content scroller -->
+  <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+{% endblock javascripts %}
