@@ -176,3 +176,9 @@ li.active {
 #scTitleDiv .invalid-feedback {
     font-size: 13px;
 }
+iframe {
+  width: 100%;
+  height: 800px;
+  border: none;
+  overflow: hidden;
+}
