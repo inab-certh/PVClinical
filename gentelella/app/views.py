@@ -30,6 +30,9 @@ from app.models import Status
 
 from app.forms import ScenarioForm
 
+def shinny_apps(request):
+    template = loader.get_template('app/ShinnyTools.html')
+    return HttpResponse(template.render({}, request))
 
 def get_synonyms(request):
     """ Get all the synonyms for a list of drugs

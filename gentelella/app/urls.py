@@ -13,6 +13,7 @@ urlpatterns = [
     path('add-edit-scenario', views.add_edit_scenario, name='add_edit_scenario'),
     path('add-edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='add_edit_scenario'),
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
+    path('shinny-apps', views.shinny_apps, name='shinny_apps'),
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]
