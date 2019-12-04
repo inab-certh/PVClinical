@@ -1,3 +1,5 @@
+import json
+
 from itertools import chain
 
 from django.contrib.auth.decorators import login_required
@@ -18,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 from app.errors_redirects import forbidden_redirect
 
+from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
@@ -40,12 +43,12 @@ def get_synonyms(request):
     :return: The list of synonyms for the drugs' list
     """
 
-    drugs = eval(request.GET.get("drugs", None))
+    drugs = json.loads(request.GET.get("drugs", None))
 
     # Replace with real service
     all_synonyms = {"Omeprazole":["Esomeprazole"], "Esomeprazole": ["Omeprazole"],
                     "Etybenzatropine": ["Benzatropine"], "Benzatropine": ["Etybenzatropine"]}
-    synonyms = list(chain.from_iterable([all_synonyms[d] for d in drugs if d in all_synonyms.keys()]))
+    synonyms = list(chain.from_iterable([all_synonyms[d] for d in drugs if d in all_synonyms.keys()])) if drugs else []
     data={}
     data["synonyms"] = synonyms
     return JsonResponse(data)
@@ -144,10 +147,13 @@ def add_edit_scenario(request, scenario_id=None):
     else:
         scform = ScenarioForm(label_suffix='', instance=scenario)
 
+    all_drug_codes = list(map(lambda d: d.code, scform.all_drugs))
+
     context = {
-        'title': _("Σενάριο"),
-        'delete_switch': delete_switch,
-        'form': scform,
+        "title": _("Σενάριο"),
+        "atc_tree": json.dumps(atc_hierarchy_tree(all_drug_codes)),
+        "delete_switch": delete_switch,
+        "form": scform,
     }
 
     # if not request.META.get('HTTP_REFERER'):
