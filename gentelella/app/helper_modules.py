@@ -84,7 +84,40 @@ def atc_by_level(level, codes):
     :return: code (atc) part specified by the level
     """
 
-    level_chars = {1:1, 2:3, 3:4, 4:5, 5:6}
+    level_chars = {1: 1, 2: 3, 3: 4, 4: 5, 5: 7}
+    return sorted(set([code[0:level_chars[level]] for code in codes]))
 
-    return [code[0:level_chars[level]] for code in codes]
+
+def get_atc_children(parent, level, codes):
+    """ Recursively get children (from next ATC level) for each level's parent
+    :param parent: the parent node
+    :param level: the ATC level of the parent
+    :param codes: the last ATC level children
+    :return: next ATC level children
+    """
+    children = list(set(filter(lambda el: el.startswith(parent), atc_by_level(level+1, codes))))
+
+    if level==4:
+        return [{"text": parent, "nodes": list(map(lambda el: {"text": el}, children))}]
+
+    for ch in children:
+        return [{"text": ch,
+                 "nodes": get_atc_children(ch, level+1, codes)}]
+
+
+def atc_hierarchy_tree(codes):
+    """ Create the ATC hierarchy tree from the ATC codes (of drugs) given
+    :param codes:  the ATC codes of drugs
+    :return: the ATC tree
+    """
+    atc_tree = []
+    levels = [atc_by_level(i+1, codes) for i in range(0, 5)]
+
+    # Append to/create the ATC tree for the specific codes (of drugs) we have
+    for root in levels[0]:
+        atc_tree.append({"text": root, "nodes": get_atc_children(root, 1, codes)})
+
+    return atc_tree
+
+
 

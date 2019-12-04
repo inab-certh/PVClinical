@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 from app.errors_redirects import forbidden_redirect
 
+from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
@@ -143,10 +144,13 @@ def add_edit_scenario(request, scenario_id=None):
     else:
         scform = ScenarioForm(label_suffix='', instance=scenario)
 
+    all_drug_codes = list(map(lambda d: d.code, scform.all_drugs))
+
     context = {
-        'title': _("Σενάριο"),
-        'delete_switch': delete_switch,
-        'form': scform,
+        "title": _("Σενάριο"),
+        "atc_tree": json.dumps(atc_hierarchy_tree(all_drug_codes)),
+        "delete_switch": delete_switch,
+        "form": scform,
     }
 
     # if not request.META.get('HTTP_REFERER'):
