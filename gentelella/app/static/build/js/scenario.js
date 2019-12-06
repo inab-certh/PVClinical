@@ -1,22 +1,20 @@
 $(function() {
     $("[name='drugs_fld']").change(function () {
-            var all_drugs = $(this).val().map(function (drug) {
-
+            var selected_drugs = $(this).val().map(function (drug) {
                 return drug.split(' - ').shift();
             });
 
             $.ajax({
                 url: $("#drugsNameCollapsible").attr("data-synonyms-url"),
-                data: {"drugs": JSON.stringify(all_drugs)},
+                data: {"drugs": JSON.stringify(selected_drugs)},
                 dataType: 'json',
                 success: function (data) {
                     var options_arr = [];
 
-                    var selected_drugs = $("[name='drugs_fld']").find(":selected").map(function () {
-                        return $(this).val().split(' - ').shift();
-                    }).toArray();
+                    // var selected_drugs = $("[name='drugs_fld']").find(":selected").map(function () {
+                    //     return $(this).val().split(' - ').shift();
+                    // }).toArray();
 
-                    console.log(selected_drugs);
 
                     // Remove common values in synonyms and selected drugs from synonyms array
                     var valid_synonyms = data.synonyms.filter(function(val) {
@@ -26,6 +24,7 @@ $(function() {
                     valid_synonyms.forEach(function (syn, index, valid_synonyms) {
                         options_arr.push(new Option(syn, syn))
                     });
+
 
                     // Change synonyms and send trigger
                     $("#drugsSynonyms").html(options_arr).trigger("change");
@@ -59,6 +58,7 @@ $(function() {
             });
             return childrenNodes;
         }
+
 
         $("#atcTree").treeview({
             data: atc_tree,
@@ -114,14 +114,31 @@ $(function() {
                 /* Get only whole atc codes checked, find equivalent drugs and transfer
                 those drugs to drugs' select2 box as selected drugs
                  */
-                var all_drugs = $("[name='drugs_fld']").val();
+                var all_drugs = $("[name='drugs_fld'] option").map(function () {
+                        return $(this).val()}).toArray();
 
-                var tree_selected_drugs = children_nodes.grep(function (val) {
-                    return all_drugs.find(val) != -1;
+                // Add parent node in children_nodes_list
+                var candidate_nodes = children_nodes;
+                candidate_nodes.push(node.nodeId);
+
+                // Selected node(s) at the last level atc code hierarchy, 7 digits value
+                var selected_atcs_ids = candidate_nodes.filter(function (nodeId) {
+                    return $("#atcTree").treeview('getNode', nodeId).text.length == 7;
                 });
-                var all_drugs_names= all_drugs.map(function (drug) {
-                    return drug.split(' - ').shift();
+
+                var selected_atcs = selected_atcs_ids.map(function (nodeId) {
+                    return $("#atcTree").treeview('getNode', nodeId).text
                 });
+
+                var selected_drugs_by_atc = all_drugs.filter(function (drug) {
+                    return selected_atcs.indexOf(drug.split(' - ').pop()) != -1;
+                });
+
+                // Append selected drugs to drugs_fld box
+                var all_selected_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
+                all_selected_drugs = all_selected_drugs.concat(selected_drugs_by_atc.filter((item) => all_selected_drugs.indexOf(item) == -1));
+
+                $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 
             },
             onNodeUnchecked: function (event, node) {
@@ -131,20 +148,29 @@ $(function() {
             }
         });
 
-        $("#atcTree").click(function () {
-            var nodes = $("#atcTree").dataSource.view();
-            console.log(nodes);
-        });
+        // $("#atcTree").click(function () {
+        //     var nodes = $("#atcTree").dataSource.view();
+        //     console.log(nodes);
+        // });
 
 
     });
 
 function moveToSelectedDrugs() {
-    var checked_synonyms = Array.from($("#drugsSynonyms option:selected"));
+    var checked_synonyms = $("#drugsSynonyms option:selected").map(function () {
+        return $(this).val();
+    }).toArray();
 
     // Move checked synonyms to selected drugs list
-    checked_synonyms.forEach( ch => {
-        var $option = $("<option selected></option>").val(ch.value).text(ch.value);
-        $("[name='drugs_fld']").append($option).trigger("change");
-    })
+    var all_drugs = $("[name='drugs_fld'] option").map(function () {
+        return $(this).val()
+    }).toArray();
+
+    var selected_synonyms = all_drugs.filter(function (drug) {
+        return checked_synonyms.indexOf(drug.split(' - ').shift()) != -1;
+    });
+
+    var all_selected_drugs = $("[name='drugs_fld']").val();
+    var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
+    $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 }
