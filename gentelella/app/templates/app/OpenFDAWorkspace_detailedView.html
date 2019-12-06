@@ -1,0 +1,198 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Fixed Sidebar {% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+<!-- jQuery custom content scroller -->
+<link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+{% endblock stylesheets %}
+
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="row my-1 ">
+        <div class="col col-sm-3 text-center"><h5>OpenFDAWorkspace</h5></div>
+        <div class="col col-sm-3 text-center drugDropdownCol"><h5>Drug</h5></div>
+        <div class="col col-sm-3 text-center eventDropdownCol"><h5>Event</h5></div>
+    </div>
+    <div class="row my-1">
+        <div class="col col-sm-3 text-center">
+            <div class="dropdown ml-3">
+                <button id='appsBtn' class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false"
+                        type="button">Application
+                </button>
+                <div role="menu" id="shinnyAppsDropdown" class="dropdown-menu">
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">Dash</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">RR_D</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">RR_E</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">DynPRR</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">ChangePoint</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">ReportView</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LabelView</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LrTest</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LrTest_E</a>
+                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">DrugEnforceView</a>
+                </div>
+            </div>
+        </div>
+        <div class="col col-sm-3 text-center drugDropdownCol">
+            <div class="dropdown ml-3">
+                <button id='drugBtn' class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false"
+                        type="button">Drug
+                </button>
+                <div id="drugDropdown" role="menu" class="dropdown-menu">
+                    <a role="presentation" class="dropdown-item" href="#">aspirin</a>
+                    <a role="presentation" class="dropdown-item" href="#">depon</a>
+                    <a role="presentation" class="dropdown-item" href="#">panadol</a></div>
+            </div>
+        </div>
+        <div class="col col-sm-3 text-center eventDropdownCol">
+            <div class="dropdown ml-3">
+                <button id="eventBtn" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false" type="button">Event
+                </button>
+                <div id="eventDropdown" role="menu" class="dropdown-menu">
+                    <a role="presentation" class="dropdown-item" href="#">nausea</a>
+                    <a role="presentation" class="dropdown-item" href="#">flushing</a>
+                    <a role="presentation" class="dropdown-item" href="#">pain</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
+        <div class="row iframe-row">
+            <div class="col">
+                <div>
+                    <iframe id="shinny-apps-iframe"
+                            src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name"
+                            width="100%" height="360" style="  border: none;
+  overflow: hidden;
+" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+{{ block.super }}
+<!-- jQuery custom content scroller -->
+<script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+<script>
+    var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
+    var shinnyAppsQueryUrl = '';
+    var app = 'Dash';
+    var drug = 'Select Drug';
+    var event = 'Select Event';
+    var parameters = ['drug'];
+    keepButtonsBasedOnApp(app);
+    initializeDropdowns();
+    $('#shinnyAppsDropdown .dropdown-item').click(function (e) {
+        console.log('test');
+        app = e.target.childNodes[0].textContent;
+        drug = 'Select Drug';
+        event = 'Select Event';
+        initializeDropdowns();
+        keepButtonsBasedOnApp(app);
+        buildUrl(app, drug, event);
+        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
+        document.getElementById("appsBtn").innerText = app;
+    })
+    $('#drugDropdown .dropdown-item').click(function (e) {
+        console.log('test');
+        drug = e.target.childNodes[0].textContent;
+        buildUrl(app, drug, event);
+        if (!(parameters.length == 2 && document.getElementById("eventBtn").innerText == 'Select Event')) {
+            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
+        }
+        document.getElementById("drugBtn").innerText = drug;
+    })
+    $('#eventDropdown .dropdown-item').click(function (e) {
+        console.log('test');
+        event = e.target.childNodes[0].textContent;
+        buildUrl(app, drug, event);
+        if (!(parameters.length == 2 && document.getElementById("drugBtn").innerText == 'Select Drug')) {
+            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
+        }
+        document.getElementById("eventBtn").innerText = event;
+    })
+
+    function initializeDropdowns() {
+        document.getElementById("appsBtn").innerText = app;
+        document.getElementById("drugBtn").innerText = drug;
+        document.getElementById("eventBtn").innerText = event;
+    }
+
+    function buildUrl(app, drug, event) {
+        shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?';
+        if (drug != '') {
+            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&';
+        }
+        if (event != '') {
+            if (parameters.includes('drug')) {
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+            } else {
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
+            }
+        }
+
+    }
+
+    function keepButtonsBasedOnApp(app) {
+        let i;
+        var drugCols = document.getElementsByClassName("drugDropdownCol");
+        var eventCols = document.getElementsByClassName("eventDropdownCol");
+        for (i = 0; i < drugCols.length; i++) {
+            if (app == 'Dash') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'none';
+                parameters = ['drug'];
+            } else if (app == 'RR_D') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'none';
+                parameters = ['drug'];
+            } else if (app == 'RR_E') {
+                drugCols[i].style.display = 'none';
+                eventCols[i].style.display = 'block';
+                parameters = ['event'];
+            } else if (app == 'DynPRR') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'block';
+                parameters = ['drug', 'event'];
+            } else if (app == 'ChangePoint') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'block';
+                parameters = ['drug', 'event'];
+            } else if (app == 'ReportView') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'none';
+                parameters = ['drug'];
+            } else if (app == 'LabelView') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'none';
+                parameters = ['drug'];
+            } else if (app == 'LrTest') {
+                drugCols[i].style.display = 'block';
+                eventCols[i].style.display = 'none';
+                parameters = ['drug'];
+            } else if (app == 'LrTest_E') {
+                drugCols[i].style.display = 'none';
+                eventCols[i].style.display = 'block';
+                parameters = ['event'];
+            } else if (app == 'DrugEnforceView') {
+                drugCols[i].style.display = 'none';
+                eventCols[i].style.display = 'none';
+                parameters = [];
+            }
+        }
+
+
+    }
+
+</script>
+{% endblock javascripts %}
+
+
