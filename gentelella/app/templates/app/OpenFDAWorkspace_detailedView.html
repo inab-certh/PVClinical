@@ -12,53 +12,88 @@
 
 {% block content %}
 <div class="right_col" role="main">
-    <div class="row my-1 ">
-        <div class="col col-sm-3 text-center"><h5>OpenFDAWorkspace</h5></div>
-        <div class="col col-sm-3 text-center drugDropdownCol"><h5>Drug</h5></div>
-        <div class="col col-sm-3 text-center eventDropdownCol"><h5>Event</h5></div>
-    </div>
+
     <div class="row my-1">
-        <div class="col col-sm-3 text-center">
-            <div class="dropdown ml-3">
-                <button id='appsBtn' class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false"
-                        type="button">Application
-                </button>
-                <div role="menu" id="shinnyAppsDropdown" class="dropdown-menu">
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">Dash</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">RR_D</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">RR_E</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">DynPRR</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">ChangePoint</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">ReportView</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LabelView</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LrTest</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">LrTest_E</a>
-                    <a role="presentation" class="dropdown-item dropdown-item-shinnyapps" href="#">DrugEnforceView</a>
+        <div class="col col-sm-12">
+            <div>
+
+                <div class="tab-content" style="margin-left: 20px;">
+                    <div class="tab-pane active" role="tabpanel" id="tab-12">
+                        <div class="row drug-events-selection-row">
+                            <div class="col drugCheckBoxesCol">
+                                <div id="drugCheckBoxes">
+                                    <fieldset>
+                                        <legend>Drugs</legend>
+                                        <div class="custom-control custom-checkbox custom-control-inline" href="#tab-1">
+                                            <input type="checkbox" id="customCheck1" class="custom-control-input"
+                                                   checked="" value="Aspirin"><label class="custom-control-label"
+                                                                                     for="customCheck1">Aspirin</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
+                                                   value="Depon"><label class="custom-control-label" for="customCheck2">Depon</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
+                                                   value="Panadol"><label class="custom-control-label"
+                                                                          for="customCheck2">Panadol</label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row drug-events-selection-row">
+                            <div class="col">
+                                <div id="eventCheckBoxes">
+                                    <fieldset>
+                                        <legend>Events</legend>
+                                        <div class="custom-control custom-checkbox custom-control-inline" href="#tab-1">
+                                            <input type="checkbox" id="customCheck1" class="custom-control-input"
+                                                   checked="" value="Nausea"><label class="custom-control-label"
+                                                                                    for="customCheck1">Nausea</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
+                                                   value="Pain"><label class="custom-control-label" for="customCheck2">Pain</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
+                                                   value="Flushing"><label class="custom-control-label"
+                                                                           for="customCheck2">Flushing</label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
-        </div>
-        <div class="col col-sm-3 text-center drugDropdownCol">
-            <div class="dropdown ml-3">
-                <button id='drugBtn' class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false"
-                        type="button">Drug
-                </button>
-                <div id="drugDropdown" role="menu" class="dropdown-menu">
-                    <a role="presentation" class="dropdown-item" href="#">aspirin</a>
-                    <a role="presentation" class="dropdown-item" href="#">depon</a>
-                    <a role="presentation" class="dropdown-item" href="#">panadol</a></div>
-            </div>
-        </div>
-        <div class="col col-sm-3 text-center eventDropdownCol">
-            <div class="dropdown ml-3">
-                <button id="eventBtn" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false" type="button">Event
-                </button>
-                <div id="eventDropdown" role="menu" class="dropdown-menu">
-                    <a role="presentation" class="dropdown-item" href="#">nausea</a>
-                    <a role="presentation" class="dropdown-item" href="#">flushing</a>
-                    <a role="presentation" class="dropdown-item" href="#">pain</a></div>
+                <ul class="nav nav-tabs nav-items-custom mt-3" id="shinnyAppsTabs">
+                    <li class="nav-item active" id="QuickView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                  href="#tab-12">QuickView</a></li>
+                    <li class="nav-item" id="Dash"><a class="nav-link" role="tab" data-toggle="tab"
+                                                      href="#tab-12">Dash</a></li>
+                    <li class="nav-item" id="RR_D"><a class="nav-link " role="tab" data-toggle="tab"
+                                                      href="#tab-1">RR_D</a></li>
+                    <li class="nav-item" id="RR_E"><a class="nav-link" role="tab" data-toggle="tab"
+                                                      href="#tab-1">RR_E</a></li>
+                    <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LabelView</a>
+                    </li>
+                    <li class="nav-item" id="DynPRR"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">DynPRR</a>
+                    </li>
+                    <li class="nav-item" id="ChangePoint"><a class="nav-link" role="tab" data-toggle="tab"
+                                                             href="#tab-1">ChangePoint</a></li>
+                    <li class="nav-item" id="ReportView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">ReportView</a>
+                    </li>
+                    <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LabelView</a>
+                    </li>
+                    <li class="nav-item" id="LrTest"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LrTest</a>
+                    </li>
+                    <li class="nav-item" id="LrTest_E"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LrTest_E</a>
+                    </li>
+                    <li class="nav-item" id="DrugEnforceView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                 href="#tab-1">DrugEnforceView</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -85,39 +120,46 @@
     var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
     var shinnyAppsQueryUrl = '';
     var app = 'Dash';
-    var drug = 'Select Drug';
-    var event = 'Select Event';
-    var parameters = ['drug'];
-    keepButtonsBasedOnApp(app);
-    initializeDropdowns();
-    $('#shinnyAppsDropdown .dropdown-item').click(function (e) {
-        console.log('test');
+    var drug = 'aspirin';
+    var event = 'nausea';
+    var AppParametersDict = {
+        "QuickView": ["Drug", "Event"],
+        "Dash": ["Drug"],
+        "RR_D": ["Drug"],
+        "RR_E": ["Event"],
+        "LabelView": ["Drug", "Event"],
+        "DynPRR": ["Drug", "Event"],
+        "ChangePoint": ["Drug", "Event"],
+        "ReportView": ["Drug"],
+        "LabelView": ["Drug"],
+        "LrTest": ["Drug"],
+        "LrTest_E": ["Event"],
+        "DrugEnforceView": ["Event"]
+    };
+    var OnlyDrugApplications = ["QuickView", "Dash", "RR_D", "ReportView", "LrTest"];
+    var OnlyEventApplications = ["QuickView", "RR_E", "LrTest_E"];
+    var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint", "LabelView","DrugEnforceView"];
+    var activeParameters = ["Drug","Event"];
+
+
+    keepAppropriateAppsBasedOnParameters();
+    //keepButtonsBasedOnApp(app);
+    // initializeDropdowns();
+    $('#shinnyAppsTabs a').click(function (e) {
         app = e.target.childNodes[0].textContent;
-        drug = 'Select Drug';
-        event = 'Select Event';
-        initializeDropdowns();
-        keepButtonsBasedOnApp(app);
         buildUrl(app, drug, event);
         document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
         document.getElementById("appsBtn").innerText = app;
     })
-    $('#drugDropdown .dropdown-item').click(function (e) {
-        console.log('test');
-        drug = e.target.childNodes[0].textContent;
+    $('#drugCheckBoxes input').click(function (e) {
+        drug = e.target.value;
         buildUrl(app, drug, event);
-        if (!(parameters.length == 2 && document.getElementById("eventBtn").innerText == 'Select Event')) {
-            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
-        }
-        document.getElementById("drugBtn").innerText = drug;
+        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
     })
-    $('#eventDropdown .dropdown-item').click(function (e) {
-        console.log('test');
-        event = e.target.childNodes[0].textContent;
+    $('#eventCheckBoxes input').click(function (e) {
+        event = e.target.value;
         buildUrl(app, drug, event);
-        if (!(parameters.length == 2 && document.getElementById("drugBtn").innerText == 'Select Drug')) {
-            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
-        }
-        document.getElementById("eventBtn").innerText = event;
+        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
     })
 
     function initializeDropdowns() {
@@ -128,68 +170,42 @@
 
     function buildUrl(app, drug, event) {
         shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?';
-        if (drug != '') {
-            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&';
+        if (activeParameters.length == 2) {
+            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+        } else if (activeParameters.includes('Drug')) {
+            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+        } else {
+            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
         }
-        if (event != '') {
-            if (parameters.includes('drug')) {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
-            } else {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
-            }
-        }
-
     }
 
-    function keepButtonsBasedOnApp(app) {
-        let i;
-        var drugCols = document.getElementsByClassName("drugDropdownCol");
-        var eventCols = document.getElementsByClassName("eventDropdownCol");
-        for (i = 0; i < drugCols.length; i++) {
-            if (app == 'Dash') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'none';
-                parameters = ['drug'];
-            } else if (app == 'RR_D') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'none';
-                parameters = ['drug'];
-            } else if (app == 'RR_E') {
-                drugCols[i].style.display = 'none';
-                eventCols[i].style.display = 'block';
-                parameters = ['event'];
-            } else if (app == 'DynPRR') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'block';
-                parameters = ['drug', 'event'];
-            } else if (app == 'ChangePoint') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'block';
-                parameters = ['drug', 'event'];
-            } else if (app == 'ReportView') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'none';
-                parameters = ['drug'];
-            } else if (app == 'LabelView') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'none';
-                parameters = ['drug'];
-            } else if (app == 'LrTest') {
-                drugCols[i].style.display = 'block';
-                eventCols[i].style.display = 'none';
-                parameters = ['drug'];
-            } else if (app == 'LrTest_E') {
-                drugCols[i].style.display = 'none';
-                eventCols[i].style.display = 'block';
-                parameters = ['event'];
-            } else if (app == 'DrugEnforceView') {
-                drugCols[i].style.display = 'none';
-                eventCols[i].style.display = 'none';
-                parameters = [];
-            }
+
+    function keepAppropriateAppsBasedOnParameters() {
+        var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
+        for (var i = 0; i < shinnyAppsTabs.length; i++) {
+            var shinnyAppsTab = shinnyAppsTabs[i];
+            shinnyAppsTab.style.display = "none";
         }
 
-
+        if (activeParameters.length == 2) {
+            for (var i = 0; i < DrugEventApplications.length; i++) {
+                document.getElementById(DrugEventApplications[i]).style.display = "block";
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+            }
+        } else if (activeParameters.includes('Drug')) {
+            for (var i = 0; i < OnlyDrugApplications.length; i++) {
+                document.getElementById(OnlyDrugApplications[i]).style.display = "block";
+                document.getElementById("eventCheckBoxes").style.display = "none";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+            }
+        } else if (activeParameters.includes('Event')) {
+            for (var i = 0; i < OnlyEventApplications.length; i++) {
+                document.getElementById(OnlyEventApplications[i]).style.display = "block";
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "none";
+            }
+        }
     }
 
 </script>
