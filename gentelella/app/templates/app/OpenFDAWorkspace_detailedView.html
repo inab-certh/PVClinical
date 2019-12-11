@@ -20,7 +20,7 @@
                     <div class="tab-content" style="margin-left: 20px;">
                         <div class="tab-pane active" role="tabpanel" id="tab-1">
                             <div class="row drug-events-selection-row">
-                                <div class="col drugCheckBoxesCol">
+                                <div class="col drugSelectionCol">
                                     <div id="drugCheckBoxes">
                                         <fieldset>
                                             <legend class="legend-margins">Drugs</legend>
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="row drug-events-selection-row mt-2">
-                                <div class="col">
+                                <div class="col eventSelectionCol">
                                     <div id="eventCheckBoxes">
                                         <fieldset>
 
@@ -62,8 +62,8 @@
                         </div>
                         <div class="tab-pane" role="tabpanel" id="tab-2">
                             <div class="row drug-events-selection-row">
-                                <div class="col drugCheckBoxesCol">
-                                    <div id="drugCheckBoxes">
+                                <div class="col drugSelectionCol">
+                                    <div id="drugRadios">
                                         <fieldset>
                                             <legend class="legend-margins">Drugs</legend>
                                             {% for drug in scenario.drugs %}
@@ -82,8 +82,8 @@
                                 </div>
                             </div>
                             <div class="row drug-events-selection-row mt-2">
-                                <div class="col">
-                                    <div id="eventCheckBoxes">
+                                <div class="col eventSelectionCol">
+                                    <div id="eventRadios">
                                         <fieldset>
                                             <legend class="legend-margins">Events</legend>
                                             {% for condition in scenario.conditions %}
@@ -167,8 +167,6 @@
         var drug = '';
         var event = '';
         getCheckedElementOfRadios();
-        var drug = 'omea';
-        var event = 'nausea';
         var AppParametersDict = {
             "QuickView": ["Drug", "Event"],
             "Dash": ["Drug"],
@@ -198,13 +196,14 @@
         $('#shinnyAppsTabs a').click(function (e) {
             app = e.target.childNodes[0].textContent;
             getCheckedElementOfRadios();
+            keepAppropriateAppsBasedOnParameters();
             buildUrl(app, drug, event);
         })
-        $('#drugCheckBoxes input').click(function (e) {
+        $('.drugSelectionCol input').click(function (e) {
             drug = e.target.value;
             buildUrl(app, drug, event);
         })
-        $('#eventCheckBoxes input').click(function (e) {
+        $('.eventSelectionCol input').click(function (e) {
             event = e.target.value;
             buildUrl(app, drug, event);
         })
@@ -239,9 +238,9 @@
             if (activeParameters.length == 2) {
                 shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
             } else if (activeParameters.includes('Drug')) {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name';
             } else {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v1=patient.reaction.reactionmeddrapt';
             }
             document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
         }
@@ -255,22 +254,29 @@
             }
 
             if (activeParameters.length == 2) {
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+                document.getElementById("eventRadios").style.display = "block";
+                document.getElementById("drugRadios").style.display = "block";
                 for (var i = 0; i < DrugEventApplications.length; i++) {
                     document.getElementById(DrugEventApplications[i]).style.display = "block";
-                    document.getElementById("eventCheckBoxes").style.display = "block";
-                    document.getElementById("drugCheckBoxes").style.display = "block";
                 }
             } else if (activeParameters.includes('Drug')) {
+                document.getElementById("eventCheckBoxes").style.display = "none";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+                document.getElementById("eventRadios").style.display = "none";
+                document.getElementById("drugRadios").style.display = "block";
                 for (var i = 0; i < OnlyDrugApplications.length; i++) {
                     document.getElementById(OnlyDrugApplications[i]).style.display = "block";
-                    document.getElementById("eventCheckBoxes").style.display = "none";
-                    document.getElementById("drugCheckBoxes").style.display = "block";
+
                 }
             } else if (activeParameters.includes('Event')) {
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "none";
+                document.getElementById("eventRadios").style.display = "block";
+                document.getElementById("drugRadios").style.display = "none";
                 for (var i = 0; i < OnlyEventApplications.length; i++) {
                     document.getElementById(OnlyEventApplications[i]).style.display = "block";
-                    document.getElementById("eventCheckBoxes").style.display = "block";
-                    document.getElementById("drugCheckBoxes").style.display = "none";
                 }
             }
         }
