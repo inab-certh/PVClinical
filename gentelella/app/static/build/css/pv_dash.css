@@ -258,6 +258,9 @@ iframe {
 .nav.nav-tabs.nav-items-custom li.active a {
   color: blue!important;
 }
+.legend-margins{
+    margin-bottom:10px;
+}
 
 
 
