@@ -1,214 +1,214 @@
+
 {% extends "app/base_site.html" %}
 
 {% block title %} Fixed Sidebar {% endblock title %}
 
 {% block stylesheets %}
-{{ block.super }}
-<!-- jQuery custom content scroller -->
-<link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+    {{ block.super }}
+    <!-- jQuery custom content scroller -->
+    <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
 {% endblock stylesheets %}
 
 {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
 
 {% block content %}
-<div class="right_col" role="main">
+    <div class="right_col" role="main">
 
-    <div class="row my-1">
-        <div class="col col-sm-12">
-            <div>
+        <div class="row my-1">
+            <div class="col col-sm-12">
+                <div>
 
-                <div class="tab-content" style="margin-left: 20px;">
-                    <div class="tab-pane active" role="tabpanel" id="tab-12">
-                        <div class="row drug-events-selection-row">
-                            <div class="col drugCheckBoxesCol">
-                                <div id="drugCheckBoxes">
-                                    <fieldset>
-                                        <legend>Drugs</legend>
-                                        <div class="custom-control custom-checkbox custom-control-inline" href="#tab-1">
-                                            <input type="checkbox" id="customCheck1" class="custom-control-input"
-                                                   checked="" value="Aspirin"><label class="custom-control-label"
-                                                                                     for="customCheck1">Aspirin</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox custom-control-inline">
-                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
-                                                   value="Depon"><label class="custom-control-label" for="customCheck2">Depon</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox custom-control-inline">
-                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
-                                                   value="Panadol"><label class="custom-control-label"
-                                                                          for="customCheck2">Panadol</label>
-                                        </div>
-                                    </fieldset>
+                    <div class="tab-content" style="margin-left: 20px;">
+                        <div class="tab-pane active" role="tabpanel" id="tab-12">
+                            <div class="row drug-events-selection-row">
+                                <div class="col drugCheckBoxesCol">
+                                    <div id="drugCheckBoxes">
+                                        <fieldset>
+                                            <legend>Drugs</legend>
+                                            {% for drug in scenario.drugs %}
+                                                <div class="custom-control custom-checkbox custom-control-inline" href="#tab-1">
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" checked="" value="{{drug.name}}"><label
+                                                        class="custom-control-label" for="customCheck1">{{drug.name}}</label>
+                                                </div>
+                                            {% endfor %}
+
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row drug-events-selection-row">
+                                <div class="col">
+                                    <div id="eventCheckBoxes">
+                                        <fieldset>
+
+                                            <legend>Events</legend>
+                                            {% for condition in scenario.conditions %}
+                                            <div class="custom-control custom-checkbox custom-control-inline"
+                                                 href="#tab-1">
+                                                <input type="checkbox" id="customCheck1" class="custom-control-input"
+                                                       checked="" value="{{condition.name}}"><label class="custom-control-label"
+                                                                                        for="customCheck1">{{condition.name}}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </fieldset>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row drug-events-selection-row">
-                            <div class="col">
-                                <div id="eventCheckBoxes">
-                                    <fieldset>
-                                        <legend>Events</legend>
-                                        <div class="custom-control custom-checkbox custom-control-inline" href="#tab-1">
-                                            <input type="checkbox" id="customCheck1" class="custom-control-input"
-                                                   checked="" value="Nausea"><label class="custom-control-label"
-                                                                                    for="customCheck1">Nausea</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox custom-control-inline">
-                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
-                                                   value="Pain"><label class="custom-control-label" for="customCheck2">Pain</label>
-                                        </div>
-                                        <div class="custom-control custom-checkbox custom-control-inline">
-                                            <input type="checkbox" id="customCheck2" class="custom-control-input"
-                                                   value="Flushing"><label class="custom-control-label"
-                                                                           for="customCheck2">Flushing</label>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
-
+                    <ul class="nav nav-tabs nav-items-custom mt-3" id="shinnyAppsTabs">
+                        <li class="nav-item active" id="QuickView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                      href="#tab-12">QuickView</a></li>
+                        <li class="nav-item" id="Dash"><a class="nav-link" role="tab" data-toggle="tab"
+                                                          href="#tab-12">Dash</a></li>
+                        <li class="nav-item" id="RR_D"><a class="nav-link " role="tab" data-toggle="tab"
+                                                          href="#tab-1">RR_D</a></li>
+                        <li class="nav-item" id="RR_E"><a class="nav-link" role="tab" data-toggle="tab"
+                                                          href="#tab-1">RR_E</a></li>
+                        <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                               href="#tab-1">LabelView</a>
+                        </li>
+                        <li class="nav-item" id="DynPRR"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">DynPRR</a>
+                        </li>
+                        <li class="nav-item" id="ChangePoint"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                 href="#tab-1">ChangePoint</a></li>
+                        <li class="nav-item" id="ReportView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                href="#tab-1">ReportView</a>
+                        </li>
+                        <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                               href="#tab-1">LabelView</a>
+                        </li>
+                        <li class="nav-item" id="LrTest"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LrTest</a>
+                        </li>
+                        <li class="nav-item" id="LrTest_E"><a class="nav-link" role="tab" data-toggle="tab"
+                                                              href="#tab-1">LrTest_E</a>
+                        </li>
+                        <li class="nav-item" id="DrugEnforceView"><a class="nav-link" role="tab" data-toggle="tab"
+                                                                     href="#tab-1">DrugEnforceView</a></li>
+                    </ul>
                 </div>
-                <ul class="nav nav-tabs nav-items-custom mt-3" id="shinnyAppsTabs">
-                    <li class="nav-item active" id="QuickView"><a class="nav-link" role="tab" data-toggle="tab"
-                                                                  href="#tab-12">QuickView</a></li>
-                    <li class="nav-item" id="Dash"><a class="nav-link" role="tab" data-toggle="tab"
-                                                      href="#tab-12">Dash</a></li>
-                    <li class="nav-item" id="RR_D"><a class="nav-link " role="tab" data-toggle="tab"
-                                                      href="#tab-1">RR_D</a></li>
-                    <li class="nav-item" id="RR_E"><a class="nav-link" role="tab" data-toggle="tab"
-                                                      href="#tab-1">RR_E</a></li>
-                    <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LabelView</a>
-                    </li>
-                    <li class="nav-item" id="DynPRR"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">DynPRR</a>
-                    </li>
-                    <li class="nav-item" id="ChangePoint"><a class="nav-link" role="tab" data-toggle="tab"
-                                                             href="#tab-1">ChangePoint</a></li>
-                    <li class="nav-item" id="ReportView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">ReportView</a>
-                    </li>
-                    <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LabelView</a>
-                    </li>
-                    <li class="nav-item" id="LrTest"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LrTest</a>
-                    </li>
-                    <li class="nav-item" id="LrTest_E"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-1">LrTest_E</a>
-                    </li>
-                    <li class="nav-item" id="DrugEnforceView"><a class="nav-link" role="tab" data-toggle="tab"
-                                                                 href="#tab-1">DrugEnforceView</a></li>
-                </ul>
             </div>
         </div>
-    </div>
-    <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
-        <div class="row iframe-row">
-            <div class="col">
-                <div>
-                    <iframe id="shinny-apps-iframe"
-                            src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name"
-                            width="100%" height="360" style="  border: none;
+        <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
+            <div class="row iframe-row">
+                <div class="col">
+                    <div>
+                        <iframe id="shinny-apps-iframe"
+                                src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name"
+                                width="100%" height="360" style="  border: none;
   overflow: hidden;
 " frameborder="0"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock content %}
 {% block javascripts %}
-{{ block.super }}
-<!-- jQuery custom content scroller -->
-<script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-<script>
-    var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-    var shinnyAppsQueryUrl = '';
-    var app = 'Dash';
-    var drug = 'aspirin';
-    var event = 'nausea';
-    var AppParametersDict = {
-        "QuickView": ["Drug", "Event"],
-        "Dash": ["Drug"],
-        "RR_D": ["Drug"],
-        "RR_E": ["Event"],
-        "LabelView": ["Drug", "Event"],
-        "DynPRR": ["Drug", "Event"],
-        "ChangePoint": ["Drug", "Event"],
-        "ReportView": ["Drug"],
-        "LabelView": ["Drug"],
-        "LrTest": ["Drug"],
-        "LrTest_E": ["Event"],
-        "DrugEnforceView": ["Event"]
-    };
-    var OnlyDrugApplications = ["QuickView", "Dash", "RR_D", "ReportView", "LrTest"];
-    var OnlyEventApplications = ["QuickView", "RR_E", "LrTest_E"];
-    var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint", "LabelView","DrugEnforceView"];
-    var activeParameters = ["Drug","Event"];
+    {{ block.super }}
+    <!-- jQuery custom content scroller -->
+    <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script>
+        var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
+        var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
+        var scenarioDrugs = '{{ scenario.drugs }}';
+        var scenarioConditions = '{{ scenario.conditions }}';
+        var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
+        var shinnyAppsQueryUrl = '';
+        var app = 'Dash';
+        var drug = 'omea';
+        var event = 'nausea';
+        var AppParametersDict = {
+            "QuickView": ["Drug", "Event"],
+            "Dash": ["Drug"],
+            "RR_D": ["Drug"],
+            "RR_E": ["Event"],
+            "LabelView": ["Drug", "Event"],
+            "DynPRR": ["Drug", "Event"],
+            "ChangePoint": ["Drug", "Event"],
+            "ReportView": ["Drug"],
+            "LabelView": ["Drug"],
+            "LrTest": ["Drug"],
+            "LrTest_E": ["Event"],
+            "DrugEnforceView": ["Event"]
+        };
+        var OnlyDrugApplications = ["QuickView", "Dash", "RR_D", "ReportView", "LrTest"];
+        var OnlyEventApplications = ["QuickView", "RR_E", "LrTest_E"];
+        var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint", "LabelView", "DrugEnforceView"];
+        var activeParameters=[]
+        scenarioConditionsLength>0 ? activeParameters.push("Event") :null ;
+        scenarioDrugsLength>0 ? activeParameters.push("Drug") : null;
+        {#var activeParameters = ["Drug", "Event"];#}
 
 
-    keepAppropriateAppsBasedOnParameters();
-    //keepButtonsBasedOnApp(app);
-    // initializeDropdowns();
-    $('#shinnyAppsTabs a').click(function (e) {
-        app = e.target.childNodes[0].textContent;
+        keepAppropriateAppsBasedOnParameters();
         buildUrl(app, drug, event);
-        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
-        document.getElementById("appsBtn").innerText = app;
-    })
-    $('#drugCheckBoxes input').click(function (e) {
-        drug = e.target.value;
-        buildUrl(app, drug, event);
-        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
-    })
-    $('#eventCheckBoxes input').click(function (e) {
-        event = e.target.value;
-        buildUrl(app, drug, event);
-        document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
-    })
+        //keepButtonsBasedOnApp(app);
+        // initializeDropdowns();
+        $('#shinnyAppsTabs a').click(function (e) {
+            app = e.target.childNodes[0].textContent;
+            buildUrl(app, drug, event);
 
-    function initializeDropdowns() {
-        document.getElementById("appsBtn").innerText = app;
-        document.getElementById("drugBtn").innerText = drug;
-        document.getElementById("eventBtn").innerText = event;
-    }
+            document.getElementById("appsBtn").innerText = app;
+        })
+        $('#drugCheckBoxes input').click(function (e) {
+            drug = e.target.value;
+            buildUrl(app, drug, event);
+        })
+        $('#eventCheckBoxes input').click(function (e) {
+            event = e.target.value;
+            buildUrl(app, drug, event);
+        })
 
-    function buildUrl(app, drug, event) {
-        shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?';
-        if (activeParameters.length == 2) {
-            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
-        } else if (activeParameters.includes('Drug')) {
-            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
-        } else {
-            shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
-        }
-    }
-
-
-    function keepAppropriateAppsBasedOnParameters() {
-        var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
-        for (var i = 0; i < shinnyAppsTabs.length; i++) {
-            var shinnyAppsTab = shinnyAppsTabs[i];
-            shinnyAppsTab.style.display = "none";
+        function initializeDropdowns() {
+            document.getElementById("appsBtn").innerText = app;
+            document.getElementById("drugBtn").innerText = drug;
+            document.getElementById("eventBtn").innerText = event;
         }
 
-        if (activeParameters.length == 2) {
-            for (var i = 0; i < DrugEventApplications.length; i++) {
-                document.getElementById(DrugEventApplications[i]).style.display = "block";
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "block";
+        function buildUrl(app, drug, event) {
+            shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?';
+            if (activeParameters.length == 2) {
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+            } else if (activeParameters.includes('Drug')) {
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+            } else {
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v2=patient.reaction.reactionmeddrapt';
             }
-        } else if (activeParameters.includes('Drug')) {
-            for (var i = 0; i < OnlyDrugApplications.length; i++) {
-                document.getElementById(OnlyDrugApplications[i]).style.display = "block";
-                document.getElementById("eventCheckBoxes").style.display = "none";
-                document.getElementById("drugCheckBoxes").style.display = "block";
+            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
+        }
+
+
+        function keepAppropriateAppsBasedOnParameters() {
+            var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
+            for (var i = 0; i < shinnyAppsTabs.length; i++) {
+                var shinnyAppsTab = shinnyAppsTabs[i];
+                shinnyAppsTab.style.display = "none";
             }
-        } else if (activeParameters.includes('Event')) {
-            for (var i = 0; i < OnlyEventApplications.length; i++) {
-                document.getElementById(OnlyEventApplications[i]).style.display = "block";
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "none";
+
+            if (activeParameters.length == 2) {
+                for (var i = 0; i < DrugEventApplications.length; i++) {
+                    document.getElementById(DrugEventApplications[i]).style.display = "block";
+                    document.getElementById("eventCheckBoxes").style.display = "block";
+                    document.getElementById("drugCheckBoxes").style.display = "block";
+                }
+            } else if (activeParameters.includes('Drug')) {
+                for (var i = 0; i < OnlyDrugApplications.length; i++) {
+                    document.getElementById(OnlyDrugApplications[i]).style.display = "block";
+                    document.getElementById("eventCheckBoxes").style.display = "none";
+                    document.getElementById("drugCheckBoxes").style.display = "block";
+                }
+            } else if (activeParameters.includes('Event')) {
+                for (var i = 0; i < OnlyEventApplications.length; i++) {
+                    document.getElementById(OnlyEventApplications[i]).style.display = "block";
+                    document.getElementById("eventCheckBoxes").style.display = "block";
+                    document.getElementById("drugCheckBoxes").style.display = "none";
+                }
             }
         }
-    }
 
-</script>
+    </script>
 {% endblock javascripts %}
 
 
