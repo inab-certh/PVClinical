@@ -35,7 +35,18 @@ from app.forms import ScenarioForm
 
 def OpenFDAWorkspace_detailedView(request):
     template = loader.get_template('app/OpenFDAWorkspace_detailedView.html')
-    return HttpResponse(template.render({}, request))
+    scenarios = []
+    for sc in Scenario.objects.all():
+        drugs = [d for d in sc.drugs.all()]
+        conditions = [c for c in sc.conditions.all()]
+        scenarios.append({"drugs": drugs,
+                          "conditions": conditions,
+                          "owner": sc.owner.username,
+                          "status": sc.status.status,
+                          "timestamp": sc.timestamp
+                          }
+                         )
+    return HttpResponse(template.render({"scenarios": scenarios}, request))
 
 def get_synonyms(request):
     """ Get all the synonyms for a list of drugs

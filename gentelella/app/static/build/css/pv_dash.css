@@ -242,6 +242,26 @@ iframe {
   background-color: #0062cc!important;
   color: #fff!important;
 }
+.custom-control {
+  position: relative;
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+
+.custom-control-inline {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  margin-right: 1rem;
+}
+.nav.nav-tabs.nav-items-custom li.active a {
+  color: blue!important;
+}
+
+
+
+
 
 
 
