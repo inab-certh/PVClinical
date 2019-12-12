@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-19 11:35+0200\n"
+"POT-Creation-Date: 2019-12-12 13:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,29 @@ msgstr ""
 #: app/templates/registration/password_change_done.html:12
 msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
 msgstr "Direct Access to this Location is not allowed"
+
+#: app/forms.py:125 app/models.py:139
+msgid "Τίτλος Σεναρίου"
+msgstr "Scenario Title"
+
+#: app/forms.py:130
+msgid "Φάρμακο/Φάρμακα:"
+msgstr "Drug/Drugs"
+
+#: app/forms.py:135
+msgid "Πάθηση/Παθήσεις:"
+msgstr "Disease/Diseases"
+
+#: app/forms.py:166
+msgid "Κατάσταση σεναρίου:"
+msgstr "Scenario Status"
+
+#: app/forms.py:202
+msgid ""
+"Τουλάχιστον ένα από τα πεδία που αφορούν τα φάρμακα και τις "
+"παθήσεις                                   του σεναρίου, πρέπει να "
+"συμπληρωθεί"
+msgstr ""
 
 #: app/helper_modules.py:64
 msgid ""
@@ -57,23 +80,24 @@ msgstr "Completed"
 msgid "Κατάσταση: "
 msgstr "Status"
 
-#: app/models.py:50
+#: app/models.py:49
 msgid "Όνομα φαρμάκου"
 msgstr "Drug name"
 
-#: app/models.py:61
+#: app/models.py:60
 msgid "Κωδικοποίηση φαρμάκου"
 msgstr "Drug code"
 
-#: app/models.py:69 app/models.py:73 app/models.py:114 app/models.py:118
+#: app/models.py:70 app/models.py:74 app/models.py:115 app/models.py:119
+#: app/models.py:159 app/models.py:163
 msgid "Δεν μπορούν και τα δύο πεδία να είναι κενά"
 msgstr "At least one of the two fields should be filled in"
 
-#: app/models.py:95
+#: app/models.py:96
 msgid "Όνομα πάθησης"
 msgstr "Disease name"
 
-#: app/models.py:106
+#: app/models.py:107
 msgid "Κωδικοποίηση πάθησης"
 msgstr "Disease code"
 
@@ -88,6 +112,45 @@ msgid ""
 msgstr ""
 "Your password must contain at least 1 number, 1 capital letter and 1 non-"
 "alphanumeric character (symbol)"
+
+#: app/templates/app/add_edit_scenario.html:33
+#, fuzzy
+#| msgid "Φάρμακο/Φάρμακα"
+msgid "Φαρμακα"
+msgstr "Drug/Drugs"
+
+#: app/templates/app/add_edit_scenario.html:38
+msgid "Αναζήτηση φαρμάκων"
+msgstr "Search Drugs"
+
+#: app/templates/app/add_edit_scenario.html:52
+msgid "Συνώνυμα φαρμάκων:"
+msgstr "Drugs' Synonyms"
+
+#: app/templates/app/add_edit_scenario.html:62
+msgid "Μεταφορά"
+msgstr "Transfer"
+
+#: app/templates/app/add_edit_scenario.html:64
+msgid "ATC Κωδικοί:"
+msgstr "ATC Codes"
+
+#: app/templates/app/add_edit_scenario.html:74
+#: app/templates/app/add_edit_scenario.html:97
+#, fuzzy
+#| msgid "Ξεχάσατε τον κωδικό σας;"
+msgid "Βάσει κωδικού"
+msgstr "Forgot password?"
+
+#: app/templates/app/add_edit_scenario.html:84
+#, fuzzy
+#| msgid "Πάθηση/Παθήσεις"
+msgid "Παθήσεις"
+msgstr "Disease/Diseases"
+
+#: app/templates/app/add_edit_scenario.html:89
+msgid "Αναζήτηση παθήσεων"
+msgstr "Search Diseases"
 
 #: app/templates/app/financing.html:3
 msgid "/static/images/ack_GR.png"
@@ -109,6 +172,18 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
+#: app/templates/app/form_base.html:78
+msgid "Αποθήκευση"
+msgstr "Save"
+
+#: app/templates/app/form_base.html:87 app/templates/app/index.html:54
+msgid "Διαγραφή"
+msgstr "Delete"
+
+#: app/templates/app/form_base.html:96
+msgid "Σενάρια"
+msgstr "Scenarios"
+
 #: app/templates/app/index.html:22
 msgid "Προσωπικά Σενάρια Διερεύνησης"
 msgstr "My Investigation Scenarios"
@@ -123,7 +198,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:47 app/views.py:87 app/views.py:115
+#: app/templates/app/index.html:47 app/views.py:151
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -148,12 +223,8 @@ msgid "Επεξεργασία"
 msgstr "Edit"
 
 #: app/templates/app/index.html:53
-msgid "Προβολή"
-msgstr "View"
-
-#: app/templates/app/index.html:54
-msgid "Διαγραφή"
-msgstr "Delete"
+msgid "Περιβάλλοντα Εργασίας"
+msgstr "Workspaces"
 
 #: app/templates/app/index.html:113
 msgid "Προσθήκη σεναρίου"
@@ -167,7 +238,7 @@ msgstr "OPTIONS"
 msgid "Σενάρια Διερεύνησης"
 msgstr "Investigation Scenarios"
 
-#: app/templates/app/top_navigation.html:22
+#: app/templates/app/top_navigation.html:24
 msgid "Αποσύνδεση"
 msgstr "Logout"
 
@@ -292,15 +363,11 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:88
-msgid "Νέο Σενάριο"
-msgstr "New Scenario"
-
-#: app/views.py:99
+#: app/views.py:133
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:106
+#: app/views.py:140
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
@@ -313,6 +380,12 @@ msgstr "Greek"
 #: gentelella/settings.py:149
 msgid "Αγγλικά"
 msgstr "English"
+
+#~ msgid "Παθήσεις:"
+#~ msgstr "Diseases"
+
+#~ msgid "Προβολή"
+#~ msgstr "View"
 
 #~ msgid "Χρήστη"
 #~ msgstr "User"

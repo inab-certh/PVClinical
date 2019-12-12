@@ -140,11 +140,11 @@ class Scenario(models.Model):
                                  code='invalid_title',),])
 
     # Drug name or code
-    drugs = models.ManyToManyField(Drug, default=None,
+    drugs = models.ManyToManyField(Drug, default=None, blank=True,
                                    verbose_name="drugs", related_name="drugs")
 
     # MedDRA name or code
-    conditions = models.ManyToManyField(Condition, default=None,
+    conditions = models.ManyToManyField(Condition, default=None, blank=True,
                                         verbose_name="conditions", related_name="conditions")
 
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
@@ -152,6 +152,16 @@ class Scenario(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        if not self.drugs and not self.conditions:
+            raise ValidationError(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
+
+    def save(self, *args, **kwargs):
+        if not self.drugs and not self.conditions:
+            raise Exception(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
+        super(Scenario, self).save(*args, **kwargs)
 
     class Meta:
         constraints = [

@@ -50,7 +50,7 @@
                     <th>{% trans "Κατάσταση" %}</th>
                     <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                     <th>{% trans "Επεξεργασία" %}</th>
-                    <th>{% trans "Προβολή" %}</th>
+                    <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
                     <th>{% trans "Διαγραφή" %}</th>
                   </tr>
                 </thead>
@@ -87,7 +87,7 @@
                       </td>
 
                       <td>
-                        <a href="">
+                        <a href={% url 'edit_scenario' scenario.id %}>
                           <i class="fa fa-edit"></i>
                         </a>
                       </td>
@@ -110,7 +110,7 @@
               </table>
             </div>
           </div>
-        <a href="{% url 'add_edit_scenario' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
+        <a href="{% url 'add_scenario' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
         </div>
       <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
         <!--<span class="count_top"><i class="fa fa-user"></i> Total Users</span>-->

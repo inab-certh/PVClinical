@@ -84,15 +84,16 @@ def index(request):
 
     scenarios = []
     for sc in Scenario.objects.all():
-        drugs = [d for d in sc.drugs.all()]
-        conditions = [c for c in sc.conditions.all()]
-        scenarios.append({"drugs": drugs,
-                          "conditions": conditions,
-                          "owner": sc.owner.username,
-                          "status": sc.status.status,
-                          "timestamp": sc.timestamp
-                          }
-                         )
+        # drugs = [d for d in sc.drugs.all()]
+        # conditions = [c for c in sc.conditions.all()]
+        scenarios.append({
+            "id": sc.id,
+            "drugs": sc.drugs.all(),
+            "conditions": sc.conditions.all(),
+            "owner": sc.owner.username,
+            "status": sc.status.status,
+            "timestamp": sc.timestamp
+        })
 
     template = loader.get_template('app/index.html')
 
@@ -125,7 +126,6 @@ def add_edit_scenario(request, scenario_id=None):
                               instance=scenario, label_suffix='')
 
         if scform.is_valid():
-            print("valid")
             scform.save()
             messages.success(
                 request,

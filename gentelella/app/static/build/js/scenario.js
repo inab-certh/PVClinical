@@ -4,7 +4,6 @@ $(function() {
         // $('#atcTree').treeview('uncheckAll', {silent: true});
         var selected = $(this).val();
 
-
         if(selected===null) {
             $('#atcTree').treeview('uncheckAll', {silent: true});
         }
@@ -106,7 +105,6 @@ $(function() {
     }
 
 
-
     $("#atcTree").treeview({
         data: atc_tree,
         levels: 1,
@@ -177,10 +175,7 @@ $(function() {
                 return !n.state.checked;
             }):[];
 
-
             $("#atcTree").treeview('checkNode', [to_be_checked]);
-
-
 
             /* Get only whole atc codes checked, find equivalent drugs and transfer
             those drugs to drugs' select2 box as selected drugs
@@ -244,6 +239,8 @@ $(function() {
         }
     });
 
+    // A fake change trigger to initialize form
+    $("[name='drugs_fld']").trigger("change");
 
 });
 
