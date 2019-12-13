@@ -1,5 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-
+from django.shortcuts import HttpResponse
 
 def is_in_group(user, group):
     """ Check whether a user belongs to a specific group or not

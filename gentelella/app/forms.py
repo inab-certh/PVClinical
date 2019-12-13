@@ -172,15 +172,18 @@ class ScenarioForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop("instance")
         super(ScenarioForm, self).__init__(*args, **kwargs)
-        self.fields["title"].initial = self.instance.title
-        self.fields["status"].initial = self.instance.status.status
-        init_drugs = ["{}{}".format(
-            d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
-        self.fields["drugs_fld"].initial = init_drugs
 
-        init_conditions = ["{}{}".format(
-            c.name, " - {}".format(c.code) if c.code else "") for c in self.instance.conditions.all()]
-        self.fields["conditions_fld"].initial = init_conditions
+        # If instance exists in database
+        if Scenario.objects.filter(title=self.instance.title, owner=self.instance.owner).exists():
+            self.fields["title"].initial = self.instance.title
+            self.fields["status"].initial = self.instance.status
+            init_drugs = ["{}{}".format(
+                d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
+            self.fields["drugs_fld"].initial = init_drugs
+
+            init_conditions = ["{}{}".format(
+                c.name, " - {}".format(c.code) if c.code else "") for c in self.instance.conditions.all()]
+            self.fields["conditions_fld"].initial = init_conditions
 
     def is_valid(self):
         """ Overriding-extending is_valid module
@@ -259,16 +262,22 @@ class ScenarioForm(forms.Form):
     def save(self, commit=True):
         """ Overriding-extending save module
         """
-        print(self.cleaned_data.get("drugs_fld"))
+        self.instance.save(checks=False)
+        drugs = []
+        conditions = []
 
-        # self.instance.
+        for drug in self.cleaned_data.get("drugs_fld"):
+            dname, dcode = drug.split(" - ")
+            drugs.append(Drug.objects.get_or_create(name=dname, code=dcode)[0])
+        self.instance.drugs.set(drugs)
 
-        print("Save")
-        # drugs = [Drug.objects.get_or_create() for d in self.drugs_by_name+self.drugs_by_code]
-        # conditions = [Condition.objects.get_or_create(name=c) for c in self.drugs_by_name] + [Condition.objects.get_or_create(code=c) for c in self.drugs_by_code]
-        # d_n, created =
-        # d_c, created = Drug.objects.get_or_create()
-        #
-        # self.instance.title = self.title
-        # self.instance.drugs = self.drugs_by_name + self.drugs_by_code
-        # self.instance.conditions = self.conditions_by_name + self.conditions_by_code
+        for condition in self.cleaned_data.get("conditions_fld"):
+            cname, ccode = condition.split(" - ")
+            conditions.append(Condition.objects.get_or_create(name=cname, code=ccode)[0])
+        self.instance.conditions.set(conditions)
+
+        self.instance.status = Status.objects.get(status=self.cleaned_data.get("status"))
+        self.instance.title = self.cleaned_data.get("title")
+
+        self.instance.save()
+        return self.instance
