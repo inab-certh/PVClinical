@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575888871786.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "1647B8F6",
+    "lastKnownWriteTime" : 1574780554,
+    "last_content_update" : 1576489285542,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/dash/ui.R",
+    "project_path" : "dash/ui.R",
+    "properties" : {
+        "cursorPosition" : "212,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

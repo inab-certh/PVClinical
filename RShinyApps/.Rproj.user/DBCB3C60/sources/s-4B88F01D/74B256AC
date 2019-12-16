@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576272408670.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2208579355",
+    "id" : "74B256AC",
+    "lastKnownWriteTime" : 1574780554,
+    "last_content_update" : 1574780554,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/sharedscripts/prr_device.R",
+    "project_path" : "sharedscripts/prr_device.R",
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 29,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

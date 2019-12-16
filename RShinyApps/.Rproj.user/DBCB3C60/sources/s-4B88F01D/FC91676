@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576272417792.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FC91676",
+    "lastKnownWriteTime" : 1575881907,
+    "last_content_update" : 1575881907,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/sharedscripts/key.r",
+    "project_path" : "sharedscripts/key.r",
+    "properties" : {
+        "cursorPosition" : "2,1",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 32,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
