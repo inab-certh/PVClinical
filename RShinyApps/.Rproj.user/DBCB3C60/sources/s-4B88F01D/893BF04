@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576272434467.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2230864067",
+    "id" : "893BF04",
+    "lastKnownWriteTime" : 1574780554,
+    "last_content_update" : 1574780554,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/sharedscripts/devicechoices.R",
+    "project_path" : "sharedscripts/devicechoices.R",
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 35,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

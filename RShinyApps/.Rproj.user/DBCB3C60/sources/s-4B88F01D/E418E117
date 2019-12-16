@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576490554168.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E418E117",
+    "lastKnownWriteTime" : 1574780538,
+    "last_content_update" : 1574780538,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/ChangePoint/ui.R",
+    "project_path" : "ChangePoint/ui.R",
+    "properties" : {
+        "cursorPosition" : "29,18",
+        "scrollLine" : "16"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 36,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

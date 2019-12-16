@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575894580457.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5E5452B7",
+    "lastKnownWriteTime" : 1574780554,
+    "last_content_update" : 1574780554,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/dynprr_Activesubstance/server.R",
+    "project_path" : "dynprr_Activesubstance/server.R",
+    "properties" : {
+        "cursorPosition" : "2,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

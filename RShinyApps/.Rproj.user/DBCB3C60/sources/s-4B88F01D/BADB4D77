@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575896165574.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BADB4D77",
+    "lastKnownWriteTime" : 1574780543,
+    "last_content_update" : 1574780543,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/RR_E/ui.R",
+    "project_path" : "RR_E/ui.R",
+    "properties" : {
+        "cursorPosition" : "226,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 17,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
