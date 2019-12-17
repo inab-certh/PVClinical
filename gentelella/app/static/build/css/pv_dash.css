@@ -61,6 +61,11 @@
     content:'\f078';
 }
 
+#atcTree {
+    max-height:220px;
+    overflow-y: scroll;
+}
+
 /* Custom theme colors */
 .left_col, body, .nav_title, .sidebar-footer>a{
     /*background: #286090!important;*/

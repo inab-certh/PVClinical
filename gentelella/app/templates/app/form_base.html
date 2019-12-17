@@ -24,12 +24,12 @@
 					$('#confirmModal').modal('hide');
 				})
 				.done(function(data) {
-					$('[class="modal-title"]').text('Επιτυχής διαγραφή!');
+					$('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
 					$('[class="modal-body"]').text(data);
 
 					/* Info modal is already open */
 					$('#infoModal').on('hidden.bs.modal', function (e) {
-						window.location.replace("/pmenu/{{patient_id}}{% if pat_visit_id %}/{{pat_visit_id}}{% endif %}");
+						window.location.replace("{% url 'index' %}");
 						//location.reload();
 					});
 					
@@ -39,7 +39,7 @@
 
 				})
 				.fail(function(resp){
-					$('[class="modal-title"]').text('Αποτυχία διαγραφής!');
+					$('[class="modal-title"]').text("{% trans 'Αποτυχία διαγραφής!'%}");
 					$('[class="modal-body"]').text(resp.responseText);
 					$('#infoModal').on('hidden.bs.modal', function (e) {
 						location.reload();
@@ -97,7 +97,6 @@
 								</span>
 							</a>
 
-
 						</div>
 					</form>
 				</div>
@@ -105,7 +104,12 @@
 		  </div>
 		</div>
 	</div>
-	{% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title="Επιβεβαίωση διαγραφής" modal_body="Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" main_btn="Επιβεβαίωση" dismiss_btn="Ακύρωση" data_target="#infoModal" %}
-	{% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn="Εντάξει" %}
+	{% trans "Επιβεβαίωση διαγραφής" as mod_title %}
+	{% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
+	{% trans "Επιβεβαίωση" as main_lbl%}
+	{% trans "Ακύρωση" as dismiss_lbl %}
+	{% trans "Εντάξει" as ok_lbl%}
+	{% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#infoModal" %}
+	{% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn=ok_lbl %}
 
 {% endblock %}

@@ -6,12 +6,12 @@ urlpatterns = [
     # Matches any html file - to be used for gentella
     # Avoid using your .html in your resources.
     # Or create a separate django app.
-    re_path(r'^.*\.html', views.gentella_html, name='gentella'),
+    # re_path(r'^.*\.html', views.gentella_html, name='gentella'),
 
     # The home page
     path('', views.index, name='index'),
-    path('add-edit-scenario', views.add_edit_scenario, name='add_edit_scenario'),
-    path('add-edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='add_edit_scenario'),
+    path('add-scenario', views.add_edit_scenario, name='add_scenario'),
+    path('edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='edit_scenario'),
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
     path('OpenFDAWorkspace_detailedView', views.OpenFDAWorkspace_detailedView, name='OpenFDAWorkspace_detailedView'),
     # Permission denied

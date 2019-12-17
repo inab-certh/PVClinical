@@ -127,12 +127,12 @@ class ScenarioForm(forms.Form):
     drugs_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
         d.name, " - {}".format(d.code) if d.code else ""),)*2 for d in all_drugs],
                                               required=False,
-                                              label=_("Φάρμακα:"),
+                                              label=_("Φάρμακο/Φάρμακα:"),
                                               widget=CustomSelect2TagWidget)
     conditions_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
         c.name, " - {}".format(c.code) if c.code else ""),)*2 for c in all_conditions],
                                                    required=False,
-                                                   label=_("Παθήσεις:"),
+                                                   label=_("Πάθηση/Παθήσεις:"),
                                                    widget=CustomSelect2TagWidget)
 
 
@@ -169,48 +169,115 @@ class ScenarioForm(forms.Form):
     # drugs_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
     # conditions_hidden = forms.CharField(required=False, max_length=0, widget=forms.HiddenInput())
 
-
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop("instance")
         super(ScenarioForm, self).__init__(*args, **kwargs)
 
-    #
+        # If instance exists in database
+        if Scenario.objects.filter(title=self.instance.title, owner=self.instance.owner).exists():
+            self.fields["title"].initial = self.instance.title
+            self.fields["status"].initial = self.instance.status
+            init_drugs = ["{}{}".format(
+                d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
+            self.fields["drugs_fld"].initial = init_drugs
+
+            init_conditions = ["{}{}".format(
+                c.name, " - {}".format(c.code) if c.code else "") for c in self.instance.conditions.all()]
+            self.fields["conditions_fld"].initial = init_conditions
+
     def is_valid(self):
         """ Overriding-extending is_valid module
         """
+
+        # At least one of drugs_by_code or drugs_by_name has to be filled in
+        # if (not self.cleaned_data.get("drugs_by_name")) and not self.cleaned_data.get("drugs_by_code"):
+        #     self.add_error(None, _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε φάρμακα βάσει ονόματος\
+        #                                       είτε φάρμακα βάσει κωδικού, πρέπει να συμπληρωθεί!"))
+        #
+        # # At least one of drugs_by_code or drugs_by_name has to be filled in
+        # if (not self.cleaned_data.get("conditions_by_name")) and not self.cleaned_data.get("conditions_by_code"):
+        #     self.add_error(None,
+        #                    _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε παθήσεις βάσει ονόματος\
+        #                      είτε παθήσεις βάσει κωδικού, πρέπει να συμπληρωθεί!"))
+
         super(ScenarioForm, self).is_valid()
 
-        # At least one of drugs_by_code or drugs_by_name has to be filled in
-        if (not self.cleaned_data.get("drugs_by_name")) and not self.cleaned_data.get("drugs_by_code"):
-            self.add_error(None, _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε φάρμακα βάσει ονόματος\
-                                              είτε φάρμακα βάσει κωδικού, πρέπει να συμπληρωθεί!"))
+        if (not self.cleaned_data.get("drugs_fld")) and not self.cleaned_data.get("conditions_fld"):
+            self.add_error(None, _("Τουλάχιστον ένα από τα πεδία που αφορούν τα φάρμακα και τις παθήσεις\
+                                   του σεναρίου, πρέπει να συμπληρωθεί"))
 
-        # At least one of drugs_by_code or drugs_by_name has to be filled in
-        if (not self.cleaned_data.get("conditions_by_name")) and not self.cleaned_data.get("conditions_by_code"):
-            self.add_error(None,
-                           _("Τουλάχιστον ένα από τα πεδία που αφορούν είτε παθήσεις βάσει ονόματος\
-                             είτε παθήσεις βάσει κωδικού, πρέπει να συμπληρωθεί!"))
 
         return not self._errors
-    # #
+
 
     def clean(self):
-        print("By code:")
-        print(self.data.get("drugs_by_code"))
-        print("By name:")
-        print(self.data.get("drugs_by_name"))
+        super(ScenarioForm, self).clean()
+
+        selected_drugs = dict(self.data).get("drugs_fld")
+        drugs_names = list(map(lambda el: el.name, self.all_drugs))
+        drugs_codes = list(map(lambda el: el.code, self.all_drugs))
+
+        if selected_drugs:
+            # If not found index is -1, max is used to assure that in case one of the two splitted parts
+            # was found, then this part was chosen to find suspected drug
+            drugs_indexes = [(max(list(map(lambda el: drugs_names.index(el) if el in drugs_names \
+                else drugs_codes.index(el) if el in drugs_codes else -1, sd.split(" - "))))) for sd in selected_drugs]
+
+            valid_drugs = list(filter(lambda d: d is not None,
+                                      (map(lambda indx: self.all_drugs[indx]\
+                                          if (indx>-1 and indx<len(self.all_drugs)) else None, drugs_indexes))))
+            valid_drugs = list(map(lambda d: "{} - {}".format(d.name, d.code), valid_drugs))
+
+            if 'drugs_fld' in self._errors:
+                del self._errors['drugs_fld']
+
+            self.cleaned_data["drugs_fld"] = valid_drugs
+
+        selected_conditions = dict(self.data).get("conditions_fld")
+        conditions_names = list(map(lambda el: el.name, self.all_conditions))
+        conditions_codes = list(map(lambda el: el.code, self.all_conditions))
+
+        if selected_conditions:
+            # If not found index is -1, max is used to assure that in case one of the two splitted parts
+            # was found, then this part was chosen to find suspected drug
+            conditions_indexes = [(max(list(map(lambda el: conditions_names.index(el) if el in conditions_names \
+                else conditions_codes.index(el) if el in conditions_codes else -1, sd.split(" - ")
+                                                )))) for sd in selected_conditions]
+
+            valid_conditions = list(filter(lambda c: c is not None,
+                                      (map(lambda indx: self.all_conditions[indx]\
+                                          if (indx>-1 and indx<len(self.all_conditions)) else None,
+                                           conditions_indexes))))
+
+            valid_conditions = list(map(lambda c: "{} - {}".format(c.name, c.code), valid_conditions))
+
+            if 'conditions_fld' in self._errors:
+                del self._errors['conditions_fld']
+
+        # return valid_conditions
+            self.cleaned_data["conditions_fld"] = valid_conditions
         return self.cleaned_data
 
 
     def save(self, commit=True):
         """ Overriding-extending save module
         """
-        print("Save")
-        # drugs = [Drug.objects.get_or_create() for d in self.drugs_by_name+self.drugs_by_code]
-        # conditions = [Condition.objects.get_or_create(name=c) for c in self.drugs_by_name] + [Condition.objects.get_or_create(code=c) for c in self.drugs_by_code]
-        # d_n, created =
-        # d_c, created = Drug.objects.get_or_create()
-        #
-        # self.instance.title = self.title
-        # self.instance.drugs = self.drugs_by_name + self.drugs_by_code
-        # self.instance.conditions = self.conditions_by_name + self.conditions_by_code
+        self.instance.save(checks=False)
+        drugs = []
+        conditions = []
+
+        for drug in self.cleaned_data.get("drugs_fld"):
+            dname, dcode = drug.split(" - ")
+            drugs.append(Drug.objects.get_or_create(name=dname, code=dcode)[0])
+        self.instance.drugs.set(drugs)
+
+        for condition in self.cleaned_data.get("conditions_fld"):
+            cname, ccode = condition.split(" - ")
+            conditions.append(Condition.objects.get_or_create(name=cname, code=ccode)[0])
+        self.instance.conditions.set(conditions)
+
+        self.instance.status = Status.objects.get(status=self.cleaned_data.get("status"))
+        self.instance.title = self.cleaned_data.get("title")
+
+        self.instance.save()
+        return self.instance

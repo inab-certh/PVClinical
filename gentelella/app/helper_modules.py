@@ -1,5 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-
+from django.shortcuts import HttpResponse
 
 def is_in_group(user, group):
     """ Check whether a user belongs to a specific group or not
@@ -96,13 +96,12 @@ def get_atc_children(parent, level, codes):
     :return: next ATC level children
     """
     children = list(set(filter(lambda el: el.startswith(parent), atc_by_level(level+1, codes))))
+    # print(children)
 
     if level==4:
-        return [{"text": parent, "nodes": list(map(lambda el: {"text": el}, children))}]
+        return list(map(lambda el: {"text": el}, children))
 
-    for ch in children:
-        return [{"text": ch,
-                 "nodes": get_atc_children(ch, level+1, codes)}]
+    return [{"text": ch, "nodes": get_atc_children(ch, level+1, codes)} for ch in children]
 
 
 def atc_hierarchy_tree(codes):
@@ -111,6 +110,7 @@ def atc_hierarchy_tree(codes):
     :return: the ATC tree
     """
     atc_tree = []
+
     levels = [atc_by_level(i+1, codes) for i in range(0, 5)]
 
     # Append to/create the ATC tree for the specific codes (of drugs) we have
