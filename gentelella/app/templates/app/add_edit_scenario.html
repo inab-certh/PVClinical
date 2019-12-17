@@ -35,7 +35,11 @@
         <div id="drugsAccordion" class="scAccordion">
             <div class="panel">
                 <div class="panel-body btn-dark collapsed" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsNameCollapsible">
-                    {% trans "Αναζήτηση φαρμάκων" %}
+                    {% if form.drugs_fld.value %}
+                        <b>{% trans "Επιλεγμένα Φάρμακα:" %}</b> {{ form.drugs_fld.value|join:" | " }}
+                    {% else %}
+                        {% trans "Εισαγωγή φαρμάκων" %}
+                    {% endif %}
                 </div>
                 <div class="well collapse" id="drugsNameCollapsible" data-synonyms-url="{% url 'drugs_synonyms' %}">
                     <div class="row">
@@ -86,7 +90,11 @@
         <div id="conditionsAccordion" class="scAccordion">
             <div class="panel">
                 <div class="panel-body btn-primary collapsed" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsNameCollapsible">
-                    {% trans "Αναζήτηση παθήσεων" %}
+                    {% if form.conditions_fld.value %}
+                        <b>{% trans "Επιλεγμένες Παθήσεις:" %}</b> {{ form.conditions_fld.value|join:" | " }}
+                    {% else %}
+                        {% trans "Εισαγωγή παθήσεων" %}
+                    {% endif %}
                 </div>
                 <div class="well collapse" id="conditionsNameCollapsible">
                     {{ form.conditions_fld|as_crispy_field }}
