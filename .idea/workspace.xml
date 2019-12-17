@@ -4,11 +4,8 @@
     <list default="true" id="d5b23b3f-98bb-428a-b966-f230371c74e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/django-gentelella.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/django-gentelella.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/templates/app/ShinnyTools.html" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/templates/app/OpenFDAWorkspace_detailedView.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gentelella/db_b.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/db_b.sqlite3" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,6 +28,9 @@
     <expand />
     <select />
   </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -51,7 +51,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editor.config.ad.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/gentelella/gentelella/settings.py" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -60,7 +60,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.django.DjangoModulesConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -83,6 +83,32 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="Python.DjangoServer" factoryName="Django server" nameIsGenerated="true">
+      <module name="django-gentelella" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="gentelella.settings" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\evgak\.venv\pvclinical\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -136,6 +162,13 @@
       <workItem from="1575527073078" duration="2408000" />
       <workItem from="1575550335166" duration="6205000" />
       <workItem from="1575622968931" duration="7920000" />
+      <workItem from="1576049165654" duration="89000" />
+      <workItem from="1576049274032" duration="148000" />
+      <workItem from="1576049440098" duration="19022000" />
+      <workItem from="1576134529668" duration="604000" />
+      <workItem from="1576141515903" duration="1200000" />
+      <workItem from="1576222286362" duration="1230000" />
+      <workItem from="1576484744666" duration="3757000" />
     </task>
     <servers />
   </component>
@@ -154,5 +187,15 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Python.DjangoServer">
+        <watch expression="request.GET[&quot;id&quot;]" language="Python" />
+        <watch expression="Scenario.objects.count" language="Python" />
+        <watch expression="Scenario.objects.get(id=scenario_id)" language="Python" />
+        <watch expression="scenario[&quot;drugs&quot;].__len__()" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
