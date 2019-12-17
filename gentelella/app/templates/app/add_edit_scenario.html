@@ -39,13 +39,15 @@
                 </div>
                 <div class="well collapse" id="drugsNameCollapsible" data-synonyms-url="{% url 'drugs_synonyms' %}">
                     <div class="row">
-                        <div class="col-xs-6">
-                            {{ form.drugs_fld|as_crispy_field }}
-                            <div class="text-center">
-                                <button type="button" class="btn btn-outline" onclick="moveToSelectedDrugs()"><i class="fa fa-arrow-up fa-2x"></i></button>
+                        <div class="col-xs-6 parent-height">
+                            <div class="row">
+                                {{ form.drugs_fld|as_crispy_field }}
+                            </div>
+                            <div class="row text-center mt-3">
+                                <button type="button" class="btn btn-outline" onclick="moveToSelectedDrugs()"><i class="fa fa-angle-double-up fa-2x"></i></button>
                             </div>
 
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="center-block synonymsEntity">
                                     <label for="#drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
                                     <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>
@@ -55,11 +57,15 @@
 
                         </div>
 
-                        <div id="atcTree" class="col-xs-6">
-                            {{ atc_tree }}
+                        <div id="atcTreeEntity" class="col-xs-6 parent-height">
+                            <!--<button  type="button" class="btn btn-outline btn-block" onclick="atcToSelectedDrugs()">-->
+                                <!--<i class="fa fa-angle-double-left"></i> <span class="visible-lg">{% trans "Μεταφορά" %}</span>-->
+                            <!--</button>-->
+                            <label for="atcTree">{% trans "ATC Κωδικοί:" %}</label>
+                            <div id="atcTree">
+                                {{ atc_tree }}
+                            </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
