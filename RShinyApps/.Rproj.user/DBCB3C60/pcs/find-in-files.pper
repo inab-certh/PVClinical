@@ -5,7 +5,7 @@
         ],
         "path" : "",
         "projectRelative" : true,
-        "query" : "require",
+        "query" : "argument is of length zero",
         "regex" : false
     }
 }
