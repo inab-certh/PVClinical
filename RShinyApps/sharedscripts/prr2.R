@@ -1,25 +1,27 @@
 
 #*****************************************************
 shinyServer(function(input, output, session) {
-  observe({
-    query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[['t1']])) {
-      isolate( {
-        query <- getQueryString()
-        updateTextInput(session, "t1", value=( query[['t1']] ) )
-        updateTextInput(session, "v1", value=( query[['v1']] ) )
-      })
-    }
-    if (!is.null(query[['t2']])) {
-      isolate( {
-        query <- getQueryString()
-        updateTextInput(session, "t2", value=( query[['t2']] ) )
-        updateTextInput(session, "v2", value=( query[['v2']] ) )
-      })
-    }
-  })
+  # observe({
+  #   query <- parseQueryString(session$clientData$url_search)
+  #   if (!is.null(query[['t1']])) {
+  #     isolate( {
+  #       query <- getQueryString()
+  #       updateTextInput(session, "t1", value=( query[['t1']] ) )
+  #       updateTextInput(session, "v1", value=( query[['v1']] ) )
+  #     })
+  #   }
+  #   if (!is.null(query[['t2']])) {
+  #     isolate( {
+  #       query <- getQueryString()
+  #       updateTextInput(session, "t2", value=( query[['t2']] ) )
+  #       updateTextInput(session, "v2", value=( query[['v2']] ) )
+  #     })
+  #   }
+  # })
   #Getters ===============================================================
   getqueryvars <- function( num = 1 ) {
+   #browser()
+   
    s <- getemptyapplist()
    if (getwhich() == 'D')
      {
@@ -262,6 +264,7 @@ shinyServer(function(input, output, session) {
     geturlquery()
     v <- c('_exists_' , getexactvar1(), gettimevar() )
     t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
+    #browser()
     mylist <-  getcounts999( session, v= v, t= t, 
                                  count=getprrvarname(), exactrad = input$useexact )
     mydfAll <- mylist$mydf
@@ -463,6 +466,7 @@ shinyServer(function(input, output, session) {
       comb <- data.frame(D='D', M='L' , comb, links$dynprr, links$cpa,  comb$ror, comb$nij)
       sourcedf <- comb
       colname <- 'Drug Name'
+      #browser()
       iname <- c( 'Dashboard', 'Label')
       if (input$v1 != 'patient.drug.medicinalproduct')
       {
@@ -568,6 +572,7 @@ output$prrtitle <- renderText({
 
 prr <- reactive({  
   if (getterm1( session )=="") {
+    #browser()
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
     tableout(mydf = getprr()$comb,  
