@@ -29,25 +29,10 @@ renderStart <- function() {
   
 }  
 shinyUI(fluidPage(
-                  fluidRow(
-                    column(width=4, 
-                           a(href='https://open.fda.gov', 
-                             img(src='l_openFDA.png', align='bottom')),
-                           renderDates()
-                           ),
-                    column(width=8,
-                          titlePanel("RR-Event"))
-                    ),
-#                  HTML( paste( "<img src='l_openFDA.png'/>" ,  "<h4>RR-Event</h4>" ) ),
-                  sidebarLayout(
-                    sidebarPanel(
-                      tabsetPanel(
-                        tabPanel('Select Reaction',
-                                 selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
-#                                               HTML( tt('drugvar1') ), tt('drugvar2'),
-                                               placement='top'),
-                                 conditionalPanel(
-                                   condition = "1 == 2", 
+                  fluidRow(useShinyjs(),
+                    column(width=12, titlePanel("RR-Event" ),
+                           
+                           hidden(
                                    textInput_p("t1", "Adverse Reaction", '', 
                                                HTML( tt('eventname1') ), tt('eventname2'),
                                                placement='bottom'), 
@@ -61,59 +46,16 @@ shinyUI(fluidPage(
                                                   1, 999, step=1, 
                                                   HTML( tt('limit1') ), tt('limit2'),
                                                   placement='bottom')
-                                 ),
-                                 wellPanel(
-                                   bsButton("tabBut", "Select Event and # of Drugs", 
-                                            style='primary'),
-                                   br(),
-                                   renderEventName(),
-                                   radioButtons('useexact', 'Match Event Term:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
-                                   renderLimit(),
-                                   renderStart()
-                                 ), 
-                                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                                          htmlOutput('mymodal'), 
-                                          textInput_p("drugname", "Adverse Reaction", '', 
-                                                      HTML( tt('eventname1') ), tt('eventname2'),
-                                                      placement='left'), 
-                                          
-                                          numericInput_p('limit2', 'Maximum number of drugs', 50,
-                                                         1, 100, step=1,
-                                                         HTML( tt('limit1') ), tt('limit2'),
-                                                         placement='left'),
-                                          
-                                          numericInput_p('start2', 'Rank of first event', 1,
-                                                         1, 999, step=1, 
-                                                         HTML( tt('limit1') ), tt('limit2'),
-                                                         placement='bottom'),
-                                          #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                                          bsButton("update", "Update Variables", style='primary')),
-                                 bsAlert("alert"),
-                                 HTML( (loadhelp('overviewside') ) )  )
-                        ,
-                        id='sidetabs', selected='Select Reaction')
-                    ),
-                    mainPanel(
-                      tags$head(
-                        tags$style(type="text/css", "select { max-width: 200px; }"),
-                        tags$style(type="text/css", "textarea { max-width: 185px; }"),
-                        tags$style(type="text/css", ".jslider { max-width: 200px; }"),
-                        tags$style(type='text/css', ".well { max-width: 900px; }"),
-                        tags$style(type='text/css', ".span4 { max-width: 310px; }")
-                      ),
+                                   
+                           ),
+                                 
+                    dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
                       bsAlert("alert2"),
                       tabsetPanel(
                         tabPanel("PRR and ROR Results",
-#                                  wellPanel(
-#  #                                  helpText('Results sorted by PRR')
-#                                  )
+
                                   htmlOutput( 'prrtitle' ),
-                                # wordcloudtabset('cloudprr', 'prr')
-#                                 wordcloudtabset('cloudprr', 'prr', 
-#                                 popheads=c( tt('prr1'), tt('word1') ), 
-#                                 poptext=c( tt('prr_E'), tt('word2') )
-#                               )
+                                
                                  maketabset( c('prr2', 'cloudprr', 'textplot'), 
                                              types=c('datatable', "plot", 'plot'),
                                              names=c("Table","Word Cloud", "Text Plot")
@@ -221,6 +163,7 @@ shinyUI(fluidPage(
                         id='maintabs', selected="PRR and ROR Results"
                       )
                     )
+)
                   )
 )
-)
+
