@@ -43,60 +43,7 @@ getcurtab <- function() {
 
 shinyUI(fluidPage(
                   fluidRow(useShinyjs(),
-                    # column(width=4,
-                    #        a(href='https://open.fda.gov/', 
-                    #          img(src='l_openFDA.png', align='bottom') ),
-                    #        renderDates(),
-                    #        
-                    #        selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
-                    #                      HTML( tt('drugvar1') ), tt('drugvar2'),
-                    #                      placement='top'), 
-                    #        conditionalPanel(
-                    #          condition = "1 == 2",
-                    #          textInput_p("t1", "Drug Name", '', 
-                    #                      HTML( tt('drugname1') ), tt('drugname2'),
-                    #                      placement='bottom'), 
-                    #          
-                    #          numericInput_p('limit', 'Maximum number of event terms', 50,
-                    #                         1, 100, step=1, 
-                    #                         HTML( tt('limit1') ), tt('limit2'),
-                    #                         placement='bottom'), 
-                    #          
-                    #          numericInput_p('start', 'Rank of first event', 1,
-                    #                         1, 999, step=1, 
-                    #                         HTML( tt('limit1') ), tt('limit2'),
-                    #                         placement='bottom')
-                    #        ),
-                    #        wellPanel(
-                    #          bsButton("tabBut", "Select Drug and # of Events...", 
-                    #                   style='primary'),
-                    #          br(),
-                    #          renderDrugName(),
-                    #          radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
-                    #          renderLimit(),
-                    #          renderStart()
-                    #        ), 
-                    #        dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                    #        
-                    #        bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                    #                 htmlOutput('mymodal'), 
-                    #                 textInput_p("drugname", "Name of Drug", '', 
-                    #                             HTML( tt('drugname1') ), tt('drugname2'),
-                    #                             placement='left'), 
-                    #                 numericInput_p('limit2', 'Number of most frequent events to analyze:', 50,
-                    #                                1, 100, step=1, 
-                    #                                HTML( tt('limit1') ), tt('limit2'),
-                    #                                placement='left'), 
-                    #                 
-                    #                 numericInput_p('start2', 'Start with ranked frquency #', 1,
-                    #                                1, 999, step=1, 
-                    #                                HTML( tt('limit1') ), tt('limit2'),
-                    #                                placement='left'),
-                    #                 #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                    #                 bsButton("update", "Update Variables", style='primary')),
-                    #        bsAlert("alert"),
-                    #        HTML( (loadhelp('overviewside') ) )
-                    # ),
+                    
                     column(width=12,
                            titlePanel("RR-Drug" ) ),
                     
@@ -125,10 +72,10 @@ shinyUI(fluidPage(
                       numericInput_p('start', 'Rank of first event', 1,
                                      1, 999, step=1, 
                                      HTML( tt('limit1') ), tt('limit2'),
-                                     placement='bottom'),
-                      dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date())
+                                     placement='bottom')
+                      
                     ),
-                    
+                    tags$div(style='padding-left:40px',dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date())),
                     tabsetPanel(
                       tabPanel("PRR and ROR Results",
                                wellPanel(
