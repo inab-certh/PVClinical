@@ -3,6 +3,20 @@
     margin-left: -0.7rem;
 }
 
+.img-icon {
+    width: 20%;
+}
+
+
+#scenariosTbl td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.btn-outline {
+    background-color: transparent;
+}
+
 .form-h1 {
     font-size: 3rem!important;
 }
@@ -32,6 +46,12 @@
 /*}*/
 
 
+.select2-selection__choice {
+    /*background-color: #eaa2a2!important;*/
+    background-color: #536E8AB3 !important;
+    color: white;
+}
+
 .select2-results__option .wrap:before {
     font-family:fontAwesome;
     color: #ffffff;
@@ -41,6 +61,11 @@
     padding-right: 10px;
 
 }
+
+.select2-selection__choice__remove {
+    color: white!important;
+}
+
 .select2-results__option[aria-selected=true] .wrap:before {
     content:"\f14a";
 }
@@ -191,6 +216,7 @@ li.active {
 
 #scTitleDiv .invalid-feedback {
     font-size: 13px;
+    color: #bf2b27;
 }
 iframe {
   width: 100%;
