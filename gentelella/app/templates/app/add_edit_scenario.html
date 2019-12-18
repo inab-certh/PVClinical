@@ -36,7 +36,7 @@
             <div class="panel">
                 <div class="panel-body btn-dark collapsed" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsNameCollapsible">
                     {% if form.drugs_fld.value %}
-                        <b>{% trans "Επιλεγμένα Φάρμακα:" %}</b> {{ form.drugs_fld.value|join:" | " }}
+                    <b>{% trans "Επιλεγμένα Φάρμακα:" %}</b> <em>{{ form.drugs_fld.value|join:", " }}</em>
                     {% else %}
                         {% trans "Εισαγωγή φαρμάκων" %}
                     {% endif %}
@@ -53,7 +53,7 @@
 
                             <div class="row mt-3">
                                 <div class="center-block synonymsEntity">
-                                    <label for="#drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
+                                    <label for="drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
                                     <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>
                                 </div>
 
@@ -91,7 +91,7 @@
             <div class="panel">
                 <div class="panel-body btn-primary collapsed" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsNameCollapsible">
                     {% if form.conditions_fld.value %}
-                        <b>{% trans "Επιλεγμένες Παθήσεις:" %}</b> {{ form.conditions_fld.value|join:" | " }}
+                    <b>{% trans "Επιλεγμένες Παθήσεις:" %}</b> <em>{{ form.conditions_fld.value|join:", " }}</em>
                     {% else %}
                         {% trans "Εισαγωγή παθήσεων" %}
                     {% endif %}

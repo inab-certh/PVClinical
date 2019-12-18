@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.template import loader
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
+from django.http import QueryDict
 from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
 
@@ -34,10 +35,10 @@ from app.models import Status
 
 from app.forms import ScenarioForm
 
-def OpenFDAWorkspace_detailedView(request):
+
+def OpenFDAWorkspace_detailedView(request, scenario_id=None):
     template = loader.get_template('app/OpenFDAWorkspace_detailedView.html')
     scenario = {}
-    scenario_id = request.GET["id"]
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
@@ -110,6 +111,17 @@ def index(request):
             "status": sc.status.status,
             "timestamp": sc.timestamp
         })
+
+    if request.method == 'DELETE':
+        scenario_id = QueryDict(request.body).get("scenario_id")
+        scenario = None
+        if scenario_id:
+            try:
+                scenario = Scenario.objects.get(id=int(scenario_id))
+                print(scenario.id)
+            except:
+                pass
+        return delete_db_rec(scenario)
 
     template = loader.get_template('app/index.html')
 
