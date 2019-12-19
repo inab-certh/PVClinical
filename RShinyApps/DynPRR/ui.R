@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 source('sourcedir.R')
 
@@ -32,63 +33,41 @@ renderEventText <- function() {
   
 }    
 shinyUI(fluidPage(
-                   fluidRow(
-                     column(width=4,
-                            a(href='https://open.fda.gov', 
-                              img(src='l_openFDA.png', align='bottom')),
-                            renderDates()
-                     ),
-                     column(width=8,
-                            titlePanel("Dynamic PRR" ) )
-                   ),
-#                    img(src='l_openFDA.png'),
-#   titlePanel( "Dynamic PRR"),
-  sidebarLayout(
-    sidebarPanel(
-      tabsetPanel(
-        tabPanel('Select Inputs',
+  fluidRow(useShinyjs(),
+           column(width=12, titlePanel("Dynamic PRR" ),
+                  
+                  hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                              HTML( tt('drugvar1') ), tt('drugvar2'),
                                              placement='top'), 
                  selectInput_p("v2", 'Time Variable' , c('receivedate', 'receiptdate'), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top', selected='receiptdate'), 
-                 conditionalPanel(
-                   condition = "1 == 2",
+                 
                  textInput_p("t1", "Name of Drug", '', 
                              HTML( tt('drugname1') ), tt('drugname2'),
                              placement='bottom'), 
                  textInput_p("t2", "Adverse Events", '', 
                              HTML( tt('eventname1') ), tt('eventname2'),
                              placement='bottom'),
-                 renderEventText()
-                 ),
-                 wellPanel(
-                   bsButton("tabBut", "Select Drug and Event...", style='primary'),
-                   br(),
+                 renderEventText(),
+                 
                    renderDrugName(),
                    radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
                    renderEventName(),
-                   radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any')
-                 ), 
-                 dateRangeInput('daterange', 'Plot PRR between ', start = '1989-6-30', end = Sys.Date()),
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'), 
+                   radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
+                 
+                 
+                 
                           textInput_p("drugname", "Name of Drug", '', 
                                       HTML( tt('drugname1') ), tt('drugname2'),
                                       placement='left'), 
                           textInput_p("eventname", "Adverse Events", '', 
                                       HTML( tt('eventname1') ), tt('eventname2'),
-                                      placement='left'), 
-                          #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                          bsButton("update", "Update Variables", style='primary')),
-                 bsAlert("alert")
-                 )
-        ,
-    id='sidetabs', selected='Select Inputs')
-    ),
-    mainPanel(
-      bsAlert("alert2"),
+                                      placement='left')
+                 ),
+                 dateRangeInput('daterange', 'Plot PRR between ', start = '1989-6-30', end = Sys.Date()),
+                          
       tabsetPanel(
         tabPanel("PRR Over Time",  
                  wellPanel( 
