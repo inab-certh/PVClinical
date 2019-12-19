@@ -22,9 +22,15 @@
 				<div class="x_title">
 					<form action="" method="post" class="ma-form col-xs-6 mt-3"  id="first-section" autocomplete="off" novalidate>
 						{% csrf_token %}
+
+						<div>
+							{% block buttongroup %}
+				  			{% endblock %}
+						</div>
+
 						{% if messages %}
 							{% for message in messages %}
-								<div id="message_container" {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+								<div id="message_container" {% if message.tags %} class="mt-5 {{ message.tags }}" {% endif %}>
 									{{ message }}
 								</div>
 							{% endfor %}

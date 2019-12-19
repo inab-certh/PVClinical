@@ -182,6 +182,7 @@ def add_edit_scenario(request, scenario_id=None):
         "title": _("Σενάριο"),
         "atc_tree": json.dumps(atc_hierarchy_tree(all_drug_codes)),
         "delete_switch": delete_switch,
+        "scenario_id": scenario.id,
         "form": scform,
     }
 
