@@ -4,9 +4,9 @@
 }
 
 .img-icon {
-    width: 20%;
+    width: 17%;
+    min-width: 48px;
 }
-
 
 #scenariosTbl td {
     vertical-align: middle;
@@ -17,34 +17,17 @@
     background-color: transparent;
 }
 
+.dropdown-menu-right {
+    top: 0!important;
+    left: 100%!important;
+}
+
 .form-h1 {
     font-size: 3rem!important;
 }
-
-
-/*.select2-results__option:before {*/
-  /*content: "";*/
-  /*display: inline-block;*/
-  /*position: relative;*/
-  /*height: 20px;*/
-  /*width: 20px;*/
-  /*border: 2px solid #e9e9e9;*/
-  /*border-radius: 4px;*/
-  /*background-color: #fff;*/
-  /*margin-right: 20px;*/
-  /*vertical-align: middle;*/
-/*}*/
-
-/*.select2-results__option[aria-selected=true]:before {*/
-  /*font-family:fontAwesome;*/
-  /*content: "\f00c";*/
-  /*color: #fff;*/
-  /*background-color: #f77750;*/
-  /*border: 0;*/
-  /*display: inline-block;*/
-  /*padding-left: 3px;*/
-/*}*/
-
+.scAccordion {
+    cursor: pointer;
+}
 
 .select2-selection__choice {
     /*background-color: #eaa2a2!important;*/
@@ -81,6 +64,7 @@
     font-size:10px;
     font-weight:300;
 }
+
 .panel .collapsed:after {
     font-family:Fontawesome;
     content:'\f078';
@@ -123,7 +107,7 @@ li.active {
 
 #pv-logo-txt, #clinical-logo-txt {
     font-size: 30px;
-    font-weight: 350;
+    font-weight: 300;
 }
 
 #pv-logo-txt {
@@ -218,61 +202,14 @@ li.active {
     font-size: 13px;
     color: #bf2b27;
 }
+
 iframe {
   width: 100%;
   height: 800px;
   border: none;
   overflow: hidden;
 }
-.dropdown-item-shinnyapps {
-  background-color: #0062cc!important;
-  color: #fff;
-}
 
-.dropdown-menu.show {
-  display: block;
-}
-
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: .25rem 1.5rem;
-  clear: both;
-  font-weight: 400;
-  color: #212529;
-  text-align: inherit;
-  white-space: nowrap;
-  background-color: transparent;
-  border: 0;
-}
-
-
-.dropdown-item-shinnyapps:hover, .dropdown-item-shinnyapps:focus {
-  color: yellow;
-  background-color: green!important;
-  border-color: #0062cc!important;
-}
-
-.dropdown-item-shinnyapps.active, .dropdown-item-shinnyapps:active {
-  color: #fff;
-  text-decoration: none;
-  background-color: red!important;
-}
-.dropdown-toggle::after {
-  display: inline-block;
-  margin-left: .255em;
-  vertical-align: .255em;
-  content: "";
-  border-top: .3em solid;
-  border-right: .3em solid transparent;
-  border-bottom: 0;
-  border-left: .3em solid transparent;
-}
-
-.dropdown-item-shinnyapps {
-  background-color: #0062cc!important;
-  color: #fff!important;
-}
 .custom-control {
   position: relative;
   display: block;
@@ -289,13 +226,7 @@ iframe {
 .nav.nav-tabs.nav-items-custom li.active a {
   color: blue!important;
 }
+
 .legend-margins{
     margin-bottom:10px;
 }
-
-
-
-
-
-
-
