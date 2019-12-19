@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 
 source('sourcedir.R')
@@ -27,25 +28,14 @@ renderNumsims <- function() {
 }  
 
 shinyUI(fluidPage(
-                  fluidRow(
-                    column(width=4,
-                           a(href='https://open.fda.gov/', 
-                             img(src='l_openFDA.png', align='bottom') ),
-                           renderDates()
-                    ),
-                    column(width=8,
-                           titlePanel("LRT Signal Analysis for a Drug" ) )
-                  ),
-#   img(src='l_openFDA.png'),
-#   titlePanel("RR-Drug"),
-  sidebarLayout(
-    sidebarPanel(
+  fluidRow(useShinyjs(),
+           column(width=12, titlePanel("LRT Signal Analysis for a Drug" ),                           
+                  
+                  hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
-                 conditionalPanel(
-                   condition = "1 == 2",
-                   textInput_p("t1", "Drug Name", 'Gadobenate', 
+                 textInput_p("t1", "Drug Name", 'Gadobenate', 
                                HTML( tt('drugname1') ), tt('drugname2'),
                                placement='bottom'), 
                    
@@ -62,21 +52,15 @@ shinyUI(fluidPage(
                    numericInput_p('numsims', 'Number of Simulations', 1000,
                                   1000, 50000, step=1, 
                                   HTML( tt('numsims1') ), tt('numsims2'),
-                                  placement='bottom')
-                 ),
-                 wellPanel(
-                   bsButton("tabBut", "Select Drug, # of Events, and # of simulations...", 
-                            style='primary'),
-                   br(),
+                                  placement='bottom'),
                    renderDrugName(),
                    radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                    renderLimit(),
                    renderStart(),
-                   renderNumsims()
-                 ), 
-                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'), 
+                   renderNumsims(),
+                  
+                 
+                  
                           textInput_p("drugname", "Name of Drug", 'Gadobenate', 
                                       HTML( tt('drugname1') ), tt('drugname2'),
                                       placement='left'), 
@@ -94,33 +78,23 @@ shinyUI(fluidPage(
                                          1000, 50000, step=1, 
                                          HTML( tt('numsims1') ), tt('numsims2'),
                                          placement='bottom'),
-                          #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                          bsButton("update", "Update Variables", style='primary')),
-                 wellPanel(
-                   helpText( HTML('<b>Down Load Report</b>') ),
+                          
                    radioButtons('format', 'Document format', c('PDF', 'HTML', 'Word'),
-                                inline = TRUE),
-                   downloadButton('downloadReport', 'Download LRT Report')
-#                   downloadButton('downloadData', 'Download LRT Results')
+                                inline = TRUE)
+                   
+
                  ),
+                 # downloadButton('downloadReport', 'Download LRT Report'),
+                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
                  
-                 bsAlert("alert")
-                 ,
-                 HTML( (loadhelp('LRT') ) )  
-)
-        ,
-    mainPanel(
-      
-      bsAlert("alert2"),
+        
       tabsetPanel(
                 tabPanel("LRT Results based on Total Events",
                          wellPanel(
                          htmlOutput( 'prrtitle' ), 
                          helpText('Results sorted by LRR')
                          ),
-#                          wordcloudtabset('cloudprr', 'prr', 
-#             `                             popheads=c( tt('prr1'), tt('word1') ), 
-#                                          poptext=c( tt('prr5'), tt('word2') ) )
+
                          maketabset( c('prr', 'cloudprr', 'textplot'), 
                                      types=c('html', "plot", 'plot'),
                                      names=c("Table","Word Cloud", "Text Plot") )
@@ -198,9 +172,7 @@ shinyUI(fluidPage(
                          wellPanel(
                            htmlOutput( 'cotitleA' )
                          ),
-#                          htmlOutput_p( 'coquerytextA' ,
-#                                        tt('gquery1'), tt('gquery2'),
-#                                        placement='bottom' ),
+
                          wordcloudtabset('cloudcoqueryA', 'coqueryA',
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
@@ -227,13 +199,8 @@ shinyUI(fluidPage(
                 tabPanel('Data Reference', HTML( renderiframe('https://open.fda.gov/drug/event/') ) ),
                 tabPanel('About', 
                          img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
-              id='maintabs'
+                         HTML( (loadhelp('about') ) )  )
+
             )
           )
         )
