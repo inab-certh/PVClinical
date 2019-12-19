@@ -66,20 +66,15 @@ $(function() {
                 console.log("error "+data);
             }
         });
-
-
     });
 
     $("#drugsSynonyms").select2MultiCheckboxes({
-
         templateSelection: function(selected, total) {
             return gettext("Επιλέξατε ")+selected.length+gettext(" από ")+total+gettext(" συνώνυμα");
         }
     });
 
-
     var atc_tree = JSON.parse($("#atcTree").text());
-
 
     function _getChildren(node) {
         if (node.nodes === undefined) return [];

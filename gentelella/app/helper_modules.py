@@ -59,7 +59,7 @@ def choices_max_length(tpl):
 def delete_db_rec(obj):
     """ Delete object from db
     """
-    if not obj.pk:
+    if not hasattr(obj, "id") or not obj.id:
         resp_status = 404
         resp_message = _("Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!"
                          " Δεν υπάρχει η αντίστοιχη καταχώριση ακόμη στο σύστημα!")
