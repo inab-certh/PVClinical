@@ -1,5 +1,6 @@
 library(shiny)
 require(shinyBS)
+library(shinyjs)
 
 source( 'sourcedir.R')
 
@@ -28,30 +29,17 @@ rendermaxcp <- function() {
   
 } 
 shinyUI(fluidPage(
-                  fluidRow(
-                    column(width=4,
-                           a(href='https://open.fda.gov/', 
-                             img(src='l_openFDA.png', align='bottom')),
-                           renderDates()
-                     ),
-                    column(width=8,
-                           titlePanel("Change Point Analysis" ) )
-                  ),
-#                   img(src='l_openFDA.png'),
-#                   titlePanel( "Change Point Analysis"),
-
-  sidebarLayout(
-    sidebarPanel(
-      tabsetPanel(
-        tabPanel('Select Inputs',
+  fluidRow(useShinyjs(),
+           column(width=12, titlePanel("Change Point Analysis" ),
+                  
+                  hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
                  selectInput_p("v2", 'Time Variable' , c('receivedate', 'receiptdate'), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top', selected='receiptdate'), 
-                 conditionalPanel(
-                   condition = "1 == 2",
+                 
                  textInput_p("t1", "Name of Drug", '', 
                              HTML( tt('drugname1') ), tt('drugname2'),
                              placement='bottom'), 
@@ -60,39 +48,24 @@ shinyUI(fluidPage(
                              placement='bottom'),
                  numericInput_p('maxcp', "Maximum Number of Change Points", 3, 1, step=1,
                                 HTML( tt('cplimit1') ), tt('cplimit2'),
-                                placement='bottom')
-                 ), 
-                 wellPanel(
-                 bsButton("tabBut", "Select Drug and Event...", style='primary'),
-                 br(),
-                 renderDrugName(),
+                                placement='bottom'),
+                  
+                 
                  radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
-                 renderEventName(),
                  radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any' ),
-                 rendermaxcp()
-                 ),
-                 dateRangeInput('daterange', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'), 
-                          textInput_p("drugname", "Name of Drug", '', 
-                                      HTML( tt('drugname1') ), tt('drugname2'),
-                                      placement='left'), 
-                          textInput_p("eventname", "Adverse Events", '', 
+                 
+                 
+                 textInput_p("drugname", "Name of Drug", '', HTML( tt('drugname1') ), tt('drugname2'), placement='left'), textInput_p("eventname", "Adverse Events", '', 
                                       HTML( tt('eventname1') ), tt('eventname2'),
-                                      placement='left'),               
-                          numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
-                                         HTML( tt('cplimit1') ), tt('cplimit2'),
-                                         placement='left'),
-                #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                          bsButton("update", "Update Variables", style='primary')),
+                                      placement='left'),              
+                 numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
+                               HTML( tt('cplimit1') ), tt('cplimit2'),
+                               placement='left')
                 
-                bsAlert("alert")
-                  )
-        ,
-    id='sidetabs', selected='Select Inputs')
-    ),
-    mainPanel(
-      bsAlert("alert2"),
+                  ),
+        
+    dateRangeInput('daterange', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
+
       tabsetPanel(
                  tabPanel("Change in Mean Analysis",  
                           wellPanel( 
@@ -186,3 +159,4 @@ shinyUI(fluidPage(
         )
       )
     )
+
