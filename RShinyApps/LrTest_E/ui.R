@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 source('sourcedir.R')
 
@@ -26,22 +27,14 @@ renderNumsims <- function() {
 }  
 
 shinyUI(fluidPage(
-                  fluidRow(
-                    column(width=4,
-                           a(href='https://open.fda.gov/', 
-                             img(src='l_openFDA.png', align='bottom') ),
-                           renderDates()
-                    ),
-                    column(width=8,
-                           titlePanel("LRT Signal Analysis for an Event" ) )
-                  ),
-  sidebarLayout(
-    sidebarPanel(
+  fluidRow(useShinyjs(),
+           column(width=12, titlePanel("LRT Signal Analysis for a Drug" ),                           
+                  
+                  hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
-                 conditionalPanel(
-                   condition = "1 == 2",
+                 
                    textInput_p("t1", "Event Name", 'NEPHROGENIC SYSTEMIC FIBROSIS', 
                                HTML( tt('drugname1') ), tt('drugname2'),
                                placement='bottom'), 
@@ -59,21 +52,17 @@ shinyUI(fluidPage(
                    numericInput_p('numsims', 'Number of Simulations', 1000,
                                   1000, 50000, step=1, 
                                   HTML( tt('numsims1') ), tt('numsims2'),
-                                  placement='bottom')
-                 ),
-                 wellPanel(
-                   bsButton("tabBut", "Select Drug, # of Events, and # of simulations...", 
-                            style='primary'),
-                   br(),
+                                  placement='bottom'),
+                 
+                 
                    renderDrugName(),
                    radioButtons('useexact', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                    renderLimit(),
                    renderStart(),
-                   renderNumsims()
-                 ), 
-                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'), 
+                   renderNumsims(),
+                 
+                 
+                  
                           textInput_p("drugname", "Name of Event", 'NEPHROGENIC SYSTEMIC FIBROSIS', 
                                       HTML( tt('drugname1') ), tt('drugname2'),
                                       placement='left'), 
@@ -91,25 +80,13 @@ shinyUI(fluidPage(
                                          1000, 50000, step=1, 
                                          HTML( tt('numsims1') ), tt('numsims2'),
                                          placement='bottom'),
-                          bsButton("update", "Update Variables", style='primary')
-                          ),
-                          #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
                           
-                 wellPanel(
-                   helpText( HTML('<b>Down Load Report</b>') ),
                    radioButtons('format', 'Document format', c('PDF', 'HTML', 'Word'),
                                 inline = TRUE),
                    downloadButton('downloadReport', 'Download LRT Report')
                    ),
-                 
-                 bsAlert("alert")
-                 ,
-                 HTML( (loadhelp('LRT') ) )  
-)
-        ,
-    mainPanel(
-      
-      bsAlert("alert2"),
+                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
+                
       tabsetPanel(
                 tabPanel("LRT Results based on Total Drugs",
                          wellPanel(
@@ -234,13 +211,8 @@ shinyUI(fluidPage(
                 tabPanel('Data Reference', HTML( renderiframe('https://open.fda.gov/drug/event/')   )  ),
                 tabPanel('About', 
                          img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
-              id='maintabs'
+                         HTML( (loadhelp('about') ) )  )
+
             )
           )
         )
