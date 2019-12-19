@@ -77,6 +77,9 @@ wordcloudtabset <- function(cloud, table,
     ), selected = names[1]
   )
 }
+makeDataTableOutput<- function( output){
+  dataTableOutput( output )
+}
 maketabset <- function( outputs, types=c('html', 'plot'), 
                         names=c( "Table2","Word Cloud2" )
                         , 
@@ -93,7 +96,7 @@ maketabset <- function( outputs, types=c('html', 'plot'),
                               placement='top' )
                } else if ( types[1] == 'datatable' )
                {
-               dataTableOutput( outputs[1] )
+                 dataTableOutput( outputs[1] )
                }
                else {
                  plotOutput(outputs[1])
