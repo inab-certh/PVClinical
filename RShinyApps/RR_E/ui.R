@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 
 source( 'sourcedir.R')
@@ -36,6 +37,9 @@ shinyUI(fluidPage(
                                    textInput_p("t1", "Adverse Reaction", '', 
                                                HTML( tt('eventname1') ), tt('eventname2'),
                                                placement='bottom'), 
+                                   selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
+                                                 #                                               HTML( tt('drugvar1') ), tt('drugvar2'),
+                                                 placement='top'),
                                    
                                    numericInput_p('limit', 'Maximum number of drugs', 50,
                                                   1, 100, step=1,
@@ -45,12 +49,25 @@ shinyUI(fluidPage(
                                    numericInput_p('start', 'Rank of first event', 1,
                                                   1, 999, step=1, 
                                                   HTML( tt('limit1') ), tt('limit2'),
-                                                  placement='bottom')
+                                                  placement='bottom'),
+                                   textInput_p("drugname", "Adverse Reaction", '', 
+                                               HTML( tt('eventname1') ), tt('eventname2'),
+                                               placement='left'), 
+                                   
+                                   numericInput_p('limit2', 'Maximum number of drugs', 50,
+                                                  1, 100, step=1,
+                                                  HTML( tt('limit1') ), tt('limit2'),
+                                                  placement='left'),
+                                   
+                                   numericInput_p('start2', 'Rank of first event', 1,
+                                                  1, 999, step=1, 
+                                                  HTML( tt('limit1') ), tt('limit2'),
+                                                  placement='bottom'),
+                                   radioButtons('useexact', 'Match Event Term:', c('Exactly'='exact', 'Any Term'='any'), selected='any')
                                    
                            ),
                                  
                     dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                      bsAlert("alert2"),
                       tabsetPanel(
                         tabPanel("PRR and ROR Results",
 
