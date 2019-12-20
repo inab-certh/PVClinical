@@ -9,8 +9,8 @@
                 {{ modal_body }}
             </div>
             <div class="modal-footer">
-                <button id="dismissBtn" type="button" 
-	                {% if modal_id == "\"confirmModal\"" %} class="btn btn-default" 
+                <button id="dismissBtn" type="button" data-record=""
+	                {% if modal_id == "\"confirmModal\"" %} class="btn btn-default"
 	                {% else %} class="btn btn-primary" {% endif %}
 	                data-dismiss="modal">{{ dismiss_btn }}
                 </button>
