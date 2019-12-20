@@ -503,8 +503,10 @@ shinyServer(function(input, output, session) {
     countname <- paste( 'Counts for', getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
+    # keptcols <-  c( iname, colname,countname, 
+    #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     keptcols <-  c( iname, colname,countname, 
-                                    'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
+                     'PRR')
 
     #    mydf <- mydf[, c(1:4, 7,8,9)]
     return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
