@@ -11,44 +11,6 @@
 {% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
-	<script type="text/javascript">
-	$(function() {
-		$('#confirmBtn').click(function() {
-			$.ajax({
-				url: "{{ request.path }}", method: 'DELETE', 
-				beforeSend: function(xhr) {
-			        xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
-			    } 
-
-			}) 	.always(function(){
-					$('#confirmModal').modal('hide');
-				})
-				.done(function(data) {
-					$('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
-					$('[class="modal-body"]').text(data);
-
-					/* Info modal is already open */
-					$('#infoModal').on('hidden.bs.modal', function (e) {
-						window.location.replace("{% url 'index' %}");
-						//location.reload();
-					});
-					
-					$("#dismissBtn").on("click", function () {
-						$('#infoModal').modal('hide');
-					});
-
-				})
-				.fail(function(resp){
-					$('[class="modal-title"]').text("{% trans 'Αποτυχία διαγραφής!'%}");
-					$('[class="modal-body"]').text(resp.responseText);
-					$('#infoModal').on('hidden.bs.modal', function (e) {
-						location.reload();
-					});
-				}); 
-		});
-	});
-	</script>
-
 {% endblock %}
 
 {% block content %}
@@ -60,9 +22,15 @@
 				<div class="x_title">
 					<form action="" method="post" class="ma-form col-xs-6 mt-3"  id="first-section" autocomplete="off" novalidate>
 						{% csrf_token %}
+
+						<div>
+							{% block buttongroup %}
+				  			{% endblock %}
+						</div>
+
 						{% if messages %}
 							{% for message in messages %}
-								<div id="message_container" {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+								<div id="message_container" {% if message.tags %} class="mt-5 {{ message.tags }}" {% endif %}>
 									{{ message }}
 								</div>
 							{% endfor %}
@@ -104,12 +72,6 @@
 		  </div>
 		</div>
 	</div>
-	{% trans "Επιβεβαίωση διαγραφής" as mod_title %}
-	{% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
-	{% trans "Επιβεβαίωση" as main_lbl%}
-	{% trans "Ακύρωση" as dismiss_lbl %}
-	{% trans "Εντάξει" as ok_lbl%}
-	{% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#infoModal" %}
-	{% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn=ok_lbl %}
+
 
 {% endblock %}
