@@ -16,7 +16,7 @@ require(wordcloud)
 
 
 source('sourcedir.R')
-source('../sharedscripts/prr2.R', local = TRUE)
+
 
 shinyServer(function(input, output, session) {
   
