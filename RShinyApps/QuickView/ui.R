@@ -42,24 +42,30 @@ getcurtab <- function() {
 }  
 
 shinyUI(fluidPage(
+                  fluidRow( style="height:80px;",
+                            column(width=3,style="height:80px;",imageOutput("graphpicture")),
+                            column(width=4,style="font-size:90px;padding-top:20px;padding-bottom:20px;",htmlOutput( "quickview" )),
+                            column(width=5,style="font-size:15px;padding-top:50px;padding-bottom:20px;",uiOutput("descriptionList"))),
+                            
                   fluidRow(useShinyjs(),
                            column(width=6,
-                                  titlePanel("RR-Drug" ),
+                                  fluidRow( plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2'))),
+                                  fluidRow( plotOutput_p( 'cpmeanplot' ))
                                   
-                                  plotOutput_p("seriousplot",
-                                               HTML( tt('dot1') ), tt('dot2'),
-                                               height = "250px"),
-
-                                 wellPanel(
-                                   plotOutput_p( 'cpmeanplot' ),
-                                   htmlOutput_p( 'cpmeantext' )
-                                 )
+                                  
+                                  
+                                 # wellPanel(
+                                 #   plotOutput_p( 'cpmeanplot' ),
+                                 #   htmlOutput_p( 'cpmeantext' )
+                                 # )
                            ),
                                   
                     column(width=6,
-                           titlePanel("RR-Drug" ) ,
+                           # titlePanel("RR-Drug" ) ,
+                           fluidRow( style="width:90%; margin-top:60px;",
+                                     makeDataTableOutput( 'prr2' )),
+                           #htmlOutput( 'prrtitle' ),
                     
-                    bsAlert("alert2"),
                     
                     hidden(
                       radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
@@ -102,21 +108,8 @@ shinyUI(fluidPage(
                       dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date())
                     ),
                     
-                    htmlOutput( 'prrtitle' ),
-                    makeDataTableOutput( 'prr2' )
-                    # tabPanel("PRR and ROR Results",
-                    #          wellPanel(
-                    #            htmlOutput( 'prrtitle' )
-                    #          ),
-                    #          #                          wordcloudtabset('cloudprr', 'prr', 
-                    #          #                                          popheads=c( tt('prr1'), tt('word1') ), 
-                    #          #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                    #          maketabset( c('prr2', 'cloudprr', 'textplot'), 
-                    #                      types=c('datatable', "plot", 'plot'),
-                    #                      names=c("Table","Word Cloud", "text Plot"), 
-                    #                      popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
-                    #                      poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
-                    # ),
+                    
+                    
                       
                       
                       
