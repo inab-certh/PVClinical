@@ -189,7 +189,7 @@ shinyUI(fluidPage(
                       ),
                       tabPanel('Data Reference', HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
                       tabPanel('About', 
-                               img(src='l_openFDA.png'),
+                               # img(src='l_openFDA.png'),
                                HTML( (loadhelp('about') ) )  ),
                       #                 tabPanel("session",  
                       #                          wellPanel( 
