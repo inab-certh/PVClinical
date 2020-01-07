@@ -23,6 +23,7 @@ app <- c(
  "LRTest",  
  "ReportView" , 
  "RR_D" , 
+ "QuickView",
  NULL
 )
 #  "deviceclassview",

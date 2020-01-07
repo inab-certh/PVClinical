@@ -55,8 +55,8 @@ renderuseexact <- function() {
 shinyUI(fluidPage( 
                    fluidRow(
                      column(width=4,
-                            a(href='https://open.fda.gov/', 
-                              img(src='l_openFDA.png', align='bottom')),
+                            # a(href='https://open.fda.gov/', 
+                            #   img(src='l_openFDA.png', align='bottom')),
                             renderDates()
                      ),
                      column(width=8,
@@ -200,7 +200,7 @@ shinyUI(fluidPage(
         tabPanel('Data Reference', HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
         ),
         tabPanel('About', 
-                 img(src='l_openFDA.png'),
+                 # img(src='l_openFDA.png'),
                  HTML( (loadhelp('about') ) )  )
         
       )

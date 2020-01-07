@@ -231,21 +231,21 @@ Automatic
 User Specified"
 
 #5***********************************  
-l['about'] <- "<h3>About</h3>
-
-This software was developed by FDA's Office Of Health Informatics
-(OHI) as part of the openFDA initiative. 
-<br>
-<h4>Development Team</h4>
-<b>Taha Kass-hout, MD, MS</b><br>
-Creator of openFDA initiative.<br>
-<b>Jonathan 'Jay' Levine, PhD</b><br>
-Software design and implementation using R and Shiny, analytical methods.<br>
-<b>Roselie Bright, ScD</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>
-Software testing and evaluation, openFDA implementation.<br>
-<b>Zhiheng Xu, PhD</b>, <i>FDA CDRH</i><br>
-Analytical methods, openFDA implementation.<br><br>
-<a href='mailto:open@fda.hhs.gov'>Email the openFDA team</a>"
+l['about'] <- "This software was developed by"
+# <h3>About</h3>
+# This software was developed by FDA's Office Of Health Informatics
+# (OHI) as part of the openFDA initiative. 
+# <br>
+# <h4>Development Team</h4>
+# <b>Taha Kass-hout, MD, MS</b><br>
+# Creator of openFDA initiative.<br>
+# <b>Jonathan 'Jay' Levine, PhD</b><br>
+# Software design and implementation using R and Shiny, analytical methods.<br>
+# <b>Roselie Bright, ScD</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>
+# Software testing and evaluation, openFDA implementation.<br>
+# <b>Zhiheng Xu, PhD</b>, <i>FDA CDRH</i><br>
+# Analytical methods, openFDA implementation.<br><br>
+# <a href='mailto:open@fda.hhs.gov'>Email the openFDA team</a>"
 
 #6***********************************  
 l['LRT'] <- '<h3>Likelihood Ratio Test (LRT) Methodology</h3>
