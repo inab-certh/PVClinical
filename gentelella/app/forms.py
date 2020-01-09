@@ -16,9 +16,7 @@ from app.models import Condition
 from app.models import Scenario
 from app.models import Status
 
-from app.retrieve_meddata import get_drugs
-from app.retrieve_meddata import get_conditions
-
+from app.retrieve_meddata import KnowledgeGraphWrapper
 
 class CustomSelect2TagWidget(Select2TagWidget):
     """ Class allowing data-tokens with spaces"""
@@ -116,8 +114,13 @@ class ScenarioForm(forms.Form):
     #     }
 
     # pass
-    all_drugs = get_drugs()
-    all_conditions = get_conditions()
+    knw = KnowledgeGraphWrapper()
+    all_drugs = knw.get_drugs()
+
+    all_conditions = knw.get_conditions()
+
+    # all_drugs = get_drugs()
+    # all_conditions = get_conditions()
     # all_synonyms = list(chain(get_synonyms(all_drugs)))
 
     # all_synonyms = reduce(lambda syns1, syns2: syns1+syns2, map(lambda d: d.synonyms.all(), all_drugs))

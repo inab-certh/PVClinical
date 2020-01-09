@@ -60,9 +60,10 @@ def get_synonyms(request):
     drugs = json.loads(request.GET.get("drugs", None))
 
     # Replace with real service
-    all_synonyms = {"Omeprazole":["Esomeprazole"], "Esomeprazole": ["Omeprazole"],
-                    "Etybenzatropine": ["Benzatropine"], "Benzatropine": ["Etybenzatropine"]}
-    synonyms = list(chain.from_iterable([all_synonyms[d] for d in drugs if d in all_synonyms.keys()])) if drugs else []
+    all_synonyms = {"omeprazole":["esomeprazole"], "esomeprazole": ["omeprazole"],
+                    "etybenzatropine": ["benzatropine"], "benzatropine": ["etybenzatropine"]}
+    synonyms = list(chain.from_iterable([all_synonyms[d.lower()] for d in drugs
+                                         if d.lower() in all_synonyms.keys()])) if drugs else []
     data={}
     data["synonyms"] = synonyms
     return JsonResponse(data)
