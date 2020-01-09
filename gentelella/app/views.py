@@ -43,11 +43,11 @@ def OpenFDAWorkspace_detailedView(request, scenario_id=None):
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
     scenario = {"drugs": drugs,
-                      "conditions": conditions,
-                      "owner": sc.owner.username,
-                      "status": sc.status.status,
-                      "timestamp": sc.timestamp
-                      }
+                "conditions": conditions,
+                "owner": sc.owner.username,
+                "status": sc.status.status,
+                "timestamp": sc.timestamp
+                }
 
     return HttpResponse(template.render({"scenario": scenario}, request))
 
