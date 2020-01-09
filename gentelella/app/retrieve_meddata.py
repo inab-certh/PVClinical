@@ -26,13 +26,18 @@ class KnowledgeGraphWrapper:
 
         # print(whole_query)
         self.sparql.setQuery(whole_query)
-        results = sorted(list(
-            map(lambda r: tuple(
-                map(lambda el: el.value, r.values())), self.sparql.query().bindings)))
+        # results = sorted(list(
+        #     map(lambda r: tuple(
+        #         map(lambda el: el.value, r.values())), self.sparql.query().bindings)))
+        #
+        # # Turn drugs into objects with name and code
+        # DrugStruct = namedtuple("DrugStruct", "name, code")
+        # results = [DrugStruct(name=r[0].lower(), code=r[1]) for r in results]
+        results = self.sparql.query().bindings
 
         # Turn drugs into objects with name and code
         DrugStruct = namedtuple("DrugStruct", "name, code")
-        results = [DrugStruct(name=r[0].lower(), code=r[1]) for r in results]
+        results = sorted([DrugStruct(name=r["name"].value.lower(), code=r["code"].value) for r in results])
 
         return results
 
