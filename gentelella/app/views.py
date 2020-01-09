@@ -109,7 +109,7 @@ def index(request):
             "drugs": sc.drugs.all(),
             "conditions": sc.conditions.all(),
             "owner": sc.owner.username,
-            "status": sc.status.status,
+            "status": dict(sc.status.status_choices).get(sc.status.status),
             "timestamp": sc.timestamp
         })
 
@@ -119,7 +119,6 @@ def index(request):
         if scenario_id:
             try:
                 scenario = Scenario.objects.get(id=int(scenario_id))
-                print(scenario.id)
             except:
                 pass
         return delete_db_rec(scenario)
