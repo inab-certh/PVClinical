@@ -1,8 +1,13 @@
 library(rsconnect)
 library(shinyjs)
+library(shiny)
+library(shinyWidgets)
+
+
+options(encoding = 'UTF-8')
+
 
 source('sourcedir.R')
-
 
 renderDrugName <- function() { 
   
@@ -40,11 +45,32 @@ getcurtab <- function() {
   return(  "PRR and ROR Results" )
   
 }  
+countries <- c("en", "gr")
 
-shinyUI(fluidPage(
+flags <- c(
+  "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gb.svg",
+  "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gr.svg"
+)
+
+shinyUI(fluidPage(theme = "custom.css",uiOutput('page_content'),
                   fluidRow( style="height:80px;",
                             column(width=3,style="height:80px;",imageOutput("graphpicture")),
-                            column(width=4,style="font-size:90px;padding-top:20px;padding-bottom:20px;",htmlOutput( "quickview" )),
+                            column(width=4,style="font-size:90px;padding-top:20px;padding-bottom:20px;",
+                                   # pickerInput("countries", "countries",
+                                   # 
+                                   #             choices = countries,
+                                   # 
+                                   #             choicesOpt = list(content =
+                                   #                                 mapply(countries, flags, FUN = function(country, flagUrl) {
+                                   #                                   HTML(paste(
+                                   #                                     tags$img(src=flagUrl, width=20, height=15),
+                                   #                                     country
+                                   #                                   ))
+                                   #                                 }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+                                   # 
+                                   #             )),
+                                   # uiOutput('page_content'),
+                            uiOutput( "quickview" )),
                             column(width=5,style="font-size:15px;padding-top:50px;padding-bottom:20px;",uiOutput("descriptionList"))),
                             
                   fluidRow(useShinyjs(),

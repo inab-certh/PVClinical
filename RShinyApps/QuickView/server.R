@@ -11,6 +11,11 @@ if (!require('openfda') ) {
 }
 require(RColorBrewer)
 require(wordcloud)
+library(shiny)
+library(shiny.i18n)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+# translator$set_translation_language('en')
+# i18n$set_translation_language("gr")
 
 #source('helperfunctions.r')
 
@@ -659,7 +664,7 @@ shinyServer(function(input, output, session) {
 
       if ( getterm1( session, FALSE )==''  )
       {
-        mydrugs <- 'All Drugs'
+        mydrugs <- i18n()$t("All Drugs")
       }
       else
       {
@@ -667,13 +672,13 @@ shinyServer(function(input, output, session) {
       }
       if ( getterm2( session, FALSE )=='' )
       {
-        myevents <- 'All Events'
+        myevents <- i18n()$t("All Events")
       }
       else
       {
         myevents <- getterm2( session, FALSE )
       }
-      mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+      mytitle <- paste( i18n()$t("Change in Mean Analysis for"), mydrugs, i18n()$t("and"), myevents )
       plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
       axis(1, pos,  labs[pos], las=2  )
       grid(nx=NA, ny=NULL)
@@ -710,7 +715,7 @@ shinyServer(function(input, output, session) {
       pos <- seq(1, length(labs), 3)
       if ( getterm1( session, FALSE ) == ''  )
       {
-        mydrugs <- 'All Drugs'
+        mydrugs <- i18n()$t("All Drugs")
       }
       else
       {
@@ -718,7 +723,7 @@ shinyServer(function(input, output, session) {
       }
       if ( getterm2( session,FALSE)=='' )
       {
-        myevents <- 'All Events'
+        myevents <- i18n()$t("All Events")
       }
       else
       {
@@ -1003,7 +1008,7 @@ shinyServer(function(input, output, session) {
   getcocounts <- reactive({
     geturlquery()
     if ( is.null( getdrugname() ) ){
-      return(data.frame( c(paste('Please enter a drug name'), '') ) )
+      return(data.frame( c(paste(i18n()$t("Please enter a drug name")), '') ) )
     }
     myurl <- buildURL( v= getbestdrugvarname(), t=getbestdrugname(),
                        count= getexactdrugvarname(), limit=999 )
@@ -1128,7 +1133,7 @@ shinyServer(function(input, output, session) {
     if ( is.data.frame(mydf) )
     {
       names(mydf) <- c('Serious', 'Case Counts' )
-      return( dotchart(mydf[,2], labels=mydf[,1], main='Seriousness') )
+      return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) )
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
   }, height=300)
 
@@ -1137,7 +1142,7 @@ shinyServer(function(input, output, session) {
     if ( is.data.frame(mydf) )
     {
       names(mydf) <- c('Serious', 'Case Counts' )
-      return( pie(mydf[,2], labels=mydf[,1], main='Seriousness') )
+      return( pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) )
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
   })
   output$sex <- renderTable({
@@ -2311,8 +2316,13 @@ shinyServer(function(input, output, session) {
     #    write(s, file='')
     return( makeapplinks(  getcururl(), getqueryvars( 1 ) )  )
   })
-  output$quickview <- renderText({ 
-    "quickview"
+  output$quickview <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("quickview")))
+
+  })
+  output$quickview2 <- renderText({ 
+    ser<-i18n()$t("Please enter a Drug name")
+    return(stri_enc_toutf8(ser))
   })
   output$graphpicture <- renderImage({
     
@@ -2321,11 +2331,27 @@ shinyServer(function(input, output, session) {
          alt = "This is alternate text")
     
   },deleteFile = FALSE)
-  output$descriptionList <- renderUI(HTML("<ul>
-  <li>Dashboard- Overview of reports for a drug</li>
-  <li>Change Point Analysis- Change point analysis for a drug-event pair over time</li>
-  <li>PRR for a Drug- Calculate Proportional Reporting Rates for Common Events for a drug</li>
-  </ul>"))
+  output$descriptionList <- renderUI(HTML(stri_enc_toutf8(i18n()$t("descriptionList"))))
+  # observeEvent(input$countries, {
+  #   i18n<-i18n$set_translation_language(input$countries)
+  # })
+  
+  i18n <- reactive({
+    selected <- input$selected_language
+    if (length(selected) > 0 && selected %in% translator$languages) {
+      translator$set_translation_language(selected)
+    }
+    translator
+  })
+  output$page_content <- renderUI({
+    selectInput('selected_language',
+                      i18n()$t("Change language"),
+                      choices = translator$languages,
+                      selected = input$selected_language)
+     
+  })
+      
+  
   
 })
 

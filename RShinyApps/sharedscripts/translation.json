@@ -1,0 +1,49 @@
+{
+  "languages": ["def","en", "gr"],
+  "translation": [
+      {"def":"drugi","en": "Please enter a Drug name", "gr": "Παρακαλώ εισάγετε φάρμακο"},
+      {"def":"Seriousness","en": "Seriousness", "gr": "Σημαντικότητα"},
+      {
+        "def":"quickview",
+        "en": "quickview",
+        "gr": "γρήγορη ματιά"
+      },
+      {
+        "def":"descriptionList",
+        "en": "<ul><li>Dashboard- Overview of reports for a drug</li><li>Change Point Analysis- Change point analysis for a drug-event pair over time</li><li>PRR for a Drug- Calculate Proportional Reporting Rates for Common Events for a drug</li></ul>",
+        "gr": "<ul><li>Πίνακας ελέγχου - Επισκόπηση των αναφορών για ένα φάρμακο</li><li>Ανάλυση σημείων αλλαγής - Ανάλυση αλλαγής σημείου για ένα ζεύγος φαρμάκων-συμβάντων με την πάροδο του χρόνου</li><li>PRR για ένα φάρμακο - Υπολογίστε αναλογικά ποσοστά αναφοράς για κοινά συμβάντα για ένα φάρμακο</li></ul>"
+      },
+      {
+        "def":"Frequency",
+        "en": "Frequency",
+        "gr": "Częstotliwość"
+      },
+      {
+        "def":"Change in Mean Analysis for",
+        "en": "Change in Mean Analysis for",
+        "gr": "Αλλαγή στη μέση ανάλυση για"
+      },
+      {
+        "def":"and",
+        "en": "and",
+        "gr": "και"
+      },
+      {
+        "def":"All Drugs",
+        "en": "All Drugs",
+        "gr": "Όλα τα φάρμακα"
+      },
+      {
+        "def":"All Events",
+        "en": "All Events",
+        "gr": "όλες τις παρενέργειες"
+      },
+      {
+        "def":"Change language",
+        "en": "Change language",
+        "gr": "άλλαξε γλώσσα"
+      }
+      
+      
+    ]
+}
