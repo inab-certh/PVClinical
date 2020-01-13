@@ -108,30 +108,30 @@
 
                     </div>
                     <ul class="nav nav-tabs nav-items-custom mt-3" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickView"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item active" id="QuickView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                       href="#tab-1" aria-expanded="true">QuickView</a>
                         </li>
-                        <li class="nav-item" id="Dash"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dash</a>
+                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dash</a>
                         </li>
-                        <li class="nav-item" id="RR_D"><a class="nav-link " role="tab" data-toggle="tab" href="#tab-2">RR_D</a>
+                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-2">RR_D</a>
                         </li>
-                        <li class="nav-item" id="RR_E"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-2">RR_E</a>
+                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">RR_E</a>
                         </li>
-                        <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                href="#tab-2">LabelView</a></li>
-                        <li class="nav-item" id="DynPRR"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-2">DynPRR</a>
+                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">DynPRR</a>
                         </li>
-                        <li class="nav-item" id="ChangePoint"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                  href="#tab-2">ChangePoint</a></li>
-                        <li class="nav-item" id="ReportView"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="ReportView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                 href="#tab-2">ReportView</a></li>
-                        <li class="nav-item" id="LabelView"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                href="#tab-2">LabelView</a></li>
-                        <li class="nav-item" id="LrTest"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-2">LrTest</a>
+                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">LrTest</a>
                         </li>
-                        <li class="nav-item" id="LrTest_E"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                               href="#tab-2">LrTest_E</a></li>
-                        <li class="nav-item" id="DrugEnforceView"><a class="nav-link" role="tab" data-toggle="tab"
+                        <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                      href="#tab-2">DrugEnforceView</a></li>
                     </ul>
                 </div>
@@ -140,8 +140,13 @@
         <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
             <div class="row iframe-row">
                 <div class="col">
-                    <div>
-                        <iframe id="shinny-apps-iframe"
+                    <div id="divFrame">
+
+                        <div id="first"  class="loader"></div>
+{#                        <div id="first"  class="spinner-border spinner-border-sm" role="status">#}
+{#                          <span class="sr-only">Loading...</span>#}
+{#                        </div>#}
+                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()"
                                 src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name"
                                 width="100%" height="360" style="  border: none;
   overflow: hidden;
@@ -157,12 +162,19 @@
     <!-- jQuery custom content scroller -->
     <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
+        function closeProgressIndicator() {
+        $("#first").hide();
+    }
+    function openProgressIndicator() {
+        $("#first").show();
+    }
+
         var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
         var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
         var scenarioDrugs = '{{ scenario.drugs }}';
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-        var shinnyAppsUrl = 'http://83.212.101.88:3838/openFDA/';
+        var shinnyAppsUrl = 'http://83.212.101.88:3838/deployshiny/';
         var shinnyAppsQueryUrl = '';
         var app = 'QuickView';
         var drug = '';
@@ -243,7 +255,7 @@
             } else {
                 shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v1=patient.reaction.reactionmeddrapt';
             }
-            document.getElementById("shinny-apps-iframe").src = shinnyAppsQueryUrl;
+            document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }
 
 
