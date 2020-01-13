@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from app import views
+from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
@@ -9,7 +10,9 @@ urlpatterns = [
     # re_path(r'^.*\.html', views.gentella_html, name='gentella'),
 
     # The home page
-    path('', views.index, name='index'),
+    path('', RedirectView.as_view(url="dashboard", permanent=False), name='index'),
+    path('dashboard', views.index, name='index'),
+    # path('dashboard', RedirectView.as_view(url='', permanent=False), name='index'),
     path('add-scenario', views.add_edit_scenario, name='add_scenario'),
     path('edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='edit_scenario'),
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),

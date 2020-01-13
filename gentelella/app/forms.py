@@ -125,7 +125,7 @@ class ScenarioForm(forms.Form):
 
     # all_synonyms = reduce(lambda syns1, syns2: syns1+syns2, map(lambda d: d.synonyms.all(), all_drugs))
 
-    title = forms.CharField(label=_("Τίτλος Σεναρίου"), required=True)
+    title = forms.CharField(label=_("Τίτλος σεναρίου:"), required=True)
 
     drugs_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
         d.name, " - {}".format(d.code) if d.code else ""),)*2 for d in all_drugs],

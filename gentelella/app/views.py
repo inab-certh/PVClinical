@@ -106,6 +106,7 @@ def index(request):
         # conditions = [c for c in sc.conditions.all()]
         scenarios.append({
             "id": sc.id,
+            "title": sc.title,
             "drugs": sc.drugs.all(),
             "conditions": sc.conditions.all(),
             "owner": sc.owner.username,

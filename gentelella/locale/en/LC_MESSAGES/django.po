@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-18 16:33+0200\n"
+"POT-Creation-Date: 2020-01-13 11:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,23 +23,23 @@ msgstr ""
 msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
 msgstr "Direct Access to this Location is not allowed"
 
-#: app/forms.py:125 app/models.py:139
-msgid "Τίτλος Σεναρίου"
-msgstr "Scenario Title"
+#: app/forms.py:128
+msgid "Τίτλος σεναρίου:"
+msgstr "Scenario title:"
 
-#: app/forms.py:130
+#: app/forms.py:133
 msgid "Φάρμακο/Φάρμακα:"
-msgstr "Drug/Drugs"
+msgstr "Drug/Drugs:"
 
-#: app/forms.py:135
+#: app/forms.py:138
 msgid "Πάθηση/Παθήσεις:"
-msgstr "Disease/Diseases"
+msgstr "Disease/Diseases:"
 
-#: app/forms.py:166
+#: app/forms.py:169
 msgid "Κατάσταση σεναρίου:"
-msgstr "Scenario Status"
+msgstr "Scenario Status:"
 
-#: app/forms.py:206
+#: app/forms.py:209
 msgid ""
 "Τουλάχιστον ένα από τα πεδία που αφορούν τα φάρμακα και τις "
 "παθήσεις                                   του σεναρίου, πρέπει να "
@@ -78,7 +78,7 @@ msgstr "Completed"
 
 #: app/models.py:26
 msgid "Κατάσταση: "
-msgstr "Status"
+msgstr "Status:"
 
 #: app/models.py:49
 msgid "Όνομα φαρμάκου"
@@ -101,6 +101,10 @@ msgstr "Disease name"
 msgid "Κωδικοποίηση πάθησης"
 msgstr "Disease code"
 
+#: app/models.py:139
+msgid "Τίτλος Σεναρίου"
+msgstr "Scenario title"
+
 #: app/password_validators.py:13
 msgid "Αδύναμο συνθηματικό."
 msgstr "Weak password"
@@ -113,50 +117,54 @@ msgstr ""
 "Your password must contain at least 1 number, 1 capital letter and 1 non-"
 "alphanumeric character (symbol)"
 
-#: app/templates/app/add_edit_scenario.html:33
+#: app/templates/app/add_edit_scenario.html:30 app/templates/app/index.html:52
+msgid "Περιβάλλοντα Εργασίας"
+msgstr "Workspaces"
+
+#: app/templates/app/add_edit_scenario.html:79
 #, fuzzy
 #| msgid "Φάρμακο/Φάρμακα"
 msgid "Φαρμακα"
 msgstr "Drug/Drugs"
 
-#: app/templates/app/add_edit_scenario.html:39
+#: app/templates/app/add_edit_scenario.html:85
 msgid "Επιλεγμένα Φάρμακα:"
 msgstr "Selected Drugs:"
 
-#: app/templates/app/add_edit_scenario.html:41
+#: app/templates/app/add_edit_scenario.html:87
 msgid "Εισαγωγή φαρμάκων"
 msgstr "Enter Drugs"
 
-#: app/templates/app/add_edit_scenario.html:56
+#: app/templates/app/add_edit_scenario.html:102
 msgid "Συνώνυμα φαρμάκων:"
 msgstr "Drugs' Synonyms"
 
-#: app/templates/app/add_edit_scenario.html:66
+#: app/templates/app/add_edit_scenario.html:112
 msgid "Μεταφορά"
 msgstr "Transfer"
 
-#: app/templates/app/add_edit_scenario.html:68
+#: app/templates/app/add_edit_scenario.html:114
 msgid "ATC Κωδικοί:"
 msgstr "ATC Codes"
 
-#: app/templates/app/add_edit_scenario.html:78
-#: app/templates/app/add_edit_scenario.html:105
+#: app/templates/app/add_edit_scenario.html:124
+#: app/templates/app/add_edit_scenario.html:151
 #, fuzzy
 #| msgid "Ξεχάσατε τον κωδικό σας;"
 msgid "Βάσει κωδικού"
 msgstr "By code"
 
-#: app/templates/app/add_edit_scenario.html:88
+#: app/templates/app/add_edit_scenario.html:134
 #, fuzzy
 #| msgid "Πάθηση/Παθήσεις"
 msgid "Παθήσεις"
 msgstr "Disease/Diseases"
 
-#: app/templates/app/add_edit_scenario.html:94
+#: app/templates/app/add_edit_scenario.html:140
 msgid "Επιλεγμένες Παθήσεις:"
 msgstr "Selected Conditions:"
 
-#: app/templates/app/add_edit_scenario.html:96
+#: app/templates/app/add_edit_scenario.html:142
 msgid "Εισαγωγή παθήσεων"
 msgstr "Enter conditions"
 
@@ -182,11 +190,11 @@ msgstr "Cancel"
 msgid "Εντάξει"
 msgstr "OK"
 
-#: app/templates/app/base_site.html:195
+#: app/templates/app/base_site.html:201
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:210
+#: app/templates/app/base_site.html:216
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -210,15 +218,15 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
-#: app/templates/app/form_base.html:40
+#: app/templates/app/form_base.html:46
 msgid "Αποθήκευση"
 msgstr "Save"
 
-#: app/templates/app/form_base.html:49 app/templates/app/index.html:55
+#: app/templates/app/form_base.html:55 app/templates/app/index.html:54
 msgid "Διαγραφή"
 msgstr "Delete"
 
-#: app/templates/app/form_base.html:58
+#: app/templates/app/form_base.html:64
 msgid "Σενάρια"
 msgstr "Scenarios"
 
@@ -236,23 +244,19 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:182
+#: app/templates/app/index.html:48 app/views.py:183
 msgid "Σενάριο"
 msgstr "Scenario"
 
 #: app/templates/app/index.html:49
-msgid "Φάρμακο/Φάρμακα"
-msgstr "Drug/Drugs"
+msgid "Τίτλος"
+msgstr "Title"
 
 #: app/templates/app/index.html:50
-msgid "Πάθηση/Παθήσεις"
-msgstr "Disease/Diseases"
+msgid "Κατάσταση"
+msgstr "Status"
 
 #: app/templates/app/index.html:51
-msgid "Κατάσταση"
-msgstr "Condition"
-
-#: app/templates/app/index.html:52
 msgid "Ημ/νία καταχώρισης"
 msgstr "Creation Date"
 
@@ -260,11 +264,15 @@ msgstr "Creation Date"
 msgid "Επεξεργασία"
 msgstr "Edit"
 
-#: app/templates/app/index.html:54
-msgid "Περιβάλλοντα Εργασίας"
-msgstr "Workspaces"
+#: app/templates/app/index.html:67
+msgid "Φάρμακο/Φάρμακα"
+msgstr "Drug/Drugs"
 
-#: app/templates/app/index.html:135
+#: app/templates/app/index.html:68
+msgid "Πάθηση/Παθήσεις"
+msgstr "Disease/Diseases"
+
+#: app/templates/app/index.html:152
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
@@ -401,11 +409,11 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:162
+#: app/views.py:163
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:169
+#: app/views.py:170
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
