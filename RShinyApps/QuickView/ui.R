@@ -2,6 +2,7 @@ library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
+library(DT)
 
 
 options(encoding = 'UTF-8')
@@ -91,8 +92,7 @@ shinyUI(fluidPage(theme = "custom.css",uiOutput('page_content'),
                            fluidRow( style="width:90%; margin-top:60px;",
                                      makeDataTableOutput( 'prr2' )),
                            #htmlOutput( 'prrtitle' ),
-                    
-                    
+                           
                     hidden(
                       radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                       radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),

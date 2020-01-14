@@ -1,7 +1,6 @@
 {
   "languages": ["def","en", "gr"],
   "translation": [
-      {"def":"drugi","en": "Please enter a Drug name", "gr": "Παρακαλώ εισάγετε φάρμακο"},
       {"def":"Seriousness","en": "Seriousness", "gr": "Σημαντικότητα"},
       {
         "def":"quickview",
@@ -42,6 +41,11 @@
         "def":"Change language",
         "en": "Change language",
         "gr": "άλλαξε γλώσσα"
+      },
+      {
+        "def":"Please enter a Drug name",
+        "en":"Please enter a Drug name",
+        "gr":"Παρακαλώ εισάγετε όνομα φαρμάκου"
       }
       
       

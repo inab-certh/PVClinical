@@ -8,6 +8,7 @@ require(shinyBS)
 #   out <- shiny::HTML(out1, out2)
 #   return(out)
 # }
+language<-''
 
 getquarters <- function() {
   #  browser()
@@ -341,3 +342,9 @@ renderiframe <- function( s )
   out <- paste0('<iframe src="', s, '" width=100% height=600 ></iframe>')
   return(out)
 }
+setLanguage<- function( lang){
+  language<-lang
+}
+getLanguage<- reactive({
+  return (language)
+})
