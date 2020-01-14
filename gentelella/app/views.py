@@ -43,11 +43,11 @@ def OpenFDAWorkspace_detailedView(request, scenario_id=None):
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
     scenario = {"drugs": drugs,
-                      "conditions": conditions,
-                      "owner": sc.owner.username,
-                      "status": sc.status.status,
-                      "timestamp": sc.timestamp
-                      }
+                "conditions": conditions,
+                "owner": sc.owner.username,
+                "status": sc.status.status,
+                "timestamp": sc.timestamp
+                }
 
     return HttpResponse(template.render({"scenario": scenario}, request))
 
@@ -60,9 +60,10 @@ def get_synonyms(request):
     drugs = json.loads(request.GET.get("drugs", None))
 
     # Replace with real service
-    all_synonyms = {"Omeprazole":["Esomeprazole"], "Esomeprazole": ["Omeprazole"],
-                    "Etybenzatropine": ["Benzatropine"], "Benzatropine": ["Etybenzatropine"]}
-    synonyms = list(chain.from_iterable([all_synonyms[d] for d in drugs if d in all_synonyms.keys()])) if drugs else []
+    all_synonyms = {"omeprazole":["esomeprazole"], "esomeprazole": ["omeprazole"],
+                    "etybenzatropine": ["benzatropine"], "benzatropine": ["etybenzatropine"]}
+    synonyms = list(chain.from_iterable([all_synonyms[d.lower()] for d in drugs
+                                         if d.lower() in all_synonyms.keys()])) if drugs else []
     data={}
     data["synonyms"] = synonyms
     return JsonResponse(data)
@@ -105,10 +106,11 @@ def index(request):
         # conditions = [c for c in sc.conditions.all()]
         scenarios.append({
             "id": sc.id,
+            "title": sc.title,
             "drugs": sc.drugs.all(),
             "conditions": sc.conditions.all(),
             "owner": sc.owner.username,
-            "status": sc.status.status,
+            "status": dict(sc.status.status_choices).get(sc.status.status),
             "timestamp": sc.timestamp
         })
 
@@ -118,7 +120,6 @@ def index(request):
         if scenario_id:
             try:
                 scenario = Scenario.objects.get(id=int(scenario_id))
-                print(scenario.id)
             except:
                 pass
         return delete_db_rec(scenario)

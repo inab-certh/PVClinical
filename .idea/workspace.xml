@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5b23b3f-98bb-428a-b966-f230371c74e2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/django-gentelella.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/django-gentelella.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-<<<<<<< HEAD
-=======
-      <change beforePath="$PROJECT_DIR$/gentelella/app/helper_modules.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/helper_modules.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html" afterDir="false" />
->>>>>>> master
+      <change beforePath="$PROJECT_DIR$/gentelella/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gentelella/db_b.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/db_b.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,17 +29,13 @@
     <expand />
     <select />
   </component>
-<<<<<<< HEAD
-  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
-    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
-=======
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gentelella/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="150" column="67" selection-start-line="150" selection-start-column="67" selection-end-line="150" selection-end-column="67" />
+            <state>
+              <caret lean-forward="true" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -54,10 +44,73 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/app/retrieve_meddata.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="345">
+              <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+              <folding>
+                <element signature="e#0#34#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/app/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="345">
+              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="602">
+              <caret line="77" column="38" lean-forward="true" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="197">
+              <caret line="77" column="22" lean-forward="true" selection-start-line="77" selection-start-column="22" selection-end-line="77" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/app/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="71" column="17" selection-start-line="71" selection-start-column="17" selection-end-line="71" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gentelella/app/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
+            <state relative-caret-position="225">
+              <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -66,82 +119,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/base_site.html">
+        <entry file="file://$PROJECT_DIR$/gentelella/gentelella/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="107" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="107" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="67" column="30" selection-start-line="67" selection-start-column="30" selection-end-line="67" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="65" column="23" selection-start-line="65" selection-start-column="23" selection-end-line="65" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/form_base.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="85" column="61" lean-forward="true" selection-start-line="85" selection-start-column="36" selection-end-line="85" selection-end-column="61" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-840">
-              <caret line="46" column="11" lean-forward="true" selection-start-line="46" selection-start-column="11" selection-end-line="46" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/retrieve_meddata.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/helper_modules.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="104" column="90" selection-start-line="104" selection-start-column="90" selection-end-line="104" selection-end-column="90" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gentelella/app/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
-              <caret line="65" selection-start-line="65" selection-end-line="65" />
+            <state relative-caret-position="428">
+              <caret line="199" column="29" lean-forward="true" selection-start-line="194" selection-end-line="202" selection-end-column="48" />
               <folding>
-                <element signature="e#0#39#0" expanded="true" />
+                <element signature="e#312#321#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
->>>>>>> master
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -153,61 +142,12 @@
       </list>
     </option>
   </component>
-<<<<<<< HEAD
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectId" id="1UWZte17ZfmfZoJEdycZUq9oHgl" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-=======
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>search_add</find>
-      <find>/static/</find>
-      <find>/static</find>
-      <find>data</find>
-      <find>jquery</find>
-      <find>locale</find>
-      <find>στον ακόλουθο</find>
-      <find>greek</find>
-      <find>Logout</find>
-      <find>επανασ</find>
-      <find>Αποσ</find>
-      <find>Προσθή</find>
-      <find>trans</find>
-      <find>parsle</find>
-      <find>for sc in</find>
-      <find>title</find>
-      <find>primary</find>
-      <find>form</find>
-      <find>script</find>
-      <find>script&gt;</find>
-      <find>Drug</find>
-      <find>scenario</find>
-      <find>drugs</find>
-      <find>btn-dar</find>
-      <find>btn-</find>
-      <find>request</find>
-      <find>whatever</find>
-      <find>select</find>
-      <find>by_name</find>
-      <find>filter</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>#2b5763</replace>
-      <replace>firstof</replace>
-      <replace>_fld</replace>
-    </replaceStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/gentelella/app/static/build/css/pvdash.css" />
-        <option value="$PROJECT_DIR$/gentelella/app/templates/app/copyright.html" />
-        <option value="$PROJECT_DIR$/gentelella/app/context_processors.py" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/registration/password_change_done.html" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/registration/logged_out.html" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/registration/password_reset_complete.html" />
@@ -234,28 +174,31 @@
         <option value="$PROJECT_DIR$/gentelella/app/templates/app/app_errors.html" />
         <option value="$PROJECT_DIR$/gentelella/app/fields.py" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/registration/base_accounts.html" />
-        <option value="$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po" />
-        <option value="$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/app/top_navigation.html" />
-        <option value="$PROJECT_DIR$/gentelella/app/templates/app/index.html" />
         <option value="$PROJECT_DIR$/gentelella/app/static/build/js/select2-spaces.js" />
         <option value="$PROJECT_DIR$/gentelella/app/static/build/js/allow-select2-spaces.js" />
-        <option value="$PROJECT_DIR$/gentelella/gentelella/settings.py" />
         <option value="$PROJECT_DIR$/gentelella/app/migrations/0001_initial.py" />
         <option value="$PROJECT_DIR$/services_calls.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/models.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/urls.py" />
         <option value="$PROJECT_DIR$/gentelella/gentelella/urls.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/templates/app/base_site.html" />
         <option value="$PROJECT_DIR$/gentelella/app/static/build/js/select2-adaptions.js" />
-        <option value="$PROJECT_DIR$/gentelella/app/forms.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/templates/app/form_base.html" />
-        <option value="$PROJECT_DIR$/gentelella/app/views.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/helper_modules.py" />
-        <option value="$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css" />
         <option value="$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/helper_modules.py" />
+        <option value="$PROJECT_DIR$/gentelella/app/templates/app/modals/parametric_modal.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/templates/app/base_site.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/templates/app/form_base.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css" />
+        <option value="$PROJECT_DIR$/gentelella/app/apps.py" />
+        <option value="$PROJECT_DIR$/gentelella/gentelella/settings.py" />
+        <option value="$PROJECT_DIR$/gentelella/app/forms.py" />
+        <option value="$PROJECT_DIR$/gentelella/app/urls.py" />
         <option value="$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/templates/app/index.html" />
+        <option value="$PROJECT_DIR$/gentelella/app/views.py" />
+        <option value="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" />
+        <option value="$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po" />
+        <option value="$PROJECT_DIR$/gentelella/app/models.py" />
       </list>
     </option>
   </component>
@@ -271,7 +214,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -289,77 +231,6 @@
               <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
               <item name="gentelella" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="build" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="build" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="build" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="vendors" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="vendors" type="462c0819:PsiDirectoryNode" />
-              <item name="select2-multi-checkboxes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
@@ -384,47 +255,25 @@
             </path>
             <path>
               <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="users" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pvclinical-dashboard" type="462c0819:PsiDirectoryNode" />
-              <item name="gentelella" type="462c0819:PsiDirectoryNode" />
-              <item name="users" type="462c0819:PsiDirectoryNode" />
-              <item name="migrations" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pvclinical-dashboard" type="b2602c69:ProjectViewProjectNode" />
               <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
->>>>>>> master
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="sqlite" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editor.config.ad.shown" value="true" />
-<<<<<<< HEAD
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/gentelella/gentelella/settings.py" />
-=======
-    <property name="last_opened_file_path" value="/var/www/pvclinical" />
->>>>>>> master
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.django.DjangoModulesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -449,28 +298,26 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="Unnamed" type="Python.DjangoServer" factoryName="Django server" nameIsGenerated="true">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="django-gentelella" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
-        <env name="DJANGO_SETTINGS_MODULE" value="gentelella.settings" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\evgak\.venv\pvclinical\Scripts\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <option name="port" value="8000" />
-      <option name="host" value="" />
-      <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="" />
-      <option name="runTestServer" value="false" />
-      <option name="runNoReload" value="false" />
-      <option name="useCustomRunCommand" value="false" />
-      <option name="customRunCommand" value="" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
   </component>
@@ -519,60 +366,28 @@
       <workItem from="1574839891353" duration="5580000" />
       <workItem from="1574846616879" duration="19072000" />
       <workItem from="1574928786964" duration="24306000" />
-<<<<<<< HEAD
-      <workItem from="1575011820317" duration="14541000" />
-      <workItem from="1575474531247" duration="38000" />
-      <workItem from="1575474569325" duration="242000" />
-      <workItem from="1575474829208" duration="622000" />
-      <workItem from="1575527073078" duration="2408000" />
-      <workItem from="1575550335166" duration="6205000" />
-      <workItem from="1575622968931" duration="7920000" />
-      <workItem from="1576049165654" duration="89000" />
-      <workItem from="1576049274032" duration="148000" />
-      <workItem from="1576049440098" duration="19022000" />
-      <workItem from="1576134529668" duration="604000" />
-      <workItem from="1576141515903" duration="1200000" />
-      <workItem from="1576222286362" duration="1230000" />
-      <workItem from="1576484744666" duration="3757000" />
-    </task>
-    <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="Python.DjangoServer">
-        <watch expression="request.GET[&quot;id&quot;]" language="Python" />
-        <watch expression="Scenario.objects.count" language="Python" />
-        <watch expression="Scenario.objects.get(id=scenario_id)" language="Python" />
-        <watch expression="scenario[&quot;drugs&quot;].__len__()" language="Python" />
-      </configuration>
-    </watches-manager>
-=======
       <workItem from="1575011820317" duration="18714000" />
       <workItem from="1575271187271" duration="22769000" />
       <workItem from="1575361458368" duration="14649000" />
       <workItem from="1575443660843" duration="16603000" />
-      <workItem from="1575616584211" duration="22906000" />
+      <workItem from="1575616584211" duration="23490000" />
+      <workItem from="1575876206219" duration="12361000" />
+      <workItem from="1575962270141" duration="34454000" />
+      <workItem from="1576049729946" duration="25074000" />
+      <workItem from="1576135227895" duration="26695000" />
+      <workItem from="1576222063282" duration="6819000" />
+      <workItem from="1576242907256" duration="10674000" />
+      <workItem from="1576481766527" duration="1221000" />
+      <workItem from="1576593133848" duration="2958000" />
+      <workItem from="1576654521651" duration="20784000" />
+      <workItem from="1576739610558" duration="9618000" />
+      <workItem from="1576752306486" duration="799000" />
+      <workItem from="1578559838995" duration="18451000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="431302000" />
+    <option name="totallyTimeSpent" value="601794000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -587,11 +402,11 @@
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.37963477" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21250692" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32937366" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4997233" weight="0.32937366" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -600,68 +415,23 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32937366" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.31965443" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5002767" side_tool="true" weight="0.32937366" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.31965443" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32937366" />
-      <window_info anchor="right" x="0" y="0" width="413" height="855" id="Documentation" side_tool="true" weight="0.32982844" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" auto_hide="true" id="SciView" order="3" show_stripe_button="false" type="FLOATING" weight="0.32982844" />
+      <window_info anchor="right" id="SciView" order="3" weight="0.32982844" />
       <window_info anchor="right" id="R Graphics" order="4" weight="0.32982844" />
       <window_info anchor="right" id="R Packages" order="5" weight="0.32982844" />
       <window_info anchor="right" id="Database" order="6" weight="0.32982844" />
+      <window_info anchor="right" x="0" y="0" width="413" height="855" id="Documentation" order="7" side_tool="true" weight="0.32982844" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/tr/datatables/Greek.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/tables_dynamic.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33645">
-          <caret line="2243" column="40" selection-start-line="2243" selection-start-column="31" selection-end-line="2243" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/scenarios_table.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="19" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/errors_redirects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="62" selection-start-line="14" selection-start-column="62" selection-end-line="14" selection-end-column="62" />
-          <folding>
-            <element signature="e#57#102#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templatetags/custom_tags.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/fields.py" />
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/app_errors.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="19" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/calendar.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/templates/registration/password_change_form.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -725,13 +495,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/top_navigation.html">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -741,13 +504,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/font-awesome/css/font-awesome.css">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2850">
-          <caret line="190" column="8" selection-start-line="190" selection-start-column="8" selection-end-line="190" selection-end-column="8" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/validator/validator.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -759,29 +515,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/custom.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-          <folding>
-            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="e#77#84#1" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/datatables-translate.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="4" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="804" column="72" selection-start-line="804" selection-start-column="65" selection-end-line="804" selection-end-column="72" />
         </state>
       </provider>
     </entry>
@@ -802,16 +539,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/gentelella/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="97" column="47" selection-start-line="96" selection-start-column="8" selection-end-line="97" selection-end-column="47" />
-          <folding>
-            <element signature="e#312#321#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2/src/js/jquery.select2.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -825,23 +552,131 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2-multi-checkboxes/package.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2-multi-checkboxes/package.json" />
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2/select2.jquery.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2-multi-checkboxes/select2.multi-checkboxes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="773">
-          <caret line="63" column="26" selection-start-line="63" selection-start-column="4" selection-end-line="63" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/static/vendors/select2-multi-checkboxes/select2.multi-checkboxes.js" />
     <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/css/custom.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="182">
           <caret line="2333" column="6" selection-start-line="2333" selection-start-column="2" selection-end-line="2333" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario (conflicted copy 2019-12-06 171652).html" />
+    <entry file="file://$PROJECT_DIR$/gentelella/app/password_validators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/custom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="474">
+          <caret line="5123" lean-forward="true" selection-start-line="5123" selection-end-line="5123" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/modals/info_modal.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/OpenFDAWorkspace_detailedView.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/modals/confirm_modal.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/sidebar.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="46" column="38" selection-start-line="46" selection-start-column="38" selection-end-line="46" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="43" column="14" selection-start-line="43" selection-start-column="10" selection-end-line="43" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/form_base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="28" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/xx.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="107" column="5" selection-start-line="107" selection-start-column="1" selection-end-line="107" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/base_site.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="63" column="14" selection-start-line="63" selection-start-column="14" selection-end-line="63" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/modals/parametric_modal.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="67" selection-start-line="11" selection-start-column="67" selection-end-line="11" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/helper_modules.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1845">
+          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+          <folding>
+            <element signature="e#0#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/gentelella/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="199" column="29" lean-forward="true" selection-start-line="194" selection-end-line="202" selection-end-column="48" />
+          <folding>
+            <element signature="e#312#321#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -854,102 +689,74 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
+        <state relative-caret-position="240">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/apps.py">
+    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/base_site.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="107" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="107" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/retrieve_meddata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="65" selection-start-line="65" selection-end-line="65" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/helper_modules.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="104" column="90" selection-start-line="104" selection-start-column="90" selection-end-line="104" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/form_base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="85" column="61" lean-forward="true" selection-start-line="85" selection-start-column="36" selection-end-line="85" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/css/pv_dash.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="65" column="23" selection-start-line="65" selection-start-column="23" selection-end-line="65" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="150" column="67" selection-start-line="150" selection-start-column="67" selection-end-line="150" selection-end-column="67" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="602">
+          <caret line="77" column="38" lean-forward="true" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
+        <state relative-caret-position="225">
+          <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gentelella/app/static/build/js/scenario.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-840">
-          <caret line="46" column="11" lean-forward="true" selection-start-line="46" selection-start-column="11" selection-end-line="46" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="67" column="30" selection-start-line="67" selection-start-column="30" selection-end-line="67" selection-end-column="30" />
+        <state relative-caret-position="197">
+          <caret line="77" column="22" lean-forward="true" selection-start-line="77" selection-start-column="22" selection-end-line="77" selection-end-column="22" />
         </state>
       </provider>
     </entry>
->>>>>>> master
+    <entry file="file://$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES/django.po">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="71" column="17" selection-start-line="71" selection-start-column="17" selection-end-line="71" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/retrieve_meddata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="31" column="9" lean-forward="true" selection-start-line="31" selection-start-column="9" selection-end-line="31" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gentelella/app/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>
