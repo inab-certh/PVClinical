@@ -14,7 +14,8 @@ require(wordcloud)
 library(shiny)
 library(shiny.i18n)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
-# translator$set_translation_language('en')
+translator$set_translation_language('en')
+setLanguage('en')
 # i18n$set_translation_language("gr")
 
 #source('helperfunctions.r')
@@ -1044,7 +1045,7 @@ shinyServer(function(input, output, session) {
   getindcounts <- reactive({
     geturlquery()
     if ( is.null( getdrugname() ) ){
-      return(data.frame( c(paste('Please enter a', getsearchtype(), 'name'), '') ) )
+      return(data.frame( i18n()$t(c(paste('Please enter a', getsearchtype(), 'name'), '')) ) )
     }
     myurl <- buildURL( v= getbestdrugvarname(), t=getbestdrugname(),
                        count= paste0( 'patient.drug.drugindication', '.exact'), limit=999)
@@ -1743,7 +1744,7 @@ shinyServer(function(input, output, session) {
     geturlquery()
     if ( is.null( getterm1( session ) ) ){
       
-      return(data.frame( c(paste('Please enter a', getsearchtype(), 'name'), '') ) )
+      return(data.frame( i18n()$t(c(paste('Please enter a', getsearchtype(), 'name'), '')) ) )
     }
     v <- c( getbestvar1(), gettimevar() )
     t <- c( getbestterm1(), gettimerange() )
@@ -1935,8 +1936,7 @@ shinyServer(function(input, output, session) {
   
   prr <- reactive({  
     if (getterm1( session )=="") {
-      #browser()
-      return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
+      return(data.frame(Term=i18n()$t(paste('Please enter a', getsearchtype(), 'name')), Count=0, Count=0, PRR=0, ROR=0))
     } else {
       tableout(mydf = getprr()$comb,  
                mynames = NULL,
@@ -1948,11 +1948,20 @@ shinyServer(function(input, output, session) {
     prr()
   },  sanitize.text.function = function(x) x)
   
-  output$prr2 <- renderDataTable({  
-    prr()
-  }, options = list(
-    autoWidth = TRUE,
-    columnDefs = list(list(width = '50', targets = c(1, 2) ) ) ),  escape = FALSE )
+  output$prr2 <- renderDT({  
+    datatable(
+      prr(),
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        language = list(
+          url = ifelse(input$selected_language=='gr', 
+                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
+                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+        )
+      )
+    )
+  })
   
   
   cloudprr <- reactive({  
@@ -2320,10 +2329,6 @@ shinyServer(function(input, output, session) {
     HTML(stri_enc_toutf8(i18n()$t("quickview")))
 
   })
-  output$quickview2 <- renderText({ 
-    ser<-i18n()$t("Please enter a Drug name")
-    return(stri_enc_toutf8(ser))
-  })
   output$graphpicture <- renderImage({
     
     list(src = "www/graphPicture.png",
@@ -2341,17 +2346,17 @@ shinyServer(function(input, output, session) {
     if (length(selected) > 0 && selected %in% translator$languages) {
       translator$set_translation_language(selected)
     }
+    setLanguage(selected)
     translator
   })
   output$page_content <- renderUI({
     selectInput('selected_language',
                       i18n()$t("Change language"),
-                      choices = translator$languages,
+                      choices = c("en","gr"),
                       selected = input$selected_language)
      
   })
+})
       
   
-  
-})
 
