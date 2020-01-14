@@ -46,6 +46,116 @@
         "def":"Please enter a Drug name",
         "en":"Please enter a Drug name",
         "gr":"Παρακαλώ εισάγετε όνομα φαρμάκου"
+      },
+      {
+        "def":"from",
+        "en":"from",
+        "gr":"από"
+      },
+      {
+        "def":"to",
+        "en":"to",
+        "gr":"εώς"
+      },
+      {
+        "def":"receivedate",
+        "en":"receivedate",
+        "gr":"ημερομηνία"
+      },
+      {
+        "def":"Dashboard",
+        "en":"Dashboard",
+        "gr":"Ταμπλό"
+      },
+      {
+        "def":"Product Summary",
+        "en":"Product Summary",
+        "gr":"Σύνοψη προϊόντων"
+      },
+      {
+        "def":"Table",
+        "en":"Table",
+        "gr":"Πίνακας"
+      },
+      {
+        "def":"Dotchart",
+        "en":"Dotchart",
+        "gr":"Διάγραμμα σημείων"
+      },
+      {
+        "def":"Piechart",
+        "en":"Piechart",
+        "gr":"Διάγραμμα πίτας"
+      },
+      {
+        "def":"Adverse Events and Concomitant Medications",
+        "en":"Adverse Events and Concomitant Medications",
+        "gr":"Ανεπιθύμητες ενέργειες και συγχορηγούμενα φάρμακα"
+      },
+      {
+        "def":"Events",
+        "en":"Events",
+        "gr":"Συμβάντα"
+      },
+      {
+        "def":"Concomitant Medications",
+        "en":"Concomitant Medications",
+        "gr":"Συγχορηγούμενα φάρμακα"
+      },
+      {
+        "def":"Indications",
+        "en":"Indications",
+        "gr":"Ενδείξεις"
+      },
+      {
+        "def":"Other Apps",
+        "en":"Other Apps",
+        "gr":"Άλλες εφαρμογές"
+      },
+      {
+        "def":"Data Reference",
+        "en":"Data Reference",
+        "gr":"Αναφορά δεδομένων"
+      },
+      {
+        "def":"About",
+        "en":"About",
+        "gr":"Σχετικά"
+      },
+      {
+        "def":"Primary Source Qualifications",
+        "en":"Primary Source Qualifications",
+        "gr":"Πρωτογενή προσόντα πηγών"
+      },
+      {
+        "def":"Gender",
+        "en":"Gender",
+        "gr":"Γένος"
+      },
+      {
+        "def":"Preferred Term",
+        "en":"Preferred Term",
+        "gr":"Προτιμώμενος όρος"
+      },
+      {
+        "def":"Case Counts for",
+        "en":"Case Counts for",
+        "gr":"Καταμέτρηση περιπτώσεων για"
+      },
+      {
+        "def":"Count",
+        "en":"Count",
+        "gr":"Αριθμός"
+      },
+      {
+        "def":"Tables",
+        "en":"Tables",
+        "gr":"Πίνακες"
+      },
+      {
+        "def":"Word Cloud",
+        "en":"Word Cloud",
+        "gr":"Λέξεις"
       }
       
       

@@ -333,7 +333,7 @@ usepopup <- function()
 
 renderDates <- function() { 
   
-  ( htmlOutput('date1') )
+  ( uiOutput('date1') )
   
 }  
 
