@@ -1,4 +1,9 @@
-
+require(shiny)
+require(shinyBS)
+library(shiny.i18n)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
+setLanguage('en')
 #*****************************************************
 shinyServer(function(input, output, session) {
   # observe({
@@ -954,5 +959,64 @@ getcururl <- reactive({
     s <- makeapplinks(  getcururl(), getqueryvars( 1 ) ) 
 #    write(s, file='')
     return( makeapplinks(  getcururl(), getqueryvars( 1 ) )  )
-  }) 
+  })
+  i18n <- reactive({
+    selected <- input$selected_language
+    if (length(selected) > 0 && selected %in% translator$languages) {
+      translator$set_translation_language(selected)
+    }
+    setLanguage(selected)
+    translator
+  })
+  output$page_content <- renderUI({
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = input$selected_language)
+    
+  })
+  output$UseReportsBetween <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("UseReportsBetween")))
+    
+  })
+  output$PRRRORResults <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("PRR and ROR Results")))
+    
+  })
+  
+  
+  
+  output$AnalyzedEventCountsforSpecifiedDrug <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for Specified Drug")))
+    
+  })
+  output$AnalyzedEventCountsforAllDrugs <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for All Drugs")))
+    
+  })
+  output$RankedEventCountsforDrug <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Ranked Event Counts for Drug")))
+    
+  })
+  output$CountsForDrugsInSelectedReports <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+    
+  })
+  output$CountsForIndicationsInSelectedReports <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For Indications In Selected Reports")))
+    
+  })
+  output$OtherApps <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+    
+  })
+  output$DataReference <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+    
+  })
+  output$About <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("About")))
+    
+  })
+  
 })

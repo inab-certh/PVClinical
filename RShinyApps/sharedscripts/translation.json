@@ -156,6 +156,46 @@
         "def":"Word Cloud",
         "en":"Word Cloud",
         "gr":"Λέξεις"
+      },
+      {
+        "def":"UseReportsBetween",
+        "en":"Use Reports Between:",
+        "gr":"Χρήση αναφορών μεταξύ"
+      },
+      {
+        "def":"PRR and ROR Results",
+        "en":"PRR and ROR Results",
+        "gr":"PRR και ROR Αποτελέσματα"
+      }
+      
+      
+      
+      
+      ,
+      {
+        "def":"Analyzed Event Counts for Specified Drug",
+        "en":"Analyzed Event Counts for Specified Drug",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο"
+      },
+      {
+        "def":"Analyzed Event Counts for All Drugs",
+        "en":"Analyzed Event Counts for All Drugs",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα"
+      },
+      {
+        "def":"Ranked Event Counts for Drug",
+        "en":"Ranked Event Counts for Drug",
+        "gr":"Κατατάσσεται η καταμέτρηση συμβάντων για ναρκωτικά"
+      },
+      {
+        "def":"Counts For Drugs In Selected Reports",
+        "en":"Counts For Drugs In Selected Reports",
+        "gr":"Μετράει για ναρκωτικά σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts For Indications In Selected Reports",
+        "en":"Counts For Indications In Selected Reports",
+        "gr":"Μετράει για ενδείξεις σε επιλεγμένες αναφορές"
       }
       
       
