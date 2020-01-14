@@ -42,7 +42,7 @@ getcurtab <- function() {
 }  
 
 shinyUI(fluidPage(
-                  fluidRow(useShinyjs(),
+                  fluidRow(useShinyjs(), uiOutput('page_content'),
                     
                     column(width=12,
                            titlePanel("RR-Drug" ) ),
@@ -75,9 +75,9 @@ shinyUI(fluidPage(
                                      placement='bottom')
                       
                     ),
-                    tags$div(style='padding-left:40px',dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date())),
+                    tags$div(style='padding-left:40px',dateRangeInput('daterange', uiOutput('UseReportsBetween'), start = '1989-6-30', end = Sys.Date())),
                     tabsetPanel(
-                      tabPanel("PRR and ROR Results",
+                      tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(
                                  htmlOutput( 'prrtitle' )
                                ),
@@ -90,7 +90,7 @@ shinyUI(fluidPage(
                                            popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
                                            poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
                       ),
-                      tabPanel("Analyzed Event Counts for Specified Drug"   ,
+                      tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
                                wellPanel( 
                                  htmlOutput( 'alldrugtext' ),
                                  htmlOutput_p( 'queryalldrugtext' ,
@@ -110,7 +110,7 @@ shinyUI(fluidPage(
                                                poptext=c( tt('event2'), tt('word2') )
                                )
                       ),
-                      tabPanel("Analyzed Event Counts for All Drugs",
+                      tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
                                wellPanel( 
                                  htmlOutput( 'alltext' ),
                                  htmlOutput_p( 'queryalltext' ,
@@ -127,7 +127,7 @@ shinyUI(fluidPage(
                                                popheads=c( tt('event1'), tt('word1') ), 
                                                poptext=c( tt('event2'), tt('word2') ))
                       ),
-                      tabPanel("Ranked Event Counts for Drug",
+                      tabPanel(uiOutput("RankedEventCountsforDrug"),
                                wellPanel( 
                                  htmlOutput( 'cotextE' ),
                                  htmlOutput_p( 'querycotextE' ,
@@ -149,7 +149,7 @@ shinyUI(fluidPage(
                                                popheads=c( tt('codrug1'), tt('word1') ), 
                                                poptext=c( tt('codrug3'), tt('word2') ))
                       ),
-                      tabPanel("Counts For Drugs In Selected Reports",
+                      tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                                wellPanel( 
                                  htmlOutput( 'cotext' ),
                                  htmlOutput_p( 'querycotext' ,
@@ -167,7 +167,7 @@ shinyUI(fluidPage(
                                                popheads=c( tt('codrug1'), tt('word1') ), 
                                                poptext=c( tt('codrug3'), tt('word2') ))
                       ),
-                      tabPanel("Counts For Indications In Selected Reports",
+                      tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
                                wellPanel( 
                                  htmlOutput( 'indtext' ),
                                  htmlOutput_p( 'queryindtext' ,
@@ -182,13 +182,13 @@ shinyUI(fluidPage(
                                                popheads=c( tt('indication1'), tt('word1') ),
                                                poptext=c( tt('indication2'), tt('word2') ) )
                       ),
-                      tabPanel("Other Apps",  
+                      tabPanel(uiOutput("OtherApps"),  
                                wellPanel( 
                                  htmlOutput( 'applinks' )
                                )
                       ),
-                      tabPanel('Data Reference', HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
-                      tabPanel('About', 
+                      tabPanel(uiOutput("DataReference"), HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
+                      tabPanel(uiOutput("About"), 
                                # img(src='l_openFDA.png'),
                                HTML( (loadhelp('about') ) )  ),
                       #                 tabPanel("session",  
@@ -196,7 +196,7 @@ shinyUI(fluidPage(
                       #                            verbatimTextOutput( 'urlquery' )
                       #                          )
                       #                 ),
-                      id='maintabs', selected=  "PRR and ROR Results" 
+                      id='maintabs', selected=  uiOutput("PRRRORResults") 
                   ),
 #   img(src='l_openFDA.png'),
 #   titlePanel("RR-Drug"),
