@@ -23,6 +23,26 @@
         "gr": "Αλλαγή στη μέση ανάλυση για"
       },
       {
+        "def":"Change in Mean Analysis",
+        "en": "Change in Mean Analysis",
+        "gr": "Αλλαγή στη μέση ανάλυση"
+      },
+      {
+        "def":"Change in Variance Analysis",
+        "en": "Change in Variance Analysis",
+        "gr": "Αλλαγή ανάλυσης διακύμανσης"
+      },
+      {
+        "def":"Bayesian Changepoint Analysis",
+        "en": "Bayesian Changepoint Analysis",
+        "gr": "Bayesian Ανάλυση Αλλαγών"
+      },
+      {
+        "def":"Report Counts by Date",
+        "en": "Report Counts by Date",
+        "gr": "Αναφορά μετράει κατά ημερομηνία"
+      },
+      {
         "def":"and",
         "en": "and",
         "gr": "και"
@@ -248,6 +268,46 @@
         "def":"Please select a drug and event",
         "en":"Please select a drug and event",
         "gr":"Επιλέξτε ένα φάρμακο και ένα συμβάν"
+      },
+      {
+        "def":"Changepoint type      : Change in",
+        "en":"Changepoint type      : Change in",
+        "gr":"Τύπος αλλαγής         : Αλλαγή σε"
+      },
+      {
+        "def":"Method of analysis    :",
+        "en":"Method of analysis    :",
+        "gr":"Μέθοδος ανάλυσης      :"
+      },
+      {
+        "def":"Test Statistic  :",
+        "en":"Test Statistic  :",
+        "gr":"Δοκιμαστική Στατιστική  :"
+      },
+      {
+        "def":"Type of penalty       :",
+        "en":"Type of penalty       :",
+        "gr":"Είδος ποινής          "
+      },
+      {
+        "def":"with value",
+        "en":"with value",
+        "gr":"με αξία"
+      },
+      {
+        "def":"Maximum no. of cpts   : ",
+        "en":"Maximum no. of cpts   : ",
+        "gr":"Μέγιστο αριθ. των cpts"
+      },
+      {
+        "def":"Changepoint Locations :",
+        "en":"Changepoint Locations :",
+        "gr":"Σημεία αλλαγής σημείου"
+      },
+      {
+        "def":"Date Report Was First Received by FDA.",
+        "en":"Date Report Was First Received by FDA.",
+        "gr":"Η αναφορά ημερομηνίας λήφθηκε για πρώτη φορά από τον FDA."
       }
     ]
 }

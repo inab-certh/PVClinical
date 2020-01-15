@@ -4,6 +4,11 @@ require('lubridate')
 require('bcp')
 require('changepoint')
 require('zoo')
+library(shiny.i18n)
+library(DT)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
+setLanguage('en')
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
@@ -453,27 +458,49 @@ output$querycotextE <- renderText({
   paste( '<b>Query:</b>', removekey( makelink( l['myurl'] ) ), '<br>')
 })
 
-output$coquery <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsD()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)  
+# output$coquery <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsD()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)  
 
-output$coqueryE <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+output$coquery <- renderDT({
+  codrugs <- getcocountsD()$mydf
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+},  escape=FALSE)
+
+
+# output$coqueryE <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsE()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)
+
+
+output$coquery <- renderDT({
   codrugs <- getcocountsE()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+},  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -623,7 +650,7 @@ output$allquerytext <- renderText({
 })
 
 
-output$cpmeantext <- renderText ({
+output$cpmeantext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
@@ -635,17 +662,17 @@ output$cpmeantext <- renderText ({
     s <- calccpmean()
     mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
     mycpts <-paste(mycpts, collapse=', ')
-    out <- paste( 'Changepoint type      : Change in', s@cpttype, '<br>' )
-    out <- paste(out,  'Method of analysis    :' , s@method , '<br>' )
-    out <- paste(out, 'Test Statistic  :' , s@test.stat, '<br>' )
-    out <- paste(out, 'Type of penalty       :' , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
-    out <- paste(out, 'Maximum no. of cpts   : ' , s@ncpts.max, '<br>' )
-    out <- paste(out, 'Changepoint Locations :' , mycpts , '<br>' )
+    out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+    out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+    out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+    out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
+    out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+    out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
     closeAlert(session, 'calclert')
     } else {
-      out <- "Insufficient data"
+      out <- i18n()$t('Insufficient data')
     }
-return(out)
+return(HTML(out))
 })
 
 output$cpmeanplot <- renderPlot ({
@@ -659,7 +686,7 @@ output$cpmeanplot <- renderPlot ({
     
     if ( getterm1( session, FALSE )==''  )
       {
-      mydrugs <- 'All Drugs'
+      mydrugs <- i18n()$t("All Drugs")
       }
     else 
       {
@@ -667,13 +694,13 @@ output$cpmeanplot <- renderPlot ({
       }
     if ( getterm2( session, FALSE )=='' )
       {
-        myevents <- 'All Events'
+        myevents <- i18n()$t("All Events")
       }
     else 
       {
         myevents <- getterm2( session, FALSE )
       }
-    mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+    mytitle <- paste( i18n()$t("Change in Mean Analysis for"), mydrugs, i18n()$t("and"), myevents )
     plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
     axis(1, pos,  labs[pos], las=2  )
     grid(nx=NA, ny=NULL)
@@ -682,22 +709,22 @@ output$cpmeanplot <- renderPlot ({
     }
 })
 
-output$cpvartext <- renderText ({
+output$cpvartext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
     s <- calccpvar()
     mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
     mycpts <-paste(mycpts, collapse=', ')
-    out <- paste( 'Changepoint type      : Change in', s@cpttype, '<br>' )
-    out <- paste(out,  'Method of analysis    :' , s@method , '<br>' )
-    out <- paste(out, 'Test Statistic  :' , s@test.stat, '<br>' )
-    out <- paste(out, 'Type of penalty       :' , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
-    out <- paste(out, 'Maximum no. of cpts   : ' , s@ncpts.max, '<br>' )
-    out <- paste(out, 'Changepoint Locations :' , mycpts , '<br>' )
-    return(out)
+    out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+    out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+    out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+    out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, i18n()$t('with value'), round(s@pen.value, 6), '<br>' )
+    out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+    out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
+    return(HTML(out))
     } else {
-      return ( 'Insufficient Data' )
+      return ( HTML(i18n()$t('Insufficient Data') ))
     }
 })
 
@@ -804,6 +831,65 @@ geturlquery <- reactive({
   updateRadioButtons(session, 'useexactD', selected = q$exactD)
   updateRadioButtons(session, 'useexactE', selected = q$exactE)
   return(q)
+})
+output$ChangeinMeanAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change in Mean Analysis")))
+  
+})
+output$ChangeinVarianceAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change in Variance Analysis")))
+  
+})
+output$BayesianChangepointAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Bayesian Changepoint Analysis")))
+  
+})
+output$ReportCountsbyDate <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Report Counts by Date")))
+  
+})
+output$CountsForDrugsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+  
+})
+output$CountsForEventsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+  
+})
+output$OtherApps <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+  
+})
+output$DataReference <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+  
+})
+output$About <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("About")))
+  
+})
+output$DateReportWasFirstReceivedbyFDA <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Date Report Was First Received by FDA.")))
+  
+})
+
+
+
+
+i18n <- reactive({
+  selected <- input$selected_language
+  if (length(selected) > 0 && selected %in% translator$languages) {
+    translator$set_translation_language(selected)
+  }
+  setLanguage(selected)
+  translator
+})
+output$page_content <- renderUI({
+  selectInput('selected_language',
+              i18n()$t("Change language"),
+              choices = c("en","gr"),
+              selected = input$selected_language)
+  
 })
 
 
