@@ -163,9 +163,9 @@
         "gr":"Χρήση αναφορών μεταξύ"
       },
       {
-        "def":"PRR and ROR Results",
-        "en":"PRR and ROR Results",
-        "gr":"PRR και ROR Αποτελέσματα"
+        "def":"Plot PRR between",
+        "en":"Plot PRR between",
+        "gr":"Σχέδιο PRR μεταξύ"
       }
       
       
@@ -183,14 +183,29 @@
         "gr":"Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα"
       },
       {
+        "def":"Analyzed Drug Counts for All Events",
+        "en":"Analyzed Drug Counts for All Events",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα"
+      },
+      {
         "def":"Ranked Event Counts for Drug",
         "en":"Ranked Event Counts for Drug",
-        "gr":"Κατατάσσεται η καταμέτρηση συμβάντων για ναρκωτικά"
+        "gr":"Κατατάσσεται η καταμέτρηση συμβάντων για φάρμακο"
+      },
+      {
+        "def":"Ranked Drug Counts for Event",
+        "en":"Ranked Drug Counts for Event",
+        "gr":"Κατατάσσεται ο αριθμός των φαρμάκων για το συμβάν"
       },
       {
         "def":"Counts For Drugs In Selected Reports",
         "en":"Counts For Drugs In Selected Reports",
-        "gr":"Μετράει για ναρκωτικά σε επιλεγμένες αναφορές"
+        "gr":"Μετράει για φάρμακα σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts For Events In Selected Reports",
+        "en":"Counts For Events In Selected Reports",
+        "gr":"Μετράει για συμβάντα σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts For Indications In Selected Reports",
@@ -211,8 +226,28 @@
         "def":"Reporting Ratios: Results sorted by PRR",
         "en":"Reporting Ratios: Results sorted by PRR",
         "gr":"Αναλογίες αναφορών: Αποτελέσματα ταξινομημένα κατά PRR"
+      },
+      {
+        "def":"MetaData and Queries",
+        "en":"MetaData and Queries",
+        "gr":"MetaData και ερωτήματα"
+      },
+      {
+        "def":"Report Counts and PRR",
+        "en":"Report Counts and PRR",
+        "gr":"Αναφορές μετρήσεων και PRR"
+      },
+      {
+        "def":"PRR Over Time",
+        "en":"PRR Over Time",
+        "gr":"PRR στον χρόνο"
+      },
+      
+      
+      {
+        "def":"Please select a drug and event",
+        "en":"Please select a drug and event",
+        "gr":"Επιλέξτε ένα φάρμακο και ένα συμβάν"
       }
-      
-      
     ]
 }

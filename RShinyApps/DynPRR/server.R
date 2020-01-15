@@ -2,6 +2,11 @@ require(shiny)
 require('lubridate')
 require('curl')
 require('zoo')
+library(shiny.i18n)
+library(DT)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
+setLanguage('en')
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
@@ -507,16 +512,26 @@ output$coquery <- renderTable({
   }  
 }, sanitize.text.function = function(x) x)  
 
-output$coquery2 <- renderDataTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+# output$coquery2 <- renderDataTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsD()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+#   }  
+# }, escape=FALSE) 
+
+output$query_counts2 <- renderDT({
   codrugs <- getcocountsD()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
-  }  
-}, escape=FALSE)   
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+},  escape=FALSE)
 
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
@@ -529,16 +544,26 @@ output$coqueryE <- renderTable({
   }  
 }, sanitize.text.function = function(x) x)
 
-output$coqueryE2 <- renderDataTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+# output$coqueryE2 <- renderDataTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsE()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+#   }  
+# }, escape=FALSE)
+
+output$query_counts2 <- renderDT({
   codrugs <- getcocountsE()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-  }  
-}, escape=FALSE)
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+    },  escape=FALSE)})
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -592,15 +617,32 @@ output$query_counts <- renderTable({
     } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
   }, include.rownames = FALSE, sanitize.text.function = (function(x) x) )
 
-output$query_counts2 <- renderDataTable({  
-  #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+# output$query_counts2 <- renderDataTable({  
+#   #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+#   mydf <- buildmergedtable()
+#   #   print(head(mydf))
+#   if ( is.data.frame(mydf) )
+#   {
+#     return( mydf) 
+#   } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
+# }, escape=FALSE )
+
+
+
+output$query_counts2 <- renderDT({
   mydf <- buildmergedtable()
-  #   print(head(mydf))
-  if ( is.data.frame(mydf) )
-  {
-    return( mydf) 
-  } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
-}, escape=FALSE )
+  datatable(
+    #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+    
+    #   print(head(mydf))
+    if ( is.data.frame(mydf) )
+    {
+      return( mydf) 
+    } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
+    ,  escape=FALSE)
+},  escape=FALSE)
+
+
 
 output$allquerytext <- renderText({ 
   mydf <- getquery_all()
@@ -746,9 +788,9 @@ output$prrplot <- renderPlot ({
       grid()
     } 
   } else  {
-    mytitle <-  "Please select a drug and event" 
+    mytitle <-  i18n()$t("Please select a drug and event") 
     plot( c(0,1), c(0,1),  main=mytitle )
-    text(.5, .5, "Please select a drug and event")
+    text(.5, .5, i18n()$t("Please select a drug and event"))
   }
 })
 
@@ -801,4 +843,56 @@ output$urlquery <- renderText({
   return( getcururl()  )
   })
 
+output$CountsForEventsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+  
+})
+output$CountsForDrugsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+  
+})
+output$ReportCountsandPRR <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Report Counts and PRR")))
+  
+})
+output$About <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("About")))
+  
+})
+output$DataReference <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+  
+})
+output$OtherApps <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+  
+})
+output$MetaDataandQueries <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("MetaData and Queries")))
+  
+})
+output$PRROverTime <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("PRR Over Time")))
+  
+})
+output$PlotPRRbetween <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Plot PRR between")))
+  
+})
+
+i18n <- reactive({
+  selected <- input$selected_language
+  if (length(selected) > 0 && selected %in% translator$languages) {
+    translator$set_translation_language(selected)
+  }
+  setLanguage(selected)
+  translator
+})
+output$page_content <- renderUI({
+  selectInput('selected_language',
+              i18n()$t("Change language"),
+              choices = c("en","gr"),
+              selected = input$selected_language)
+  
+})
 }) #End shinyServer

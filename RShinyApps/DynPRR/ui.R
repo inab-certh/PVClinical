@@ -33,7 +33,7 @@ renderEventText <- function() {
   
 }    
 shinyUI(fluidPage(
-  fluidRow(useShinyjs(),
+  fluidRow(useShinyjs(),uiOutput('page_content'),
            column(width=12, titlePanel("Dynamic PRR" ),
                   
                   hidden(
@@ -66,17 +66,17 @@ shinyUI(fluidPage(
                                       HTML( tt('eventname1') ), tt('eventname2'),
                                       placement='left')
                  ),
-                 dateRangeInput('daterange', 'Plot PRR between ', start = '1989-6-30', end = Sys.Date()),
+                 dateRangeInput('daterange', uiOutput('PlotPRRbetween'), start = '1989-6-30', end = Sys.Date()),
                           
       tabsetPanel(
-        tabPanel("PRR Over Time",  
+        tabPanel(uiOutput('PRROverTime'),  
                  wellPanel( 
                    plotOutput_p( 'prrplot',
                                  tt('prr1'), tt('prr5'),
                                  placement='left', height='600px' )
                  )
         ),
-      tabPanel("Report Counts and PRR", 
+      tabPanel(uiOutput('ReportCountsandPRR'), 
                wellPanel( 
                  htmlOutput_p( 'querytitle' ), 
                  dataTableOutput_p("query_counts2",
@@ -84,7 +84,7 @@ shinyUI(fluidPage(
                               placement='top' )
                )
               ),
-      tabPanel("Counts For Drugs In Selected Reports",
+      tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
                wellPanel( 
                  htmlOutput( 'cotext' ),
                  htmlOutput_p( 'querycotext' ,
@@ -102,7 +102,7 @@ shinyUI(fluidPage(
                                popheads=c( tt('codrug1'), tt('word1') ), 
                                poptext=c( tt('codrug3'), tt('word2') ))
       ),
-      tabPanel("Counts For Events In Selected Reports",
+      tabPanel(uiOutput('CountsForEventsInSelectedReports'),
                wellPanel( 
                  htmlOutput( 'cotextE' ),
                  htmlOutput_p( 'querycotextE' ,
@@ -120,7 +120,7 @@ shinyUI(fluidPage(
                                popheads=c( tt('codrug1'), tt('word1') ), 
                                poptext=c( tt('codrug3'), tt('word2') ))
       ),
-        tabPanel("Meta Data and Queries",  
+        tabPanel(uiOutput('MetaDataandQueries'),  
                  wellPanel( 
                    htmlOutput_p( 'allquerytext' ,
                                  tt('gquery1'), tt('gquery2'),
@@ -136,14 +136,14 @@ shinyUI(fluidPage(
                                  placement='bottom')
                  )
         ),
-      tabPanel("Other Apps",  
+      tabPanel(uiOutput('OtherApps'),  
                wellPanel( 
                  htmlOutput( 'applinks' )
                )
       ),
-      tabPanel('Data Reference', HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
+      tabPanel(uiOutput('DataReference'), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
       ),
-      tabPanel('About', 
+      tabPanel(uiOutput('About'), 
                img(src='l_openFDA.png'),
                HTML( (loadhelp('about') ) )  ),
 #                 tabPanel("session",  
