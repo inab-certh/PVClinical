@@ -336,6 +336,31 @@
         "def":"LRT Signal Analysis for a Drug",
         "en":"LRT Signal Analysis for a Drug",
         "gr":"Ανάλυση σήματος LRT για ένα φάρμακο"
+      },
+      {
+        "def":"LRT Signal Analysis for an Event",
+        "en":"LRT Signal Analysis for an Event",
+        "gr":"Ανάλυση σήματος LRT για ένα συμβάν"
+      },
+      
+      
+      
+      
+      {
+        "def":"LRT Results based on Total Drugs",
+        "en":"LRT Results based on Total Drugs",
+        "gr":"Αποτελέσματα LRT βάσει των συνολικών φαρμάκων"
+      },
+      {
+        "def":"Simulation Results for Drug Based LRT",
+        "en":"Simulation Results for Drug Based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT με βάση τα φάρμακα"
+      },
+      {
+        "def":"Analyzed Drug Counts for Event",
+        "en":"Analyzed Drug Counts for Event",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για συμβάντα"
       }
+      
     ]
 }

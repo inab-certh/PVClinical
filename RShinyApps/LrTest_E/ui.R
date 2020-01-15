@@ -27,8 +27,8 @@ renderNumsims <- function() {
 }  
 
 shinyUI(fluidPage(
-  fluidRow(useShinyjs(),
-           column(width=12, titlePanel("LRT Signal Analysis for a Drug" ),                           
+  fluidRow(useShinyjs(),uiOutput('page_content'),
+           column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                   
                   hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -85,10 +85,10 @@ shinyUI(fluidPage(
                                 inline = TRUE),
                    downloadButton('downloadReport', 'Download LRT Report')
                    ),
-                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
+                 dateRangeInput('daterange', uiOutput('UseReportsBetween'), start = '1989-6-30', end = Sys.Date()),
                 
       tabsetPanel(
-                tabPanel("LRT Results based on Total Drugs",
+                tabPanel(uiOutput("LRTResultsbasedonTotalDrugs"),
                          wellPanel(
                          htmlOutput( 'prrtitle' ), 
                          helpText('Results sorted by LRR')
@@ -96,16 +96,16 @@ shinyUI(fluidPage(
 #                          wordcloudtabset('cloudprr', 'prr', 
 #                                          popheads=c( tt('prr1'), tt('word1') ), 
 #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                         maketabset( c('prr', 'cloudprr', 'textplot'), 
-                                     names=c("Table","Word Cloud", "Text Plot"),
-                                     types=c('html', "plot", 'plot') )
+                        
+uiOutput("makeTabsetLRTResultsbasedonTotalDrugs")
+                         
                 ),
-              tabPanel("Simulation Results for Drug Based LRT",
+              tabPanel(uiOutput("SimulationResultsforDrugBasedLRT"),
                        wellPanel( 
                          plotOutput( 'simplot')
                         )
               ),
-              tabPanel("Analyzed Event Counts for Drug"   ,
+              tabPanel(uiOutput("AnalyzedDrugCountsforEventText")   ,
                        wellPanel( 
                          htmlOutput( 'alldrugtextAnalyzedEventCountsforDrug' ),
                          htmlOutput_p( 'alldrugqueryAnalyzedEventCountsforDrug' ,
@@ -122,7 +122,7 @@ shinyUI(fluidPage(
                        wordcloudtabset('cloudAnalyzedEventCountsforDrug', 'AnalyzedEventCountsforDrug'
                        )
               ),
-                tabPanel("Analyzed Drug Counts for All Events",
+                tabPanel(uiOutput("AnalyzedDrugCountsforAllEvents"),
                          wellPanel( 
                            htmlOutput( 'alltext' ),
                            htmlOutput_p( 'queryalltext' ,
@@ -136,7 +136,7 @@ shinyUI(fluidPage(
                                      placement='bottom' ) ),
                          wordcloudtabset('cloudall', 'all')
                 ),
-                tabPanel("Counts For Events In Selected Reports",
+                tabPanel(uiOutput("CountsForEventsInSelectedReports"),
                          wellPanel( 
                            htmlOutput( 'cotext' ),
                            htmlOutput_p( 'querycotext' ,
@@ -151,7 +151,7 @@ shinyUI(fluidPage(
                                      placement='bottom' ),
                          wordcloudtabset('cloudcoquery', 'coquery')
                  ),
-                tabPanel("Drug Counts for Event",
+                tabPanel(uiOutput("DrugCountsforEvent"),
                          wellPanel( 
                            htmlOutput( 'cotextE' ),
                            htmlOutput_p( 'querycotextE' ,
@@ -172,7 +172,7 @@ shinyUI(fluidPage(
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                 ),
-                tabPanel("Counts For All Drugs",
+                tabPanel(uiOutput("CountsForAllDrugs"),
                          wellPanel( 
                            htmlOutput( 'cotextA' ),
                            htmlOutput_p( 'querycotextA' ,
@@ -189,7 +189,7 @@ shinyUI(fluidPage(
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                 ),
-                tabPanel("Counts For Indications In Selected Reports",
+                tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
                          wellPanel( 
                            htmlOutput( 'indtext' ),
                            htmlOutput_p( 'queryindtext' ,
@@ -203,13 +203,13 @@ shinyUI(fluidPage(
                                          popheads=c( tt('indication1'), tt('word1') ),
                                          poptext=c( tt('indication2'), tt('word2') ) )
                 ),
-                tabPanel("Other Apps",  
+                tabPanel(uiOutput("OtherApps"),  
                          wellPanel( 
                            htmlOutput( 'applinks' )
                          )
                 ),
-                tabPanel('Data Reference', HTML( renderiframe('https://open.fda.gov/drug/event/')   )  ),
-                tabPanel('About', 
+                tabPanel(uiOutput('DataReference'), HTML( renderiframe('https://open.fda.gov/drug/event/')   )  ),
+                tabPanel(uiOutput('About'), 
                          img(src='l_openFDA.png'),
                          HTML( (loadhelp('about') ) )  )
 

@@ -1,4 +1,10 @@
-
+require(shiny)
+require(shinyBS)
+library(shiny.i18n)
+library(DT)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
+setLanguage('en')
 popcoquery <- function()
 {
   text <- 'Frequency table for events found in selected reports. Event name is linked to LRT results for event. \"M\" is linked to defintion of term.'
@@ -1255,5 +1261,88 @@ getcururl <- reactive({
       file.rename(out, file)
     }
   )
+  
+  output$LRTResultsbasedonTotalDrugs <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("LRT Results based on Total Drugs")))
+    
+  })
+  output$SimulationResultsforDrugBasedLRT <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Simulation Results for Drug Based LRT")))
+    
+  })
+  output$AnalyzedDrugCountsforEventText <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for Event")))
+    
+  })
+  output$AnalyzedDrugCountsforAllEvents <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for All Events")))
+    
+  })
+  output$CountsForEventsInSelectedReports <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+    
+  })
+  output$DrugCountsforEvent <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Event Counts for Event")))
+    
+  })
+  output$CountsForAllDrugs <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For All Drugs")))
+    
+  })
+  output$CountsForIndicationsInSelectedReports <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For Indications In Selected Reports")))
+    
+  })
+  output$OtherApps <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+    
+  })
+  output$DataReference <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+    
+  })
+  output$About <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("About")))
+    
+  })
+  output$UseReportsBetween <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Use Reports Between")))
+    
+  })
+  output$LRTSignalAnalysisforaDrug <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("LRT Signal Analysis for a Drug")))
+    
+  })
+  output$LRTSignalAnalysisforanEvent <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("LRT Signal Analysis for an Event")))
+    
+  })
+  output$makeTabsetLRTResultsbasedonTotalDrugs <- renderUI({ 
+    maketabset( c('prr', 'cloudprr', 'textplot'), 
+                names=getTranslatedTabsetNamesWithTextPlot(),
+                types=c('html', "plot", 'plot') )
+    
+  })
+  
+  
+  getTranslatedTabsetNamesWithTextPlot <- function(){
+    return (c( i18n()$t("Tables"),i18n()$t("Word Cloud"),i18n()$t("text Plot")))
+  }
+  
+  i18n <- reactive({
+    selected <- input$selected_language
+    if (length(selected) > 0 && selected %in% translator$languages) {
+      translator$set_translation_language(selected)
+    }
+    setLanguage(selected)
+    translator
+  })
+  output$page_content <- renderUI({
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = input$selected_language)
+  })
   
 })
