@@ -196,6 +196,21 @@
         "def":"Counts For Indications In Selected Reports",
         "en":"Counts For Indications In Selected Reports",
         "gr":"Μετράει για ενδείξεις σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts for Entire Database",
+        "en":"Counts for Entire Database",
+        "gr":"Υπολογισμός για ολόκληρη τη βάση δεδομένων"
+      },
+      {
+        "def":"text Plot",
+        "en":"text Plot",
+        "gr":"Γράφημα κειμένου"
+      },
+      {
+        "def":"Reporting Ratios: Results sorted by PRR",
+        "en":"Reporting Ratios: Results sorted by PRR",
+        "gr":"Αναλογίες αναφορών: Αποτελέσματα ταξινομημένα κατά PRR"
       }
       
       
