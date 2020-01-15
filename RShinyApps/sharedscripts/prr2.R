@@ -1071,12 +1071,24 @@ getcururl <- reactive({
     HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for All Drugs")))
     
   })
+  output$AnalyzedDrugCountsforAllEvents <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for All Events")))
+    
+  })
   output$RankedEventCountsforDrug <- renderUI({ 
     HTML(stri_enc_toutf8(i18n()$t("Ranked Event Counts for Drug")))
     
   })
+  output$RankedDrugCountsforEvent <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Ranked Drug Counts for Event")))
+    
+  })
   output$CountsForDrugsInSelectedReports <- renderUI({ 
     HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+    
+  })
+  output$CountsForEventsInSelectedReports <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
     
   })
   output$CountsForIndicationsInSelectedReports <- renderUI({ 
