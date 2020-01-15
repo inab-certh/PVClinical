@@ -308,6 +308,34 @@
         "def":"Date Report Was First Received by FDA.",
         "en":"Date Report Was First Received by FDA.",
         "gr":"Η αναφορά ημερομηνίας λήφθηκε για πρώτη φορά από τον FDA."
+      },
+      
+      
+      
+      {
+        "def":"LRT Results based on Total Events",
+        "en":"LRT Results based on Total Events",
+        "gr":"Αποτελέσματα LRT βάσει των συνολικών εκδηλώσεων"
+      },
+      {
+        "def":"Simulation Results for Event Based LRT",
+        "en":"Simulation Results for Event Based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT με βάση τα συμβάντα"
+      },
+      {
+        "def":"Analyzed Event Counts for Drug",
+        "en":"Analyzed Event Counts for Drug",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για φάρμακα"
+      },
+      {
+        "def":"Use Reports Between",
+        "en":"Use Reports Between",
+        "gr":"Χρήση αναφορών μεταξύ"
+      },
+      {
+        "def":"LRT Signal Analysis for a Drug",
+        "en":"LRT Signal Analysis for a Drug",
+        "gr":"Ανάλυση σήματος LRT για ένα φάρμακο"
       }
     ]
 }
