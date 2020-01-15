@@ -1,6 +1,7 @@
 require(shiny)
 require(shinyBS)
 library(shiny.i18n)
+library(DT)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 setLanguage('en')
@@ -572,9 +573,9 @@ geteventtotals <- reactive(
 ##
 # tabPanel("PRR and ROR Results"
 
-output$prrtitle <- renderText({ 
+output$prrtitle <- renderUI({ 
   geturlquery()
-  return('<h4>Reporting Ratios: Results sorted by PRR</h4>')
+  return(HTML(paste('<h4>',i18n()$t("Reporting Ratios: Results sorted by PRR"),'</h4>',sep='')))
 })
 
 prr <- reactive({  
@@ -592,11 +593,20 @@ output$prr <- renderTable({
  prr()
 },  sanitize.text.function = function(x) x)
 
-output$prr2 <- renderDataTable({  
-  prr()
-}, options = list(
-  autoWidth = TRUE,
-  columnDefs = list(list(width = '50', targets = c(1, 2) ) ) ),  escape = FALSE )
+output$prr2 <- renderDT({  
+  datatable(
+    prr(),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr', 
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    )
+  )
+})
 
 
 cloudprr <- reactive({  
@@ -683,11 +693,22 @@ output$specifieddrug <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 },  height=120, sanitize.text.function = function(x) x)
 
-output$specifieddrug2 <- renderDataTable({ 
-  tableout(mydf = getdrugcountstable()$mydf,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
-           error = paste( 'No results for', getterm1( session ) ) )
-},  escape=FALSE )
+output$specifieddrug2 <- renderDT({
+  datatable(
+    tableout(mydf = getdrugcountstable()$mydf,  
+             mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+             error = paste( 'No results for', getterm1( session ) )),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
+  )
+},  escape=FALSE)
 
 # tabPanel("Event Counts for All Drugs" 'alltext' 'queryalltext' 
 #'alltitle'  'allquerytext' ,'cloudall', 'all'
@@ -701,9 +722,8 @@ output$queryalltext <- renderText({
 })
 
 output$alltitle <- renderText({ 
-  return( ('<h4>Counts for Entire Database</h4><br>') )
+  return(paste('<h4>',i18n()$t("Counts for Entire Database"),'</h4><br>',sep='') )
 })
-
 cloudall <- reactive({  
   cloudout(geteventtotalstable()$sourcedf, 
            paste('Events in Reports That Contain', getterm1( session ) ) ) 
@@ -725,12 +745,22 @@ output$all <- renderTable({
   )
 }, sanitize.text.function = function(x) x)
 
-output$all2 <- renderDataTable({  
-  tableout(mydf = geteventtotalstable()$mydf, 
-           mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
-           error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
+output$all2 <- renderDT({
+  datatable(
+    tableout(mydf = geteventtotalstable()$mydf,  
+             mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+             error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
   )
-}, escape=FALSE)
+},  escape=FALSE)
 
 
 # tabPanel("Ranked Drug/Event Counts for Event/Drug 'cotextE' 'querycotextE'  'cotitleE',
@@ -771,9 +801,22 @@ output$coqueryE <- renderTable({
   coqueryE()
 }, sanitize.text.function = function(x) x)
 
-output$coqueryE2 <- renderDataTable({  
-  coqueryE()
-}, escape=FALSE)
+
+
+output$coqueryE2 <- renderDT({
+  datatable(
+    coqueryE(),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
+  )
+},  escape=FALSE)
 
 # tabPanel("Counts For Drugs In Selected Reports"
 #            htmlOutput( 'cotext' ),
@@ -811,9 +854,21 @@ coquery2 <- reactive({
   return(out)
 } )
 
-output$coquery2 <- renderDataTable({  
-  coquery2()
-},  escape=FALSE )
+
+output$coquery2 <- renderDT({
+  datatable(
+    coquery2(),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
+  )
+},  escape=FALSE)
 
 # tabPanel("Counts For Indications In Selected Reports"
 #            htmlOutput( 'indtext' ),
@@ -834,10 +889,21 @@ output$indquery <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
-output$indquery2 <- renderDataTable({ 
-  tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
-           error = paste( 'No results for', getterm1( session ) ) )
-},  escape=FALSE )
+output$indquery2 <- renderDT({
+  datatable(
+    tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+             error = paste( 'No results for', getterm1( session ) ) ),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
+  )
+},  escape=FALSE)
 
 
 
@@ -850,12 +916,23 @@ output$coqueryEex <- renderTable({
 }, sanitize.text.function = function(x) x)
 
 
-output$coqueryEex2 <- renderDataTable({  
-  tableout(mydf = getdrugcounts()$excludeddf,  
-           #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),
-           error = paste( 'No Events for', getterm1( session ) )
+output$coqueryEex2 <- renderDT({
+  datatable(
+    tableout(mydf = getdrugcounts()$excludeddf,  
+             #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),
+             error = paste( 'No Events for', getterm1( session ) )
+    ),
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(input$selected_language=='gr',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+      )
+    ),  escape=FALSE
   )
-}, escape=FALSE )
+},  escape=FALSE)
 
 #Plots========================================================
 # output$cloudquery <- renderPlot({  
@@ -1016,6 +1093,17 @@ getcururl <- reactive({
   })
   output$About <- renderUI({ 
     HTML(stri_enc_toutf8(i18n()$t("About")))
+    
+  })
+  getTranslatedTabsetNamesWithTextPlot <- function(){
+    return (c( i18n()$t("Tables"),i18n()$t("Word Cloud"),i18n()$t("text Plot")))
+  }
+  output$maketabsetPRRRORResults <- renderUI({ 
+    maketabset( c('prr2', 'cloudprr', 'textplot'), 
+                types=c('datatable', "plot", 'plot'),
+                names=getTranslatedTabsetNamesWithTextPlot(), 
+                popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
+                poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
     
   })
   

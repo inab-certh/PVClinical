@@ -79,16 +79,12 @@ shinyUI(fluidPage(
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(
-                                 htmlOutput( 'prrtitle' )
+                                 uiOutput( 'prrtitle' )
                                ),
                                #                          wordcloudtabset('cloudprr', 'prr', 
                                #                                          popheads=c( tt('prr1'), tt('word1') ), 
                                #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                               maketabset( c('prr2', 'cloudprr', 'textplot'), 
-                                           types=c('datatable', "plot", 'plot'),
-                                           names=c("Table","Word Cloud", "text Plot"), 
-                                           popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
-                                           poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
+                               uiOutput("maketabsetPRRRORResults")
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
                                wellPanel( 
