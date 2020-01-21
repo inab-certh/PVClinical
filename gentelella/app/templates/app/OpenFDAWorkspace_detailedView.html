@@ -168,13 +168,21 @@
     function openProgressIndicator() {
         $("#first").show();
     }
-
+        var language = $('#curLang').attr('data-lang');
+        var lang='gr'
+        if(language=='Greek')
+        {
+            lang='gr'
+        }
+        else{
+            lang='en'
+        }
         var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
         var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
         var scenarioDrugs = '{{ scenario.drugs }}';
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-        var shinnyAppsUrl = 'http://83.212.101.88:3838/openFDA/';
+        var shinnyAppsUrl = 'http://83.212.101.88:3838/deployshiny/';
         var shinnyAppsQueryUrl = '';
         var app = 'QuickView';
         var drug = '';
@@ -247,7 +255,7 @@
         }
 
         function buildUrl(app, drug, event) {
-            shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?';
+            shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (activeParameters.length == 2) {
                 shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
             } else if (activeParameters.includes('Drug')) {
