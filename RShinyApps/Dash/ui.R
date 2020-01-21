@@ -52,7 +52,7 @@ renderuseexact <- function() {
   ( uiOutput('useexact_in') )
   
 } 
-shinyUI(fluidPage(useShinyjs(), uiOutput('page_content'),
+shinyUI(fluidPage(useShinyjs(), 
                    fluidRow(
                      column(width=4,
                             # a(href='https://open.fda.gov/', 
@@ -64,8 +64,11 @@ shinyUI(fluidPage(useShinyjs(), uiOutput('page_content'),
                    ),
 #                    img(src='l_openFDA.png'),
 #                    titlePanel( 'Dashboard' ),
+
                     hr(),
 hidden(
+  uiOutput('page_content'),
+  
            selectInput_p("v1", 'Drug Variable' , openfdavars, 
                    HTML( tt('drugvar1') ), tt('drugvar2'),
                    placement='top'),

@@ -53,7 +53,7 @@ flags <- c(
   "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gr.svg"
 )
 
-shinyUI(fluidPage(theme = "custom.css",uiOutput('page_content'),
+shinyUI(fluidPage(theme = "custom.css",
                   fluidRow( style="height:80px;",
                             column(width=3,style="height:80px;",imageOutput("graphpicture")),
                             column(width=4,style="font-size:90px;padding-top:20px;padding-bottom:20px;",
@@ -94,6 +94,7 @@ shinyUI(fluidPage(theme = "custom.css",uiOutput('page_content'),
                            #htmlOutput( 'prrtitle' ),
                            
                     hidden(
+                      uiOutput('page_content'),
                       radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                       radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
                       radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any' ),

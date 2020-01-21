@@ -27,10 +27,11 @@ renderNumsims <- function() {
 }  
 
 shinyUI(fluidPage(
-  fluidRow(useShinyjs(),uiOutput('page_content'),
+  fluidRow(useShinyjs(),
            column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                   
                   hidden(
+                    uiOutput('page_content'),
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
