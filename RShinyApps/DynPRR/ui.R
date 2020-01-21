@@ -50,6 +50,9 @@ shinyUI(fluidPage(
                  textInput_p("t2", "Adverse Events", '', 
                              HTML( tt('eventname1') ), tt('eventname2'),
                              placement='bottom'),
+                 textInput_p("lang", "lang", '', 
+                             HTML( tt('en') ), tt('gr'),
+                             placement='bottom'),
                  renderEventText(),
                  
                    renderDrugName(),

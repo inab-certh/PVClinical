@@ -360,6 +360,11 @@
         "def":"Analyzed Drug Counts for Event",
         "en":"Analyzed Drug Counts for Event",
         "gr":"Αναλυθείσες μετρήσεις φαρμάκων για συμβάντα"
+      },
+      {
+        "def":"Change Point Analysis",
+        "en":"Change Point Analysis",
+        "gr":"Ανάλυση Change Point"
       }
       
     ]

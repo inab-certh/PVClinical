@@ -7,8 +7,6 @@ require('zoo')
 library(shiny.i18n)
 library(DT)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
-translator$set_translation_language('en')
-setLanguage('en')
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
@@ -23,7 +21,39 @@ source( 'sourcedir.R')
 #CPA
 #**************************************************
 shinyServer(function(input, output, session) {
- 
+  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
 #Getters
   getwaittime <- reactive({ 
     if(session$clientData$url_hostname == '10.12.207.87')
@@ -872,6 +902,10 @@ output$DateReportWasFirstReceivedbyFDA <- renderUI({
   HTML(stri_enc_toutf8(i18n()$t("Date Report Was First Received by FDA.")))
   
 })
+output$ChangePointAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change Point Analysis")))
+  
+})
 
 
 
@@ -881,16 +915,10 @@ i18n <- reactive({
   if (length(selected) > 0 && selected %in% translator$languages) {
     translator$set_translation_language(selected)
   }
-  setLanguage(selected)
   translator
 })
-output$page_content <- renderUI({
-  selectInput('selected_language',
-              i18n()$t("Change language"),
-              choices = c("en","gr"),
-              selected = input$selected_language)
-  
-})
+
+
 
 
 })

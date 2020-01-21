@@ -4,7 +4,7 @@ library(shiny.i18n)
 library(DT)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
-setLanguage('en')
+
 popcoquery <- function()
 {
   text <- 'Frequency table for events found in selected reports. Event name is linked to LRT results for event. \"M\" is linked to defintion of term.'
@@ -15,7 +15,38 @@ popcoquery <- function()
 shinyServer(function(input, output, session) {
   
   mywait <- 0.5
-  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
 # Getters ======  
   getwaittime <- reactive({ 
     if(session$clientData$url_hostname == '10.12.207.87')
@@ -1335,14 +1366,8 @@ getcururl <- reactive({
     if (length(selected) > 0 && selected %in% translator$languages) {
       translator$set_translation_language(selected)
     }
-    setLanguage(selected)
     translator
   })
-  output$page_content <- renderUI({
-    selectInput('selected_language',
-                i18n()$t("Change language"),
-                choices = c("en","gr"),
-                selected = input$selected_language)
-  })
+  
   
 })

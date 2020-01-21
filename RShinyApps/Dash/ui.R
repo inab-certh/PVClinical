@@ -37,7 +37,6 @@ renderv1 <- function() {
   
 }  
 renderdrugname <- function() { 
-  browser()
   s <- ( ('drugname_in') )
   s <- strsplit(s, '<', fixed=TRUE)
   s <- strsplit(s[1], '>', fixed=TRUE)
@@ -76,7 +75,9 @@ hidden(
                     placement='bottom'),
                   # ),
 
-             
+           textInput_p("lang", "lang", '', 
+                       HTML( tt('en') ), tt('gr'),
+                       placement='bottom'),
               renderDrugName(),
              radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'),
                           selected='any', inline=TRUE),
