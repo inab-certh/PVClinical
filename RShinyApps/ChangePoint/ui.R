@@ -30,7 +30,7 @@ rendermaxcp <- function() {
 } 
 shinyUI(fluidPage(
   fluidRow(useShinyjs(),uiOutput('page_content'),
-           column(width=12, titlePanel("Change Point Analysis" ),
+           column(width=12, titlePanel(uiOutput('ChangePointAnalysis') ),
                   
                   hidden(
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -45,6 +45,9 @@ shinyUI(fluidPage(
                              placement='bottom'), 
                  textInput_p("t2", "Adverse Events", '', 
                              HTML( tt('eventname1') ), tt('eventname2'),
+                             placement='bottom'),
+                 textInput_p("lang", "lang", '', 
+                             HTML( tt('en') ), tt('gr'),
                              placement='bottom'),
                  numericInput_p('maxcp', "Maximum Number of Change Points", 3, 1, step=1,
                                 HTML( tt('cplimit1') ), tt('cplimit2'),

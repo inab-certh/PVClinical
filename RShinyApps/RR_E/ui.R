@@ -42,6 +42,9 @@ shinyUI(fluidPage(fluidRow(
         tt('eventname2'),
         placement = 'bottom'
       ),
+      textInput_p("lang", "lang", '', 
+                  HTML( tt('en') ), tt('gr'),
+                  placement='bottom'),
       selectInput_p("v1", 'Drug Variable' , getdrugvarchoices(),
                     #                                               HTML( tt('drugvar1') ), tt('drugvar2'),
                     placement = 'top'),

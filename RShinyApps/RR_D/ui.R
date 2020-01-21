@@ -63,6 +63,9 @@ shinyUI(fluidPage(
                       textInput_p("t1", "Drug Name", '', 
                                   HTML( tt('drugname1') ), tt('drugname2'),
                                   placement='bottom'), 
+                      textInput_p("lang", "lang", '', 
+                                  HTML( tt('en') ), tt('gr'),
+                                  placement='bottom'),
                       
                       numericInput_p('limit', 'Maximum number of event terms', 50,
                                      1, 100, step=1, 

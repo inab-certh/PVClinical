@@ -3,7 +3,6 @@ require(shinyBS)
 library(shiny.i18n)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
-setLanguage('en')
 
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
@@ -32,6 +31,39 @@ shinyServer(function(input, output, session) {
 #     }
 #     return(0.0)
 #   })
+  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
   
   getqueryvars <- function( num = 1 ) {
     s <- vector(mode = "character", length = 7)
@@ -744,16 +776,9 @@ i18n <- reactive({
   if (length(selected) > 0 && selected %in% translator$languages) {
     translator$set_translation_language(selected)
   }
-  setLanguage(selected)
   translator
 })
-output$page_content <- renderUI({
-  selectInput('selected_language',
-              i18n()$t("Change language"),
-              choices = c("en","gr"),
-              selected = input$selected_language)
-  
-})
+
 output$dashboard <- renderUI({ 
   HTML(stri_enc_toutf8(i18n()$t("Dashboard")))
   

@@ -4,7 +4,7 @@ library(shiny.i18n)
 library(DT)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
-setLanguage('en')
+
 #*****************************************************
 shinyServer(function(input, output, session) {
   # observe({
@@ -25,6 +25,38 @@ shinyServer(function(input, output, session) {
   #   }
   # })
   #Getters ===============================================================
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
   getqueryvars <- function( num = 1 ) {
    #browser()
    
@@ -604,9 +636,9 @@ output$prr2 <- renderDT({
                      '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
                      '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
       )
-    )
+    ),  escape=FALSE
   )
-})
+},  escape=FALSE)
 
 
 cloudprr <- reactive({  
@@ -1042,15 +1074,7 @@ getcururl <- reactive({
     if (length(selected) > 0 && selected %in% translator$languages) {
       translator$set_translation_language(selected)
     }
-    setLanguage(selected)
     translator
-  })
-  output$page_content <- renderUI({
-    selectInput('selected_language',
-                i18n()$t("Change language"),
-                choices = c("en","gr"),
-                selected = input$selected_language)
-    
   })
   output$UseReportsBetween <- renderUI({ 
     HTML(stri_enc_toutf8(i18n()$t("UseReportsBetween")))
