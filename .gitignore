@@ -12,3 +12,4 @@ gentelella/users/migrations/__pycache__/
 gentelella/__pycache__/
 .idea/
 RShinyApps/QuickView/rsconnect/shinyapps.io/
+gentelella/gentelella/settings.py
