@@ -25,45 +25,45 @@
 
 {% block buttongroup %}
 
-
     <div class="btn-group mb-3 dropdown pull-right">
-        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if not scenario_id %}disabled{% endif %} >
             {% trans "Περιβάλλοντα Εργασίας" %} <i class="fa fa-caret-right"></i>
         </button>
-        <ul class="dropdown-menu dropdown-menu-right">
-            <!-- Dropdown menu links -->
-            <li>
-                <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                <span class="text-center">
-                    <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                    <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
-                </span>
-            </a>
-            </li>
-            <li role="separator" class="divider"></li>
-            <li>
-                <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                <span class="text-center">
-                    <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                    <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
-                </span>
-            </a>
-            </li>
-            <li role="separator" class="divider"></li>
-            <li>
-                <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                <span class="text-center">
-                    <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                    <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
-                </span>
-            </a>
-            </li>
+        {% if scenario_id %}
+            <ul class="dropdown-menu dropdown-menu-right">
+                <!-- Dropdown menu links -->
+                <li>
+                    <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                    <span class="text-center">
+                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                        <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                    </span>
+                </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                    <span class="text-center">
+                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                        <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                    </span>
+                </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'OpenFDAWorkspace_detailedView' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                    <span class="text-center">
+                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                        <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                    </span>
+                </a>
+                </li>
 
 
 
-        </ul>
+            </ul>
+        {% endif %}
     </div>
-
 <br>
 {% endblock %}
 

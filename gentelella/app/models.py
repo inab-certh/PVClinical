@@ -19,7 +19,7 @@ class Status(models.Model):
     """
 
     status_choices = [("CREATING", _("Υπό δημιουργία")),
-                      ("RUNNING", _("Τρέχει")),
+                      ("RUNNING", _("Σε εξέλιξη")),
                       ("COMPLETED", _("Ολοκληρώθηκε")),]
 
     status = models.CharField(
