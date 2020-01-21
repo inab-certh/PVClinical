@@ -42,7 +42,7 @@ getcurtab <- function() {
 }  
 
 shinyUI(fluidPage(
-                  fluidRow(useShinyjs(), uiOutput('page_content'),
+                  fluidRow(useShinyjs(), 
                     
                     column(width=12,
                            titlePanel("RR-Drug" ) ),
@@ -50,6 +50,8 @@ shinyUI(fluidPage(
                     bsAlert("alert2"),
                     
                     hidden(
+                      uiOutput('page_content'),
+                      
                       radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                       
                       renderDates(),

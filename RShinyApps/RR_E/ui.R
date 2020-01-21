@@ -28,12 +28,14 @@ renderStart <- function() {
 }
 shinyUI(fluidPage(fluidRow(
   useShinyjs(),
-  uiOutput('page_content'),
+  
   column(
     width = 12,
     titlePanel("RR-Event"),
     
     hidden(
+      uiOutput('page_content'),
+      
       textInput_p(
         "t1",
         "Adverse Reaction",
