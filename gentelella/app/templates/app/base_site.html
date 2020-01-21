@@ -50,6 +50,19 @@
   </head>
 
   <body class="{% block body_class %}nav-md {% endblock body_class %}">
+    <a id="topPVLogo" href="{% url 'index' %}" class="site_title hidden-md hidden-lg mb-minus-5">
+      <div class="row logo-block container-fluid">
+        <img src="/static/images/lens_w.png" class="col-xs-2 logo-icon img-responsive">
+        <div class="row col-xs-9">
+          <span id="pv-logo-txt">PV</span>
+          <span id="clinical-logo-txt">Clinical</span>
+        </div>
+      </div>
+      <!--<i class="fa fa-spinner"></i>-->
+      <!--<img src="/static/images/pvclinical_w.png" class="logo-block img-responsive">-->
+    </a>
+
+
 
     <form class="mt-1" name="languageForm" id="languageForm" action="{% url 'set_language' %}" method="post">{% csrf_token %}
         <input name="next" type="hidden" value="{{ redirect_to }}">
@@ -58,6 +71,8 @@
         {% get_language_info for LANGUAGE_CODE as cur_lang %}
         {% get_available_languages as LANGUAGES %}
         {% get_language_info_list for LANGUAGES as languages %}
+
+
         <div class="dropdown pull-right">
             <div class="btn dropdown-toggle" data-toggle="dropdown">
               <span id="curLang" class="flag-icon flag-icon-{% lang_to_flag cur_lang.code %}" data-lang="{{ cur_lang.name }}"></span> {{ cur_lang.name_local }}
@@ -175,6 +190,14 @@
         <script src="/static/vendors/jszip/dist/jszip.min.js"></script>
         <script src="/static/vendors/pdfmake/build/pdfmake.min.js"></script>
         <script src="/static/vendors/pdfmake/build/vfs_fonts.js"></script>
+
+        <script src='{% static "build/js/pv_dash.js" %}'></script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.has-popover').popover({'trigger':'hover'});
+            });
+        </script>
 
 
         <script type="text/javascript">

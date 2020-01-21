@@ -3,9 +3,17 @@
     margin-left: -0.7rem;
 }
 
+.logo-icon {
+    max-width: 5rem;
+}
+
 .img-icon {
     width: 17%;
     min-width: 48px;
+}
+
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
 
 #scenariosTbl td {
@@ -118,6 +126,13 @@ li.active {
     color: #bf2b27;
 }
 
+a.disabled {
+  /* Make the disabled links grayish*/
+  color: rgba(199, 199, 199, 0.31);
+  /* And disable the pointer events */
+  pointer-events: none;
+}
+
 .mt-1 {
     margin-top: 1rem;
 }
@@ -155,6 +170,18 @@ li.active {
 
 .mb-5 {
     margin-bottom: 5rem;
+}
+
+.ml-5 {
+    margin-left: 5rem!important;
+}
+
+.mt-minus-4 {
+    margin-top: -4rem;
+}
+
+.mb-minus-5 {
+    margin-bottom: -5rem;
 }
 
 .login_content h1:before,

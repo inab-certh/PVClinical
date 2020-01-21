@@ -1,3 +1,5 @@
+settings.py
+.idea/
 gentelella/app/__pycache__/
 .Rproj.user
 gentelella/app/templatetags/__pycache__/custom_tags.cpython-37.pyc
