@@ -3,6 +3,7 @@ library(shinyjs)
 library(shiny)
 library(shinyWidgets)
 library(DT)
+library(shinycssloaders)
 
 
 options(encoding = 'UTF-8')
@@ -53,10 +54,10 @@ flags <- c(
   "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gr.svg"
 )
 
-shinyUI(fluidPage(theme = "custom.css",
-                  fluidRow( style="height:80px;",
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
+                  fluidRow( useShinyjs(),style="height:80px;",
                             column(width=3,style="height:80px;",imageOutput("graphpicture")),
-                            column(width=4,style="font-size:90px;padding-top:20px;padding-bottom:20px;",
+                            column(width=4,style="font-size:70px;padding-top:20px;padding-bottom:20px;",
                                    # pickerInput("countries", "countries",
                                    # 
                                    #             choices = countries,
@@ -76,8 +77,8 @@ shinyUI(fluidPage(theme = "custom.css",
                             
                   fluidRow(useShinyjs(),
                            column(width=6,
-                                  fluidRow( plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2'))),
-                                  fluidRow( plotOutput_p( 'cpmeanplot' ))
+                                  fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
+                                  fluidRow( withSpinner(plotOutput_p( 'cpmeanplot' )))
                                   
                                   
                                   
@@ -90,7 +91,7 @@ shinyUI(fluidPage(theme = "custom.css",
                     column(width=6,
                            # titlePanel("RR-Drug" ) ,
                            fluidRow( style="width:90%; margin-top:60px;",
-                                     makeDataTableOutput( 'prr2' )),
+                                     withSpinner(makeDataTableOutput( 'prr2' ))),
                            #htmlOutput( 'prrtitle' ),
                            
                     hidden(

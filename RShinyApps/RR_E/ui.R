@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 
 source('sourcedir.R')
 
@@ -127,7 +127,7 @@ shinyUI(fluidPage(fluidRow(
         
         uiOutput('prrtitle'),
         
-        uiOutput("maketabsetPRRRORResults")
+        withSpinner(uiOutput("maketabsetPRRRORResults"))
       ),
       tabPanel(
         uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
@@ -230,16 +230,16 @@ shinyUI(fluidPage(fluidRow(
             poptext = c(tt('indication2'), tt('word2'))
           )
         ),
-        tabPanel(uiOutput("OtherApps"),
-                 wellPanel(htmlOutput('applinks'))),
-        tabPanel(uiOutput("DataReference"), HTML(
-          renderiframe("https://open.fda.gov/drug/event/")
-        )),
-        tabPanel(uiOutput("About"),
-                 img(src = 'l_openFDA.png'),
-                 HTML((loadhelp(
-                   'about'
-                 )))),
+        # tabPanel(uiOutput("OtherApps"),
+        #          wellPanel(htmlOutput('applinks'))),
+        # tabPanel(uiOutput("DataReference"), HTML(
+        #   renderiframe("https://open.fda.gov/drug/event/")
+        # )),
+        # tabPanel(uiOutput("About"),
+        #          img(src = 'l_openFDA.png'),
+        #          HTML((loadhelp(
+        #            'about'
+        #          )))),
         id = 'maintabs',
         selected = uiOutput("PRRRORResults")
       )

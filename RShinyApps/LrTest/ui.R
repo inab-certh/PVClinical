@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 
 source('sourcedir.R')
 
@@ -27,7 +27,7 @@ renderNumsims <- function() {
   
 }  
 
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(), 
            column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforaDrug") ),                           
                   
@@ -99,7 +99,7 @@ shinyUI(fluidPage(
                                htmlOutput( 'prrtitle' ), 
                                helpText('Results sorted by LRR')
                              ),
-                             uiOutput("makeTabsetLRTResultsbasedonTotalEvents")
+                             withSpinner(uiOutput("makeTabsetLRTResultsbasedonTotalEvents"))
                              
                     ),
                     tabPanel(uiOutput("SimulationResultsforEventBasedLRT"),
@@ -193,16 +193,16 @@ shinyUI(fluidPage(
                              wordcloudtabset('cloudindquery', 'indquery',
                                              popheads=c( tt('indication1'), tt('word1') ),
                                              poptext=c( tt('indication2'), tt('word2') ) )
-                    ),
-                    tabPanel(uiOutput("OtherApps"),  
-                             wellPanel( 
-                               htmlOutput( 'applinks' )
-                             )
-                    ),
-                    tabPanel(uiOutput('DataReference'), HTML( renderiframe('https://open.fda.gov/drug/event/') ) ),
-                    tabPanel(uiOutput('About'), 
-                             img(src='l_openFDA.png'),
-                             HTML( (loadhelp('about') ) )  )
+                    )
+                    # tabPanel(uiOutput("OtherApps"),  
+                    #          wellPanel( 
+                    #            htmlOutput( 'applinks' )
+                    #          )
+                    # ),
+                    # tabPanel(uiOutput('DataReference'), HTML( renderiframe('https://open.fda.gov/drug/event/') ) ),
+                    # tabPanel(uiOutput('About'), 
+                    #          img(src='l_openFDA.png'),
+                    #          HTML( (loadhelp('about') ) )  )
                     
                   )
            )

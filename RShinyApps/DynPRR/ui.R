@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 source('sourcedir.R')
 
 # getdrugvarchoices <- function(){
@@ -32,7 +32,7 @@ renderEventText <- function() {
   return( verbatimTextOutput('geteventtext') )
   
 }    
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),
            column(width=12, titlePanel("Dynamic PRR" ),
                   
@@ -75,9 +75,9 @@ shinyUI(fluidPage(
       tabsetPanel(
         tabPanel(uiOutput('PRROverTime'),  
                  wellPanel( 
-                   plotOutput_p( 'prrplot',
+                   withSpinner(plotOutput_p( 'prrplot',
                                  tt('prr1'), tt('prr5'),
-                                 placement='left', height='600px' )
+                                 placement='left', height='600px' ))
                  )
         ),
       tabPanel(uiOutput('ReportCountsandPRR'), 
@@ -124,32 +124,32 @@ shinyUI(fluidPage(
                                popheads=c( tt('codrug1'), tt('word1') ), 
                                poptext=c( tt('codrug3'), tt('word2') ))
       ),
-        tabPanel(uiOutput('MetaDataandQueries'),  
-                 wellPanel( 
-                   htmlOutput_p( 'allquerytext' ,
-                                 tt('gquery1'), tt('gquery2'),
-                                 placement='bottom'),
-                   htmlOutput_p( 'drugquerytext',
-                                 tt('gquery1'), tt('gquery2'),
-                                 placement='bottom' ),
-                   htmlOutput_p( 'eventquerytext',
-                                 tt('gquery1'), tt('gquery2'),
-                                 placement='bottom' ),
-                   htmlOutput_p( 'drugeventquerytext' ,
-                                 tt('gquery1'), tt('gquery2'),
-                                 placement='bottom')
-                 )
-        ),
-      tabPanel(uiOutput('OtherApps'),  
-               wellPanel( 
-                 htmlOutput( 'applinks' )
-               )
-      ),
-      tabPanel(uiOutput('DataReference'), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-      ),
-      tabPanel(uiOutput('About'), 
-               img(src='l_openFDA.png'),
-               HTML( (loadhelp('about') ) )  ),
+        # tabPanel(uiOutput('MetaDataandQueries'),  
+        #          wellPanel( 
+        #            htmlOutput_p( 'allquerytext' ,
+        #                          tt('gquery1'), tt('gquery2'),
+        #                          placement='bottom'),
+        #            htmlOutput_p( 'drugquerytext',
+        #                          tt('gquery1'), tt('gquery2'),
+        #                          placement='bottom' ),
+        #            htmlOutput_p( 'eventquerytext',
+        #                          tt('gquery1'), tt('gquery2'),
+        #                          placement='bottom' ),
+        #            htmlOutput_p( 'drugeventquerytext' ,
+        #                          tt('gquery1'), tt('gquery2'),
+        #                          placement='bottom')
+        #          )
+        # ),
+      # tabPanel(uiOutput('OtherApps'),  
+      #          wellPanel( 
+      #            htmlOutput( 'applinks' )
+      #          )
+      # ),
+      # tabPanel(uiOutput('DataReference'), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
+      # ),
+      # tabPanel(uiOutput('About'), 
+      #          img(src='l_openFDA.png'),
+      #          HTML( (loadhelp('about') ) )  ),
 #                 tabPanel("session",  
 #                          wellPanel( 
 #                            verbatimTextOutput( 'urlquery' )
