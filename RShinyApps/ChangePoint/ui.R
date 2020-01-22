@@ -1,7 +1,7 @@
 library(shiny)
 require(shinyBS)
 library(shinyjs)
-
+library(shinycssloaders)
 source( 'sourcedir.R')
 
 # getdrugvarchoices <- function(){
@@ -28,7 +28,7 @@ rendermaxcp <- function() {
   ( htmlOutput('maxcp') )
   
 } 
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),
            column(width=12, titlePanel(uiOutput('ChangePointAnalysis') ),
                   
@@ -74,7 +74,7 @@ shinyUI(fluidPage(
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"),  
                           wellPanel( 
-                            plotOutput_p( 'cpmeanplot' ), 
+                            withSpinner(plotOutput_p( 'cpmeanplot' )), 
                             uiOutput("cpmeantext" )
                             )
                           ),
@@ -143,16 +143,16 @@ shinyUI(fluidPage(
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                 ),
-                tabPanel(uiOutput("OtherApps"),  
-                         wellPanel( 
-                           htmlOutput( 'applinks' )
-                         )
-                ),
-                tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-                ),
-                tabPanel(uiOutput("About"), 
-                         img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  ),
+                # tabPanel(uiOutput("OtherApps"),  
+                #          wellPanel( 
+                #            htmlOutput( 'applinks' )
+                #          )
+                # ),
+                # tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
+                # ),
+                # tabPanel(uiOutput("About"), 
+                #          img(src='l_openFDA.png'),
+                #          HTML( (loadhelp('about') ) )  ),
 #                 tabPanel("session",  
 #                          wellPanel( 
 #                            verbatimTextOutput( 'urlquery' )

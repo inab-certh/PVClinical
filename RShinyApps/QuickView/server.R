@@ -4,6 +4,7 @@ require('lubridate')
 require('bcp')
 require('changepoint')
 require('zoo')
+library(xlsx)
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
@@ -688,6 +689,7 @@ shinyServer(function(input, output, session) {
 
   output$cpmeanplot <- renderPlot ({
     mydf <-getquerydata()$mydfin$result
+    write.xlsx(mydf, "../mydf.xlsx")
     if (length(mydf) > 0)
     {
       s <- calccpmean()
@@ -711,9 +713,10 @@ shinyServer(function(input, output, session) {
         myevents <- getterm2( session, FALSE )
       }
       mytitle <- paste( i18n()$t("Change in Mean Analysis for"), mydrugs, i18n()$t("and"), myevents )
+      # par(bg = "gray")
       plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
       axis(1, pos,  labs[pos], las=2  )
-      grid(nx=NA, ny=NULL)
+      grid(nx=NA, ny=NULL,col = "lightgray")
       abline(v=pos, col = "lightgray", lty = "dotted",
              lwd = par("lwd") )
     }
@@ -1165,7 +1168,7 @@ shinyServer(function(input, output, session) {
     if ( is.data.frame(mydf) )
     {
       names(mydf) <- c('Serious', 'Case Counts' )
-      return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) )
+      return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand") )
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
   }, height=300)
 
@@ -1980,8 +1983,10 @@ shinyServer(function(input, output, session) {
   },  sanitize.text.function = function(x) x)
   
   output$prr2 <- renderDT({  
+    prr<-prr()
+    write.xlsx(prr, "../mydata.xlsx")
     datatable(
-      prr(),
+      prr,
       options = list(
         autoWidth = TRUE,
         columnDefs = list(list(width = '50', targets = c(1, 2))),

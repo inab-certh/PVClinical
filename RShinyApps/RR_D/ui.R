@@ -1,5 +1,6 @@
 library(rsconnect)
 library(shinyjs)
+library(shinycssloaders)
 
 source('sourcedir.R')
 
@@ -89,7 +90,7 @@ shinyUI(fluidPage(
                                #                          wordcloudtabset('cloudprr', 'prr', 
                                #                                          popheads=c( tt('prr1'), tt('word1') ), 
                                #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                               uiOutput("maketabsetPRRRORResults")
+                               withSpinner(uiOutput("maketabsetPRRRORResults"))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
                                wellPanel( 
@@ -183,15 +184,15 @@ shinyUI(fluidPage(
                                                popheads=c( tt('indication1'), tt('word1') ),
                                                poptext=c( tt('indication2'), tt('word2') ) )
                       ),
-                      tabPanel(uiOutput("OtherApps"),  
-                               wellPanel( 
-                                 htmlOutput( 'applinks' )
-                               )
-                      ),
-                      tabPanel(uiOutput("DataReference"), HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
-                      tabPanel(uiOutput("About"), 
-                               # img(src='l_openFDA.png'),
-                               HTML( (loadhelp('about') ) )  ),
+                      # tabPanel(uiOutput("OtherApps"),  
+                      #          wellPanel( 
+                      #            htmlOutput( 'applinks' )
+                      #          )
+                      # ),
+                      # tabPanel(uiOutput("DataReference"), HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
+                      # tabPanel(uiOutput("About"), 
+                      #          # img(src='l_openFDA.png'),
+                      #          HTML( (loadhelp('about') ) )  ),
                       #                 tabPanel("session",  
                       #                          wellPanel( 
                       #                            verbatimTextOutput( 'urlquery' )

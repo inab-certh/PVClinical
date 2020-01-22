@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 source('sourcedir.R')
 
 
@@ -26,7 +26,7 @@ renderNumsims <- function() {
   
 }  
 
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),
            column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                   
@@ -101,7 +101,7 @@ shinyUI(fluidPage(
 #                                          popheads=c( tt('prr1'), tt('word1') ), 
 #                                          poptext=c( tt('prr5'), tt('word2') ) )
                         
-uiOutput("makeTabsetLRTResultsbasedonTotalDrugs")
+withSpinner(uiOutput("makeTabsetLRTResultsbasedonTotalDrugs"))
                          
                 ),
               tabPanel(uiOutput("SimulationResultsforDrugBasedLRT"),

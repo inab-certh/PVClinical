@@ -1,6 +1,6 @@
 library(shiny)
 require(shinyBS)
-
+library(shinycssloaders)
 
 source('sourcedir.R')
 
@@ -52,7 +52,7 @@ renderuseexact <- function() {
   ( uiOutput('useexact_in') )
   
 } 
-shinyUI(fluidPage(useShinyjs(), 
+shinyUI(fluidPage(useShinyjs(), includeCSS("../sharedscripts/custom.css"),
                    fluidRow(
                      column(width=4,
                             # a(href='https://open.fda.gov/', 
@@ -112,9 +112,9 @@ fluidRow(
                                       tt( 'freqtab2') )
              ),
              tabPanel(uiOutput( "dotchart" ),
-                        plotOutput_p("sourceplot", 
+                      withSpinner(plotOutput_p("sourceplot", 
                                      HTML( tt('dot1') ), tt('dot2'), 
-                                     height = "250px")
+                                     height = "250px"))
              ),
              tabPanel(uiOutput( "piechart" ),
                         plotOutput_p("sourcepie", 
@@ -130,9 +130,9 @@ fluidRow(
                                         tt( 'freqtab2'))
                   ),
                 tabPanel(uiOutput( "dotchart2" ),
-                           plotOutput_p("seriousplot", 
+                         withSpinner(plotOutput_p("seriousplot", 
                                         HTML( tt('dot1') ), tt('dot2'), 
-                                        height = "250px")
+                                        height = "250px"))
                 ),
                 tabPanel(uiOutput( "piechart2" ),
                            plotOutput_p("seriouspie", 
@@ -149,9 +149,9 @@ fluidRow(
                                      tt( 'freqtab2'))
              ),
              tabPanel(uiOutput( "dotchart3" ),
-                        plotOutput_p("sexplot", 
+                        (withSpinner(plotOutput_p("sexplot", 
                                    HTML( tt('dot1') ), tt('dot2'),
-                                   height = "250px")
+                                   height = "250px")))
              ),
              tabPanel(uiOutput( "piechart3" ),
                         plotOutput_p("sexpie", 
@@ -170,7 +170,7 @@ fluidRow(
       tabsetPanel(
 
 
-        tabPanel(uiOutput( "Events"), uiOutput("wordcloudtabset")
+        tabPanel(uiOutput( "Events"), withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
                  wordcloudtabset('cocloud', 'coquery', 
@@ -181,17 +181,17 @@ fluidRow(
                  wordcloudtabset('indcloud', 'indquery', 
                                  popheads=c( tt('indication1'), tt('word1') ), poptext=c( tt('indication2'), tt('word2') )
                  )
-        ),
-        tabPanel(uiOutput("Other Apps"),  
-                 wellPanel( 
-                   htmlOutput_p( 'applinks' )
-                 )
-        ),
-        tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-        ),
-        tabPanel(uiOutput("About"), 
-                 # img(src='l_openFDA.png'),
-                 HTML( (loadhelp('about') ) )  )
+        )
+        # tabPanel(uiOutput("Other Apps"),  
+        #          wellPanel( 
+        #            htmlOutput_p( 'applinks' )
+        #          )
+        # ),
+        # tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
+        # ),
+        # tabPanel(uiOutput("About"), 
+        #          # img(src='l_openFDA.png'),
+        #          HTML( (loadhelp('about') ) )  )
         
       )
     ),
