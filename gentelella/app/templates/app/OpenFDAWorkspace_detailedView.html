@@ -202,9 +202,9 @@
             "LrTest_E": ["Event"],
             "DrugEnforceView": ["Event"]
         };
-        var OnlyDrugApplications = ["QuickView", "Dash", "RR_D", "ReportView", "LrTest"];
+        var OnlyDrugApplications = ["QuickView", "Dash", "RR_D",  "LrTest"];
         var OnlyEventApplications = ["QuickView", "RR_E", "LrTest_E"];
-        var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint", "LabelView", "DrugEnforceView"];
+        var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint"];
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
