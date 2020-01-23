@@ -1,4 +1,5 @@
 import json
+import os
 import time
 
 from collections import namedtuple
@@ -72,7 +73,8 @@ class KnowledgeGraphWrapper:
 
     def cache_conditions(self):
         # Change with real service
-        with open("app/med_data/medDRA.json", "r") as fp:
+        json_dir = os.path.dirname(os.path.realpath(__file__))
+        with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
             conditions = sorted(json.load(fp).items())
 
             # #
