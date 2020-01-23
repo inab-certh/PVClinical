@@ -1,4 +1,31 @@
 $(function() {
+    var languages = {"Greek": "el", "English": "en"};
+    console.log(languages[$("#curLang").attr("data-lang")]);
+    $(".customselect2tagwidget[name='drugs_fld'], .customselect2tagwidget[name='conditions_fld']").select2({
+        language: languages[$("#curLang").attr("data-lang")],
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: '/ajax/filter-whole-set',
+            dataType: 'json',
+            type: "GET",
+            quietMillis: 50,
+            data: function(term) {
+                return {
+                    type: $(this).attr("name").replace("_fld",""),
+                    term: term.term
+                };
+            },
+            processResults: function (response) {
+                return {
+                    results: response.results
+                };
+            },
+            cache: true
+        }
+    });
+
+
     $("[name='drugs_fld']").change(function () {
         // $('#atcTree').treeview('collapseAll', {silent: true});
         // $('#atcTree').treeview('uncheckAll', {silent: true});

@@ -16,6 +16,13 @@
     max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
 
+#scenariosTbl thead th:nth-child(1) {
+  width: 5rem;
+  max-width: 56px;
+  /*word-break: break-all;*/
+  /*white-space: pre-line;*/
+}
+
 #scenariosTbl td {
     vertical-align: middle;
     text-align: center;
