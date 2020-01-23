@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-13 11:40+0200\n"
+"POT-Creation-Date: 2020-01-22 16:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
 msgstr "Direct Access to this Location is not allowed"
 
-#: app/forms.py:128
+#: app/forms.py:129
 msgid "Τίτλος σεναρίου:"
 msgstr "Scenario title:"
 
@@ -31,15 +31,15 @@ msgstr "Scenario title:"
 msgid "Φάρμακο/Φάρμακα:"
 msgstr "Drug/Drugs:"
 
-#: app/forms.py:138
+#: app/forms.py:142
 msgid "Πάθηση/Παθήσεις:"
 msgstr "Disease/Diseases:"
 
-#: app/forms.py:169
+#: app/forms.py:174
 msgid "Κατάσταση σεναρίου:"
 msgstr "Scenario Status:"
 
-#: app/forms.py:209
+#: app/forms.py:218
 msgid ""
 "Τουλάχιστον ένα από τα πεδία που αφορούν τα φάρμακα και τις "
 "παθήσεις                                   του σεναρίου, πρέπει να "
@@ -168,33 +168,33 @@ msgstr "Selected Conditions:"
 msgid "Εισαγωγή παθήσεων"
 msgstr "Enter conditions"
 
-#: app/templates/app/base_site.html:110
+#: app/templates/app/base_site.html:125
 msgid "Επιβεβαίωση διαγραφής"
 msgstr "Deletion confirmation"
 
-#: app/templates/app/base_site.html:111
+#: app/templates/app/base_site.html:126
 msgid ""
 "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το "
 "σύστημα;"
 msgstr "Are you sure you want to delete this record from the system?"
 
-#: app/templates/app/base_site.html:112
+#: app/templates/app/base_site.html:127
 msgid "Επιβεβαίωση"
 msgstr "Confirm"
 
-#: app/templates/app/base_site.html:113
+#: app/templates/app/base_site.html:128
 msgid "Ακύρωση"
 msgstr "Cancel"
 
-#: app/templates/app/base_site.html:114
+#: app/templates/app/base_site.html:129
 msgid "Εντάξει"
 msgstr "OK"
 
-#: app/templates/app/base_site.html:201
+#: app/templates/app/base_site.html:218
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:216
+#: app/templates/app/base_site.html:233
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -244,7 +244,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:183
+#: app/templates/app/index.html:48 app/views.py:208
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -275,6 +275,10 @@ msgstr "Disease/Diseases"
 #: app/templates/app/index.html:152
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
+
+#: app/templates/app/sidebar.html:27
+msgid "Καλωσήλθατε"
+msgstr ""
 
 #: app/templates/app/sidebar.html:38
 msgid "ΕΠΙΛΟΓΕΣ"
@@ -409,11 +413,11 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:163
+#: app/views.py:188
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:170
+#: app/views.py:195
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"

@@ -1,0 +1,92 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-22 16:58+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/static/build/js/scenario.js:7
+msgid "Διαλέξτε τουλάχιστον 1 χαρακτήρα"
+msgstr "Please enter 1 or more characters"
+
+#: app/static/build/js/scenario.js:114
+msgid "Επιλέξατε "
+msgstr "You have selected "
+
+#: app/static/build/js/scenario.js:114
+msgid " από "
+msgstr " from "
+
+#: app/static/build/js/scenario.js:114
+msgid " συνώνυμα"
+msgstr " synonyms"
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:11
+msgid ""
+"moment construction falls back to js Date. This is discouraged and will be "
+"removed in upcoming major release. Please refer to https://github.com/moment/"
+"moment/issues/1407 for more info."
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:11
+msgid ""
+"moment().min is deprecated, use moment.max instead. https://github.com/"
+"moment/moment/issues/1548"
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:11
+msgid ""
+"moment().max is deprecated, use moment.min instead. https://github.com/"
+"moment/moment/issues/1548"
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:11
+msgid ""
+"moment().lang() is deprecated. Instead, use moment().localeData() to get the "
+"language configuration. Use moment().locale() to change languages."
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid "dates accessor is deprecated. Use date instead."
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid "months accessor is deprecated. Use month instead"
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid "years accessor is deprecated. Use year instead"
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid ""
+"moment().zone is deprecated, use moment().utcOffset instead. https://github."
+"com/moment/moment/issues/1779"
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid "moment.lang is deprecated. Use moment.locale instead."
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid "moment.langData is deprecated. Use moment.localeData instead."
+msgstr ""
+
+#: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:12
+msgid ""
+"toIsoString() is deprecated. Please use toISOString() instead (notice the "
+"capitals)"
+msgstr ""
