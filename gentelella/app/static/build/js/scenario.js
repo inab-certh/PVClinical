@@ -1,13 +1,17 @@
+// var all_drugs = [];
+
 $(function() {
     var languages = {"Greek": "el", "English": "en"};
-    console.log(languages[$("#curLang").attr("data-lang")]);
+
+    var all_drugs = get_all_drugs();
+
     $(".customselect2tagwidget[name='drugs_fld'], .customselect2tagwidget[name='conditions_fld']").select2({
         language: languages[$("#curLang").attr("data-lang")],
         allowClear: true,
-        minimumInputLength: 1,
+        minimumInputLength: 2,
         ajax: {
-            url: '/ajax/filter-whole-set',
-            dataType: 'json',
+            url: "/ajax/filter-whole-set",
+            dataType: "json",
             type: "GET",
             quietMillis: 50,
             data: function(term) {
@@ -45,7 +49,6 @@ $(function() {
 
         // Find checked atcs which are not in the drugs_fld, and uncheck them
         var checked_atcs = $("#atcTree").treeview('getChecked');
-        // console.log(checked_atcs);
         var atcs_to_uncheck = checked_atcs.filter(function (ch_atc) {
             return ch_atc.text.length==7 && selected_atcs.indexOf(ch_atc.text) == -1;
         })
@@ -60,18 +63,15 @@ $(function() {
             });
         }).toArray();
 
-
-
         $("#atcTree").treeview('checkNode', [nodes_to_check]);
         // $("#atcTree").treeview('uncheckNode', [nodes_to_uncheck]);
         // $("#atcTree").treeview('checkNode', [more_to_check]);
         $("#atcTree").treeview('revealNode', [nodes_to_check, {silent: true}]);
 
-
         $.ajax({
             url: $("#drugsNameCollapsible").attr("data-synonyms-url"),
             data: {"drugs": JSON.stringify(selected_drugs)},
-            dataType: 'json',
+            dataType: "json",
             success: function (data) {
                 var options_arr = [];
 
@@ -202,8 +202,8 @@ $(function() {
             /* Get only whole atc codes checked, find equivalent drugs and transfer
             those drugs to drugs' select2 box as selected drugs
              */
-            var all_drugs = $("[name='drugs_fld'] option").map(function () {
-                    return $(this).val()}).toArray();
+            // var all_drugs = $("[name='drugs_fld'] option").map(function () {
+            //         return $(this).val()}).toArray();
 
             // Add parent node in children_nodes_list
             var candidate_nodes = children_nodes;
@@ -217,14 +217,32 @@ $(function() {
             var selected_atcs = selected_atcs_ids.map(function (nodeId) {
                 return $("#atcTree").treeview('getNode', nodeId).text
             });
+            // console.log(selected_atcs);
 
             var selected_drugs_by_atc = all_drugs.filter(function (drug) {
                 return selected_atcs.indexOf(drug.split(' - ').pop()) != -1;
             });
 
+
             // Append selected drugs to drugs_fld box
             var all_selected_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
             all_selected_drugs = all_selected_drugs.concat(selected_drugs_by_atc.filter((item) => all_selected_drugs.indexOf(item) == -1));
+
+
+            /* Mechanism to update options in drugs' select2 element with values selected
+            from tree view
+             */
+            $("[name='drugs_fld']").empty();
+            for(i=0;i<all_selected_drugs.length;i++){
+                var data = {
+                    id: all_selected_drugs[i],
+                    text: all_selected_drugs[i]
+                };
+
+                var newOption = new Option(data.text, data.id, false, false);
+                $("[name='drugs_fld']").append(newOption);
+
+            }
 
             $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
         },
@@ -251,9 +269,6 @@ $(function() {
             $("[name='drugs_fld']").val(selected_fld_drugs).trigger("change");
 
 
-            // console.log(selected_fld_drugs)
-
-
             // Append selected drugs to drugs_fld box
             // var all_selected_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
             // all_selected_drugs = all_selected_drugs.concat(selected_drugs_by_atc.filter((item) => all_selected_drugs.indexOf(item) == -1));
@@ -264,9 +279,24 @@ $(function() {
     // A fake change trigger to initialize form
     $("[name='drugs_fld']").trigger("change");
 
+    function get_all_drugs() {
+        var drugs=[];
+        $.ajax({
+            url: "/ajax/all-drugs",
+            type: "GET",
+            dataType: "json",
+            async: false
+        }).done(function(data) {
+            drugs = data.results;
+        }).fail(function () {
+            drugs = [];
+        });
+        return drugs;
+    }
+
 });
 
-function moveToSelectedDrugs() {
+function move_to_selected_drugs() {
     var checked_synonyms = $("#drugsSynonyms option:selected").map(function () {
         return $(this).val();
     }).toArray();

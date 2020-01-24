@@ -19,8 +19,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: app/static/build/js/scenario.js:7
-msgid "Διαλέξτε τουλάχιστον 1 χαρακτήρα"
-msgstr "Please enter 1 or more characters"
+msgid "Διαλέξτε τουλάχιστον 2 χαρακτήρα"
+msgstr "Please enter 2 or more characters"
 
 #: app/static/build/js/scenario.js:114
 msgid "Επιλέξατε "
