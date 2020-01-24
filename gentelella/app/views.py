@@ -94,6 +94,18 @@ def filter_whole_set(request):
     return JsonResponse(data)
 
 
+def get_all_drugs(request):
+    knw = KnowledgeGraphWrapper()
+
+    all_drugs = knw.get_drugs()
+    all_drugs = ["{}{}".format(
+        el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
+
+    data={}
+    data["results"] = all_drugs
+    return JsonResponse(data)
+
+
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):

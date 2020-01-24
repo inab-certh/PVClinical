@@ -25,7 +25,7 @@ class CustomSelect2TagWidget(Select2TagWidget):
         # self.attrs.setdefault('data-width', '50%')
         self.attrs.setdefault('data-tags', 'true')
         self.attrs.setdefault('data-url', '')
-        # self.attrs.setdefault('data-minimum-input-length', 3)
+        self.attrs.setdefault('data-minimum-input-length', 2)
         return super().build_attrs(*args, **kwargs)
 
 
