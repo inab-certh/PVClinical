@@ -68,6 +68,11 @@
         "gr":"Παρακαλώ εισάγετε όνομα φαρμάκου"
       },
       {
+        "def":"Please enter a Reaction name",
+        "en":"Please enter a Reaction name",
+        "gr":"Παρακαλώ εισάγετε όνομα ανεπιθύμητης ενέργειας"
+      },
+      {
         "def":"from",
         "en":"from",
         "gr":"από"
