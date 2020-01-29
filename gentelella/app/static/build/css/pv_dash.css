@@ -256,8 +256,11 @@ iframe {
   color: blue!important;
 }
 
-.legend-margins{
+.DrugEventParameter{
     margin-bottom:10px;
+    margin-right:20px;
+    font-size:20px;
+    font-weight: bold;
 }
 #first {
     position:absolute;
@@ -279,5 +282,18 @@ iframe {
 #divFrame{
     position:relative;
 }
+.drugs-div{
+    line-height: 50px;
+    height: 50px;
+    /*border: 3px solid green;*/
+    text-align: center;
+    position:relative;
+}
+.drug-event-radio{
+    margin-left:20px;
+    /*position:relative;*/
+    /*left:30px;*/
+}
+
 
 
