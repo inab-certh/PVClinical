@@ -18,7 +18,7 @@
                 <div>
 
                     <div class="tab-content" style="margin-left: 20px;">
-                        <div class="tab-pane active" role="tabpanel" id="tab-1">
+                        <div class="tab-pane" role="tabpanel" id="tab-1">
                             <div class="row drug-events-selection-row">
                                 <div class="col drugSelectionCol">
                                     <div id="drugCheckBoxes">
@@ -60,35 +60,40 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" role="tabpanel" id="tab-2">
+                        <div class="tab-pane active" role="tabpanel" id="tab-2">
                             <div class="row drug-events-selection-row">
                                 <div class="col drugSelectionCol">
                                     <div id="drugRadios">
                                         <fieldset>
-                                            <legend class="legend-margins">Drugs</legend>
-                                            {% for drug in scenario.drugs %}
-                                                <div class="custom-control custom-checkbox custom-control-inline"
+
+                                        <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
+                                        <p class="DrugEventParameter">Drugs</p>
+                                            {% for drug in scenario.drugs %}
+                                                   <div class="float-left drug-event-radio">
                                                     <input type="radio" id="drugRadioInline{{ drug.id }}"
                                                            class="custom-control-input" name="drugRadio"
                                                            value="{{ drug.name }}" checked/>
                                                     <label class="custom-control-label"
                                                            for="customRadioInline1">{{ drug.name }}</label>
-                                                </div>
-                                            {% endfor %}
+                                                   </div>
+                                                {% endfor %}
+
+                                        </div>
 
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row drug-events-selection-row mt-2">
+                            <div class="row drug-events-selection-row mt-1">
                                 <div class="col eventSelectionCol">
                                     <div id="eventRadios">
                                         <fieldset>
-                                            <legend class="legend-margins">Events</legend>
-                                            {% for condition in scenario.conditions %}
-                                                <div class="custom-control custom-checkbox custom-control-inline"
+                                            <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
+                                            <p class="DrugEventParameter">Adverse Events</p>
+                                            {% for condition in scenario.conditions %}
+                                                <div class="float-left drug-event-radio">
                                                     <input type="radio" id="eventRadioInline{{ condition.id }}"
                                                            class="custom-control-input" name="eventRadio"
                                                            value="{{ condition.name }}" checked/>
@@ -107,9 +112,8 @@
 
 
                     </div>
-                    <ul class="nav nav-tabs nav-items-custom mt-3" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                      href="#tab-1" aria-expanded="true">QuickView</a>
+                    <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
+                        <li class="nav-item active" id="QuickView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">QuickView</a>
                         </li>
                         <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dash</a>
                         </li>
@@ -227,7 +231,7 @@
         })
 
         function getCheckedElementOfRadios() {
-            if (app != 'QuickView') {
+            if (app != 'QuickView2') {
                 var ele = document.getElementsByName('drugRadio');
                 for (i = 0; i < ele.length; i++) {
                     if (ele[i].checked) {
