@@ -40,6 +40,9 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  output$info<-renderText({
+    "i"
+  })
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -48,6 +51,9 @@ shinyServer(function(input, output, session) {
       selectedLang='en'
     }
     translator$set_translation_language(selectedLang)
+    addPopover(session=session, id="info", title="Application Info", 
+               content=stri_enc_toutf8(i18n()$t("descriptionList")), placement = "bottom",
+               trigger = "hover", options = NULL)
     #browser()
     # if (!is.null(query[['lang']])) {
     #   updateSelectInput(session, "selected_language",
@@ -2384,6 +2390,15 @@ shinyServer(function(input, output, session) {
     }
     translator
   })
+  # observeEvent(input$info, {
+  #   # Show a simple modal
+  #   shinyalert(title = "pame na figoume!??", type = "success")
+  #   browser()
+  #   addPopover(session=session, id="info", title="title", 
+  #              content='test', placement = "bottom",
+  #              trigger = "hover", options = NULL)
+  # })
+  
   
 })
       
