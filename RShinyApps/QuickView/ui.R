@@ -4,6 +4,7 @@ library(shiny)
 library(shinyWidgets)
 library(DT)
 library(shinycssloaders)
+library(shinyalert)
 
 
 options(encoding = 'UTF-8')
@@ -55,9 +56,8 @@ flags <- c(
 )
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-                  fluidRow( useShinyjs(),style="height:80px;",
-                            column(width=3,style="height:80px;",imageOutput("graphpicture")),
-                            column(width=4,style="font-size:70px;padding-top:20px;padding-bottom:20px;",
+                  fluidRow( useShinyjs(),useShinyalert(),
+                            column(width=3),column(width=7),column(width=1,style="margin-top:20px;",actionButton("info", "i")),column(width=1)),
                                    # pickerInput("countries", "countries",
                                    # 
                                    #             choices = countries,
@@ -72,8 +72,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                    # 
                                    #             )),
                                    # uiOutput('page_content'),
-                            uiOutput( "quickview" )),
-                            column(width=5,style="font-size:15px;padding-top:50px;padding-bottom:20px;",uiOutput("descriptionList"))),
+                            # ,uiOutput( "quickview" )),
+                            
                             
                   fluidRow(useShinyjs(),
                            column(width=6,
