@@ -14,7 +14,7 @@ require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
-library("rjson")
+library(jsonlite)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -1993,6 +1993,8 @@ shinyServer(function(input, output, session) {
   
   output$prr2 <- DT::renderDT({  
     query <- parseQueryString(session$clientData$url_search)
+    grlang<-'datatablesGreek.json'
+    enlang<-'datatablesEnglish.json'
     selectedLang = tail(query[['lang']], 1)
     if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
     {
@@ -2006,11 +2008,11 @@ shinyServer(function(input, output, session) {
         autoWidth = TRUE,
         columnDefs = list(list(width = '50', targets = c(1, 2))),
         language = list(
-          url = ifelse(selectedLang=='gr', 
-                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                       '//cdn.datsatables.net/plug-ins/1.10.11/i18n/English.json')
-                       # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
-                       # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+          url = ifelse(selectedLang=='gr',
+          #              '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
+          #              '//cdn.datsatables.net/plug-ins/1.10.11/i18n/English.json')
+          grlang, 
+          enlang)
         )
       ),  escape=FALSE
     )
