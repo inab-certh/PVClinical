@@ -499,7 +499,7 @@ output$querycotextE <- renderText({
 #   }  
 # }, sanitize.text.function = function(x) x)  
 
-output$coquery <- renderDT({
+output$coquery <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
   datatable(
     if ( is.data.frame(codrugs) )
@@ -522,7 +522,7 @@ output$coquery <- renderDT({
 # }, sanitize.text.function = function(x) x)
 
 
-output$coquery <- renderDT({
+output$coquery <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
   datatable(
     if ( is.data.frame(codrugs) )
@@ -680,7 +680,7 @@ output$allquerytext <- renderText({
 })
 
 
-output$cpmeantext <- renderUI ({
+output$infocpmeantext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
@@ -702,7 +702,11 @@ output$cpmeantext <- renderUI ({
     } else {
       out <- i18n()$t('Insufficient data')
     }
-return(HTML(out))
+    addPopover(session=session, id="infocpmeantext", title="Application Info", 
+             content=out, placement = "left",
+             trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  
 })
 
 output$cpmeanplot <- renderPlot ({
@@ -730,7 +734,7 @@ output$cpmeanplot <- renderPlot ({
       {
         myevents <- getterm2( session, FALSE )
       }
-    mytitle <- paste( i18n()$t("Change in Mean Analysis for"), mydrugs, i18n()$t("and"), myevents )
+    mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
     plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
     axis(1, pos,  labs[pos], las=2  )
     grid(nx=NA, ny=NULL)
@@ -739,7 +743,7 @@ output$cpmeanplot <- renderPlot ({
     }
 })
 
-output$cpvartext <- renderUI ({
+output$infocpvartext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
@@ -752,10 +756,14 @@ output$cpvartext <- renderUI ({
     out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, i18n()$t('with value'), round(s@pen.value, 6), '<br>' )
     out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
     out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
-    return(HTML(out))
+    
     } else {
-      return ( HTML(i18n()$t('Insufficient Data') ))
+       out<-HTML(i18n()$t('Insufficient Data') )
     }
+    addPopover(session=session, id="infocpvartext", title="", 
+               content=out, placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$cpvarplot <- renderPlot ({
@@ -781,7 +789,7 @@ output$cpvarplot <- renderPlot ({
     {
       myevents <- getterm2( session,FALSE)
     }
-    mytitle <- paste( "Change in Variance Analysis for", mydrugs, 'and', myevents )
+    mytitle <- paste( "Change in variance analysis for", mydrugs, 'and', myevents )
     plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
     axis(1, pos,  labs[pos], las=2  )
     grid(nx=NA, ny=NULL)
@@ -803,6 +811,34 @@ output$cpbayestext <- renderPrint ({
     } else {
       return ( 'Insufficient Data', file='' )
     }
+})
+output$infocpbayestext <- renderPrint ({
+  mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0)
+  {
+    mycp <- calccpbayes()
+    data <- mycp$data
+    bcp.flu <- mycp$bcp.flu
+    data$postprob <- bcp.flu$posterior.prob
+    data2<-data[order(data$postprob,decreasing = TRUE),]
+    out<-print(data2[1:input$maxcp,])
+    outb<-data.frame()
+    for (i in 1:length(out)){
+      outb<-paste(outb,out[i],sep="")
+    }
+    # out<-paste(typeof(data2[1:input$maxcp,]),data2[1:input$maxcp,])
+    # out<-paste( out, collapse='<br>')
+    
+  } else {
+    outb<-'Insufficient Data'
+  }
+  
+  addPopover(session=session, id="infocpbayestext", title="", 
+             content=HTML(outb), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  
+  
 })
 output$cpbayesplot <- renderPlot ({
   mydf <-getquerydata()$mydfin$result
@@ -863,27 +899,27 @@ geturlquery <- reactive({
   return(q)
 })
 output$ChangeinMeanAnalysis <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Change in Mean Analysis")))
+  HTML(stri_enc_toutf8(i18n()$t("Change in mean analysis")))
   
 })
 output$ChangeinVarianceAnalysis <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Change in Variance Analysis")))
+  HTML(stri_enc_toutf8(i18n()$t("Change in variance analysis")))
   
 })
 output$BayesianChangepointAnalysis <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Bayesian Changepoint Analysis")))
+  HTML(stri_enc_toutf8(i18n()$t("Bayesian changepoint analysis")))
   
 })
 output$ReportCountsbyDate <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Report Counts by Date")))
+  HTML(stri_enc_toutf8(i18n()$t("Report counts by date")))
   
 })
 output$CountsForDrugsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
   
 })
 output$CountsForEventsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
   
 })
 output$OtherApps <- renderUI({ 

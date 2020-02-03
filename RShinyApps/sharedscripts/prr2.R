@@ -625,7 +625,7 @@ output$prr <- renderTable({
  prr()
 },  sanitize.text.function = function(x) x)
 
-output$prr2 <- renderDT({  
+output$prr2 <- DT::renderDT({  
   datatable(
     prr(),
     options = list(
@@ -725,7 +725,7 @@ output$specifieddrug <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 },  height=120, sanitize.text.function = function(x) x)
 
-output$specifieddrug2 <- renderDT({
+output$specifieddrug2 <- DT::renderDT({
   datatable(
     tableout(mydf = getdrugcountstable()$mydf,  
              mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
@@ -777,7 +777,7 @@ output$all <- renderTable({
   )
 }, sanitize.text.function = function(x) x)
 
-output$all2 <- renderDT({
+output$all2 <- DT::renderDT({
   datatable(
     tableout(mydf = geteventtotalstable()$mydf,  
              mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
@@ -835,7 +835,7 @@ output$coqueryE <- renderTable({
 
 
 
-output$coqueryE2 <- renderDT({
+output$coqueryE2 <- DT::renderDT({
   datatable(
     coqueryE(),
     options = list(
@@ -887,7 +887,7 @@ coquery2 <- reactive({
 } )
 
 
-output$coquery2 <- renderDT({
+output$coquery2 <- DT::renderDT({
   datatable(
     coquery2(),
     options = list(
@@ -921,7 +921,7 @@ output$indquery <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
-output$indquery2 <- renderDT({
+output$indquery2 <- DT::renderDT({
   datatable(
     tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
              error = paste( 'No results for', getterm1( session ) ) ),
@@ -948,7 +948,7 @@ output$coqueryEex <- renderTable({
 }, sanitize.text.function = function(x) x)
 
 
-output$coqueryEex2 <- renderDT({
+output$coqueryEex2 <- DT::renderDT({
   datatable(
     tableout(mydf = getdrugcounts()$excludeddf,  
              #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),

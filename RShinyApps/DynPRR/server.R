@@ -556,7 +556,7 @@ output$coquery <- renderTable({
 #   }  
 # }, escape=FALSE) 
 
-output$coquery2 <- renderDT({
+output$coquery2 <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
   datatable(
     if ( is.data.frame(codrugs) )
@@ -588,7 +588,7 @@ output$coqueryE <- renderTable({
 #   }  
 # }, escape=FALSE)
 
-output$coqueryE2 <- renderDT({
+output$coqueryE2 <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
   datatable(
     if ( is.data.frame(codrugs) )
@@ -662,7 +662,7 @@ output$query_counts <- renderTable({
 
 
 
-output$query_counts2 <- renderDT({
+output$query_counts2 <- DT::renderDT({
   mydf <- buildmergedtable()
   datatable(
     #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
@@ -806,7 +806,8 @@ output$prrplot <- renderPlot ({
       {
         myevents <- getterm2( session, FALSE )
       }
-      mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
+      # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
+      mytitle <- "PRR Plot"
       plot( xloc, mydf$prr, ylim=myylim, ylab='95% Confidence Interval for PRR',
             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )
@@ -877,15 +878,15 @@ output$urlquery <- renderText({
   })
 
 output$CountsForEventsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
   
 })
 output$CountsForDrugsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
   
 })
 output$ReportCountsandPRR <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Report Counts and PRR")))
+  HTML(stri_enc_toutf8(i18n()$t("Report counts and PRR")))
   
 })
 output$About <- renderUI({ 
@@ -905,7 +906,7 @@ output$MetaDataandQueries <- renderUI({
   
 })
 output$PRROverTime <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("PRR Over Time")))
+  HTML(stri_enc_toutf8(i18n()$t("PRR over time")))
   
 })
 output$PlotPRRbetween <- renderUI({ 

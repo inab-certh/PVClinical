@@ -18,28 +18,28 @@
         "gr": "Częstotliwość"
       },
       {
-        "def":"Change in Mean Analysis for",
-        "en": "Change in Mean Analysis for",
+        "def":"Change in mean analysis for",
+        "en": "Change in mean analysis for",
         "gr": "Αλλαγή στη μέση ανάλυση για"
       },
       {
-        "def":"Change in Mean Analysis",
-        "en": "Change in Mean Analysis",
+        "def":"Change in mean analysis",
+        "en": "Change in mean analysis",
         "gr": "Αλλαγή στη μέση ανάλυση"
       },
       {
-        "def":"Change in Variance Analysis",
-        "en": "Change in Variance Analysis",
+        "def":"Change in variance analysis",
+        "en": "Change in variance analysis",
         "gr": "Αλλαγή ανάλυσης διακύμανσης"
       },
       {
-        "def":"Bayesian Changepoint Analysis",
-        "en": "Bayesian Changepoint Analysis",
-        "gr": "Bayesian Ανάλυση Αλλαγών"
+        "def":"Bayesian changepoint analysis",
+        "en": "Bayesian changepoint analysis",
+        "gr": "Bayesian ανάλυση αλλαγών"
       },
       {
-        "def":"Report Counts by Date",
-        "en": "Report Counts by Date",
+        "def":"Report counts by date",
+        "en": "Report counts by date",
         "gr": "Αναφορά μετράει κατά ημερομηνία"
       },
       {
@@ -223,13 +223,13 @@
         "gr":"Κατατάσσεται ο αριθμός των φαρμάκων για το συμβάν"
       },
       {
-        "def":"Counts For Drugs In Selected Reports",
-        "en":"Counts For Drugs In Selected Reports",
+        "def":"Counts for drugs in selected reports",
+        "en":"Counts for drugs in selected reports",
         "gr":"Μετράει για φάρμακα σε επιλεγμένες αναφορές"
       },
       {
-        "def":"Counts For Events In Selected Reports",
-        "en":"Counts For Events In Selected Reports",
+        "def":"Counts for events in selected reports",
+        "en":"Counts for events in selected reports",
         "gr":"Μετράει για συμβάντα σε επιλεγμένες αναφορές"
       },
       {
@@ -258,13 +258,13 @@
         "gr":"MetaData και ερωτήματα"
       },
       {
-        "def":"Report Counts and PRR",
-        "en":"Report Counts and PRR",
+        "def":"Report counts and PRR",
+        "en":"Report counts and PRR",
         "gr":"Αναφορές μετρήσεων και PRR"
       },
       {
-        "def":"PRR Over Time",
-        "en":"PRR Over Time",
+        "def":"PRR over time",
+        "en":"PRR over time",
         "gr":"PRR στον χρόνο"
       },
       

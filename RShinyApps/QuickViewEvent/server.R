@@ -14,7 +14,6 @@ require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
-library("rjson")
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -27,25 +26,6 @@ source('sourcedir.R')
 
 
 shinyServer(function(input, output, session) {
-  observe({
-    query <- parseQueryString(session$clientData$url_search)
-    selectedLang = tail(query[['lang']], 1)
-    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
-    {
-      selectedLang='en'
-    }
-    translator$set_translation_language(selectedLang)
-    
-    #browser()
-    # if (!is.null(query[['lang']])) {
-    #   updateSelectInput(session, "selected_language",
-    #                     i18n()$t("Change language"),
-    #                     choices = c("en","gr"),
-    #                     selected = selectedLang
-    #   )
-    # }
-    
-  })
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -60,13 +40,24 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
-  output$info<-renderUI({
-    addPopover(session=session, id="info", title="Application Info", 
-               content=stri_enc_toutf8(i18n()$t("descriptionList")), placement = "left",
-               trigger = "hover", options = list(html = "true"))
-    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
   })
-  
   #Getters
   getwaittime <- reactive({
     if(session$clientData$url_hostname == '10.12.207.87')
@@ -77,32 +68,107 @@ shinyServer(function(input, output, session) {
     }
     return(0.0)
   })
-
+  
+  # getqueryvars <- function( num = 1 ) {
+  #   s <- vector(mode = "character", length = 7)
+  #   #Dashboard
+  #   s[1] <- paste0( input$t1, '&v1=', input$v1 )
+  # 
+  #   #PRR for a Drug
+  #   s[2] <- paste0( input$t1, '&v1=', input$v1 )
+  # 
+  #   #PRR for an Event
+  #   s[3] <- paste0( input$t2, '&v1=', input$v1 )
+  # 
+  #   #Dynamic PRR
+  #   s[4] <- paste0( input$t1 , '&v1=', input$v1, '&t2=', input$t2  )
+  # 
+  #   #CPA
+  #   s[5] <- paste0( input$t1 , '&v1=', input$v1,  '&t2=', input$t2  )
+  # 
+  #   #Reportview
+  #   s[6] <- paste0( input$t1, '&v1=', input$v1,  '&t2=', input$t2 , '&v2=', getaevar() )
+  # 
+  #   #labelview
+  #   s[7] <- paste0( input$t1, '&v1=', input$v1 )
+  # 
+  #   #LRTest
+  #   s[8] <- paste0( input$t1, '&v1=', input$v1 )
+  #   return(s)
+  # }
+  
   getqueryvars <- function( num = 1 ) {
-    s <- vector(mode = "character", length = 7)
-    #Dashboard
-    s[1] <- paste0( input$t1, '&v1=', input$v1 )
-
-    #PRR for a Drug
-    s[2] <- paste0( input$t1, '&v1=', input$v1 )
-
-    #PRR for an Event
-    s[3] <- paste0( input$t2, '&v1=', input$v1 )
-
-    #Dynamic PRR
-    s[4] <- paste0( input$t1 , '&v1=', input$v1, '&t2=', input$t2  )
-
-    #CPA
-    s[5] <- paste0( input$t1 , '&v1=', input$v1,  '&t2=', input$t2  )
-
-    #Reportview
-    s[6] <- paste0( input$t1, '&v1=', input$v1,  '&t2=', input$t2 , '&v2=', getaevar() )
-
-    #labelview
-    s[7] <- paste0( input$t1, '&v1=', input$v1 )
-
-    #LRTest
-    s[8] <- paste0( input$t1, '&v1=', input$v1 )
+    #browser()
+    
+    s <- getemptyapplist()
+    if (getwhich() == 'D')
+    {
+      #Dashboard
+      s['DA'] <- paste0( input$t1, '&v1=', input$v1 )
+      
+      #PRR for a Drug
+      s['D'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+      
+      #PRR for an Event
+      s['E'] <- paste0( '', '&v1=', input$v1, gettimeappend() )
+      
+      #Dynamic PRR
+      s['P'] <- paste0( input$t1 , '&v1=', input$v1 )
+      
+      #CPA
+      s['Z'] <- paste0(input$t1 , '&v1=', input$v1 )
+      
+      #Reportview
+      s['R'] <- paste0( input$t1, '&v1=', input$v1 )
+      
+      #labelview
+      s['L'] <- paste0( input$t1, '&v1=', input$v1 )
+      
+      #LRTest
+      s['LR'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+      
+      #LRTestE
+      s['LRE'] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+      
+      #Enforcement report
+      s['ENFFD'] <- paste0( input$t1 )
+      
+      s['LRDAS'] <- paste0( input$t1 )
+      s['DAS'] <- paste0( input$t1 )
+      
+      
+    } else {
+      #Dashboard
+      s['DA'] <- paste0( '', '&v1=', input$v1 )
+      
+      #PRR for a Drug
+      s['D'] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+      
+      #PRR for an Event
+      s['E'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+      
+      #Dynamic PRR
+      s['P'] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
+      
+      #CPA
+      s['Z'] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
+      
+      #Reportview
+      s['R'] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1 )
+      
+      #labelview
+      s['L'] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1)
+      
+      #LRTest
+      s['LR'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )  
+      
+      #LRTestE
+      s['LRE'] <- paste0( '', '&v1=', input$v1, gettimeappend() )
+      s['LREAS'] <- paste0( input$t1 )
+      s['EAS'] <- paste0( input$t1 )
+    }
+    
+    
     return(s)
   }
 
@@ -197,7 +263,6 @@ shinyServer(function(input, output, session) {
 
   #Reactive Queries
   fixInput <- reactive({
-
     updateTextInput(session, "t1", value= (input$t1) )
     updateTextInput(session,"t2", value=(input$t2))
   })
@@ -966,8 +1031,7 @@ shinyServer(function(input, output, session) {
   #*********************
 
   getsexcounts <- reactive({
-
-
+    
     geturlquery()
 
     myurl <- buildURL(v= getbestdrugvarname(), t=getbestdrugname(),
@@ -1012,7 +1076,6 @@ shinyServer(function(input, output, session) {
   #*********************
 
   getdrugcounts999 <- reactive({
-
     geturlquery()
     mylist <- getcounts999 ( session, v= getexactdrugvarname(), t= getterm1( session, quote = FALSE ),
                              count=geteventvarname(), limit=999, exactrad=input$useexact, counter=1 )
@@ -1379,6 +1442,7 @@ shinyServer(function(input, output, session) {
   # })
 
   geturlquery <- reactive({
+    browser()
     q <- parseQueryString(session$clientData$url_search)
     #  browser()
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
@@ -1784,6 +1848,7 @@ shinyServer(function(input, output, session) {
   
   #Indication table
   getindcounts <- reactive({
+    browser()
     geturlquery()
     if ( is.null( getterm1( session ) ) ){
       
@@ -1992,12 +2057,6 @@ shinyServer(function(input, output, session) {
   },  sanitize.text.function = function(x) x)
   
   output$prr2 <- DT::renderDT({  
-    query <- parseQueryString(session$clientData$url_search)
-    selectedLang = tail(query[['lang']], 1)
-    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
-    {
-      selectedLang='en'
-    }
     prr<-prr()
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
@@ -2006,15 +2065,13 @@ shinyServer(function(input, output, session) {
         autoWidth = TRUE,
         columnDefs = list(list(width = '50', targets = c(1, 2))),
         language = list(
-          url = ifelse(selectedLang=='gr', 
-                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                       '//cdn.datsatables.net/plug-ins/1.10.11/i18n/English.json')
-                       # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
-                       # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+          url = ifelse(input$selected_language=='gr', 
+                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
+                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
         )
       ),  escape=FALSE
     )
-  },  escape=FALSE)
+  })
   
   
   cloudprr <- reactive({  
@@ -2052,16 +2109,16 @@ shinyServer(function(input, output, session) {
     textplot()
   }, height=400, width=900)
   
-  # output$info <- renderTable({
-  #   mylist <- getprr()
-  #   mydf <- mylist$comb
-  #   mydf2 <- mylist$sourcedf
-  #   #   mydf <- data.frame( Event = mydf[,'term'],
-  #   #                       Count = mydf[,'count.x'],
-  #   #                       PRR = mydf[,'prr'] )
-  #   # With base graphics, need to tell it what the x and y variables are.
-  #   brushedPoints(mydf, input$plot_brush, yvar = "PRR", xvar = 'nij' )
-  # },  sanitize.text.function = function(x) x)
+  output$info <- renderTable({
+    mylist <- getprr()
+    mydf <- mylist$comb
+    mydf2 <- mylist$sourcedf
+    #   mydf <- data.frame( Event = mydf[,'term'],
+    #                       Count = mydf[,'count.x'],
+    #                       PRR = mydf[,'prr'] )
+    # With base graphics, need to tell it what the x and y variables are.
+    brushedPoints(mydf, input$plot_brush, yvar = "PRR", xvar = 'nij' )
+  },  sanitize.text.function = function(x) x)
   
   
   
@@ -2401,15 +2458,6 @@ shinyServer(function(input, output, session) {
     }
     translator
   })
-  # observeEvent(input$info, {
-  #   # Show a simple modal
-  #   shinyalert(title = "pame na figoume!??", type = "success")
-  #   browser()
-  #   addPopover(session=session, id="info", title="title", 
-  #              content='test', placement = "bottom",
-  #              trigger = "hover", options = NULL)
-  # })
-  
   
 })
       

@@ -1,0 +1,10 @@
+name: RR_D
+title:
+username:
+account: Name of account to save or remove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1579315
+bundleId: 2652168
+url: https://Name of account to save or remove.shinyapps.io/RR_D/
+when: 1575889236.49665

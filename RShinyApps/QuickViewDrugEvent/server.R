@@ -1981,7 +1981,7 @@ shinyServer(function(input, output, session) {
     prr()
   },  sanitize.text.function = function(x) x)
   
-  output$prr2 <- renderDT({  
+  output$prr2 <- DT::renderDT({  
     prr<-prr()
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
@@ -2083,7 +2083,7 @@ shinyServer(function(input, output, session) {
              error = paste( 'No results for', getterm1( session ) ) )
   },  height=120, sanitize.text.function = function(x) x)
   
-  output$specifieddrug2 <- renderDataTable({ 
+  output$specifieddrug2 <- shiny::renderDataTable({ 
     tableout(mydf = getdrugcountstable()$mydf,  
              mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) ) )
@@ -2125,7 +2125,7 @@ shinyServer(function(input, output, session) {
     )
   }, sanitize.text.function = function(x) x)
   
-  output$all2 <- renderDataTable({  
+  output$all2 <- shiny::renderDataTable({  
     tableout(mydf = geteventtotalstable()$mydf, 
              mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
@@ -2171,7 +2171,7 @@ shinyServer(function(input, output, session) {
     coqueryE()
   }, sanitize.text.function = function(x) x)
   
-  output$coqueryE2 <- renderDataTable({  
+  output$coqueryE2 <- shiny::renderDataTable({  
     coqueryE()
   }, escape=FALSE)
   
@@ -2211,7 +2211,7 @@ shinyServer(function(input, output, session) {
     return(out)
   } )
   
-  output$coquery2 <- renderDataTable({  
+  output$coquery2 <- shiny::renderDataTable({  
     coquery2()
   },  escape=FALSE )
   
@@ -2234,7 +2234,7 @@ shinyServer(function(input, output, session) {
              error = paste( 'No results for', getterm1( session ) ) )
   }, sanitize.text.function = function(x) x)
   
-  output$indquery2 <- renderDataTable({ 
+  output$indquery2 <- shiny::renderDataTable({ 
     tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
              error = paste( 'No results for', getterm1( session ) ) )
   },  escape=FALSE )
@@ -2250,7 +2250,7 @@ shinyServer(function(input, output, session) {
   }, sanitize.text.function = function(x) x)
   
   
-  output$coqueryEex2 <- renderDataTable({  
+  output$coqueryEex2 <- shiny::renderDataTable({  
     tableout(mydf = getdrugcounts()$excludeddf,  
              #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),
              error = paste( 'No Events for', getterm1( session ) )

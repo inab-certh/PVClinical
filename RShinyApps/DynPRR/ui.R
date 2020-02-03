@@ -34,8 +34,7 @@ renderEventText <- function() {
 }    
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),
-           column(width=12, titlePanel("Dynamic PRR" ),
-                  
+           column(width=12, 
                   hidden(
                     uiOutput('page_content'),
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -89,40 +88,35 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                )
               ),
       tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
-               wellPanel( 
-                 htmlOutput( 'cotext' ),
-                 htmlOutput_p( 'querycotext' ,
-                               tt('gquery1'), tt('gquery2'),
-                               placement='bottom' )
-               ),
+               
                wellPanel(
                  htmlOutput( 'cotitle' )
                ),
                htmlOutput_p( 'coquerytext' ,
                              tt('gquery1'), tt('gquery2'),
                              placement='bottom' ),
-               wordcloudtabset('cloudcoquery', 'coquery2', 
-                               types=c('datatable', 'plot'),
-                               popheads=c( tt('codrug1'), tt('word1') ), 
-                               poptext=c( tt('codrug3'), tt('word2') ))
+               dataTableOutput_p("coquery2",
+                                 tt('ts1'), tt('ts2'),
+                                 placement='top' )
+               # wordcloudtabset('cloudcoquery', 'coquery2', 
+               #                 types=c('datatable', 'plot'),
+               #                 popheads=c( tt('codrug1'), tt('word1') ), 
+               #                 poptext=c( tt('codrug3'), tt('word2') ))
       ),
       tabPanel(uiOutput('CountsForEventsInSelectedReports'),
-               wellPanel( 
-                 htmlOutput( 'cotextE' ),
-                 htmlOutput_p( 'querycotextE' ,
-                               tt('gquery1'), tt('gquery2'),
-                               placement='bottom' )
-               ),
                wellPanel(
                  htmlOutput( 'cotitleE' )
                ),
                htmlOutput_p( 'coquerytextE' ,
                              tt('gquery1'), tt('gquery2'),
                              placement='bottom' ),
-               wordcloudtabset('cloudcoqueryE', 'coqueryE2',
-                               types=c('datatable', 'plot'),
-                               popheads=c( tt('codrug1'), tt('word1') ), 
-                               poptext=c( tt('codrug3'), tt('word2') ))
+               dataTableOutput_p("coqueryE2",
+                                 tt('ts1'), tt('ts2'),
+                                 placement='top' )
+               # wordcloudtabset('cloudcoqueryE', 'coqueryE2',
+               #                 types=c('datatable', 'plot'),
+               #                 popheads=c( tt('codrug1'), tt('word1') ), 
+               #                 poptext=c( tt('codrug3'), tt('word2') ))
       ),
         # tabPanel(uiOutput('MetaDataandQueries'),  
         #          wellPanel( 
