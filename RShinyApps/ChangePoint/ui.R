@@ -30,7 +30,7 @@ rendermaxcp <- function() {
 } 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),
-           column(width=12, titlePanel(uiOutput('ChangePointAnalysis') ),
+           column(width=12, 
                   
                   hidden(
                     uiOutput('page_content'),
@@ -69,79 +69,84 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                 
                   ),
         
-    dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"),  
                           wellPanel( 
-                            withSpinner(plotOutput_p( 'cpmeanplot' )), 
-                            uiOutput("cpmeantext" )
+                            uiOutput("infocpmeantext", style = "position:absolute;right:40px;z-index:10"),
+                            withSpinner(plotOutput_p( 'cpmeanplot' )) 
+                            # uiOutput("cpmeantext" )
                             )
                           ),
                 tabPanel(uiOutput("ChangeinVarianceAnalysis"),  
                          wellPanel( 
-                           plotOutput_p( 'cpvarplot' ), 
-                           uiOutput( 'cpvartext' )
+                           uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10"),
+                           plotOutput_p( 'cpvarplot' ) 
+                           # uiOutput( 'cpvartext' )
                           )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
                           wellPanel( 
-                            plotOutput_p( 'cpbayesplot' ), 
+                            # uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10"),
+                            plotOutput_p( 'cpbayesplot' ),
                             verbatimTextOutput( 'cpbayestext' )
                             )
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
+                         # wellPanel( 
+                         #   htmlOutput_p( 'allquerytext',
+                         #                 tt('gquery1'), tt('gquery2'),
+                         #                 placement='bottom'  ),
+                         #   htmlOutput_p( 'metatext' ,
+                         #               tt('gquery1'), tt('gquery2'),
+                         #               placement='bottom' )
+                         # ),
                          wellPanel( 
-                           htmlOutput_p( 'allquerytext',
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom'  ),
-                           htmlOutput_p( 'metatext' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' )
-                         ),
-                         wellPanel( 
-                           htmlOutput( 'querytitle' ),
-                           htmlOutput_p( 'querytext',
-                                       HTML( tt('gquery1') ), tt('gquery2'),
-                                       placement='bottom' ),
+                           # htmlOutput( 'querytitle' ),
+                           # htmlOutput_p( 'querytext',
+                           #             HTML( tt('gquery1') ), tt('gquery2'),
+                           #             placement='bottom' ),
                            htmlOutput_p("query",
                                         HTML( tt('ts1') ), tt('ts2'),
                                         placement='top'  )
                          )
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                         wellPanel( 
-                           htmlOutput( 'cotext' ),
-                           htmlOutput_p( 'querycotext' ,
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom' )
-                         ),
-                         wellPanel(
-                           htmlOutput( 'cotitle' )
-                         ),
-                         htmlOutput_p( 'coquerytext' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' ),
-                         wordcloudtabset('cloudcoquery', 'coquery',
-                                         popheads=c( tt('codrug1'), tt('word1') ), 
-                                         poptext=c( tt('codrug3'), tt('word2') ))
+                         # wellPanel( 
+                         #   htmlOutput( 'cotext' ),
+                         #   # htmlOutput_p( 'querycotext' ,
+                         #   #               tt('gquery1'), tt('gquery2'),
+                         #   #               placement='bottom' )
+                         # ),
+                         # wellPanel(
+                         #   htmlOutput( 'cotitle' )
+                         # ),
+                         # htmlOutput_p( 'coquerytext' ,
+                         #               tt('gquery1'), tt('gquery2'),
+                         #               placement='bottom' ),
+                         # wordcloudtabset('cloudcoquery', 'coquery',
+                         #                 popheads=c( tt('codrug1'), tt('word1') ), 
+                         #                 poptext=c( tt('codrug3'), tt('word2') ))
+                         uiOutput('coquery')
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                         wellPanel( 
-                           htmlOutput( 'cotextE' ),
-                           htmlOutput_p( 'querycotextE' ,
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom' )
-                         ),
-                         wellPanel(
-                           htmlOutput( 'cotitleE' )
-                         ),
-                         htmlOutput_p( 'coquerytextE' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' ),
-                         wordcloudtabset('cloudcoqueryE', 'coqueryE',
-                                         popheads=c( tt('codrug1'), tt('word1') ), 
-                                         poptext=c( tt('codrug3'), tt('word2') ))
+                         # wellPanel( 
+                         #   htmlOutput( 'cotextE' )
+                         #   # htmlOutput_p( 'querycotextE' ,
+                         #   #               tt('gquery1'), tt('gquery2'),
+                         #   #               placement='bottom' )
+                         # ),
+                         # wellPanel(
+                         #   htmlOutput( 'cotitleE' )
+                         # ),
+                         # htmlOutput_p( 'coquerytextE' ,
+                         #               tt('gquery1'), tt('gquery2'),
+                         #               placement='bottom' ),
+                         # wordcloudtabset('cloudcoqueryE', 'coqueryE',
+                         #                 popheads=c( tt('codrug1'), tt('word1') ), 
+                         #                 poptext=c( tt('codrug3'), tt('word2') ))
+                         uiOutput('coqueryE')
                 ),
                 # tabPanel(uiOutput("OtherApps"),  
                 #          wellPanel( 

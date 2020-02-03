@@ -397,7 +397,7 @@ prrnohyper <- reactive({
   return(out)
 })
 
-output$prr <- renderDataTable({   
+output$prr <- shiny::renderDataTable({   
   prr()
 },  escape=FALSE)
 
@@ -603,7 +603,7 @@ getcururl <- reactive({
     contentType="text/csv"
   )
  
- output$fulltable <- renderDataTable({  
+ output$fulltable <- shiny::renderDataTable({  
     mytable <- getprr()[['prrtab']]
     mytable[, 'PRR'] <- round( mytable[, 'PRR'], digits = 2 )
     mynames <- names(mytable)
