@@ -2066,8 +2066,8 @@ shinyServer(function(input, output, session) {
         columnDefs = list(list(width = '50', targets = c(1, 2))),
         language = list(
           url = ifelse(input$selected_language=='gr', 
-                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
-                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                       'datatablesGreek.json', 
+                       'datatablesEnglish.json')
         )
       ),  escape=FALSE
     )

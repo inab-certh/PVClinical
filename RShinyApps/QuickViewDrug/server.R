@@ -2007,8 +2007,8 @@ shinyServer(function(input, output, session) {
         columnDefs = list(list(width = '50', targets = c(1, 2))),
         language = list(
           url = ifelse(selectedLang=='gr', 
-                       '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                       '//cdn.datsatables.net/plug-ins/1.10.11/i18n/English.json')
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
                        # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
                        # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
         )
