@@ -279,12 +279,12 @@ class ScenarioForm(forms.Form):
         conditions = []
 
         for drug in self.cleaned_data.get("drugs_fld"):
-            dname, dcode = list(map(lambda part: part.strip(), drug.split("-")))
+            dname, dcode = list(map(lambda part: part.strip(), drug.split(" - ")))
             drugs.append(Drug.objects.get_or_create(name=dname, code=dcode)[0])
         self.instance.drugs.set(drugs)
 
         for condition in self.cleaned_data.get("conditions_fld"):
-            cname, ccode = list(map(lambda part: part.strip(), condition.split("-")))
+            cname, ccode = list(map(lambda part: part.strip(), condition.split(" - ")))
             conditions.append(Condition.objects.get_or_create(name=cname, code=ccode)[0])
         self.instance.conditions.set(conditions)
 
