@@ -99,9 +99,11 @@ def get_atc_children(parent, level, codes):
     # print(children)
 
     if level==4:
-        return list(map(lambda el: {"text": el}, children))
+        return sorted(list(map(lambda el: {"text": el}, children)), key = lambda v: v["text"])
 
-    return [{"text": ch, "nodes": get_atc_children(ch, level+1, codes)} for ch in children]
+    return sorted([{"text": ch,
+                    "nodes": get_atc_children(ch, level+1, codes)} for ch in children],
+                  key = lambda v: v["text"])
 
 
 def atc_hierarchy_tree(codes):

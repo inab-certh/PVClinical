@@ -24,6 +24,8 @@ class CustomSelect2TagWidget(Select2TagWidget):
         self.attrs.setdefault('data-token-separators', [","])
         # self.attrs.setdefault('data-width', '50%')
         self.attrs.setdefault('data-tags', 'true')
+        self.attrs.setdefault('data-url', '')
+        self.attrs.setdefault('data-minimum-input-length', 2)
         return super().build_attrs(*args, **kwargs)
 
 
@@ -116,7 +118,6 @@ class ScenarioForm(forms.Form):
     # pass
     knw = KnowledgeGraphWrapper()
     all_drugs = knw.get_drugs()
-
     all_conditions = knw.get_conditions()
 
     # all_drugs = get_drugs()
@@ -127,17 +128,21 @@ class ScenarioForm(forms.Form):
 
     title = forms.CharField(label=_("Τίτλος σεναρίου:"), required=True)
 
-    drugs_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
-        d.name, " - {}".format(d.code) if d.code else ""),)*2 for d in all_drugs],
-                                              required=False,
-                                              label=_("Φάρμακο/Φάρμακα:"),
-                                              widget=CustomSelect2TagWidget)
-    conditions_fld = forms.MultipleChoiceField(choices=[("{}{}".format(
-        c.name, " - {}".format(c.code) if c.code else ""),)*2 for c in all_conditions],
-                                                   required=False,
-                                                   label=_("Πάθηση/Παθήσεις:"),
-                                                   widget=CustomSelect2TagWidget)
+    drugs_fld = forms.MultipleChoiceField(choices=[],
+                                          required=False,
+                                          label=_("Φάρμακο/Φάρμακα:"),
+                                          widget=CustomSelect2TagWidget)
 
+
+    # [("{}{}".format(
+    #     d.name, " - {}".format(d.code) if d.code else ""),) * 2 for d in all_drugs]
+
+    conditions_fld = forms.MultipleChoiceField(choices=[],
+                                               required=False,
+                                               label=_("Πάθηση/Παθήσεις:"),
+                                               widget=CustomSelect2TagWidget)
+    # [("{}{}".format(
+    #     c.name, " - {}".format(c.code) if c.code else ""),) * 2 for c in all_conditions]
 
 
     # drugs_by_name = forms.MultipleChoiceField(choices=[(d.name, "{}{}".format(
@@ -182,11 +187,15 @@ class ScenarioForm(forms.Form):
             self.fields["status"].initial = self.instance.status
             init_drugs = ["{}{}".format(
                 d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
+            self.fields["drugs_fld"].choices = list(zip(*[init_drugs]*2))
             self.fields["drugs_fld"].initial = init_drugs
+            # print(init_drugs)
 
             init_conditions = ["{}{}".format(
                 c.name, " - {}".format(c.code) if c.code else "") for c in self.instance.conditions.all()]
+            self.fields["conditions_fld"].choices = list(zip(*[init_conditions] * 2))
             self.fields["conditions_fld"].initial = init_conditions
+            # print(init_conditions)
 
     def is_valid(self):
         """ Overriding-extending is_valid module
@@ -270,12 +279,12 @@ class ScenarioForm(forms.Form):
         conditions = []
 
         for drug in self.cleaned_data.get("drugs_fld"):
-            dname, dcode = drug.split(" - ")
+            dname, dcode = list(map(lambda part: part.strip(), drug.split(" - ")))
             drugs.append(Drug.objects.get_or_create(name=dname, code=dcode)[0])
         self.instance.drugs.set(drugs)
 
         for condition in self.cleaned_data.get("conditions_fld"):
-            cname, ccode = condition.split(" - ")
+            cname, ccode = list(map(lambda part: part.strip(), condition.split(" - ")))
             conditions.append(Condition.objects.get_or_create(name=cname, code=ccode)[0])
         self.instance.conditions.set(conditions)
 

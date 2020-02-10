@@ -16,8 +16,11 @@ urlpatterns = [
     path('add-scenario', views.add_edit_scenario, name='add_scenario'),
     path('edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='edit_scenario'),
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
+    path('ajax/filter-whole-set', views.filter_whole_set, name='filter_whole_set'),
+    path('ajax/all-drugs', views.get_all_drugs, name='get_all_drugs'),
     path('OpenFDAWorkspace_detailedView/', views.OpenFDAWorkspace_detailedView, name='OpenFDAWorkspace_detailedView'),
-    path('OpenFDAWorkspace_detailedView/<int:scenario_id>', views.OpenFDAWorkspace_detailedView, name='OpenFDAWorkspace_detailedView'),
+    path('OpenFDAWorkspace_detailedView/<int:scenario_id>',
+         views.OpenFDAWorkspace_detailedView, name='OpenFDAWorkspace_detailedView'),
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]
