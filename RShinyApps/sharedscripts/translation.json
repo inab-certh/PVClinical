@@ -233,8 +233,8 @@
         "gr":"Μετράει για συμβάντα σε επιλεγμένες αναφορές"
       },
       {
-        "def":"Counts For Indications In Selected Reports",
-        "en":"Counts For Indications In Selected Reports",
+        "def":"Counts for indications in selected reports",
+        "en":"Counts for indications in selected reports",
         "gr":"Μετράει για ενδείξεις σε επιλεγμένες αναφορές"
       },
       {
@@ -338,13 +338,13 @@
         "gr":"Χρήση αναφορών μεταξύ"
       },
       {
-        "def":"LRT Signal Analysis for a Drug",
-        "en":"LRT Signal Analysis for a Drug",
+        "def":"LRT signal analysis for a drug",
+        "en":"LRT signal analysis for a drug",
         "gr":"Ανάλυση σήματος LRT για ένα φάρμακο"
       },
       {
-        "def":"LRT Signal Analysis for an Event",
-        "en":"LRT Signal Analysis for an Event",
+        "def":"LRT signal analysis for an event",
+        "en":"LRT signal analysis for an event",
         "gr":"Ανάλυση σήματος LRT για ένα συμβάν"
       },
       
@@ -352,8 +352,8 @@
       
       
       {
-        "def":"LRT Results based on Total Drugs",
-        "en":"LRT Results based on Total Drugs",
+        "def":"LRT results based on total Drugs",
+        "en":"LRT results based on total Drugs",
         "gr":"Αποτελέσματα LRT βάσει των συνολικών φαρμάκων"
       },
       {
@@ -370,7 +370,107 @@
         "def":"Change Point Analysis",
         "en":"Change Point Analysis",
         "gr":"Ανάλυση Change Point"
+      },
+      {
+        "def":"PRR Plot",
+        "en":"PRR Plot",
+        "gr":"Διάγραμμα PRR"
+      },
+      {
+        "def":"95% Confidence Interval for PRR",
+        "en":"95% Confidence Interval for PRR",
+        "gr":"95% διάστημα εμπιστοσύνης για PRR"
+      },
+      {
+        "def":"Date",
+        "en":"Date",
+        "gr":"Ημερομηνία"
+      },
+      {
+        "def":"Cumulative Count",
+        "en":"Cumulative Count",
+        "gr":"Αθροιστική αρίθμηση"
+      },
+      {
+        "def":"Cumulative Sum",
+        "en":"Cumulative Sum",
+        "gr":"Άθροισμα"
+      },
+      {
+        "def":"Drug Name",
+        "en":"Drug Name",
+        "gr":"Όνομα φαρμάκου"
+      },
+      {
+        "def":"% Count",
+        "en":"% Count",
+        "gr":"% Αρίθμηση"
+      },
+      {
+        "def":"Counts for All Reports",
+        "en":"Counts for All Reports",
+        "gr":"Υπολογισμός για όλες τις αναφορές"
+      },
+      {
+        "def":"Lower 95% CI for PRR",
+        "en":"Lower 95% CI for PRR",
+        "gr":"Κάτω 95% CI για PRR"
+      },
+      {
+        "def":"Upper 95% CI for PRR",
+        "en":"Upper 95% CI for PRR",
+        "gr":"Κάτω 95% CI για PRR"
+      },
+      {
+        "def":"Drug_Event Counts",
+        "en":"Drug_Event Counts",
+        "gr":"Καταμέτρηση Drug_Event"
+      },
+      {
+        "def":"Drug Counts",
+        "en":"Drug Counts",
+        "gr":"Καταμέτρηση φαρμάκων"
+      },
+      {
+        "def":"Event Counts",
+        "en":"Event Counts",
+        "gr":"Καταμέτρηση παρενεργειών"
+      },
+      {
+        "def":"Total Counts",
+        "en":"Total Counts",
+        "gr":"Συνολική καταμέτρηση"
+      },
+      {
+        "def":"Simulation results for drug based LRT",
+        "en":"Simulation results for drug based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT που βασίζεται σε φάρμακα"
+      },
+      {
+        "def":"Analyzed drug counts for event",
+        "en":"Analyzed drug counts for event",
+        "gr":"Αναλύονται μετρήσεις φαρμάκων για συμβάν"
+      },
+      {
+        "def":"Analyzed drug counts for all events",
+        "en":"Analyzed drug counts for all events",
+        "gr":"Αναλύεται ο αριθμός των φαρμάκων για όλα τα συμβάντα"
+      },
+      {
+        "def":"Event counts for event",
+        "en":"Event counts for event",
+        "gr":"Αριθμός συμβάντων"
+      },
+      {
+        "def":"Counts for all drugs",
+        "en":"Counts for all drugs",
+        "gr":"καταμέτρηση για όλα τα φάρμακα"
       }
+      
+      
+      
+      
+      
       
     ]
 }

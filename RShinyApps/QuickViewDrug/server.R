@@ -46,6 +46,9 @@ shinyServer(function(input, output, session) {
     # }
     
   })
+  output$PRRTitle <- renderUI({
+    return ('PRR')
+  })
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -281,7 +284,10 @@ shinyServer(function(input, output, session) {
                 content = 'Calculating Time Series...',
                 dismiss = FALSE)
     mydfin <- gettstable( tmp )
-    closeAlert(session,  'calcalert')
+    if(!is.null(session$calcalert))
+    {
+      closeAlert(session,  'calcalert')
+    }
     return( list( mydfin= mydfin, mydf=mydf, myurl= mydf$myurl, mysum = mydfin$total ) )
   })
 
@@ -337,7 +343,7 @@ shinyServer(function(input, output, session) {
     #    print(names(mydf))
     #Drug Table
     if (whichcount =='D'){
-      colname <- 'Drug Name'
+      colname <- i18n()$t("Drug Name")
       if (input$v1 != 'patient.drug.medicinalproduct')
       {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -354,7 +360,7 @@ shinyServer(function(input, output, session) {
                                  append= drugvar )
 
         mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-        mynames <- c( 'D', 'L', colname, 'Count', 'Cumulative Sum')
+        mynames <- c( 'D', 'L', colname, 'Count', i18n()$t("Cumulative Sum"))
       }
       else {
         medlinelinks <- rep(' ', nrow( sourcedf ) )
@@ -364,8 +370,8 @@ shinyServer(function(input, output, session) {
       values <- c(getbestaevar(), getbestterm2(), getexactdrugvar() )
       #Event Table
     } else {
-      colname <- 'Preferred Term'
-      mynames <- c('M', colname, 'Count', 'Cumulative Sum')
+      colname <- i18n()$t("Preferred Term")
+      mynames <- c('M', colname, 'Count', i18n()$t("Cumulative Sum"))
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')
       mydf <- data.frame(M=medlinelinks, mydf)
       names <- c('v1','t1', 'v2', 't2')
@@ -404,7 +410,7 @@ shinyServer(function(input, output, session) {
       mydates <- gsub('-', '', as.character( mydates ))
       mycumdates <- paste0(start[1],  '+TO+', mydates ,']')
       mydates <- paste0(start,  '+TO+', mydates ,']')
-      names(mydf) <- c('Date', 'Count', 'Cumulative Count')
+      names(mydf) <- c('Date', 'Count', i18n()$t("Cumulative Count"))
       #    mydf <- mydf[ (mydf[,'Cumulative Count'] > 0), ]
       mydf_d <- mydf
       names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
@@ -471,8 +477,10 @@ shinyServer(function(input, output, session) {
     d <- input$v2
     e <- input$useexactD
     f <- input$useexactE
-
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
   })
   #SETTERS
   output$mymodal <- renderText({
@@ -689,7 +697,10 @@ shinyServer(function(input, output, session) {
       out <- paste(out, 'Type of penalty       :' , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
       out <- paste(out, 'Maximum no. of cpts   : ' , s@ncpts.max, '<br>' )
       out <- paste(out, 'Changepoint Locations :' , mycpts , '<br>' )
-      closeAlert(session, 'calclert')
+      if(!is.null(session$calclert))
+      {
+        closeAlert(session, 'calclert')
+      }
     } else {
       out <- "Insufficient data"
     }
@@ -721,7 +732,8 @@ shinyServer(function(input, output, session) {
       {
         myevents <- getterm2( session, FALSE )
       }
-      mytitle <- paste( i18n()$t("Change in Mean Analysis for"), mydrugs, i18n()$t("and"), myevents )
+      # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
+      mytitle <- i18n()$t("Change in mean analysis")
       # par(bg = "gray")
       plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
       axis(1, pos,  labs[pos], las=2  )
@@ -773,7 +785,8 @@ shinyServer(function(input, output, session) {
       {
         myevents <- getterm2( session,FALSE)
       }
-      mytitle <- paste( "Change in Variance Analysis for", mydrugs, 'and', myevents )
+      # mytitle <- paste( "Change in Variance Analysis for", mydrugs, 'and', myevents )
+      mytitle <- i18n()$t("Change in variance analysis")
       plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
       axis(1, pos,  labs[pos], las=2  )
       grid(nx=NA, ny=NULL)
@@ -1251,7 +1264,7 @@ shinyServer(function(input, output, session) {
     mydf <- getdrugcountstable()$mydf
     if ( is.data.frame(mydf) )
     {
-      names(mydf) <- c( 'M', 'Preferred Term', paste( 'Case Counts for', getdrugname()), '% Count' )
+      names(mydf) <- c( 'M', i18n()$t("Preferred Term"), paste( i18n()$t("Case Counts for"), getdrugname()), i18n()$t("% Count") )
       return(mydf)
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
   },  sanitize.text.function = function(x) x)
@@ -1588,7 +1601,10 @@ shinyServer(function(input, output, session) {
   # Input SETTERS ====================================================================
   updatevars <- reactive({
     input$update
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
     isolate( {
       updateTextInput(session, "t1", value=( input$drugname ) )
       updateNumericInput(session, "limit", value= ( input$limit2 ) )
@@ -1600,7 +1616,10 @@ shinyServer(function(input, output, session) {
     a <- input$t1
     b <- input$v1
     c <- input$useexact
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
   })
   
   output$mymodal <- renderText({
@@ -1744,7 +1763,7 @@ shinyServer(function(input, output, session) {
       return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
     }
     if (getwhich() =='D'){
-      colname <- 'Drug Name'
+      colname <- i18n()$t("Drug Name")
       if (input$v1 != 'patient.drug.medicinalproduct')
       {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -1768,7 +1787,7 @@ shinyServer(function(input, output, session) {
         mynames <- c('-', colname, 'Count') 
       }
     } else {
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       mynames <- c('M', colname, 'Count') 
       medlinelinks <- makemedlinelink(sourcedf[,1], 'Definition')          
       mydf <- data.frame(M=medlinelinks, mydf) 
@@ -1860,7 +1879,7 @@ shinyServer(function(input, output, session) {
       comb <- data.frame( M='M' , comb, links$dynprr, links$cpa,  comb$ror, comb$nij)
       #      print( names(comb) )
       sourcedf <- comb
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'Definition'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 

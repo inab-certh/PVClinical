@@ -355,7 +355,7 @@ shinyServer(function(input, output, session) {
       comb <- data.frame( M='M' , comb, links$dynprr, links$cpa,  ror)
 #      print( names(comb) )
       sourcedf <- comb
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'M'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 

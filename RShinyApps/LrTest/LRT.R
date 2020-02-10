@@ -501,7 +501,7 @@ shinyServer(function(input, output, session) {
       #Event Table
     } else {
       linkapp <- 'LRE'
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       mynames <- c('M', colname, 'Count', 'Cum Sum') 
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
       mydf <- data.frame(M=medlinelinks, mydf) 
@@ -665,7 +665,7 @@ getindcounts <- reactive({
 #      print( names(comb) )
       sourcedf <- comb
 #      sourcedf2 <- comb2
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'M'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     }

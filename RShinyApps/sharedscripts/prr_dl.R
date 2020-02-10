@@ -263,10 +263,10 @@ shinyServer(function(input, output, session) {
                           mybaseurl=getcururl()
                           )
       comb <- data.frame(comb, tmp[[1]])
-      names( comb ) <- c('Preferred Term',	paste('Counts for', s), 	'Counts for All Reports', 	
-                         'PRR', 'Lower 95% CI for PRR', 'Upper 95% CI for PRR', 'Dynamic PRR')
+      names( comb ) <- c(i18n()$t("Preferred Term"),	paste(i18n()$t("Counts for"), s), 	i18n()$t("Counts for All Reports"), 	
+                         'PRR', i18n()$t("Lower 95% CI for PRR"), i18n()$t("Upper 95% CI for PRR"), i18n()$t("Dynamic PRR"))
       }
-    colname <- 'Preferred Term'
+    colname <- i18n()$t("Preferred Term")
     
     return( list(comb=comb, eventcounts=unique(eventcounts), 
                  alleventcounts=unique(alleventcounts), 
