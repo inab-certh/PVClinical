@@ -61,12 +61,19 @@ def get_synonyms(request):
     """
 
     drugs = json.loads(request.GET.get("drugs", None))
+    # print(drugs, type(drugs))
 
     # Replace with real service
-    all_synonyms = {"omeprazole":["esomeprazole"], "esomeprazole": ["omeprazole"],
-                    "etybenzatropine": ["benzatropine"], "benzatropine": ["etybenzatropine"]}
-    synonyms = list(chain.from_iterable([all_synonyms[d.lower()] for d in drugs
-                                         if d.lower() in all_synonyms.keys()])) if drugs else []
+    # all_synonyms = {"omeprazole":["esomeprazole"], "esomeprazole": ["omeprazole"],
+    #                 "etybenzatropine": ["benzatropine"], "benzatropine": ["etybenzatropine"]}
+    # synonyms = list(chain.from_iterable([all_synonyms[d.lower()] for d in drugs
+    #                                      if d.lower() in all_synonyms.keys()])) if drugs else []
+
+    # whole_query = whole_query.format(" ".join(drugs))
+    # print(whole_query)
+    knw = KnowledgeGraphWrapper()
+    synonyms = knw.get_synonyms(drugs)
+
     data={}
     data["synonyms"] = synonyms
     return JsonResponse(data)
