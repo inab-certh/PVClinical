@@ -40,38 +40,62 @@ class KnowledgeGraphWrapper:
         self.sparql.setHTTPAuth(settings.SPARQL_AUTH)
         self.sparql.setReturnFormat(JSON)
 
-    def cache_drugs(self):
+    def get_synonyms(self, drugs):
+        """ Retrieves synonyms for selected drugs
+        :param drugs: the selected drugs
+        :return: the synonyms
+        """
+        drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
         whole_query = """
-        SELECT ?name, ?code WHERE {
-        ?s <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-        ?s skos:prefLabel ?name.
-        ?s skos:notation ?code.
-        }
+                select ?synonym_name, ?drug_code from <https://bio2rdf.org/drugbank>
+                where {{
+                ?drug <http://purl.org/dc/terms/title> ?drug_name.
+                FILTER (?drug_name IN {})
+                ?drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?drug_code.
+                ?drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+                ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
+                FILTER(?synonym_name!=?drug_name)
+                }}
+                """.format(drugs)
+
+        self.sparql.setQuery(whole_query)
+        synonyms = self.sparql.query().bindings
+        synonyms = sorted(["{} - {}".format(
+            synonym["synonym_name"].value,
+            synonym["drug_code"].value.split(":").pop().strip()
+        ) for synonym in synonyms])
+        return synonyms
+
+    def cache_drugs(self):
+        """ Caches the drugs for faster retrieval
         """
 
-        # print(whole_query)
-        self.sparql.setQuery(whole_query)
-        # results = sorted(list(
-        #     map(lambda r: tuple(
-        #         map(lambda el: el.value, r.values())), self.sparql.query().bindings)))
+        whole_query = """
+        select ?drug_name, ?drug_code where {
+        ?drug a <http://bio2rdf.org/drugbank_vocabulary:Drug>.
+        ?drug <http://purl.org/dc/terms/title> ?drug_name.
+        ?drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?drug_code.
+        }
+        """
         #
-        # # Turn drugs into objects with name and code
-        # DrugStruct = namedtuple("DrugStruct", "name, code")
-        # results = [DrugStruct(name=r[0].lower(), code=r[1]) for r in results]
-
+        self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings
-
-        # DrugStruct = namedtuple("DrugStruct", "name, code")
-        # drugs = sorted([DrugStruct(name=d["name"].value.lower(), code=d["code"].value) for d in drugs])
-        drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
-                                  ) for d in drugs])
+        # drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
+        #                           ) for d in drugs])
+        drugs = sorted([NCObject(name=d["drug_name"].value,
+                                 code=d["drug_code"].value.split(":").pop().strip()
+                                 ) for d in drugs])
 
         cache.set("drugs", drugs)
 
     def get_drugs(self):
+        """ Retrieve drugs from cache
+        """
         return cache.get("drugs")
 
     def cache_conditions(self):
+        """ Caches the conditions for faster retrieval
+        """
         # Change with real service
         json_dir = os.path.dirname(os.path.realpath(__file__))
         with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
@@ -88,6 +112,8 @@ class KnowledgeGraphWrapper:
             cache.set("conditions", conditions)
 
     def get_conditions(self):
+        """ Retrieve drugs from cache
+        """
         return cache.get("conditions")
 
 # def get_drugs():
