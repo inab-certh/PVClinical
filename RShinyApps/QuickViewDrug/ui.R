@@ -89,8 +89,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            ),
                                   
                     column(width=6,
-                           # titlePanel("RR-Drug" ) ,
-                           fluidRow( style="width:90%; margin-top:60px;",
+                           fluidRow( align="center",style="width:90%; margin-top:60px;",uiOutput('PRRTitle',style="font-weight:bold" ),
                                      withSpinner(makeDataTableOutput( 'prr2' ))),
                            #htmlOutput( 'prrtitle' ),
                            
