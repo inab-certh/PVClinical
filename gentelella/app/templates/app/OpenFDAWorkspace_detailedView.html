@@ -1,5 +1,5 @@
 {% extends "app/base_site.html" %}
-
+{% load i18n %}
 {% block title %} Fixed Sidebar {% endblock title %}
 
 {% block stylesheets %}
@@ -215,6 +215,18 @@
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
+        {
+            app='QuickViewDrugEvent';
+        }
+        else if(scenarioConditionsLength>0)
+        {
+            app='QuickViewEvent';
+        }
+        else{
+            app='QuickViewDrug';
+        }
+
 
         keepAppropriateAppsBasedOnParameters();
         buildUrl(app, drug, event);
