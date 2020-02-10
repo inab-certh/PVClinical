@@ -500,7 +500,7 @@ shinyServer(function(input, output, session) {
       #Event Table
     } else {
       whichapp <- 'LRE'
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       mynames <- c('M', colname, 'Count', 'Cum Sum') 
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
       mydf <- data.frame(M=medlinelinks, mydf) 
@@ -659,7 +659,7 @@ getindcounts <- reactive({
 #      print( names(comb) )
       sourcedf <- comb
 #      sourcedf2 <- comb2
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'M'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     }
@@ -1294,59 +1294,43 @@ getcururl <- reactive({
   )
   
   output$LRTResultsbasedonTotalDrugs <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("LRT Results based on Total Drugs")))
+    HTML(stri_enc_toutf8(i18n()$t("LRT results based on total Drugs")))
     
   })
   output$SimulationResultsforDrugBasedLRT <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Simulation Results for Drug Based LRT")))
+    HTML(stri_enc_toutf8(i18n()$t("Simulation results for drug based LRT")))
     
   })
   output$AnalyzedDrugCountsforEventText <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for Event")))
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed drug counts for event")))
     
   })
   output$AnalyzedDrugCountsforAllEvents <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for All Events")))
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed drug counts for all events")))
     
   })
   output$CountsForEventsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
     
   })
   output$DrugCountsforEvent <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Event Counts for Event")))
+    HTML(stri_enc_toutf8(i18n()$t("Event counts for event")))
     
   })
   output$CountsForAllDrugs <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For All Drugs")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for all drugs")))
     
   })
   output$CountsForIndicationsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For Indications In Selected Reports")))
-    
-  })
-  output$OtherApps <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
-    
-  })
-  output$DataReference <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
-    
-  })
-  output$About <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("About")))
-    
-  })
-  output$UseReportsBetween <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Use Reports Between")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
     
   })
   output$LRTSignalAnalysisforaDrug <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("LRT Signal Analysis for a Drug")))
+    HTML(stri_enc_toutf8(i18n()$t("LRT signal analysis for a drug")))
     
   })
   output$LRTSignalAnalysisforanEvent <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("LRT Signal Analysis for an Event")))
+    HTML(stri_enc_toutf8(i18n()$t("LRT signal analysis for an event")))
     
   })
   output$makeTabsetLRTResultsbasedonTotalDrugs <- renderUI({ 
