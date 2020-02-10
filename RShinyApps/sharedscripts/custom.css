@@ -2,3 +2,11 @@ body{
   font-family: Quicksand !important;
   /*font-style: italic!important;*/
 }
+.popover{
+  max-width: 100%;
+  width:500px;
+}
+.shiny-plot-output, .datatables {
+  color:blue;
+}
+

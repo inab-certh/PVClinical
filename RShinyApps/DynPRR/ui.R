@@ -2,16 +2,10 @@ library(shiny)
 library(shinyjs)
 library(shinycssloaders)
 source('sourcedir.R')
+library(shinyalert)
+library(DT)
 
-# getdrugvarchoices <- function(){
-#   openfdavars <- c( 
-#     'generic_name',
-#     'substance_name',
-#     'brand_name')
-#   openfdavars <-  paste0( 'patient.drug.openfda.', openfdavars )
-#   s <- c( openfdavars, 'patient.drug.medicinalproduct')
-#   return(s)
-# }
+
 renderDrugName <- function() { 
   
   ( htmlOutput('drugname') )
@@ -22,20 +16,15 @@ renderEventName <- function() {
   ( htmlOutput('eventname') )
   
 } 
-# renderDrugText <- function() { 
-#   
-#   return('')
-#   
-# }   
+  
 renderEventText <- function() { 
   
   return( verbatimTextOutput('geteventtext') )
   
 }    
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-  fluidRow(useShinyjs(),
-           column(width=12, titlePanel("Dynamic PRR" ),
-                  
+  fluidRow(useShinyjs(),useShinyalert(),
+           column(width=12, 
                   hidden(
                     uiOutput('page_content'),
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -81,80 +70,25 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                  )
         ),
       tabPanel(uiOutput('ReportCountsandPRR'), 
-               wellPanel( 
-                 htmlOutput_p( 'querytitle' ), 
-                 dataTableOutput_p("query_counts2",
-                              tt('ts1'), tt('ts2'),
-                              placement='top' )
-               )
+               wellPanel(
+                 withSpinner(makeDataTableOutput( 'query_counts2' ))
+               ) 
+              
               ),
       tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
-               wellPanel( 
-                 htmlOutput( 'cotext' ),
-                 htmlOutput_p( 'querycotext' ,
-                               tt('gquery1'), tt('gquery2'),
-                               placement='bottom' )
-               ),
+               
                wellPanel(
-                 htmlOutput( 'cotitle' )
+                 withSpinner(makeDataTableOutput( 'coquery2' ))
                ),
-               htmlOutput_p( 'coquerytext' ,
-                             tt('gquery1'), tt('gquery2'),
-                             placement='bottom' ),
-               wordcloudtabset('cloudcoquery', 'coquery2', 
-                               types=c('datatable', 'plot'),
-                               popheads=c( tt('codrug1'), tt('word1') ), 
-                               poptext=c( tt('codrug3'), tt('word2') ))
+               
+               
       ),
       tabPanel(uiOutput('CountsForEventsInSelectedReports'),
-               wellPanel( 
-                 htmlOutput( 'cotextE' ),
-                 htmlOutput_p( 'querycotextE' ,
-                               tt('gquery1'), tt('gquery2'),
-                               placement='bottom' )
-               ),
                wellPanel(
-                 htmlOutput( 'cotitleE' )
-               ),
-               htmlOutput_p( 'coquerytextE' ,
-                             tt('gquery1'), tt('gquery2'),
-                             placement='bottom' ),
-               wordcloudtabset('cloudcoqueryE', 'coqueryE2',
-                               types=c('datatable', 'plot'),
-                               popheads=c( tt('codrug1'), tt('word1') ), 
-                               poptext=c( tt('codrug3'), tt('word2') ))
+                 withSpinner(makeDataTableOutput( 'coqueryE2' ))
+               )
       ),
-        # tabPanel(uiOutput('MetaDataandQueries'),  
-        #          wellPanel( 
-        #            htmlOutput_p( 'allquerytext' ,
-        #                          tt('gquery1'), tt('gquery2'),
-        #                          placement='bottom'),
-        #            htmlOutput_p( 'drugquerytext',
-        #                          tt('gquery1'), tt('gquery2'),
-        #                          placement='bottom' ),
-        #            htmlOutput_p( 'eventquerytext',
-        #                          tt('gquery1'), tt('gquery2'),
-        #                          placement='bottom' ),
-        #            htmlOutput_p( 'drugeventquerytext' ,
-        #                          tt('gquery1'), tt('gquery2'),
-        #                          placement='bottom')
-        #          )
-        # ),
-      # tabPanel(uiOutput('OtherApps'),  
-      #          wellPanel( 
-      #            htmlOutput( 'applinks' )
-      #          )
-      # ),
-      # tabPanel(uiOutput('DataReference'), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-      # ),
-      # tabPanel(uiOutput('About'), 
-      #          img(src='l_openFDA.png'),
-      #          HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
+        
               id='maintabs'
             )
           )

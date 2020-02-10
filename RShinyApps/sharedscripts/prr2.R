@@ -221,7 +221,10 @@ shinyServer(function(input, output, session) {
 # Input SETTERS ====================================================================
   updatevars <- reactive({
     input$update
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
     isolate( {
       updateTextInput(session, "t1", value=( input$drugname ) )
       updateNumericInput(session, "limit", value= ( input$limit2 ) )
@@ -233,7 +236,10 @@ shinyServer(function(input, output, session) {
     a <- input$t1
     b <- input$v1
     c <- input$useexact
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
     })
   
   output$mymodal <- renderText({
@@ -377,7 +383,7 @@ shinyServer(function(input, output, session) {
       return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
     }
     if (getwhich() =='D'){
-      colname <- 'Drug Name'
+      colname <- i18n()$t("Drug Name")
       if (input$v1 != 'patient.drug.medicinalproduct')
         {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -393,16 +399,16 @@ shinyServer(function(input, output, session) {
                                  display= rep('Dashboard', nrow( sourcedf ) ), 
                                  append= drugvar )
         mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-        mynames <- c( 'D', 'L', colname, 'Count') 
+        mynames <- c( 'D', 'L', colname, i18n()$t("Count")) 
         }
       else {
         medlinelinks <- rep(' ', nrow( sourcedf ) )
         mydf <- data.frame(L=medlinelinks, mydf)
-        mynames <- c('-', colname, 'Count') 
+        mynames <- c('-', colname, i18n()$t("Count")) 
       }
     } else {
-      colname <- 'Preferred Term'
-      mynames <- c('M', colname, 'Count') 
+      colname <- i18n()$t("Preferred Term")
+      mynames <- c('M', colname, i18n()$t("Count")) 
       medlinelinks <- makemedlinelink(sourcedf[,1], 'Definition')          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
@@ -493,7 +499,7 @@ shinyServer(function(input, output, session) {
       comb <- data.frame( M='M' , comb, links$dynprr, links$cpa,  comb$ror, comb$nij)
 #      print( names(comb) )
       sourcedf <- comb
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'Definition'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 
@@ -625,7 +631,7 @@ output$prr <- renderTable({
  prr()
 },  sanitize.text.function = function(x) x)
 
-output$prr2 <- renderDT({  
+output$prr2 <- DT::renderDT({  
   datatable(
     prr(),
     options = list(
@@ -633,8 +639,8 @@ output$prr2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr', 
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json', 
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json', 
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -725,7 +731,7 @@ output$specifieddrug <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 },  height=120, sanitize.text.function = function(x) x)
 
-output$specifieddrug2 <- renderDT({
+output$specifieddrug2 <- DT::renderDT({
   datatable(
     tableout(mydf = getdrugcountstable()$mydf,  
              mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
@@ -735,8 +741,8 @@ output$specifieddrug2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -777,7 +783,7 @@ output$all <- renderTable({
   )
 }, sanitize.text.function = function(x) x)
 
-output$all2 <- renderDT({
+output$all2 <- DT::renderDT({
   datatable(
     tableout(mydf = geteventtotalstable()$mydf,  
              mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
@@ -787,8 +793,8 @@ output$all2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -835,7 +841,7 @@ output$coqueryE <- renderTable({
 
 
 
-output$coqueryE2 <- renderDT({
+output$coqueryE2 <- DT::renderDT({
   datatable(
     coqueryE(),
     options = list(
@@ -843,8 +849,8 @@ output$coqueryE2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -887,7 +893,13 @@ coquery2 <- reactive({
 } )
 
 
-output$coquery2 <- renderDT({
+output$coquery2 <- DT::renderDT({
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   datatable(
     coquery2(),
     options = list(
@@ -895,8 +907,8 @@ output$coquery2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -921,7 +933,7 @@ output$indquery <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
-output$indquery2 <- renderDT({
+output$indquery2 <- DT::renderDT({
   datatable(
     tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
              error = paste( 'No results for', getterm1( session ) ) ),
@@ -930,8 +942,8 @@ output$indquery2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )
@@ -948,7 +960,7 @@ output$coqueryEex <- renderTable({
 }, sanitize.text.function = function(x) x)
 
 
-output$coqueryEex2 <- renderDT({
+output$coqueryEex2 <- DT::renderDT({
   datatable(
     tableout(mydf = getdrugcounts()$excludeddf,  
              #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),
@@ -959,8 +971,8 @@ output$coqueryEex2 <- renderDT({
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(input$selected_language=='gr',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/Greek.json',
-                     '//cdn.datatables.net/plug-ins/1.10.11/i18n/English.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
   )

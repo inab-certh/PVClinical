@@ -1,5 +1,5 @@
 {% extends "app/base_site.html" %}
-
+{% load i18n %}
 {% block title %} Fixed Sidebar {% endblock title %}
 
 {% block stylesheets %}
@@ -113,7 +113,11 @@
 
                     </div>
                     <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">QuickView</a>
+                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
+                        </li>
+                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
+                        </li>
+                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
                         </li>
                         <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dash</a>
                         </li>
@@ -123,7 +127,7 @@
                         </li>
                         <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                href="#tab-2">LabelView</a></li>
-                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">DynPRR</a>
+                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dynamic PRR</a>
                         </li>
                         <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                  href="#tab-2">ChangePoint</a></li>
@@ -185,12 +189,14 @@
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
         var shinnyAppsUrl = 'http://83.212.101.88:3838/deployshiny/';
         var shinnyAppsQueryUrl = '';
-        var app = 'QuickView';
+        var app = 'QuickViewDrugEvent';
         var drug = '';
         var event = '';
         getCheckedElementOfRadios();
         var AppParametersDict = {
-            "QuickView": ["Drug", "Event"],
+            "QuickViewDrugEvent": ["Drug", "Event"],
+            "QuickViewDrug": ["Drug"],
+            "QuickViewEvent": ["Event"],
             "Dash": ["Drug"],
             "RR_D": ["Drug"],
             "RR_E": ["Event"],
@@ -203,12 +209,24 @@
             "LrTest_E": ["Event"],
             "DrugEnforceView": ["Event"]
         };
-        var OnlyDrugApplications = ["QuickView", "Dash", "RR_D",  "LrTest"];
-        var OnlyEventApplications = ["QuickView", "RR_E", "LrTest_E"];
-        var DrugEventApplications = ["QuickView", "DynPRR", "ChangePoint"];
+        var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest"];
+        var OnlyEventApplications = ["QuickViewEvent", "RR_E", "LrTest_E"];
+        var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint"];
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
+        {
+            app='QuickViewDrugEvent';
+        }
+        else if(scenarioConditionsLength>0)
+        {
+            app='QuickViewEvent';
+        }
+        else{
+            app='QuickViewDrug';
+        }
+
 
         keepAppropriateAppsBasedOnParameters();
         buildUrl(app, drug, event);
@@ -216,7 +234,8 @@
         // initializeDropdowns();
 
         $('#shinnyAppsTabs a').click(function (e) {
-            app = e.target.childNodes[0].textContent;
+            app=e.target.parentElement.id;
+            {#app = e.target.childNodes[0].textContent;#}
             getCheckedElementOfRadios();
             keepAppropriateAppsBasedOnParameters();
             buildUrl(app, drug, event);

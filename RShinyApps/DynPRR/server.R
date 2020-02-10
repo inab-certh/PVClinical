@@ -1,17 +1,23 @@
 require(shiny)
+require(shinyBS)
 require('lubridate')
-require('curl')
+require('bcp')
+require('changepoint')
 require('zoo')
-library(shiny.i18n)
-library(DT)
-translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
-translator$set_translation_language('en')
-
+library(xlsx)
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
   print('loaded open FDA')
 }
+require(RColorBrewer)
+require(wordcloud)
+library(shiny)
+library(shiny.i18n)
+library(jsonlite)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
+
 
 source('sourcedir.R')
  
@@ -167,7 +173,7 @@ gettstable <- function(tmp){
     mydates <- gsub('-', '', as.character( mydates ))
     mycumdates <- paste0(start[1],  '+TO+', mydates ,']')
     mydates <- paste0(start,  '+TO+', mydates ,']')
-    names(mydf) <- c('Date', 'Count', 'Cumulative Count')
+    names(mydf) <- c('Date', i18n()$t('Count'), i18n()$t('Cumulative Count'))
     names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
     values <- c( getbestdrugvar(), getbestterm1(), getbestaevar(), getbestterm2(), gettimevar() )
     mydf_d <- mydf
@@ -310,17 +316,17 @@ buildmergedtable <- reactive({
   if ( length(mydf1)*length(mydf2)*length(mydf3)*length(mydf4)> 0 )
     { 
     mydf_d <- merge(mydf1[, c(1,3)], mydf2[, c(1,3)], by.x='Date', by.y='Date')
-    names(mydf_d) <- c('Date', 'Drug_Event Counts', 'Drug Counts')
+    names(mydf_d) <- c('Date', i18n()$t('Drug_Event Counts'), i18n()$t('Drug Counts'))
     mydf_all <- merge(mydf3[, c(1,3)], mydf4[, c(1,3)], by.x='Date', by.y='Date')
-    names(mydf_all) <- c('Date', 'Event Counts', 'Total Counts')
+    names(mydf_all) <- c('Date', i18n()$t('Event Counts'), i18n()$t('Total Counts'))
     mydf <- merge(mydf_d, mydf_all, by.x='Date', by.y='Date')
-    comb <- mydf[ mydf[ , 'Event Counts' ] >0, ]
-    comb <- comb[ comb[ ,'Total Counts' ] >2 , ]
+    comb <- mydf[ mydf[ , i18n()$t('Event Counts') ] >0, ]
+    comb <- comb[ comb[ ,i18n()$t('Total Counts') ] >2 , ]
     oldnames <- names(comb)
-    nij <- comb[,'Drug_Event Counts']
-    n.j <- comb[, 'Drug Counts' ]
-    ni. <- comb[, 'Event Counts' ]
-    n.. <- comb[, 'Total Counts' ]
+    nij <- comb[,i18n()$t('Drug_Event Counts')]
+    n.j <- comb[, i18n()$t('Drug Counts') ]
+    ni. <- comb[, i18n()$t('Event Counts') ]
+    n.. <- comb[, i18n()$t('Total Counts') ]
     prrci <- prre_ci( n.., ni., n.j, nij )
     comb <- data.frame(comb, prr=round(prrci[['prr']], 2), sd=round(prrci[['sd']], 2), lb=round(prrci[['lb']], 2), ub=round(prrci[['ub']], 2) )
     names(comb) <-c(oldnames, 'prr', 'sd', 'lb', 'ub')
@@ -341,19 +347,19 @@ buildmergedtable <- reactive({
    
    names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
    values <- c( getbestdrugvar(), getbestterm1(), getbestaevar(), getbestterm2(), gettimevar() )
-   comb[,'Drug_Event Counts'] <- numcoltohyper(comb[,'Drug_Event Counts'], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
+   comb[,i18n()$t('Drug_Event Counts')] <- numcoltohyper(comb[,i18n()$t('Drug_Event Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
     
    names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
    values <- c( getbestdrugvar(), getbestterm1(), '_exists_', getbestaevar(), gettimevar() )
-   comb[,'Drug Counts'] <- numcoltohyper(comb[,'Drug Counts'], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
+   comb[,i18n()$t('Drug Counts')] <- numcoltohyper(comb[,i18n()$t('Drug Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
    
    names <- c('v1','t1', 'v2','t2', 'v3', 't3')
    values <- c( '_exists_', getbestdrugvar(), getbestaevar(), getbestterm2(), gettimevar() )
-   comb[,'Event Counts'] <- numcoltohyper(comb[,'Event Counts'], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=TRUE )
+   comb[,i18n()$t('Event Counts')] <- numcoltohyper(comb[,i18n()$t('Event Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=TRUE )
   
    names <- c( 'v1','t1', 'v2','t2','v3', 't3')
    values <- c( '_exists_', getbestdrugvar(), '_exists_', getbestaevar(),  gettimevar() )
-   comb[,'Total Counts'] <- numcoltohyper(comb[,'Total Counts'], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=TRUE )
+   comb[,i18n()$t('Total Counts')] <- numcoltohyper(comb[,i18n()$t('Total Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=TRUE )
    
     return(comb)
     } else {
@@ -413,7 +419,7 @@ getcocounts <- function(whichcount = 'D'){
   #    print(names(mydf))
 #Drug Table
   if (whichcount =='D'){
-    colname <- 'Drug Name'
+    colname <- i18n()$t("Drug Name")
     if (input$v1 != 'patient.drug.medicinalproduct')
     {
       drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -430,20 +436,20 @@ getcocounts <- function(whichcount = 'D'){
                                append= drugvar )
       
       mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-      mynames <- c( 'D', 'L', colname, 'Count', 'Cumulative Sum') 
+      mynames <- c( 'D', 'L', colname, i18n()$t('Count'), i18n()$t('Cumulative Sum')) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
-      mynames <- c('-', colname, 'Count', 'Cumulative Sum') 
+      mynames <- c('-', colname, i18n()$t('Count'), i18n()$t('Cumulative Sum')) 
     }
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestaevar(), getbestterm2(), getexactdrugvar() ) 
 #Event Table
   } else {
-    colname <- 'Preferred Term'
+    colname <- i18n()$t('Preferred Term')
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
     mydf <- data.frame(M=medlinelinks, mydf) 
-    mynames <- c('M', colname, 'Count', 'Cumulative Sum' ) 
+    mynames <- c('M', colname, i18n()$t('Count'), i18n()$t('Cumulative Sum') ) 
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestdrugvar(), getbestterm1(), getexactaevar() ) 
   }
@@ -498,8 +504,6 @@ anychanged <- reactive({
   d <- input$v2
   e <- input$useexactD
   f <- input$useexactE
-  
-  closeAlert(session, 'erroralert')
 })
 
 #SETTERS
@@ -556,15 +560,33 @@ output$coquery <- renderTable({
 #   }  
 # }, escape=FALSE) 
 
-output$coquery2 <- renderDT({
+output$coquery2 <- DT::renderDT({
+  grlang<-'www/datatablesGreek.json'
+  enlang<-'www/datatablesEnglish.json'
   codrugs <- getcocountsD()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   datatable(
     if ( is.data.frame(codrugs) )
     { 
       return(codrugs) 
     } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},  escape=FALSE)
-},  escape=FALSE)
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     grlang,
+                     enlang)
+      )
+    ),  escape=FALSE)
+},
+  escape=FALSE)
 
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
@@ -588,15 +610,35 @@ output$coqueryE <- renderTable({
 #   }  
 # }, escape=FALSE)
 
-output$coqueryE2 <- renderDT({
+output$coqueryE2 <- DT::renderDT({
+  grlang<-'datatablesGreek.json'
+  enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsE()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   datatable(
     if ( is.data.frame(codrugs) )
     { 
       return(codrugs) 
     } else  {
       return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-    },  escape=FALSE)},  escape=FALSE)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     grlang,
+                     enlang)
+        # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
+        # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+      )
+    )
+    ,  escape=FALSE)},  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -662,8 +704,14 @@ output$query_counts <- renderTable({
 
 
 
-output$query_counts2 <- renderDT({
+output$query_counts2 <- DT::renderDT({
   mydf <- buildmergedtable()
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   datatable(
     #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
     
@@ -671,8 +719,17 @@ output$query_counts2 <- renderDT({
     if ( is.data.frame(mydf) )
     {
       return( mydf) 
-    } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
-    ,  escape=FALSE)
+    } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))},
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'www/datatablesGreek.json',
+                     'www/datatablesEnglish.json')
+      )
+    ),  escape=FALSE
+    )
 },  escape=FALSE)
 
 
@@ -806,8 +863,9 @@ output$prrplot <- renderPlot ({
       {
         myevents <- getterm2( session, FALSE )
       }
-      mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
-      plot( xloc, mydf$prr, ylim=myylim, ylab='95% Confidence Interval for PRR',
+      # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
+      mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
+      plot( xloc, mydf$prr, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )
       if( ! isTRUE( all.equal(mydf$prr, mydf$lb) ) )
@@ -877,15 +935,15 @@ output$urlquery <- renderText({
   })
 
 output$CountsForEventsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
   
 })
 output$CountsForDrugsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
   
 })
 output$ReportCountsandPRR <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Report Counts and PRR")))
+  HTML(stri_enc_toutf8(i18n()$t("Report counts and PRR")))
   
 })
 output$About <- renderUI({ 
@@ -905,7 +963,7 @@ output$MetaDataandQueries <- renderUI({
   
 })
 output$PRROverTime <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("PRR Over Time")))
+  HTML(stri_enc_toutf8(i18n()$t("PRR over time")))
   
 })
 output$PlotPRRbetween <- renderUI({ 
