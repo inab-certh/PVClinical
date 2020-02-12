@@ -63,7 +63,7 @@ $(function() {
             });
         }).toArray();
 
-        $("#atcTree").treeview('checkNode', [nodes_to_check]);
+        $("#atcTree").treeview('checkNode', [nodes_to_check, {silent: true}]);
         // $("#atcTree").treeview('uncheckNode', [nodes_to_uncheck]);
         // $("#atcTree").treeview('checkNode', [more_to_check]);
         $("#atcTree").treeview('revealNode', [nodes_to_check, {silent: true}]);
