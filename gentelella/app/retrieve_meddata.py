@@ -45,18 +45,28 @@ class KnowledgeGraphWrapper:
         :param drugs: the selected drugs
         :return: the synonyms
         """
-        drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
+        drugs = list(map(lambda d: d.lower(), drugs))
+        # print(str(tuple(drugs)))
+        # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
         whole_query = """
-                select ?synonym_name, ?drug_code from <https://bio2rdf.org/drugbank>
+                select ?synonym_name, ?drug_code
+                from <http://purl.bioontology.org/ontology/UATC/>
+                from <https://bio2rdf.org/drugbank>
                 where {{
-                ?drug <http://purl.org/dc/terms/title> ?drug_name.
-                FILTER (?drug_name IN {})
-                ?drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?drug_code.
-                ?drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+                ?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.
+                FILTER (lcase(str(?drugbank_drug_name)) IN {})
+                ?drug skos:prefLabel ?drug_name.
+                FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
+                ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+                ?drug skos:notation ?code.
+                bind(str(?code) as ?drug_code)
+                ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
                 ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
-                FILTER(?synonym_name!=?drug_name)
+                FILTER(?synonym_name!=?drugbank_drug_name)
                 }}
-                """.format(drugs)
+                """.format("(\"{}\")".format("\", \"".join(drugs)))
+
+        # print(whole_query)
 
         self.sparql.setQuery(whole_query)
         synonyms = self.sparql.query().bindings
@@ -71,10 +81,13 @@ class KnowledgeGraphWrapper:
         """
 
         whole_query = """
-        select ?drug_name, ?drug_code where {
-        ?drug a <http://bio2rdf.org/drugbank_vocabulary:Drug>.
-        ?drug <http://purl.org/dc/terms/title> ?drug_name.
-        ?drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?drug_code.
+        select ?drug_name, ?drug_code from <http://purl.bioontology.org/ontology/UATC/> where {
+            {
+                ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+                ?drug skos:prefLabel ?drug_name.
+                ?drug skos:notation ?code.
+                bind(str(?code) as ?drug_code)
+            }
         }
         """
         #
