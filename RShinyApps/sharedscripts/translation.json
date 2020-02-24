@@ -15,17 +15,17 @@
       {
         "def":"Frequency",
         "en": "Frequency",
-        "gr": "Częstotliwość"
+        "gr": "Συχνότητα"
       },
       {
         "def":"Change in mean analysis for",
         "en": "Change in mean analysis for",
-        "gr": "Αλλαγή στη μέση ανάλυση για"
+        "gr": "Αλλαγή στην μέση ανάλυση για"
       },
       {
         "def":"Change in mean analysis",
         "en": "Change in mean analysis",
-        "gr": "Αλλαγή στη μέση ανάλυση"
+        "gr": "Αλλαγή στην μέση ανάλυση"
       },
       {
         "def":"Change in variance analysis",
@@ -35,12 +35,12 @@
       {
         "def":"Bayesian changepoint analysis",
         "en": "Bayesian changepoint analysis",
-        "gr": "Bayesian ανάλυση αλλαγών"
+        "gr": "Ανάλυση αλλαγών Bayesian "
       },
       {
         "def":"Report counts by date",
         "en": "Report counts by date",
-        "gr": "Αναφορά μετράει κατά ημερομηνία"
+        "gr": "Αρίθμηση αναφορών κατά ημερομηνία"
       },
       {
         "def":"and",
@@ -55,12 +55,12 @@
       {
         "def":"All Events",
         "en": "All Events",
-        "gr": "όλες τις παρενέργειες"
+        "gr": "όλες οι παρενέργειες"
       },
       {
         "def":"Change language",
         "en": "Change language",
-        "gr": "άλλαξε γλώσσα"
+        "gr": "Αλλαγή γλώσσας"
       },
       {
         "def":"Please enter a Drug name",
@@ -90,7 +90,7 @@
       {
         "def":"Dashboard",
         "en":"Dashboard",
-        "gr":"Ταμπλό"
+        "gr":"Dashboard"
       },
       {
         "def":"Product Summary",
@@ -215,32 +215,32 @@
       {
         "def":"Ranked Event Counts for Drug",
         "en":"Ranked Event Counts for Drug",
-        "gr":"Κατατάσσεται η καταμέτρηση συμβάντων για φάρμακο"
+        "gr":"Καταμέτρηση συμβάντων ανά φάρμακο"
       },
       {
         "def":"Ranked Drug Counts for Event",
         "en":"Ranked Drug Counts for Event",
-        "gr":"Κατατάσσεται ο αριθμός των φαρμάκων για το συμβάν"
+        "gr":"Καταμέτρηση φαρμάκων ανά συμβάν"
       },
       {
         "def":"Counts for drugs in selected reports",
         "en":"Counts for drugs in selected reports",
-        "gr":"Μετράει για φάρμακα σε επιλεγμένες αναφορές"
+        "gr":"Καταμέτρηση φαρμάκων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for events in selected reports",
         "en":"Counts for events in selected reports",
-        "gr":"Μετράει για συμβάντα σε επιλεγμένες αναφορές"
+        "gr":"Καταμέτρηση συμβάντων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for indications in selected reports",
         "en":"Counts for indications in selected reports",
-        "gr":"Μετράει για ενδείξεις σε επιλεγμένες αναφορές"
+        "gr":"Καταμέτρηση ενδείξεων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for Entire Database",
         "en":"Counts for Entire Database",
-        "gr":"Υπολογισμός για ολόκληρη τη βάση δεδομένων"
+        "gr":"Καταμέτρηση για ολόκληρη τη βάση δεδομένων"
       },
       {
         "def":"text Plot",
@@ -449,12 +449,12 @@
       {
         "def":"Analyzed drug counts for event",
         "en":"Analyzed drug counts for event",
-        "gr":"Αναλύονται μετρήσεις φαρμάκων για συμβάν"
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για συμβάν"
       },
       {
         "def":"Analyzed drug counts for all events",
         "en":"Analyzed drug counts for all events",
-        "gr":"Αναλύεται ο αριθμός των φαρμάκων για όλα τα συμβάντα"
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα"
       },
       {
         "def":"Event counts for event",
