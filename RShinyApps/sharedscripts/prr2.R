@@ -409,7 +409,7 @@ shinyServer(function(input, output, session) {
     } else {
       colname <- i18n()$t("Preferred Term")
       mynames <- c('M', colname, i18n()$t("Count")) 
-      medlinelinks <- makemedlinelink(sourcedf[,1], 'Definition')          
+      medlinelinks <- makemedlinelink(sourcedf[,1], i18n()$t("Definition"))          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
     names <- c('v1','t1','v3', 't3', 'v2', 't2')
@@ -500,7 +500,7 @@ shinyServer(function(input, output, session) {
 #      print( names(comb) )
       sourcedf <- comb
       colname <- i18n()$t("Preferred Term")
-      iname <- 'Definition'
+      iname <- i18n()$t("Definition")
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 
       names <- c('exactD', 'exactE','v2','term2', 'v1','term1')
@@ -509,9 +509,9 @@ shinyServer(function(input, output, session) {
       links <-getcpalinks(comb[ , 1], names, values, getcururl(), appendtext =  exacttext )
       comb <- data.frame(D='D', M='L' , comb, links$dynprr, links$cpa,  comb$ror, comb$nij)
       sourcedf <- comb
-      colname <- 'Drug Name'
+      colname <- i18n()$t("Drug Name")
       #browser()
-      iname <- c( 'Dashboard', 'Label')
+      iname <- c( i18n()$t("Dashboard"), i18n()$t("Label"))
       if (input$v1 != 'patient.drug.medicinalproduct')
       {
         drugvarname <- gsub( "patient.drug.","" , input$v1 , fixed=TRUE)
@@ -544,11 +544,12 @@ shinyServer(function(input, output, session) {
 #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
 #     row.names(comb)<- seq(1:nrow(comb))
    
-    countname <- paste( 'Counts for', getterm1( session ))
+    countname <- paste( i18n()$t("Counts for"), getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
+    browser()
     keptcols <-  c( iname, colname,countname, 
                      'PRR')
 
@@ -632,13 +633,21 @@ output$prr <- renderTable({
 },  sanitize.text.function = function(x) x)
 
 output$prr2 <- DT::renderDT({  
+  
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  translator$set_translation_language(selectedLang)
   datatable(
     prr(),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr', 
+        url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json', 
                      'datatablesEnglish.json')
       )
@@ -709,8 +718,8 @@ output$queryalldrugtext <- renderText({
     paste( '<b>Query:</b>', removekey( makelink(l['totaldrugurl']) ) , '<br>') ) 
 })
 
-output$querytitle <- renderText({ 
-  return( paste('<h4>Counts for', getterm1( session ), '</h4><br>') )
+output$querytitle <- renderUI({ 
+  return( html(paste('<h4>',i18n()$t("Counts for"), getterm1( session ), '</h4><br>') ))
 })
 
 cloudquery <- reactive({  
@@ -722,25 +731,32 @@ output$cloudquery <- renderPlot({
 
 specifieddrug <- reactive({ 
   tableout(mydf = getdrugcountstable()$mydf,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
 })
 output$specifieddrug <- renderTable({ 
   tableout(mydf = getdrugcountstable()$mydf,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
 },  height=120, sanitize.text.function = function(x) x)
 
 output$specifieddrug2 <- DT::renderDT({
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  translator$set_translation_language(selectedLang)
   datatable(
     tableout(mydf = getdrugcountstable()$mydf,  
-             mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) )),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr',
+        url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
@@ -772,27 +788,34 @@ output$cloudall <- renderPlot({
 
 all <- renderTable({  
   tableout(mydf = geteventtotalstable()$mydf, 
-           mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
 })
 output$all <- renderTable({  
   tableout(mydf = geteventtotalstable()$mydf, 
-           mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
 }, sanitize.text.function = function(x) x)
 
 output$all2 <- DT::renderDT({
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  translator$set_translation_language(selectedLang)
   datatable(
     tableout(mydf = geteventtotalstable()$mydf,  
-             mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr',
+        url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
@@ -828,7 +851,7 @@ output$cloudcoqueryE <- renderPlot({
 
 coqueryE <- reactive({  
   out <- tableout(mydf = getdrugcountstable()$mydfAll,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
            error = paste( 'No Events for', getterm1( session ) )
             )
   
@@ -842,13 +865,20 @@ output$coqueryE <- renderTable({
 
 
 output$coqueryE2 <- DT::renderDT({
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  translator$set_translation_language(selectedLang)
   datatable(
     coqueryE(),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr',
+        url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
@@ -900,13 +930,20 @@ output$coquery2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  translator$set_translation_language(selectedLang)
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   datatable(
     coquery2(),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr',
+        url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
@@ -929,19 +966,26 @@ output$coquery2 <- DT::renderDT({
 
 
 output$indquery <- renderTable({ 
-  tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+  tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
 output$indquery2 <- DT::renderDT({
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  translator$set_translation_language(selectedLang)
   datatable(
-    tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+    tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
              error = paste( 'No results for', getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
-        url = ifelse(input$selected_language=='gr',
+        url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
@@ -1120,15 +1164,15 @@ getcururl <- reactive({
     
   })
   output$CountsForDrugsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For Drugs In Selected Reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
     
   })
   output$CountsForEventsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For Events In Selected Reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
     
   })
   output$CountsForIndicationsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts For Indications In Selected Reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
     
   })
   output$OtherApps <- renderUI({ 
@@ -1154,5 +1198,6 @@ getcururl <- reactive({
                 poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
     
   })
+  
   
 })

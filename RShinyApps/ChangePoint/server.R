@@ -729,6 +729,9 @@ output$infocpmeantext <- renderUI ({
     addPopover(session=session, id="infocpmeantext", title="Application Info", 
              content=out, placement = "left",
              trigger = "hover", options = list(html = "true"))
+    attr(session, "cpmeanplottext") <- out
+    # browser()
+    # l <- append( l, c('cpmeanplottext' =  out ) )
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   
 })

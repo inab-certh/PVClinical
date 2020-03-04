@@ -313,8 +313,8 @@ shinyServer(function(input, output, session) {
                             )
       comb <- data.frame(comb, tmp[[1]])
       }
-    names( comb ) <- c('Drug',	paste('Counts for', s), 	'Counts for All Reports', 	
-                       'PRR', 'Lower 95% CI for PRR', 'Upper 95% CI for PRR', 'Dynamic PRR')
+    names( comb ) <- c(i18n()$t("Drug"),	paste(i18n()$t("Counts for"), s), 	i18n()$t("Counts for All Reports"), 	
+                       'PRR', i18n()$t("Lower 95% CI for PRR"), i18n()$t("Upper 95% CI for PRR"), i18n()$t("Dynamic PRR"))
     colname <- 'Drug'
     
     return( list(comb=comb, drugcounts=unique(drugcounts), alldrugcounts=unique(alldrugcounts), colname=colname, prrtab=prrtab, mydf=mydf, sourcedf=sourcedf ) )
@@ -463,13 +463,13 @@ output$cloudquery <- renderPlot({
 
 output$specifieddrug2 <- shiny::renderDataTable({ 
   tableout(mydf = getprr()$eventcounts,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
 })
 
 output$specifiedevent2 <- shiny::renderDataTable({ 
   tableout(mydf = getprr()$drugcounts,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
 })
 
@@ -515,7 +515,7 @@ all <- renderTable({
     prre()
   }
   tableout(mydf = geteventtotalstable()$mydf, 
-           mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
 })
@@ -525,13 +525,13 @@ output$all2 <- shiny::renderDataTable({
   if ( getwhich() == 'D')
   {
     tableout(mydf = getprr()$alleventcounts, 
-             mynames = c('Term', paste( 'Counts for All Reports') ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")) ),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ) 
   }
   else
   {
     tableout(mydf = getprr()$alldrugcounts, 
-             mynames = c('Term', paste( 'Counts for All Reports') ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")) ),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ) 
   } 
 }, escape = FALSE)

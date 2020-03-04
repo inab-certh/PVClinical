@@ -480,9 +480,9 @@ simplot <- function(){
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
     mytruehist <- hist(vals , breaks=mybreaks, 
-             main="Histogram of Simulated Distribution of LLR", 
-             xlab='Loglikelihood Ratio', xaxt='n', col='cyan' )
-    text(mycrit, .75*max(mytruehist$counts), paste('Rejection Region,\n LLR >', round(mycrit, 2) ), pos=4, col='red')
+             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n', col='cyan' )
+    text(mycrit, .75*max(mytruehist$counts), paste(i18n()$t("Rejection Region,\n LLR >"), round(mycrit, 2) ), pos=4, col='red')
     mystep <- max(1, floor( ( myrange[2] - myrange[1] )/20) )
     smallbreaks <- seq(0, max(mybreaks), mystep )
     
@@ -492,7 +492,7 @@ simplot <- function(){
     if ( is.data.frame(mydf) ) 
     {
     } else {
-      return(data.frame(Term= paste('No records for', getterm1(session)), Count=0))
+      return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
     }
   }
 }

@@ -90,99 +90,105 @@ shinyUI(fluidPage(
                                #                          wordcloudtabset('cloudprr', 'prr', 
                                #                                          popheads=c( tt('prr1'), tt('word1') ), 
                                #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                               withSpinner(uiOutput("maketabsetPRRRORResults"))
+                               # withSpinner(uiOutput("maketabsetPRRRORResults"))
+                               dataTableOutput( 'prr2' )
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
-                               wellPanel( 
-                                 htmlOutput( 'alldrugtext' ),
-                                 htmlOutput_p( 'queryalldrugtext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ), 
-                               wellPanel( 
-                                 htmlOutput( 'querytitle' ), 
-                                 #                          tableOutput("query"),
-                                 htmlOutput_p( 'querytext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ),
-                               wordcloudtabset('cloudquery', 'specifieddrug2', 
-                                               types= c('datatable', 'plot'), 
-                                               popheads=c( tt('event1'), tt('word1') ), 
-                                               poptext=c( tt('event2'), tt('word2') )
-                               )
+                               # wellPanel( 
+                               #   htmlOutput( 'alldrugtext' ),
+                               #   htmlOutput_p( 'queryalldrugtext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ), 
+                               # wellPanel( 
+                               #   htmlOutput( 'querytitle' ), 
+                               #   #                          tableOutput("query"),
+                               #   htmlOutput_p( 'querytext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ),
+                               # wordcloudtabset('cloudquery', 'specifieddrug2', 
+                               #                 types= c('datatable', 'plot'), 
+                               #                 popheads=c( tt('event1'), tt('word1') ), 
+                               #                 poptext=c( tt('event2'), tt('word2') )
+                               # )
+                               dataTableOutput( 'specifieddrug2' )
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
-                               wellPanel( 
-                                 htmlOutput( 'alltext' ),
-                                 htmlOutput_p( 'queryalltext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ),
-                               wellPanel(
-                                 htmlOutput( 'alltitle' ), 
-                                 htmlOutput_p( 'allquerytext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' ) ),
-                               wordcloudtabset('cloudall', 'all2',  
-                                               types= c('datatable', 'plot'),
-                                               popheads=c( tt('event1'), tt('word1') ), 
-                                               poptext=c( tt('event2'), tt('word2') ))
+                               # wellPanel( 
+                               #   htmlOutput( 'alltext' ),
+                               #   htmlOutput_p( 'queryalltext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ),
+                               # wellPanel(
+                               #   htmlOutput( 'alltitle' ), 
+                               #   htmlOutput_p( 'allquerytext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' ) ),
+                               # wordcloudtabset('cloudall', 'all2',  
+                               #                 types= c('datatable', 'plot'),
+                               #                 popheads=c( tt('event1'), tt('word1') ), 
+                               #                 poptext=c( tt('event2'), tt('word2') ))
+                               dataTableOutput( 'all2' )
                       ),
                       tabPanel(uiOutput("RankedEventCountsforDrug"),
-                               wellPanel( 
-                                 htmlOutput( 'cotextE' ),
-                                 htmlOutput_p( 'querycotextE' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ),
-                               wellPanel(
-                                 htmlOutput( 'cotitleE' )
-                               ),
-                               wellPanel(
-                                 htmlOutput( 'cotitleEex' ),
-                                 htmlOutput( 'coqueryEex' )
-                               ),
-                               htmlOutput_p( 'coquerytextE' ,
-                                             tt('gquery1'), tt('gquery2'),
-                                             placement='bottom' ),
-                               wordcloudtabset('cloudcoqueryE', 'coqueryE2',
-                                               types= c('datatable', 'plot'), 
-                                               popheads=c( tt('codrug1'), tt('word1') ), 
-                                               poptext=c( tt('codrug3'), tt('word2') ))
+                               # wellPanel( 
+                               #   htmlOutput( 'cotextE' ),
+                               #   htmlOutput_p( 'querycotextE' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ),
+                               # wellPanel(
+                               #   htmlOutput( 'cotitleE' )
+                               # ),
+                               # wellPanel(
+                               #   htmlOutput( 'cotitleEex' ),
+                               #   htmlOutput( 'coqueryEex' )
+                               # ),
+                               # htmlOutput_p( 'coquerytextE' ,
+                               #               tt('gquery1'), tt('gquery2'),
+                               #               placement='bottom' ),
+                               # wordcloudtabset('cloudcoqueryE', 'coqueryE2',
+                               #                 types= c('datatable', 'plot'), 
+                               #                 popheads=c( tt('codrug1'), tt('word1') ), 
+                               #                 poptext=c( tt('codrug3'), tt('word2') ))
+                               dataTableOutput( 'coqueryE2' )
                       ),
                       tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                               wellPanel( 
-                                 htmlOutput( 'cotext' ),
-                                 htmlOutput_p( 'querycotext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ),
-                               wellPanel(
-                                 htmlOutput( 'cotitle' )
-                               ),
-                               htmlOutput_p( 'coquerytext' ,
-                                             tt('gquery1'), tt('gquery2'),
-                                             placement='bottom' ),
-                               wordcloudtabset('cloudcoquery', 'coquery2',
-                                               types= c('datatable', 'plot'), 
-                                               popheads=c( tt('codrug1'), tt('word1') ), 
-                                               poptext=c( tt('codrug3'), tt('word2') ))
+                               # wellPanel( 
+                               #   htmlOutput( 'cotext' ),
+                               #   htmlOutput_p( 'querycotext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ),
+                               # wellPanel(
+                               #   htmlOutput( 'cotitle' )
+                               # ),
+                               # htmlOutput_p( 'coquerytext' ,
+                               #               tt('gquery1'), tt('gquery2'),
+                               #               placement='bottom' ),
+                               # wordcloudtabset('cloudcoquery', 'coquery2',
+                               #                 types= c('datatable', 'plot'), 
+                               #                 popheads=c( tt('codrug1'), tt('word1') ), 
+                               #                 poptext=c( tt('codrug3'), tt('word2') ))
+                               dataTableOutput( 'coquery2' )
                       ),
                       tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
-                               wellPanel( 
-                                 htmlOutput( 'indtext' ),
-                                 htmlOutput_p( 'queryindtext' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' )
-                               ),
-                               wellPanel(
-                                 htmlOutput( 'indtitle' )
-                               ),
-                               wordcloudtabset('cloudindquery', 'indquery2',
-                                               types= c('datatable', 'plot'), 
-                                               popheads=c( tt('indication1'), tt('word1') ),
-                                               poptext=c( tt('indication2'), tt('word2') ) )
+                               # wellPanel( 
+                               #   htmlOutput( 'indtext' ),
+                               #   htmlOutput_p( 'queryindtext' ,
+                               #                 tt('gquery1'), tt('gquery2'),
+                               #                 placement='bottom' )
+                               # ),
+                               # wellPanel(
+                               #   htmlOutput( 'indtitle' )
+                               # ),
+                               # wordcloudtabset('cloudindquery', 'indquery2',
+                               #                 types= c('datatable', 'plot'), 
+                               #                 popheads=c( tt('indication1'), tt('word1') ),
+                               #                 poptext=c( tt('indication2'), tt('word2') ) )
+                               dataTableOutput( 'indquery2' )
                       ),
                       # tabPanel(uiOutput("OtherApps"),  
                       #          wellPanel( 

@@ -398,7 +398,7 @@ shinyServer(function(input, output, session) {
     comb <- comb[order(comb$prr, decreasing = TRUE),]
     row.names(comb)<- seq(1:nrow(comb))
    
-    countname <- paste( 'Counts for', getterm1( session, upper=FALSE ))
+    countname <- paste( i18n()$t("Counts for"), getterm1( session, upper=FALSE ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR')
     keptcols <-  c( iname, colname,countname, 
@@ -464,12 +464,12 @@ geteventtotals <- reactive(
 ##Tables ================================
 output$specifieddrug <- renderTable({ 
   tableout(mydf = getdrugcountstable()$mydf,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session, upper=FALSE ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session, upper=FALSE ) ) ),
            error = paste( 'No results for', getterm1( session, upper=FALSE ) ) )
 },  sanitize.text.function = function(x) x)
 
 output$indquery <- renderTable({ 
-  tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+  tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
            error = paste( 'No results for', getterm1( session, upper=FALSE ) ) )
 }, sanitize.text.function = function(x) x)
 
@@ -499,7 +499,7 @@ output$prr <- renderTable({
 
 output$coqueryE <- renderTable({  
   tableout(mydf = getdrugcountstable()$mydfAll,  
-           mynames = c('Term', paste( 'Counts for', getterm1( session, upper=FALSE ) ) ),
+           mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session, upper=FALSE ) ) ),
            error = paste( 'No Events for', getterm1( session, upper=FALSE ) )
   )
 }, sanitize.text.function = function(x) x)

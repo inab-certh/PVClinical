@@ -888,9 +888,9 @@ simplot <- function(){
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
     truehist(vals , breaks=mybreaks, 
-             main="Histogram of Simulated Distribution of LLR", 
-             xlab='Loglikelihood Ratio', xaxt='n' )
-    text(mycrit,.3, paste('Rejection Region, LLR >', round(mycrit, 2) ), pos=4, col='red')
+             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
+    text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
     smallbreaks <- seq(0, max(mybreaks), 1)
     
     smallbreaks <-  c( round(mycrit, 2), smallbreaks )
@@ -899,7 +899,7 @@ simplot <- function(){
     if ( is.data.frame(mydf) ) 
     {
     } else {
-      return(data.frame(Term= paste('No records for', getterm1(session)), Count=0))
+      return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
     }
   }
 }
@@ -914,7 +914,7 @@ AnalyzedEventCountsforDrug <- reactive(
   {
     mydf <- getdrugcountstable()$mydfE
     checkdf(mydf, getterm1(session),
-            names=c('Term', paste( 'Counts for', getterm1(session)) ),
+            names=c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1(session)) ),
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
   }
 )
@@ -1020,7 +1020,7 @@ output$alltitle <- renderText({
 all <- function(){  
   all <- geteventtotalstable()$mydf
   checkdf(all, paste(getsearchtype(), getterm1(session)), 
-          names=c('Term', paste( 'Counts for All Reports'), 'Query' ), 
+          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
 allnohyper <- function(){  
