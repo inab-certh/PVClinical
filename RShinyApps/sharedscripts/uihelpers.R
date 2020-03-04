@@ -181,6 +181,7 @@ maketabset2 <- function( outputs, types=c('html', 'plot'),
 }
 getpopstrings <- function( myname, pophead, poptext )
   {
+  browser()
   helpfunname <- paste0('pop', myname )
 #  browser()
 # if function called popmyname exists, call it to get pop heads
@@ -246,11 +247,12 @@ plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
   s <- getpopstrings( plot, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
+  browser()
   if( !is.null(pophead) )
   {
     popify(
       plotOutput(plot, brush = "plot_brush", hover=hoverOpts(id='plot_hover'), ...),
-      HTML( pophead ), HTML(poptext),
+      HTML( 'pophead' ), HTML(poptext),
       placement=placement)
   }
   else

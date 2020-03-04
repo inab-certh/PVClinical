@@ -241,8 +241,8 @@ shinyServer(function(input, output, session) {
     }
     
     mydf <- rbind(conganom, death, disable, hosp, lifethreat, other)
-   mydf[,'term'] <- c('Congenital Anomaly', 'Death', 'Disability', 'Hospitalization',
-                      'Life Threatening', 'Other')
+   mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
+                      i18n()$t("Life Threatening"), i18n()$t("Other"))
     
     mydf <- mydf[order(mydf[,2]), ]
     return( mydf )
@@ -261,9 +261,9 @@ getsexcounts <- reactive({
                     count="patient.patientsex" )
   mydf <- fda_fetch_p( session, myurl)$result
   mydf[,3] <- mydf[,1]
-  mydf[ mydf[,1]==2 , 1] <- 'Female' 
-  mydf[ mydf[,1]==1 , 1] <- 'Male' 
-  mydf[ mydf[,1]==0 , 1] <- 'Unknown' 
+  mydf[ mydf[,1]==2 , 1] <- i18n()$t("Female") 
+  mydf[ mydf[,1]==1 , 1] <- i18n()$t("Male")
+  mydf[ mydf[,1]==0 , 1] <- i18n()$t("Unknown") 
   mydf <- mydf[order(mydf[,2]), ]
   
   return( mydf )
@@ -284,11 +284,11 @@ getsourcecounts <- reactive({
                     count="primarysource.qualification" )
   mydf <- fda_fetch_p( session, myurl)$result
   mydf[,3] <- mydf[,1]
-  mydf[ mydf[,1]==1 , 1] <- 'Physician' 
-  mydf[ mydf[,1]==2 , 1] <- 'Pharmacist' 
-  mydf[ mydf[,1]==3 , 1] <- 'Other Health Professional' 
-  mydf[ mydf[,1]==4 , 1] <- 'Lawyer' 
-  mydf[ mydf[,1]==5 , 1] <- 'Consumer or non-health...' 
+  mydf[ mydf[,1]==1 , 1] <- i18n()$t("Physician") 
+  mydf[ mydf[,1]==2 , 1] <- i18n()$t("Pharmacist") 
+  mydf[ mydf[,1]==3 , 1] <- i18n()$t("Other Health Professional") 
+  mydf[ mydf[,1]==4 , 1] <- i18n()$t("Lawyer")
+  mydf[ mydf[,1]==5 , 1] <- i18n()$t("Consumer or non-health...") 
   mydf <- mydf[order(mydf[,2]), ]
   
   return( mydf )
@@ -609,7 +609,7 @@ output$coquery <- renderTable({
   codrugs <- getcocounts()$mydf
   if ( is.data.frame(codrugs) )
   { 
-    names(codrugs) <- c('L', 'Drug',  'Counts' )
+    names(codrugs) <- c('L', i18n()$t("Drug"),  i18n()$t("Counts") )
     return(codrugs) 
   } else  {
     return( data.frame(Term=paste( 'No events for', getdrugname() ) ) )
@@ -623,7 +623,7 @@ output$cocloud <- renderPlot({
   codrugs <- getcocounts()$sourcedf
   if ( is.data.frame(codrugs) )
   { 
-    names(codrugs) <- c('Drug',  'Counts' )
+    names(codrugs) <- c(i18n()$t("Drug"),  i18n()$t("Counts") )
     mytitle <- paste('Medications in Reports That Contain', getdrugname() )
     return( getcloud(codrugs, title=mytitle ) ) 
   } else  {
@@ -637,7 +637,7 @@ output$indquery <- renderTable({
   codinds <- getindcounts()$mydf
   if ( is.data.frame(codinds) )
   { 
-    names(codinds) <- c('Indication',  'Counts' )
+    names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
     return(codinds) 
   } else  {
     return( data.frame(Term=paste( 'No', getsearchtype(), 'for', getdrugname() ) ) )
@@ -652,7 +652,7 @@ output$indcloud <- renderPlot({
   codinds <- getindcounts()$sourcedf  } )
   if ( is.data.frame(codinds) )
   { 
-    names(codinds) <- c('Indication',  'Counts' )
+    names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
     mytitle <- paste('Indications in Reports That Contain', getdrugname() )
     return( getcloud(codinds, title=mytitle ) ) 
   } else  {

@@ -967,8 +967,8 @@ shinyServer(function(input, output, session) {
     }
 
     mydf <- rbind(conganom, death, disable, hosp, lifethreat, other)
-    mydf[,'term'] <- c('Congenital Anomaly', 'Death', 'Disability', 'Hospitalization',
-                       'Life Threatening', 'Other')
+    mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
+                       i18n()$t("Life Threatening"), i18n()$t("Other"))
 
     mydf <- mydf[order(mydf[,2]), ]
     return( mydf )
@@ -1363,7 +1363,7 @@ shinyServer(function(input, output, session) {
     codinds <- getindcounts()$mydf
     if ( is.data.frame(codinds) )
     {
-      names(codinds) <- c('Indication',  'Counts' )
+      names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
       return(codinds)
     } else  {
       return( data.frame(Term=paste( 'No', getsearchtype(), 'for', getdrugname() ) ) )
@@ -1378,7 +1378,7 @@ shinyServer(function(input, output, session) {
       codinds <- getindcounts()$sourcedf  } )
     if ( is.data.frame(codinds) )
     {
-      names(codinds) <- c('Indication',  'Counts' )
+      names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
       mytitle <- paste('Indications in Reports That Contain', getdrugname() )
       return( getcloud(codinds, title=mytitle ) )
     } else  {
@@ -1789,7 +1789,7 @@ shinyServer(function(input, output, session) {
     } else {
       colname <- i18n()$t("Preferred Term")
       mynames <- c('M', colname, 'Count') 
-      medlinelinks <- makemedlinelink(sourcedf[,1], 'Definition')          
+      medlinelinks <- makemedlinelink(sourcedf[,1], i18n()$t("Definition"))          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
     names <- c('v1','t1','v3', 't3', 'v2', 't2')
@@ -1880,7 +1880,7 @@ shinyServer(function(input, output, session) {
       #      print( names(comb) )
       sourcedf <- comb
       colname <- i18n()$t("Preferred Term")
-      iname <- 'Definition'
+      iname <- i18n()$t("Definition")
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 
       names <- c('exactD', 'exactE','v2','term2', 'v1','term1')
@@ -1924,7 +1924,7 @@ shinyServer(function(input, output, session) {
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
     
-    countname <- paste( 'Counts for', getterm1( session ))
+    countname <- paste( i18n()$t("Counts for"), getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
@@ -2010,7 +2010,7 @@ shinyServer(function(input, output, session) {
     prr()
   },  sanitize.text.function = function(x) x)
   
-  output$prr2 <- DT::renderDT({  
+  output$prr2 <- DT::renderDT({ 
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
     if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -2111,18 +2111,18 @@ shinyServer(function(input, output, session) {
   
   specifieddrug <- reactive({ 
     tableout(mydf = getdrugcountstable()$mydf,  
-             mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) ) )
   })
   output$specifieddrug <- renderTable({ 
     tableout(mydf = getdrugcountstable()$mydf,  
-             mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) ) )
   },  height=120, sanitize.text.function = function(x) x)
   
   output$specifieddrug2 <- shiny::renderDataTable({ 
     tableout(mydf = getdrugcountstable()$mydf,  
-             mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) ) )
   },  escape=FALSE )
   
@@ -2197,7 +2197,7 @@ shinyServer(function(input, output, session) {
   
   coqueryE <- reactive({  
     out <- tableout(mydf = getdrugcountstable()$mydfAll,  
-                    mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+                    mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
                     error = paste( 'No Events for', getterm1( session ) )
     )
     
@@ -2267,12 +2267,12 @@ shinyServer(function(input, output, session) {
   
   
   output$indquery <- renderTable({ 
-    tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+    tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
              error = paste( 'No results for', getterm1( session ) ) )
   }, sanitize.text.function = function(x) x)
   
   output$indquery2 <- shiny::renderDataTable({ 
-    tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+    tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
              error = paste( 'No results for', getterm1( session ) ) )
   },  escape=FALSE )
   

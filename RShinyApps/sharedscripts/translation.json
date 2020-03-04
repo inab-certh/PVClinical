@@ -133,6 +133,11 @@
         "gr":"Ενδείξεις"
       },
       {
+        "def":"Indication",
+        "en":"Indication",
+        "gr":"Ένδειξη"
+      },
+      {
         "def":"Other Apps",
         "en":"Other Apps",
         "gr":"Άλλες εφαρμογές"
@@ -465,7 +470,169 @@
         "def":"Counts for all drugs",
         "en":"Counts for all drugs",
         "gr":"καταμέτρηση για όλα τα φάρμακα"
+      },
+      {
+        "def":"Counts for",
+        "en":"Counts for",
+        "gr":"Μετρήσεις για"
+      },
+      {
+        "def":"Label",
+        "en":"Label",
+        "gr":"Ετικέτα"
+      },
+      {
+        "def":"PRR and ROR Results",
+        "en":"PRR and ROR Results",
+        "gr":"Αποτελέσματα PRR και ROR"
+      },
+      {
+        "def":"Counts For Events In Selected Reports",
+        "en":"Counts For Events In Selected Reports",
+        "gr":"καταμέτρηση συμβάντων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts For Indications In Selected Reports",
+        "en":"Counts For Indications In Selected Reports",
+        "gr":"Καταμέτρηση ενδείξεων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Term",
+        "en":"Term",
+        "gr":"Όρος"
+      },
+      {
+        "def":"Significant?",
+        "en":"Significant?",
+        "gr":"Σημαντικότητα"
+      },
+      {
+        "def":"Histogram of Simulated Distribution of LLR",
+        "en":"Histogram of Simulated Distribution of LLR",
+        "gr":"Ιστόγραμμα προσομοιωμένης κατανομής LLR"
+      },
+      {
+        "def":"Rejection Region, LLR >",
+        "en":"Rejection Region, LLR >",
+        "gr":"Περιοχή απόρριψης, LLR >"
+      },
+      {
+        "def":"No records for",
+        "en":"No records for",
+        "gr":"Δεν υπάρχουν εγγραφές για"
+      },
+      {
+        "def":"Rejection Region,\n LLR >",
+        "en":"Rejection Region,\n LLR >",
+        "gr":"Περιοχή απόρριψης, \n LLR >"
+      },
+      {
+        "def":"Loglikelihood Ratio",
+        "en":"Loglikelihood Ratio",
+        "gr":"Αναλογία πιθανότητας σύνδεσης"
+      },
+      {
+        "def":"NEPHROGENIC SYSTEMIC FIBROSIS",
+        "en":"NEPHROGENIC SYSTEMIC FIBROSIS",
+        "gr":"ΝΕΦΡΟΓΕΝΗΤΙΚΗ ΣΥΣΤΗΜΑΤΙΚΗ FIBROSIS"
+      },
+      
+      
+      {
+        "def":"Congenital Anomaly",
+        "en":"Congenital Anomaly",
+        "gr":"Συγγενής ανωμαλία"
+      },
+      {
+        "def":"Death",
+        "en":"Death",
+        "gr":"Θάνατος"
+      },
+      {
+        "def":"Disability",
+        "en":"Disability",
+        "gr":"Αναπηρία"
+      },
+      {
+        "def":"Hospitalization",
+        "en":"Hospitalization",
+        "gr":"Νοσηλεία σε νοσοκομείο"
+      },
+      {
+        "def":"Life Threatening",
+        "en":"Life Threatening",
+        "gr":"Απειλή ζωής"
+      },
+      {
+        "def":"Other",
+        "en":"Other",
+        "gr":"Άλλο"
+      },
+      
+      
+      
+      {
+        "def":"Physician",
+        "en":"Physician",
+        "gr":"Γιατρός"
+      },
+      {
+        "def":"Pharmacist",
+        "en":"Pharmacist",
+        "gr":"Φαρμακοποιός"
+      },
+      {
+        "def":"Other Health Professional",
+        "en":"Other Health Professional",
+        "gr":"Άλλος επαγγελματίας υγείας"
+      },
+      {
+        "def":"Lawyer",
+        "en":"Lawyer",
+        "gr":"Δικηγόρος"
+      },
+      {
+        "def":"Consumer or non-health...",
+        "en":"Consumer or non-health...",
+        "gr":"Καταναλωτές"
+      },
+      
+      
+      {
+        "def":"Female",
+        "en":"Female",
+        "gr":"Γυναίκα"
+      },
+      {
+        "def":"Male",
+        "en":"Male",
+        "gr":"Άνδρας"
+      },
+      {
+        "def":"Unknown",
+        "en":"Unknown",
+        "gr":"Άγνωστο"
+      },
+      {
+        "def":"Event counts for drug",
+        "en":"Event counts for drug",
+        "gr":"Καταμέτρηση συμβάντων για φάρμακα"
+      },
+      {
+        "def":"Counts for all events",
+        "en":"Counts for all events",
+        "gr":"Καταμέτρηση για όλα τα συμβάντα"
+      },
+      {
+        "def":"Definition",
+        "en":"Definition",
+        "gr":"Ορισμός"
       }
+      
+      
+      
+      
+      
       
       
       

@@ -1,6 +1,7 @@
 library(shiny)
 require(shinyBS)
 library(shinycssloaders)
+library(shinyjs)
 
 source('sourcedir.R')
 
@@ -105,60 +106,72 @@ fluidRow(
            HTML(paste('<h4>',uiOutput( "productsummary" ),'</h4>', sep="")))),
   fluidRow(
     column(width=4,
-           tabsetPanel(
-             tabPanel(uiOutput( "table" ),
-                        htmlOutput_p("source", 
-                                      tt( 'freqtab1'), 
-                                      tt( 'freqtab2') )
-             ),
-             tabPanel(uiOutput( "dotchart" ),
-                      withSpinner(plotOutput_p("sourceplot", 
-                                     HTML( tt('dot1') ), tt('dot2'), 
-                                     height = "250px"))
-             ),
-             tabPanel(uiOutput( "piechart" ),
-                        plotOutput_p("sourcepie", 
-                                     HTML( tt('pie1') ), tt('pie2'), height = "250px")
-             ),
-             id='maintabs', selected=uiOutput( "dotchart" )
-           )),
+           withSpinner(plotOutput_p("sourceplot", 
+                                    HTML( tt('dot1') ), tt('dot2'), 
+                                    height = "250px"))
+           # tabsetPanel(
+           #   tabPanel(uiOutput( "table" ),
+           #              htmlOutput_p("source", 
+           #                            tt( 'freqtab1'), 
+           #                            tt( 'freqtab2') )
+           #   ),
+           #   tabPanel(uiOutput( "dotchart" ),
+           #            withSpinner(plotOutput_p("sourceplot", 
+           #                           HTML( tt('dot1') ), tt('dot2'), 
+           #                           height = "250px"))
+           #   ),
+           #   tabPanel(uiOutput( "piechart" ),
+           #              plotOutput_p("sourcepie", 
+           #                           HTML( tt('pie1') ), tt('pie2'), height = "250px")
+           #   ),
+           #   id='maintabs', selected=uiOutput( "dotchart" )
+           # )
+           ),
     column(width=4,
-      tabsetPanel(
-                tabPanel(uiOutput( "table2" ),
-                           htmlOutput_p("serious", 
-                                        tt( 'freqtab1'), 
-                                        tt( 'freqtab2'))
-                  ),
-                tabPanel(uiOutput( "dotchart2" ),
-                         withSpinner(plotOutput_p("seriousplot", 
-                                        HTML( tt('dot1') ), tt('dot2'), 
-                                        height = "250px"))
-                ),
-                tabPanel(uiOutput( "piechart2" ),
-                           plotOutput_p("seriouspie", 
-                                        HTML( tt('pie1') ), tt('pie2'), height = "250px")
-                ),
-                id='maintabs', selected=uiOutput( "dotchart2" )
-                )
+           tabPanel(uiOutput( "dotchart2" ),
+                    withSpinner(plotOutput_p("seriousplot", 
+                                             HTML( tt('dot1') ), tt('dot2'), 
+                                             height = "250px"))
+           )
+      # tabsetPanel(
+      #           tabPanel(uiOutput( "table2" ),
+      #                      htmlOutput_p("serious", 
+      #                                   tt( 'freqtab1'), 
+      #                                   tt( 'freqtab2'))
+      #             ),
+      #           tabPanel(uiOutput( "dotchart2" ),
+      #                    withSpinner(plotOutput_p("seriousplot", 
+      #                                   HTML( tt('dot1') ), tt('dot2'), 
+      #                                   height = "250px"))
+      #           ),
+      #           tabPanel(uiOutput( "piechart2" ),
+      #                      plotOutput_p("seriouspie", 
+      #                                   HTML( tt('pie1') ), tt('pie2'), height = "250px")
+      #           ),
+      #           id='maintabs', selected=uiOutput( "dotchart2" )
+      #           )
             ),
     column(width=4,
-           tabsetPanel(
-             tabPanel(uiOutput( "table3" ),
-                        htmlOutput_p("sex", 
-                                     tt( 'freqtab1'), 
-                                     tt( 'freqtab2'))
-             ),
-             tabPanel(uiOutput( "dotchart3" ),
-                        (withSpinner(plotOutput_p("sexplot", 
-                                   HTML( tt('dot1') ), tt('dot2'),
-                                   height = "250px")))
-             ),
-             tabPanel(uiOutput( "piechart3" ),
-                        plotOutput_p("sexpie", 
-                                     HTML( tt('pie1') ), tt('pie2'), height = "250px")
-             ),
-             id='maintabs', selected=uiOutput( "dotchart3" )
-           )
+           withSpinner(plotOutput_p("sexplot", 
+                                    HTML( tt('dot1') ), tt('dot2'),
+                                    height = "250px"))
+           # tabsetPanel(
+           #   tabPanel(uiOutput( "table3" ),
+           #              htmlOutput_p("sex", 
+           #                           tt( 'freqtab1'), 
+           #                           tt( 'freqtab2'))
+           #   ),
+           #   tabPanel(uiOutput( "dotchart3" ),
+           #              (withSpinner(plotOutput_p("sexplot", 
+           #                         HTML( tt('dot1') ), tt('dot2'),
+           #                         height = "250px")))
+           #   ),
+           #   tabPanel(uiOutput( "piechart3" ),
+           #              plotOutput_p("sexpie", 
+           #                           HTML( tt('pie1') ), tt('pie2'), height = "250px")
+           #   ),
+           #   id='maintabs', selected=uiOutput( "dotchart3" )
+           # )
            )
   ),
   fluidRow(
@@ -170,17 +183,19 @@ fluidRow(
       tabsetPanel(
 
 
-        tabPanel(uiOutput( "Events"), withSpinner(uiOutput("wordcloudtabset"))
+        tabPanel(uiOutput( "Events"), htmlOutput_p('query')
+                 # withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
-                 wordcloudtabset('cocloud', 'coquery', 
-                 popheads=c( tt('codrug1'), tt('word1') ), poptext=c( tt('codrug2'), tt('word2') )
-                 )
+                 htmlOutput_p('coquery')
+                 # wordcloudtabset('cocloud', 'coquery', 
+                 # popheads=c( tt('codrug1'), tt('word1') ), poptext=c( tt('codrug2'), tt('word2') )
+                 # )
             ),
-        tabPanel(uiOutput("Indications"),
-                 wordcloudtabset('indcloud', 'indquery', 
-                                 popheads=c( tt('indication1'), tt('word1') ), poptext=c( tt('indication2'), tt('word2') )
-                 )
+        tabPanel(uiOutput("Indications"),htmlOutput_p('indquery')
+                 # wordcloudtabset('indcloud', 'indquery', 
+                 #                 popheads=c( tt('indication1'), tt('word1') ), poptext=c( tt('indication2'), tt('word2') )
+                 # )
         )
         # tabPanel(uiOutput("Other Apps"),  
         #          wellPanel( 
