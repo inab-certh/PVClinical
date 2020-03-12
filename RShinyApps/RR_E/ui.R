@@ -31,7 +31,7 @@ shinyUI(fluidPage(fluidRow(
   
   column(
     width = 12,
-    titlePanel("RR-Event"),
+    # titlePanel("RR-Event"),
     
     hidden(
       uiOutput('page_content'),
@@ -124,7 +124,7 @@ shinyUI(fluidPage(fluidRow(
     tabsetPanel(
       tabPanel(
         uiOutput("PRRRORResults"),
-        uiOutput('prrtitle'),
+        uiOutput('prrtitleBlank'),
         withSpinner(makeDataTableOutput( 'prr2' ))
         # withSpinner(uiOutput("maketabsetPRRRORResults"))
       ),

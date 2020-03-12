@@ -388,13 +388,13 @@ shinyServer(function(input, output, session) {
         {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
         drugvar <- paste0( "&v1=", drugvar )
-        medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+        medlinelinks <- coltohyper( sourcedf[,1], 'L', 
                                   mybaseurl = getcururl(), 
                                   display= rep('Label', nrow( sourcedf ) ), 
                                   append= drugvar )
         
         drugvar <- paste0( "&v1=", input$v1 )
-        dashlinks <- coltohyper( paste0( '%22' , sourcedf[, 1 ], '%22' ), 'DA', 
+        dashlinks <- coltohyper( sourcedf[, 1 ], 'DA', 
                                  mybaseurl = getcururl(), 
                                  display= rep('Dashboard', nrow( sourcedf ) ), 
                                  append= drugvar )
@@ -549,7 +549,6 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    browser()
     keptcols <-  c( iname, colname,countname, 
                      'PRR')
 
@@ -615,6 +614,10 @@ geteventtotals <- reactive(
 output$prrtitle <- renderUI({ 
   geturlquery()
   return(HTML(paste('<h4>',i18n()$t("Reporting Ratios: Results sorted by PRR"),'</h4>',sep='')))
+})
+output$prrtitleBlank <- renderUI({ 
+  geturlquery()
+  return(HTML(''))
 })
 
 prr <- reactive({  

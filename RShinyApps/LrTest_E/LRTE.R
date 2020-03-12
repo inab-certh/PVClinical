@@ -256,7 +256,10 @@ shinyServer(function(input, output, session) {
     a <- input$t1
     b <- input$v1
     c <- input$useexact
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
   })
   
   
@@ -340,7 +343,6 @@ shinyServer(function(input, output, session) {
 #    browser()
     mylist <-  getcounts999( session, v= v, t= t, 
                              count=getprrvarname(), exactrad = input$useexact )
-    
     return( list(mydf=mylist$mydf, myurl=mylist$myurl, excludeddf = mylist$excludeddf, exact = mylist$exact   ) )
   })    
   
@@ -491,19 +493,20 @@ shinyServer(function(input, output, session) {
                                  append= drugvar )
         
         mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-        mynames <- c( 'D', 'L', colname, 'Count', 'Cum Sum') 
+        mynames <- c( 'D', 'L', i18n()$t(colname), i18n()$t('Count'), i18n()$t('Cum Sum')) 
       }
       else {
         medlinelinks <- rep(' ', nrow( sourcedf ) )
-        mynames <- c('-', colname, 'Count', 'Cum Sum') 
+        mynames <- c('-', i18n()$t(colname), i18n()$t('Count'), i18n()$t('Cum Sum')) 
       }
       #Event Table
     } else {
       whichapp <- 'LRE'
       colname <- i18n()$t("Preferred Term")
-      mynames <- c('M', colname, 'Count', 'Cum Sum') 
-      medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-      mydf <- data.frame(M=medlinelinks, mydf) 
+      # mynames <- c('M', i18n()$t(colname), i18n()$t('Count'), i18n()$t('Cum Sum')) 
+      mynames <- c( i18n()$t(colname), i18n()$t('Count'), i18n()$t('Cum Sum'))
+      medlinelinks <- makemedlinelink(sourcedf[,1], 'M') 
+      mydf <- data.frame(mydf) 
     }
 #     names <- c('v1','t1')
 #     values <- c(getbestterm1var() )
@@ -642,7 +645,7 @@ getindcounts <- reactive({
       
       dynprr <- numcoltohyper( paste(comb[ , 1], 'PRR'), comb[ , 1], names, values, type='P',
                                mybaseurl =getcururl() )
-      comb <- data.frame( M='M' , comb, dynprr, cpa,  mystats$RR)
+      comb <- data.frame(  comb, dynprr, cpa,  mystats$RR)
 #      comb2 <- data.frame( M='M' , comb2, dynprr, cpa,  mystats$RR)
 #      print(  comb2[, 'rn..'])
       comb<- data.frame(comb,
@@ -663,7 +666,7 @@ getindcounts <- reactive({
       iname <- 'M'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     }
-    comb[,'M'] <- medlinelinks
+    # comb[,'M'] <- medlinelinks
 #    comb2[,'M'] <- medlinelinks
     names <- c('v1','t1' ,'v2', 't2')
     values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
@@ -679,7 +682,7 @@ getindcounts <- reactive({
 #    row.names(comb2)<- seq(1:nrow(comb2))
     countname <- paste( 'nij for', getterm1(session))
 #    print(head(comb2))
-    names(comb) <-  c( iname, colname, countname, 
+    names(comb) <-  c(  colname, countname, 
                        'ni.', "Significant?", 'LLR',
                        'RR',  'a', 'b', 'c', 'd', 'pi.',
                        'nij',  'n.j', 'ni.',  'n..',
@@ -691,15 +694,17 @@ getindcounts <- reactive({
 #                        'Dynamic PRR', 'Change Point Analysis', 'PRR2', 'LLR', 'PRRE', 'PRRD' )
 #    print(  comb2[, 'n..'])
  #   print((comb2$pri.))
-    keptcols1 <-  c( iname, colname, "Significant?", 'LLR',
+    keptcols1 <-  c(  colname, "Significant?", 'LLR',
                     'RR',  'nij' )
 #     keptcols2 <-  c( iname, colname, "Significant?", 'LLR',
 #                      'PRR' )
     #    mydf <- mydf[, c(1:4, 7,8,9)]
 #      print(comb[, keptcols])
 #      print(comb2[, keptcols])
-    
-    closeAlert(session, 'simalert')
+    if(!is.null(session$simalert))
+    {
+      closeAlert(session, 'simalert')
+    }
     
     numsims <- getnumsims( session )
     mycritval <- getCritVal2(session, numsims, comb$n.j[1], comb$ni., comb$n..[1], comb$pi., .95)
@@ -851,17 +856,22 @@ output$textplot <- renderPlot({
   textplot()
 }, height=400, width=900)
 
-prrtitle <- reactive({ 
+output$prrtitle <- renderUI({ 
   maxLRT <- getprr()$maxLRT
   critval <- getprr()$critval$critval
-  return( paste( '<h4>Reporting Ratios</h4>',
-                 'Critical Value =',  round( critval, 2),
-                 '<br># of Simulations =',  getprr()$numsims
-  ) )
+  out=paste( '<h4>Results sorted by LRR</h4><h4>Reporting Ratios</h4>',
+             'Critical Value =',  round( critval, 2),
+             '<br># of Simulations =',  getprr()$numsims
+  )
+  addPopover(session=session, id="prrtitle", title="Application Info", 
+             content=out, placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  
+  return( HTML('<button type="button" class="btn btn-info">i</button>') )
 })
-output$prrtitle <- renderText({ 
-  prrtitle()
-})
+# output$prrtitle <- renderText({ 
+#   prrtitle()
+# })
 
 info <- reactive(
   { 
@@ -914,7 +924,7 @@ AnalyzedEventCountsforDrug <- reactive(
   {
     mydf <- getdrugcountstable()$mydfE
     checkdf(mydf, getterm1(session),
-            names=c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1(session)) ),
+            names=c(i18n()$t("Term"), paste( i18n()$t("Counts for"), i18n()$t(getterm1(session))) ),
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
   }
 )
@@ -1314,7 +1324,7 @@ getcururl <- reactive({
     
   })
   output$DrugCountsforEvent <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Event counts for event")))
+    HTML(stri_enc_toutf8(i18n()$t("Drug counts for event")))
     
   })
   output$CountsForAllDrugs <- renderUI({ 

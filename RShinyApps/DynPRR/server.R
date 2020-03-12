@@ -561,8 +561,8 @@ output$coquery <- renderTable({
 # }, escape=FALSE) 
 
 output$coquery2 <- DT::renderDT({
-  grlang<-'www/datatablesGreek.json'
-  enlang<-'www/datatablesEnglish.json'
+  grlang<-'datatablesGreek.json'
+  enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsD()$mydf
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
@@ -570,19 +570,20 @@ output$coquery2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  if ( is.data.frame(codrugs) )
+  { 
+    codedrugsIndatatable=codrugs
+  } else  {
+    codedrugsIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
   datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+    codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
-                     grlang,
-                     enlang)
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE)
 },
@@ -620,13 +621,13 @@ output$coqueryE2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  if ( is.data.frame(codrugs) )
+  { 
+    codedrugsIndatatable=codrugs
+  } else  {
+    codedrugsIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
   datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-    },
+    codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
@@ -712,21 +713,20 @@ output$query_counts2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  if ( is.data.frame(mydf) )
+  { 
+    mydfIndatatable=mydf
+  } else  {
+    mydfIndatatable= data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0) }
   datatable(
-    #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
-    
-    #   print(head(mydf))
-    if ( is.data.frame(mydf) )
-    {
-      return( mydf) 
-    } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))},
+    mydfIndatatable,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(width = '50', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
-                     'www/datatablesGreek.json',
-                     'www/datatablesEnglish.json')
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
     ),  escape=FALSE
     )

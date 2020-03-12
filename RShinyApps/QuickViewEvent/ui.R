@@ -63,7 +63,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                     uiOutput('UseReportsBetween'),
                                     start = '1989-6-30',
                                     end = Sys.Date()
-                                  ),uiOutput('prrtitle'),
+                                  ),
+                                  uiOutput('prrtitleBlank'),
                                             withSpinner(makeDataTableOutput( 'prr2' ))),
                                   #htmlOutput( 'prrtitle' ),
                                   

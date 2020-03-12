@@ -462,9 +462,9 @@
         "gr":"Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα"
       },
       {
-        "def":"Event counts for event",
-        "en":"Event counts for event",
-        "gr":"Αριθμός συμβάντων"
+        "def":"Drug counts for event",
+        "en":"Drug counts for event",
+        "gr":"Αριθμός φαρμάκων για συμβάν"
       },
       {
         "def":"Counts for all drugs",

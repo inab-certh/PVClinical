@@ -28,7 +28,8 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
+                           column(width=12, 
+                                  # titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                                   
                                   hidden(
                                     uiOutput('page_content'),
@@ -95,14 +96,17 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                     tabPanel(
                                       uiOutput("LRTResultsbasedonTotalDrugs"),
                                       wellPanel(
-                                        htmlOutput( 'prrtitle' ), 
-                                        helpText('Results sorted by LRR')
-                                      ),
+                                        uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10"),
+                                        withSpinner(htmlOutput_p("prr"))
+                                        # htmlOutput( 'prrtitle' ), 
+                                        # helpText('Results sorted by LRR')
+                                        
+                                      )
                                       #                          wordcloudtabset('cloudprr', 'prr', 
                                       #                                          popheads=c( tt('prr1'), tt('word1') ), 
                                       #                                          poptext=c( tt('prr5'), tt('word2') ) )
                                       
-                                      withSpinner(htmlOutput_p("prr"))
+                                      
                                       
                                     ),
                                     tabPanel(uiOutput("SimulationResultsforDrugBasedLRT"),
@@ -175,10 +179,10 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                              # #                          htmlOutput_p( 'coquerytextE' ,
                                              # #                                        tt('gquery1'), tt('gquery2'),
                                              # #                                        placement='bottom' ),
-                                             wordcloudtabset('coqueryEex', 'coqueryE', names=c('Tables', 'Tables'),
-                                                             popheads=c( tt('codrug1'), tt('word1') ), 
-                                                             poptext=c( tt('codrug3'), tt('word2') ))
-                                             #withSpinner(makeDataTableOutput( 'coqueryEex' ))
+                                             # wordcloudtabset('coqueryEex', 'coqueryE', names=c('Tables', 'Tables'),
+                                             #                 popheads=c( tt('codrug1'), tt('word1') ), 
+                                             #                 poptext=c( tt('codrug3'), tt('word2') ))
+                                             withSpinner(htmlOutput_p( 'coqueryEex' ))
                                     ),
                                     tabPanel(uiOutput("CountsForAllDrugs"),
                                              # wellPanel( 
@@ -196,7 +200,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                              # wordcloudtabset('cloudcoqueryA', 'coqueryA',
                                              #                 popheads=c( tt('codrug1'), tt('word1') ), 
                                              #                 poptext=c( tt('codrug3'), tt('word2') ))
-                                             withSpinner(makeDataTableOutput( 'coqueryA' ))
+                                             withSpinner(htmlOutput_p( 'coqueryA' ))
                                     ),
                                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
                                              # wellPanel( 
@@ -211,7 +215,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                              # wordcloudtabset('cloudindquery', 'indquery',
                                              #                 popheads=c( tt('indication1'), tt('word1') ),
                                              #                 poptext=c( tt('indication2'), tt('word2') ) )
-                                             withSpinner(makeDataTableOutput( 'indquery' ))
+                                             withSpinner(htmlOutput_p( 'indquery' ))
                                     ),
                                     tabPanel(uiOutput("OtherApps"),  
                                              wellPanel( 

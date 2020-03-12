@@ -5,6 +5,8 @@ source('sourcedir.R')
 library(shinyalert)
 library(DT)
 
+options(encoding = 'UTF-8')
+
 
 renderDrugName <- function() { 
   
