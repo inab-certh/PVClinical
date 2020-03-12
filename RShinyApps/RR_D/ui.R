@@ -46,7 +46,8 @@ shinyUI(fluidPage(
                   fluidRow(useShinyjs(), 
                     
                     column(width=12,
-                           titlePanel("RR-Drug" ) ),
+                           # titlePanel("RR-Drug" ) 
+                           ),
                     
                     bsAlert("alert2"),
                     
@@ -81,7 +82,9 @@ shinyUI(fluidPage(
                                      placement='bottom')
                       
                     ),
-                    tags$div(style='padding-left:40px',dateRangeInput('daterange', uiOutput('UseReportsBetween'), start = '1989-6-30', end = Sys.Date())),
+                    tags$div(style='padding-left:40px',dateRangeInput('daterange', '',
+                                                                      # uiOutput('UseReportsBetween'), 
+                                                                      start = '1989-6-30', end = Sys.Date())),
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(

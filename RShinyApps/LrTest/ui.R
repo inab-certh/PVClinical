@@ -29,7 +29,8 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(), 
-           column(width=12, titlePanel(uiOutput("LRTSignalAnalysisforaDrug") ),                           
+           column(width=12, 
+                  # titlePanel(uiOutput("LRTSignalAnalysisforaDrug") ),                           
                   
                   hidden(
                     uiOutput('page_content'),
@@ -90,7 +91,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                     
                   ),
                   # downloadButton('downloadReport', 'Download LRT Report'),
-                  dateRangeInput('daterange', uiOutput('UseReportsBetween'), start = '1989-6-30', end = Sys.Date()),
+                  dateRangeInput('daterange', '',
+                                 # uiOutput('UseReportsBetween'), 
+                                 start = '1989-6-30', end = Sys.Date()),
                   
                   
                   tabsetPanel(
@@ -133,7 +136,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                              #                 tt('gquery1'), tt('gquery2'),
                              #                 placement='bottom' )
                              # ),
-                             # htmlOutput( 'alltitle' ), 
+                             htmlOutput_p( 'all' ), 
                              # wordcloudtabset('cloudall', 'all')
                     ),
                     tabPanel(uiOutput("CountsForDrugsInSelectedReports"),

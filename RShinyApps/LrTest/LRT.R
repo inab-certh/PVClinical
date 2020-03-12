@@ -480,13 +480,17 @@ shinyServer(function(input, output, session) {
       {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
         drugvar <- paste0( "&v1=", drugvar )
-        medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+        # medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+        #                             mybaseurl = getcururl(), 
+        #                             display= rep('L', nrow( sourcedf ) ), 
+        #                             append= drugvar )
+        medlinelinks <- coltohyper( sourcedf[,1], 'L', 
                                     mybaseurl = getcururl(), 
                                     display= rep('L', nrow( sourcedf ) ), 
                                     append= drugvar )
         
         drugvar <- paste0( "&v1=", input$v1 )
-        dashlinks <- coltohyper( paste0( '%22' , sourcedf[, 'term' ], '%22' ), 'DA', 
+        dashlinks <- coltohyper(  sourcedf[, 'term' ], 'DA', 
                                  mybaseurl = getcururl(), 
                                  display= rep('D', nrow( sourcedf ) ), 
                                  append= drugvar )
@@ -502,9 +506,11 @@ shinyServer(function(input, output, session) {
     } else {
       linkapp <- 'LRE'
       colname <- i18n()$t("Preferred Term")
-      mynames <- c('M', colname, 'Count', 'Cum Sum') 
+      # mynames <- c('M', colname, 'Count', 'Cum Sum') 
+      mynames <- c(colname, 'Count', 'Cum Sum')
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-      mydf <- data.frame(M=medlinelinks, mydf) 
+      # mydf <- data.frame(M=medlinelinks, mydf) 
+      
     }
 #     names <- c('v1','t1')
 #     values <- c(getbestterm1var() ) 
@@ -702,8 +708,8 @@ getindcounts <- reactive({
 #                        'Dynamic PRR', 'Change Point Analysis', 'PRR2', 'LLR', 'PRRE', 'PRRD' )
 #    print(  comb2[, 'n..'])
  #   print((comb2$pri.))
-    keptcols1 <-  c( iname, colname, "Significant?", 'LLR',
-                    'RR', 'nij' )
+    # keptcols1 <-  c( iname, colname, "Significant?", 'LLR', 'RR', 'nij' )
+    keptcols1 <-  c( colname, "Significant?", 'LLR', 'RR', 'nij' )
 #     keptcols2 <-  c( iname, colname, "Significant?", 'LLR',
 #                      'PRR' )
     #    mydf <- mydf[, c(1:4, 7,8,9)]

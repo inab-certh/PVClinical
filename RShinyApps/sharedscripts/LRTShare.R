@@ -61,6 +61,34 @@ popcloudcoquery <- function()
 #   return( c(head=head, text=text) )
 # }
 
+popcoqueryE <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
+
+popcoqueryEex <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
+
+popcoqueryA <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
+
+popindquery <- function()
+{
+  text <- 'Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term'
+  head <- 'Reported Indication for Drug' 
+  return( c(head=head, text=text) )
+}
+
 calcLRTstats2 <- function( nij, n.j , ni. , n.. )
   #Total number of reports
 {

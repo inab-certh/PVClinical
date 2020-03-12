@@ -2057,6 +2057,11 @@ shinyServer(function(input, output, session) {
     geturlquery()
     return(HTML(paste0('<h4>',i18n()$t("Reporting Ratios: Results sorted by PRR"),'</h4>')))
   })
+  output$prrtitleBlank <- renderUI({ 
+    geturlquery()
+    return(HTML(''))
+  })
+  
   
   prr <- reactive({  
     if (getterm1( session )=="") {

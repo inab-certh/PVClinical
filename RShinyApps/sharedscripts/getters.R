@@ -76,7 +76,7 @@ cloudout <- function(mydf, title)
   
 }
 getcounts999 <- function( session, v, t, count, limit=1000, 
-                          exactrad='exact', counter=1, db= '/drug/' )
+                         exactrad='exact', counter=1, db= '/drug/' )
   {
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
@@ -136,6 +136,6 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   } else {
     excludeddf <- mydf
   }
-  max <- min(900, nrow(mydf) )
+  max <- min(10, nrow(mydf) )
   return( list(mydf=mydf[1:max,], myurl=myurl, exact = exact, excludeddf = excludeddf   ) )
   }

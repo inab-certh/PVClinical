@@ -345,18 +345,18 @@ getcocounts <- function(whichcount = 'D'){
                                append= drugvar )
       
       mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-      mynames <- c( 'D', 'L', colname, 'Count', i18n()$t("Cumulative Sum")) 
+      mynames <- c( 'D', 'L', colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
-      mynames <- c('-', colname, 'Count') 
+      mynames <- c('-', colname, i18n()$t("Count")) 
     }
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestaevar(), getbestterm2(), getexactdrugvar() ) 
     #Event Table
   } else {
     colname <- i18n()$t("Preferred Term")
-    mynames <- c('M', colname, 'Count', i18n()$t("Cumulative Sum")) 
+    mynames <- c('M', colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
     mydf <- data.frame(M=medlinelinks, mydf) 
     names <- c('v1','t1', 'v2', 't2')
@@ -395,7 +395,7 @@ gettstable <- function( tmp ){
     mydates <- gsub('-', '', as.character( mydates ))
     mycumdates <- paste0(start[1],  '+TO+', mydates ,']')
     mydates <- paste0(start,  '+TO+', mydates ,']')
-    names(mydf) <- c('Date', 'Count', i18n()$t("Cumulative Count"))
+    names(mydf) <- c(i18n()$t("Date"), i18n()$t("Count"), i18n()$t("Cumulative Count"))
 #    mydf <- mydf[ (mydf[,'Cumulative Count'] > 0), ]
     mydf_d <- mydf
     names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
@@ -729,7 +729,7 @@ output$infocpmeantext <- renderUI ({
     addPopover(session=session, id="infocpmeantext", title="Application Info", 
              content=out, placement = "left",
              trigger = "hover", options = list(html = "true"))
-    attr(session, "cpmeanplottext") <- out
+    #attr(session, "cpmeanplottext") <- out
     # browser()
     # l <- append( l, c('cpmeanplottext' =  out ) )
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
