@@ -54,12 +54,19 @@ popcloudcoquery <- function()
 }
 
 
-# popcoquery <- function()
-# {
-#   text <- 'Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.'
-#   head <- 'Concomitant Medications' 
-#   return( c(head=head, text=text) )
-# }
+popcoquery <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.'
+  head <- 'Concomitant Medications'
+  return( c(head=head, text=text) )
+}
+
+popquery <- function()
+{
+  text <- 'Frequency table of events found in selected reports.  Event term is linked to PRR results for the event. "M" is linked to medline dictionary definition for event term'
+  head <- 'Reported Events'
+  return( c(head=head, text=text) )
+}
 
 popcoqueryE <- function()
 {
@@ -187,4 +194,43 @@ checkdf <- function(mydf, myinput, names=NULL, changecell=NULL)
     return(mydf) 
   } else  {return(data.frame(Term=paste( 'No results for', myinput ), Count=0))}
 }
+
+
+popindquery2 <- function()
+{
+  text <- 'Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term'
+  head <- 'Reported Indication for Drug' 
+  return( c(head=head, text=text) )
+}
+popcoqueryE2 <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
+popall2 <- function()
+{
+  text <- "All Counts for Drugs"
+  head <- "Frequency Table"
+  return( c(head=head, text=text) )
+}
+popspecifieddrug2 <- function()
+{
+  text <- "All Counts for Drugs"
+  head <- "Frequency Table"
+  return( c(head=head, text=text) )
+}
+popprr2 <- function()
+{
+  text <- "The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>"
+  head <- "Proportional Reporting Ratio"
+  return( c(head=head, text=text) )
+}
+popcpmeanplot <- function()
+{
+  text <- 'Changepoint type      : Change in mean'
+  head <- "Change in mean analysis"
+  return( c(head=head, text=text) )
+}
+
 

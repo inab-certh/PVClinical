@@ -9,4 +9,23 @@ body{
 .shiny-plot-output, .datatables {
   color:blue;
 }
+.tooltip > .tooltip-inner {
+  background-color: #FFFFFF;
+  color: #000000;
+  border: 1px solid black;
+  padding: 15px;
+  font-size: 12px;
+  opacity:1;
+   width:500px!important;
+}
+
+/* Tooltip on top */
+ .tooltip-arrow {
+   background-color: blue;
+  border-bottom: 1px red;
+}
+.tooltip{
+  top: -74px; left: 144px; display: block; width:500px!important;
+  opacity:1;
+}
 

@@ -82,147 +82,48 @@ shinyUI(fluidPage(
                                      placement='bottom')
                       
                     ),
-                    tags$div(style='padding-left:40px',dateRangeInput('daterange', '',
-                                                                      # uiOutput('UseReportsBetween'), 
-                                                                      start = '1989-6-30', end = Sys.Date())),
+                    tags$div(style='padding-left:40px',dateRangeInput('daterange', "", start = '1989-6-30', end = Sys.Date())),
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(
-                                 uiOutput( 'prrtitle' )
+                                 style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               #                          wordcloudtabset('cloudprr', 'prr', 
-                               #                                          popheads=c( tt('prr1'), tt('word1') ), 
-                               #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                               # withSpinner(uiOutput("maketabsetPRRRORResults"))
                                dataTableOutput( 'prr2' )
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
-                               # wellPanel( 
-                               #   htmlOutput( 'alldrugtext' ),
-                               #   htmlOutput_p( 'queryalldrugtext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ), 
-                               # wellPanel( 
-                               #   htmlOutput( 'querytitle' ), 
-                               #   #                          tableOutput("query"),
-                               #   htmlOutput_p( 'querytext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ),
-                               # wordcloudtabset('cloudquery', 'specifieddrug2', 
-                               #                 types= c('datatable', 'plot'), 
-                               #                 popheads=c( tt('event1'), tt('word1') ), 
-                               #                 poptext=c( tt('event2'), tt('word2') )
-                               # )
+                               wellPanel(
+                                 style="background-color:white;height:60px;border:none",uiOutput("infospecifieddrug2",style = "position:absolute;right:40px;z-index:10")
+                               ),
                                dataTableOutput( 'specifieddrug2' )
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
-                               # wellPanel( 
-                               #   htmlOutput( 'alltext' ),
-                               #   htmlOutput_p( 'queryalltext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ),
-                               # wellPanel(
-                               #   htmlOutput( 'alltitle' ), 
-                               #   htmlOutput_p( 'allquerytext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' ) ),
-                               # wordcloudtabset('cloudall', 'all2',  
-                               #                 types= c('datatable', 'plot'),
-                               #                 popheads=c( tt('event1'), tt('word1') ), 
-                               #                 poptext=c( tt('event2'), tt('word2') ))
+                               wellPanel(
+                                 style="background-color:white;height:60px;border:none",uiOutput("infoall2",style = "position:absolute;right:40px;z-index:10")
+                               ),
                                dataTableOutput( 'all2' )
                       ),
                       tabPanel(uiOutput("RankedEventCountsforDrug"),
-                               # wellPanel( 
-                               #   htmlOutput( 'cotextE' ),
-                               #   htmlOutput_p( 'querycotextE' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ),
-                               # wellPanel(
-                               #   htmlOutput( 'cotitleE' )
-                               # ),
-                               # wellPanel(
-                               #   htmlOutput( 'cotitleEex' ),
-                               #   htmlOutput( 'coqueryEex' )
-                               # ),
-                               # htmlOutput_p( 'coquerytextE' ,
-                               #               tt('gquery1'), tt('gquery2'),
-                               #               placement='bottom' ),
-                               # wordcloudtabset('cloudcoqueryE', 'coqueryE2',
-                               #                 types= c('datatable', 'plot'), 
-                               #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                               #                 poptext=c( tt('codrug3'), tt('word2') ))
+                               wellPanel(
+                                 style="background-color:white;height:60px;border:none",uiOutput("infocoqueryE2",style = "position:absolute;right:40px;z-index:10")
+                               ),
                                dataTableOutput( 'coqueryE2' )
                       ),
                       tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                               # wellPanel( 
-                               #   htmlOutput( 'cotext' ),
-                               #   htmlOutput_p( 'querycotext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ),
-                               # wellPanel(
-                               #   htmlOutput( 'cotitle' )
-                               # ),
-                               # htmlOutput_p( 'coquerytext' ,
-                               #               tt('gquery1'), tt('gquery2'),
-                               #               placement='bottom' ),
-                               # wordcloudtabset('cloudcoquery', 'coquery2',
-                               #                 types= c('datatable', 'plot'), 
-                               #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                               #                 poptext=c( tt('codrug3'), tt('word2') ))
+                               wellPanel(
+                                 style="background-color:white;height:60px;border:none",uiOutput("infocoquery2",style = "position:absolute;right:40px;z-index:10")
+                               ),
                                dataTableOutput( 'coquery2' )
                       ),
                       tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
-                               # wellPanel( 
-                               #   htmlOutput( 'indtext' ),
-                               #   htmlOutput_p( 'queryindtext' ,
-                               #                 tt('gquery1'), tt('gquery2'),
-                               #                 placement='bottom' )
-                               # ),
-                               # wellPanel(
-                               #   htmlOutput( 'indtitle' )
-                               # ),
-                               # wordcloudtabset('cloudindquery', 'indquery2',
-                               #                 types= c('datatable', 'plot'), 
-                               #                 popheads=c( tt('indication1'), tt('word1') ),
-                               #                 poptext=c( tt('indication2'), tt('word2') ) )
+                               wellPanel(
+                                 style="background-color:white;height:60px;border:none",uiOutput("infoindquery2",style = "position:absolute;right:40px;z-index:10")
+                               ),
                                dataTableOutput( 'indquery2' )
                       ),
-                      # tabPanel(uiOutput("OtherApps"),  
-                      #          wellPanel( 
-                      #            htmlOutput( 'applinks' )
-                      #          )
-                      # ),
-                      # tabPanel(uiOutput("DataReference"), HTML( renderiframe('https://open.fda.gov/drug/event/') )  ),
-                      # tabPanel(uiOutput("About"), 
-                      #          # img(src='l_openFDA.png'),
-                      #          HTML( (loadhelp('about') ) )  ),
-                      #                 tabPanel("session",  
-                      #                          wellPanel( 
-                      #                            verbatimTextOutput( 'urlquery' )
-                      #                          )
-                      #                 ),
                       id='maintabs', selected=  uiOutput("PRRRORResults") 
-                  ),
-#   img(src='l_openFDA.png'),
-#   titlePanel("RR-Drug"),
-#   sidebarLayout(
-#     sidebarPanel(
-# #       tabsetPanel(
-# #         tabPanel('Select Drug',
-#                    )
-#         ,
-# #     id='sidetabs', selected='Select Drug')
-# #     ),
-#     mainPanel(
-#       
-#             )
-#           )
+                    ),
+                      
+
         )
       )
     )
