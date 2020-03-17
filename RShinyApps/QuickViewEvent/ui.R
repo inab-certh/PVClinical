@@ -56,16 +56,16 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12,
+                           column(width=12,uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                   # titlePanel("RR-Drug" ) ,
-                                  fluidRow( style="width:90%; margin-top:60px;",dateRangeInput(
+                                  fluidRow(useShinyjs(),  column(width=12,style="margin-top:60px;",dateRangeInput(
                                     'daterange',
                                     uiOutput('UseReportsBetween'),
                                     start = '1989-6-30',
                                     end = Sys.Date()
                                   ),
                                   uiOutput('prrtitleBlank'),
-                                            withSpinner(makeDataTableOutput( 'prr2' ))),
+                                            withSpinner(makeDataTableOutput( 'prr2' )))),
                                   #htmlOutput( 'prrtitle' ),
                                   
                                   hidden(
@@ -153,5 +153,4 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            )
                            
                   )
-)
-)
+

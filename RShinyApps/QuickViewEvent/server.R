@@ -1958,12 +1958,12 @@ shinyServer(function(input, output, session) {
       {
         drugvarname <- gsub( "patient.drug.","" , input$v1 , fixed=TRUE)
         drugvar <- paste0( "&v1=", drugvarname)
-        medlinelinks <- coltohyper( paste0( '%22' , sourcedf[, 'term' ], '%22' ), 'L', 
+        medlinelinks <- coltohyper( sourcedf[, 'term' ], 'L', 
                                     mybaseurl = getcururl(), 
                                     display= rep(iname[2], nrow( sourcedf ) ), 
                                     append= drugvar )
         drugvar <- paste0( "&v1=", input$v1 )
-        dashlinks <- coltohyper( paste0( '%22' , sourcedf[, 'term' ], '%22' ), 'DA', 
+        dashlinks <- coltohyper(  sourcedf[, 'term' ], 'DA', 
                                  mybaseurl = getcururl(), 
                                  display= rep(iname[1], nrow( sourcedf ) ), 
                                  append= drugvar )
@@ -1991,7 +1991,7 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c( iname, colname,countname, 
+    keptcols <-  c( colname,countname, 
                     'PRR')
     
     #    mydf <- mydf[, c(1:4, 7,8,9)]
@@ -2486,7 +2486,12 @@ shinyServer(function(input, output, session) {
     }
     translator
   })
-  
+  output$info<-renderUI({
+    addPopover(session=session, id="info", title="Proportional Reporting Ratio", 
+               content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  }) 
 })
       
   

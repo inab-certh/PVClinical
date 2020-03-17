@@ -398,8 +398,8 @@ shinyServer(function(input, output, session) {
                                  mybaseurl = getcururl(), 
                                  display= rep('Dashboard', nrow( sourcedf ) ), 
                                  append= drugvar )
-        mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-        mynames <- c( 'D', 'L', colname, i18n()$t("Count")) 
+        # mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
+        mynames <- c(  colname, i18n()$t("Count")) 
         }
       else {
         medlinelinks <- rep(' ', nrow( sourcedf ) )
@@ -408,9 +408,9 @@ shinyServer(function(input, output, session) {
       }
     } else {
       colname <- i18n()$t("Preferred Term")
-      mynames <- c('M', colname, i18n()$t("Count")) 
+      mynames <- c(colname, i18n()$t("Count")) 
       medlinelinks <- makemedlinelink(sourcedf[,1], i18n()$t("Definition"))          
-      mydf <- data.frame(M=medlinelinks, mydf) 
+      mydf <- data.frame( mydf) 
     }
     names <- c('v1','t1','v3', 't3', 'v2', 't2')
     values <- c(getbestvar1(), getbestterm1(), gettimevar(), gettimerange(), getexactvar1() ) 
@@ -444,7 +444,7 @@ shinyServer(function(input, output, session) {
     names <- c('v1','t1','v3', 't3', 'v2', 't2')
     values <- c( getbestvar1(), getbestterm1(), gettimevar(), gettimerange(), paste0( 'patient.drug.drugindication', '.exact') )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
-    mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
+    # mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
     return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
   })   
   
@@ -549,7 +549,7 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c( iname, colname,countname, 
+    keptcols <-  c(  colname,countname, 
                      'PRR')
 
     #    mydf <- mydf[, c(1:4, 7,8,9)]
@@ -635,6 +635,29 @@ output$prr <- renderTable({
  prr()
 },  sanitize.text.function = function(x) x)
 
+
+# output$dataTableOutput_p_withpopover_prr2 <- renderUI
+# {
+#   browser()
+#   s <- getpopstrings( 'prr2', NULL, NULL)
+#   pophead <- s['pophead']
+#   poptext <- s['poptext']
+#   addPopover(session=session, id="prr2", title="Application Info", 
+#              content='paok', placement = "left",
+#              trigger = "hover", options = list(html = "true"))
+#   if( !is.null(pophead) )
+#   {
+#     
+#     popify(
+#       dataTableOutput('prr2'),
+#       HTML( pophead ), HTML(poptext),
+#       placement='top')
+#   }
+#   else
+#   {
+#     dataTableOutput('prr2')
+#   }
+# }
 output$prr2 <- DT::renderDT({  
   
   query <- parseQueryString(session$clientData$url_search)
@@ -1200,6 +1223,46 @@ getcururl <- reactive({
                 popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
                 poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
     
+  })
+  output$infoprr2<-renderUI({
+    addPopover(session=session, id="infoprr2", title="Proportional Reporting Ratio", 
+               content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infospecifieddrug2<-renderUI({
+    addPopover(session=session, id="infospecifieddrug2", title="Frequency Table", 
+               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infoall2<-renderUI({
+    addPopover(session=session, id="infoall2", title="Frequency Table", 
+               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infocoqueryE2<-renderUI({
+    addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
+               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infocoquery2<-renderUI({
+    addPopover(session=session, id="infocoquery2", title="Concomitant Medications", 
+               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  output$infoindquery2<-renderUI({
+    addPopover(session=session, id="infoindquery2", title="Reported Indication for Drug", 
+               content=stri_enc_toutf8(i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   

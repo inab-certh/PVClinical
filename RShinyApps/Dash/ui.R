@@ -58,10 +58,16 @@ shinyUI(fluidPage(useShinyjs(), includeCSS("../sharedscripts/custom.css"),
                      column(width=4,
                             # a(href='https://open.fda.gov/', 
                             #   img(src='l_openFDA.png', align='bottom')),
-                            renderDates()
+                            # renderDates()
+                            dateRangeInput(
+                              'daterange','',
+                              # uiOutput('UseReportsBetween'),
+                              start = '1989-6-30',
+                              end = Sys.Date()
+                            ),
                      ),
                      column(width=8,
-                            titlePanel(uiOutput( "dashboard" ) ) )
+                            titlePanel("" ) )
                    ),
 #                    img(src='l_openFDA.png'),
 #                    titlePanel( 'Dashboard' ),
@@ -101,9 +107,9 @@ hidden(
       ),
     
 
-fluidRow(
-    column(width=12,
-           HTML(paste('<h4>',uiOutput( "productsummary" ),'</h4>', sep="")))),
+# fluidRow(
+#     column(width=12,
+#            HTML(paste('<h4>',uiOutput( "productsummary" ),'</h4>', sep="")))),
   fluidRow(
     column(width=4,
            withSpinner(plotOutput_p("sourceplot", 
@@ -175,8 +181,7 @@ fluidRow(
            )
   ),
   fluidRow(
-    column(width=12,
-           HTML(paste('<h4>',uiOutput( "AdverseEventsConcomitantMedications" ),'</h4>', sep="")))
+    column(width=12,style = "height:20px;")
     ),
   fluidRow(
     column(width=9,
@@ -211,7 +216,7 @@ fluidRow(
       )
     ),
     column(width=3,
-           bsAlert("alert") )
+           "" )
   )
 )
 )

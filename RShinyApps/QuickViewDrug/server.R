@@ -1114,6 +1114,7 @@ shinyServer(function(input, output, session) {
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')
     names <- c('v1','t1', 'v2', 't2')
     values <- c( getbestdrugvarname(), getbestdrugname(), paste0( 'patient.drug.drugindication', '.exact') )
+    browser()
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
 

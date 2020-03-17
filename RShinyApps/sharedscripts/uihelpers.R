@@ -211,7 +211,7 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
   poptext <- s['poptext']
   if( !is.null(pophead) )
       {
-      popify(
+        popify(
         htmlOutput(table),
       HTML(  paste('<b>', pophead,'</b>') ), poptext,
       placement=placement)
@@ -221,9 +221,9 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
     tableOutput(table)
     }
   }     
-
 dataTableOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
 {
+  
   s <- getpopstrings( table, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
@@ -231,21 +231,22 @@ dataTableOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top'
   {
     popify(
       dataTableOutput(table),
-      HTML(  paste('<b>', pophead,'</b>') ), poptext,
+      HTML( pophead ), HTML(poptext),
       placement=placement)
   }
   else
   {
     dataTableOutput(table)
   }
-}     
+}  
+
+
 
 plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 {
   s <- getpopstrings( plot, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
-  browser
   if( !is.null(pophead) && !is.na(pophead ))
   {
     popify(

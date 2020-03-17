@@ -68,7 +68,7 @@ shinyServer(function(input, output, session) {
     }
     return(0.0)
   })
-
+  
   getqueryvars <- function( num = 1 ) {
     s <- vector(mode = "character", length = 7)
     #Dashboard
@@ -128,7 +128,12 @@ shinyServer(function(input, output, session) {
       return( getdrugvar() )
     }
   }
-
+  output$info<-renderUI({
+    addPopover(session=session, id="info", title="Application Info", 
+               content=stri_enc_toutf8(i18n()$t("descriptionList")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  }) 
   getbestaevar <- function(){
     exact <-   ( getexactvals()$exacte)
     if (exact){

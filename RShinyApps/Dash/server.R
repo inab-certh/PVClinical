@@ -324,8 +324,8 @@ getsourcecounts <- reactive({
     myurl <- mydf$myurl
     mydf <- mydf$mydf
     sourcedf <- mydf
-    mydf <- data.frame( rep('M', nrow(mydf) ), mydf )
-    mydf[,1] <- makemedlinelink(mydf[,2], mydf[,1])
+    # mydf <- data.frame( rep('M', nrow(mydf) ), mydf )
+    # mydf[,1] <- makemedlinelink(mydf[,2], mydf[,1])
     names <- c('v1','t1' ,'v2', 't2')
     values <- c(getbestdrugvarname(), getbestdrugname(), geteventvarname() )
     mydf[,3] <- numcoltohyper(mydf[ , 3], sourcedf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
@@ -357,7 +357,7 @@ getcocounts <- reactive({
     {
       drugvar <- gsub( "patient.drug.","" ,input$v1, fixed=TRUE)
       drugvar <- paste0( "&v1=",URLencode(drugvar, reserved = TRUE )   )
-      medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+      medlinelinks <- coltohyper( sourcedf[,1], 'L', 
                                   mybaseurl = getcururl(), 
                                   display= rep('L', nrow( sourcedf ) ), 
                                   append= drugvar )
@@ -388,8 +388,8 @@ getindcounts <- reactive({
   medlinelinks <- makemedlinelink(sourcedf[,1], 'M')
   names <- c('v1','t1', 'v2', 't2')
   values <- c( getbestdrugvarname(), getbestdrugname(), paste0( 'patient.drug.drugindication', '.exact') )
-  mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
-  mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
+  # mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
+  # mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
   
   return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
 })   
@@ -538,7 +538,7 @@ output$query <- renderTable({
   mydf <- getdrugcountstable()$mydf
   if ( is.data.frame(mydf) )
   {
-    names(mydf) <- c( 'M', stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+    names(mydf) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
     return(mydf) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 },  sanitize.text.function = function(x) x)
