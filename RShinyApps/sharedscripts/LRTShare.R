@@ -232,5 +232,12 @@ popcpmeanplot <- function()
   head <- "Change in mean analysis"
   return( c(head=head, text=text) )
 }
+popquery_counts2 <- function()
+{
+  text <- 'Changepoint type      : Change in mean'
+  head <- "Monthly and cumulative counts for drug-event combination"
+  return( c(head=head, text=text) )
+}
+
 
 

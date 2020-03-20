@@ -344,8 +344,8 @@ getcocounts <- function(whichcount = 'D'){
                                display= rep('D', nrow( sourcedf ) ), 
                                append= drugvar )
       
-      mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-      mynames <- c( 'D', 'L', colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
+      mydf <- data.frame( mydf)
+      mynames <- c(  colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
@@ -356,9 +356,9 @@ getcocounts <- function(whichcount = 'D'){
     #Event Table
   } else {
     colname <- i18n()$t("Preferred Term")
-    mynames <- c('M', colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
+    mynames <- c(colname, i18n()$t("Count"), i18n()$t("Cumulative Sum")) 
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-    mydf <- data.frame(M=medlinelinks, mydf) 
+    mydf <- data.frame( mydf) 
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestdrugvar(), getbestterm1(), getexactaevar() ) 
   }
@@ -603,8 +603,38 @@ output$maxcp <- renderText({
   out <- paste( '<b>Maximum Number of Changepoints:<i>', s, '</i></b>' )
   return(out)
 })
+output$queryplot <- renderPlot({  
+  fetchalldata()
+  #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+  mydf <- getquerydata()$mydfin
+  lapply(mydf$display['Date'][[1]], function(x) {
+    x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+    x
+  })
+  if ( is.data.frame(mydf$display) )
+  {
+    labs <-    mydf$display[[1]]
+    Date<-mydf$display[[1]]
+    Counts<-mydf$display[[2]]
+    # plot(x,y)
+    
+    
+    plot(Counts, axes=FALSE, xlab="",ylab='Count')
+    axis(2)
+    axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
+    box()
+    
+    # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
+    # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
+    # plot(Count ~ Date, mydf$display)
+    
+    grid()
+  } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
+})
+
 
 output$query <- renderTable({  
+  browser()
   fetchalldata()
 #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
     mydf <- getquerydata()$mydfin
@@ -851,49 +881,35 @@ output$infocpbayestext <- renderUI ({
     data$postprob <- bcp.flu$posterior.prob
     data2<-data[order(data$postprob,decreasing = TRUE),]
     out<-print(data2[1:input$maxcp,])
-    outb<-data.frame()
-    for (i in 1:length(out)){
-      outb<-paste(outb,out[i],sep="")
-    }
-    # out<-paste(typeof(data2[1:input$maxcp,]),data2[1:input$maxcp,])
-    # out<-paste( out, collapse='<br>')
+    outb<-build_infocpbayes_table(out)
+    
+    
     
   } else {
     outb<-'Insufficient Data'
   }
   addPopover(session=session, id="infocpbayestext", title="", 
-             content=HTML(build_infocpbayes_table(out)), placement = "left",
+             content=HTML(outb), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
   
   
 })
-build_infocpbayes_table <- function(data)({
-  html.table <- paste('<table style = "border: 1px solid black; padding: 1%; width: 300px;"><tr><th>index</th><th>Date</th><th>Count</th><th>postprob</th></tr><tr>',tags$td(HTML(paste0(rownames(data),collapse=""))),
-                      tags$td(HTML(paste0(data$Date,collapse=""))),
-                      tags$td(HTML(paste0(data$Count,collapse=""))),
-                      tags$td(HTML(paste0(data$postprob,collapse=""))),
-                    '</tr></table>')
-  
-  
-  
-  #   html.table <-tags$table(style = "border: 1px solid black; padding: 1%; width: 100%;",
-  #                          tags$tr(
-  #                            tags$th("index"),
-  #                            tags$th("Date"),
-  #                            tags$th("Count"),
-  #                            tags$th("postprob")
-  # 
-  #                          ),
-  #                          tags$tr(
-  #                            tags$td(rownames(data)),
-  #                            tags$td(data$Date),
-  #                            tags$td(data$Count),
-  #                            tags$td(data$postprob)
-  #                          )
-  # )
-  
-  return(html.table)
+build_infocpbayes_table <- function(out)({
+  outb<-'row '
+  outb<-paste(outb,attr(out,'names')[1],' ')
+  outb<-paste(outb,formatC(attr(out,'names')[2], format = "f", width=-8, ),' ')
+  outb<-paste(outb,attr(out,'names')[3],' ')
+  outb<-paste(outb,'<br>')
+  for(i in 1:length(out))
+  {
+    outb<-paste(outb,attr(out,'row.names')[i])
+    outb<-paste(outb,out[1:input$maxcp,]$Date[i],' ')
+    outb<-paste(outb,out[1:input$maxcp,]$Count[i],' ')
+    outb<-paste(outb,out[1:input$maxcp,]$postprob[i], ' ')
+    outb<-paste(outb,'<br>')
+  }
+  return(outb)
 })
 # output$infocpbayestext <- renderPrint ({
 #   mydf <-getquerydata()$mydfin$result
@@ -928,6 +944,7 @@ output$cpbayesplot <- renderPlot ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
+    browser()
     s <- calccpbayes()$bcp.flu
     labs <-    index( getts() )
     plot(s)

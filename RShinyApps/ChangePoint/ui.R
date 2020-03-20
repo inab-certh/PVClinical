@@ -29,7 +29,7 @@ rendermaxcp <- function() {
   
 } 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-  fluidRow(useShinyjs(),
+  fluidRow(useShinyjs(),style = "margin-top:15px;",
            column(width=12, 
                   
                   hidden(
@@ -73,96 +73,33 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"),  
-                          wellPanel( 
                             uiOutput("infocpmeantext", style = "position:absolute;right:40px;z-index:10"),
                             withSpinner(plotOutput_p( 'cpmeanplot' )) 
-                            # uiOutput("cpmeantext" )
-                            )
                           ),
                 tabPanel(uiOutput("ChangeinVarianceAnalysis"),  
-                         wellPanel( 
                            uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10"),
-                           plotOutput_p( 'cpvarplot' ) 
-                           # uiOutput( 'cpvartext' )
-                          )
+                         withSpinner(plotOutput_p( 'cpvarplot' ) )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
-                          wellPanel( 
-                            # uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10"),
-                            plotOutput_p( 'cpbayesplot' ),
-                            verbatimTextOutput( 'cpbayestext' )
-                            )
+                          wellPanel(
+                            style="background-color:white;height:30px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
+                          ),
+                          withSpinner(plotOutput_p( 'cpbayesplot' ))
+                            # verbatimTextOutput( 'cpbayestext' )
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
-                         # wellPanel( 
-                         #   htmlOutput_p( 'allquerytext',
-                         #                 tt('gquery1'), tt('gquery2'),
-                         #                 placement='bottom'  ),
-                         #   htmlOutput_p( 'metatext' ,
-                         #               tt('gquery1'), tt('gquery2'),
-                         #               placement='bottom' )
-                         # ),
-                         wellPanel( 
-                           # htmlOutput( 'querytitle' ),
-                           # htmlOutput_p( 'querytext',
-                           #             HTML( tt('gquery1') ), tt('gquery2'),
-                           #             placement='bottom' ),
-                           htmlOutput_p("query",
-                                        HTML( tt('ts1') ), tt('ts2'),
-                                        placement='top'  )
-                         )
+                         # withSpinner(htmlOutput_p("query",
+                         #                HTML( tt('ts1') ), tt('ts2'),
+                         #                placement='top'  ))
+                         withSpinner(plotOutput_p('queryplot'))
+                         
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                         # wellPanel( 
-                         #   htmlOutput( 'cotext' ),
-                         #   # htmlOutput_p( 'querycotext' ,
-                         #   #               tt('gquery1'), tt('gquery2'),
-                         #   #               placement='bottom' )
-                         # ),
-                         # wellPanel(
-                         #   htmlOutput( 'cotitle' )
-                         # ),
-                         # htmlOutput_p( 'coquerytext' ,
-                         #               tt('gquery1'), tt('gquery2'),
-                         #               placement='bottom' ),
-                         # wordcloudtabset('cloudcoquery', 'coquery',
-                         #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                         #                 poptext=c( tt('codrug3'), tt('word2') ))
-                         uiOutput('coquery')
+                         withSpinner(htmlOutput_p('coquery'))
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                         # wellPanel( 
-                         #   htmlOutput( 'cotextE' )
-                         #   # htmlOutput_p( 'querycotextE' ,
-                         #   #               tt('gquery1'), tt('gquery2'),
-                         #   #               placement='bottom' )
-                         # ),
-                         # wellPanel(
-                         #   htmlOutput( 'cotitleE' )
-                         # ),
-                         # htmlOutput_p( 'coquerytextE' ,
-                         #               tt('gquery1'), tt('gquery2'),
-                         #               placement='bottom' ),
-                         # wordcloudtabset('cloudcoqueryE', 'coqueryE',
-                         #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                         #                 poptext=c( tt('codrug3'), tt('word2') ))
-                         uiOutput('coqueryE')
+                         withSpinner(htmlOutput_p('coqueryE'))
                 ),
-                # tabPanel(uiOutput("OtherApps"),  
-                #          wellPanel( 
-                #            htmlOutput( 'applinks' )
-                #          )
-                # ),
-                # tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-                # ),
-                # tabPanel(uiOutput("About"), 
-                #          img(src='l_openFDA.png'),
-                #          HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
               id='maintabs', selected = uiOutput("ChangeinMeanAnalysis")
             )
           )

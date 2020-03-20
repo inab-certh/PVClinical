@@ -435,8 +435,8 @@ getcocounts <- function(whichcount = 'D'){
                                display= rep('D', nrow( sourcedf ) ), 
                                append= drugvar )
       
-      mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-      mynames <- c( 'D', 'L', colname, i18n()$t('Count'), i18n()$t('Cumulative Sum')) 
+      mydf <- data.frame( mydf)
+      mynames <- c(  colname, i18n()$t('Count'), i18n()$t('Cumulative Sum')) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
@@ -448,8 +448,8 @@ getcocounts <- function(whichcount = 'D'){
   } else {
     colname <- i18n()$t('Preferred Term')
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-    mydf <- data.frame(M=medlinelinks, mydf) 
-    mynames <- c('M', colname, i18n()$t('Count'), i18n()$t('Cumulative Sum') ) 
+    mydf <- data.frame( mydf) 
+    mynames <- c(colname, i18n()$t('Count'), i18n()$t('Cumulative Sum') ) 
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestdrugvar(), getbestterm1(), getexactaevar() ) 
   }
@@ -977,6 +977,47 @@ i18n <- reactive({
     translator$set_translation_language(selected)
   }
   translator
+})
+
+output$infoprrplot<-renderUI({
+  addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
+             content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database.For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database.")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoquery_counts2<-renderUI({
+  addPopover(session=session, id="infoquery_counts2", title="Time Series", 
+             content=stri_enc_toutf8(i18n()$t("Monthly and cumulative counts for drug-event combination")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoall2<-renderUI({
+  addPopover(session=session, id="infoall2", title="Frequency Table", 
+             content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infocoqueryE2<-renderUI({
+  addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
+             content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infocoquery2<-renderUI({
+  addPopover(session=session, id="infocoquery2", title="Concomitant Medications", 
+             content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+output$infoindquery2<-renderUI({
+  addPopover(session=session, id="infoindquery2", title="Reported Indication for Drug", 
+             content=stri_enc_toutf8(i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 }) #End shinyServer
