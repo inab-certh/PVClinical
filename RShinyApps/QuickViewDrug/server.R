@@ -15,6 +15,7 @@ require(wordcloud)
 library(shiny)
 library(shiny.i18n)
 library("rjson")
+library(sp)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -712,7 +713,7 @@ shinyServer(function(input, output, session) {
     write.xlsx(mydf, "../mydf.xlsx")
     if (length(mydf) > 0)
     {
-      s <- calccpmean()
+      s1 <- calccpmean()
       labs <-    index( getts() )
       pos <- seq(1, length(labs), 3)
 
@@ -735,11 +736,15 @@ shinyServer(function(input, output, session) {
       # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
       mytitle <- i18n()$t("Change in mean analysis")
       # par(bg = "gray")
-      plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+      browser()
+      
+      # points(mydf)
+      plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+      rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgray")
+      points(s1@data.set)
       axis(1, pos,  labs[pos], las=2  )
-      grid(nx=NA, ny=NULL,col = "lightgray")
-      abline(v=pos, col = "lightgray", lty = "dotted",
-             lwd = par("lwd") )
+      # grid(nx=NA, ny=NULL,col = "lightgray")
+      # abline(v=pos, col = "lightgray", lty = "dotted",     lwd = par("lwd") )
     }
   })
 
@@ -1191,7 +1196,11 @@ shinyServer(function(input, output, session) {
     if ( is.data.frame(mydf) )
     {
       names(mydf) <- c('Serious', 'Case Counts' )
-      return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand") )
+      browser()
+      dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand",col="black",type = "n")
+      rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "yellow")
+      points(mydf[,2],1:6)
+      
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
   }, height=300)
 
