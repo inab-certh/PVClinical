@@ -22,6 +22,8 @@ from django.urls import reverse
 
 from app.errors_redirects import forbidden_redirect
 
+from app.forms import ScenarioForm
+
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
@@ -33,7 +35,7 @@ from app.models import Condition
 from app.models import Scenario
 from app.models import Status
 
-from app.forms import ScenarioForm
+from app.retrieve_meddata import KnowledgeGraphWrapper
 
 
 def OpenFDAWorkspace(request, scenario_id=None):
@@ -51,6 +53,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
 
     return HttpResponse(template.render({"scenario": scenario}, request))
 
+
 def get_synonyms(request):
     """ Get all the synonyms for a list of drugs
     :param request: The request from which the list of drugs to search for synonyms will be retrieved
@@ -66,6 +69,40 @@ def get_synonyms(request):
                                          if d.lower() in all_synonyms.keys()])) if drugs else []
     data={}
     data["synonyms"] = synonyms
+    return JsonResponse(data)
+
+
+def filter_whole_set(request):
+    """ Get all drugs or conditions containing the characters given as input
+    :param request: The request from which the characters given as input will be retrieved
+    :return: The list of drugs or conditions containing the characters given as input
+    """
+
+    set_type = request.GET.get("type", None)
+    term = request.GET.get("term", None)
+
+    knw = KnowledgeGraphWrapper()
+
+    whole_set = knw.get_drugs() if set_type == "drugs" else knw.get_conditions()
+    whole_set = ["{}{}".format(
+        el.name, " - {}".format(el.code) if el.code else "") for el in whole_set]
+    subset = list(filter(lambda el: term.lower().strip() in el.lower(), whole_set))
+
+    data={}
+    data["results"]=[{"id":elm, "text":elm} for elm in subset]
+
+    return JsonResponse(data)
+
+
+def get_all_drugs(request):
+    knw = KnowledgeGraphWrapper()
+
+    all_drugs = knw.get_drugs()
+    all_drugs = ["{}{}".format(
+        el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
+
+    data={}
+    data["results"] = all_drugs
     return JsonResponse(data)
 
 
