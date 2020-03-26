@@ -20,7 +20,7 @@ urlpatterns = [
     path('ajax/all-drugs', views.get_all_drugs, name='get_all_drugs'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
-         views.OpenFDAWorkspace_detailedView, name='OpenFDAWorkspace_detailedView'),
+
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]
