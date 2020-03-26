@@ -40,7 +40,7 @@
       {
         "def":"Report counts by date",
         "en": "Report counts by date",
-        "gr": "Αρίθμηση αναφορών κατά ημερομηνία"
+        "gr": "Πλήθος αναφορών κατά ημερομηνία"
       },
       {
         "def":"and",
@@ -170,12 +170,12 @@
       {
         "def":"Case Counts for",
         "en":"Case Counts for",
-        "gr":"Καταμέτρηση περιπτώσεων για"
+        "gr":"Πλήθος περιπτώσεων για"
       },
       {
         "def":"Count",
         "en":"Count",
-        "gr":"Αριθμός"
+        "gr":"Πλήθος"
       },
       {
         "def":"Tables",
@@ -220,32 +220,32 @@
       {
         "def":"Ranked Event Counts for Drug",
         "en":"Ranked Event Counts for Drug",
-        "gr":"Καταμέτρηση συμβάντων ανά φάρμακο"
+        "gr":"Πλήθος συμβάντων ανά φάρμακο"
       },
       {
         "def":"Ranked Drug Counts for Event",
         "en":"Ranked Drug Counts for Event",
-        "gr":"Καταμέτρηση φαρμάκων ανά συμβάν"
+        "gr":"Πλήθος φαρμάκων ανά συμβάν"
       },
       {
         "def":"Counts for drugs in selected reports",
         "en":"Counts for drugs in selected reports",
-        "gr":"Καταμέτρηση φαρμάκων σε επιλεγμένες αναφορές"
+        "gr":"Πλήθος φαρμάκων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for events in selected reports",
         "en":"Counts for events in selected reports",
-        "gr":"Καταμέτρηση συμβάντων σε επιλεγμένες αναφορές"
+        "gr":"Πλήθος συμβάντων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for indications in selected reports",
         "en":"Counts for indications in selected reports",
-        "gr":"Καταμέτρηση ενδείξεων σε επιλεγμένες αναφορές"
+        "gr":"Πλήθος ενδείξεων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts for Entire Database",
         "en":"Counts for Entire Database",
-        "gr":"Καταμέτρηση για ολόκληρη τη βάση δεδομένων"
+        "gr":"Πλήθος για ολόκληρη τη βάση δεδομένων"
       },
       {
         "def":"text Plot",
@@ -394,7 +394,7 @@
       {
         "def":"Cumulative Count",
         "en":"Cumulative Count",
-        "gr":"Αθροιστική αρίθμηση"
+        "gr":"Αθροιστικό πλήθος"
       },
       {
         "def":"Cumulative Sum",
@@ -409,7 +409,7 @@
       {
         "def":"% Count",
         "en":"% Count",
-        "gr":"% Αρίθμηση"
+        "gr":"% Πλήθος"
       },
       {
         "def":"Counts for All Reports",
@@ -429,22 +429,22 @@
       {
         "def":"Drug_Event Counts",
         "en":"Drug_Event Counts",
-        "gr":"Καταμέτρηση Drug_Event"
+        "gr":"Πλήθος Drug_Event"
       },
       {
         "def":"Drug Counts",
         "en":"Drug Counts",
-        "gr":"Καταμέτρηση φαρμάκων"
+        "gr":"Πλήθος φαρμάκων"
       },
       {
         "def":"Event Counts",
         "en":"Event Counts",
-        "gr":"Καταμέτρηση παρενεργειών"
+        "gr":"Πλήθος παρενεργειών"
       },
       {
         "def":"Total Counts",
         "en":"Total Counts",
-        "gr":"Συνολική καταμέτρηση"
+        "gr":"Συνολικό πλήθος"
       },
       {
         "def":"Simulation results for drug based LRT",
@@ -464,12 +464,12 @@
       {
         "def":"Drug counts for event",
         "en":"Drug counts for event",
-        "gr":"Αριθμός φαρμάκων για συμβάν"
+        "gr":"Πλήθος φαρμάκων για συμβάν"
       },
       {
         "def":"Counts for all drugs",
         "en":"Counts for all drugs",
-        "gr":"καταμέτρηση για όλα τα φάρμακα"
+        "gr":"Πλήθος όλων των φαρμάκων"
       },
       {
         "def":"Counts for",
@@ -489,12 +489,12 @@
       {
         "def":"Counts For Events In Selected Reports",
         "en":"Counts For Events In Selected Reports",
-        "gr":"καταμέτρηση συμβάντων σε επιλεγμένες αναφορές"
+        "gr":"Πλήθος συμβάντων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Counts For Indications In Selected Reports",
         "en":"Counts For Indications In Selected Reports",
-        "gr":"Καταμέτρηση ενδείξεων σε επιλεγμένες αναφορές"
+        "gr":"Πλήθος ενδείξεων σε επιλεγμένες αναφορές"
       },
       {
         "def":"Term",
@@ -616,12 +616,12 @@
       {
         "def":"Event counts for drug",
         "en":"Event counts for drug",
-        "gr":"Καταμέτρηση συμβάντων για φάρμακα"
+        "gr":"Πλήθος συμβάντων για φάρμακα"
       },
       {
         "def":"Counts for all events",
         "en":"Counts for all events",
-        "gr":"Καταμέτρηση για όλα τα συμβάντα"
+        "gr":"Πλήθος για όλα τα συμβάντα"
       },
       {
         "def":"Definition",

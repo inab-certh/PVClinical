@@ -1,5 +1,6 @@
 body{
-  font-family: Quicksand !important;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
+  color:#73879C!important;
   /*font-style: italic!important;*/
 }
 .popover{
@@ -7,7 +8,7 @@ body{
   width:500px;
 }
 .shiny-plot-output, .datatables {
-  color:blue;
+  /*color:blue;*/
 }
 .tooltip > .tooltip-inner {
   background-color: #FFFFFF;
@@ -27,5 +28,16 @@ body{
 .tooltip{
   top: -74px; left: 144px; display: block; width:500px!important;
   opacity:1;
+}
+
+.nav.nav-tabs>li.active>a {
+    color: blue!important;
+}
+a {
+    color: #5A738E!important;
+    text-decoration: none!important;
+    text-decoration-line: none!important;
+    text-decoration-style: initial!important;
+    text-decoration-color: initial!important;
 }
 
