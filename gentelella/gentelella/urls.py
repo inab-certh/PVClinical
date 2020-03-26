@@ -21,7 +21,10 @@ from django.views.i18n import JavaScriptCatalog
 from django.conf.urls.i18n import i18n_patterns
 from app.views import index
 
-
+js_info_dict = {
+    'domain': 'djangojs',
+    'packages': ('gentelella',),
+}
 # urlpatterns = [
 #     url(r'^(?P<filename>(robots.txt)|(humans.txt))$',
 #         index, name='home-files'),
