@@ -427,6 +427,59 @@ msgstr "Greek"
 msgid "Αγγλικά"
 msgstr "English"
 
+
+
+
+#: app/OpenFDAWorkspace
+msgid "Γρήγορη επισκόπηση"
+msgstr "Quick view"
+
+#: app/OpenFDAWorkspace
+msgid "Πίνακας"
+msgstr "Dashboard"
+
+#: app/OpenFDAWorkspace
+msgid "Λόγος αναφορών"
+msgstr "Reporting Ratio"
+
+
+
+#: app/OpenFDAWorkspace
+msgid "λαμπελβιου"
+msgstr "LabelView"
+
+#: app/OpenFDAWorkspace
+msgid "Δυναμικό PRR"
+msgstr "Dynamic PRR"
+
+#: app/OpenFDAWorkspace
+msgid "Ανάλυση Αλλαγών"
+msgstr "Change Point Analysis"
+
+#: app/OpenFDAWorkspace
+msgid "Αναφορές"
+msgstr "Report view"
+
+#: app/OpenFDAWorkspace
+msgid "Έλεγχος Πιθανοτήτων"
+msgstr "Likelihood Rate Test"
+
+
+
+#: app/OpenFDAWorkspace
+msgid "ντραγκενφορσβιου"
+msgstr "DrugEnforceView"
+
+#: app/OpenFDAWorkspace
+msgid "Φάρμακα"
+msgstr "Drugs"
+
+#: app/OpenFDAWorkspace
+msgid "Ανεπιθύμητες ενέργειες"
+msgstr "Adverse Events"
+
+
+
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
 

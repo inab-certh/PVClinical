@@ -1,5 +1,6 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
+{% load static %}
 {% block title %} Fixed Sidebar {% endblock title %}
 
 {% block stylesheets %}
@@ -68,7 +69,7 @@
 
                                         <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
-                                        <p class="DrugEventParameter">Drugs</p>
+                                        <p class="DrugEventParameter">{% trans  'Φάρμακα' %}</p>
                                             {% for drug in scenario.drugs %}
                                                    <div class="float-left drug-event-radio">
                                                     <input type="radio" id="drugRadioInline{{ drug.id }}"
@@ -91,7 +92,7 @@
                                         <fieldset>
                                             <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
-                                            <p class="DrugEventParameter">Adverse Events</p>
+                                            <p class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</p>
                                             {% for condition in scenario.conditions %}
                                                 <div class="float-left drug-event-radio">
                                                     <input type="radio" id="eventRadioInline{{ condition.id }}"
@@ -113,34 +114,34 @@
 
                     </div>
                     <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
+                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
+                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">Quick view</a>
+                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dash</a>
+                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Πίνακας' %}</a>
                         </li>
-                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-2">RR_D</a>
+                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-2">{% trans 'Λόγος αναφορών' %}</a>
                         </li>
-                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">RR_E</a>
+                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Λόγος αναφορών' %}RR_E</a>
                         </li>
                         <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-2">LabelView</a></li>
-                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">Dynamic PRR</a>
+                                                               href="#tab-2">{% trans 'λαμπελβιου' %}</a></li>
+                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Δυναμικό PRR' %}</a>
                         </li>
                         <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                 href="#tab-2">ChangePoint</a></li>
+                                                                 href="#tab-2">{% trans 'Ανάλυση Αλλαγών' %}</a></li>
                         <li class="nav-item" id="ReportView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                href="#tab-2">ReportView</a></li>
+                                                                href="#tab-2">{% trans 'Αναφορές' %}</a></li>
                         <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-2">LabelView</a></li>
-                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">LrTest</a>
+                                                               href="#tab-2">{% trans 'λαμπελβιου' %}</a></li>
+                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
                         </li>
                         <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                              href="#tab-2">LrTest_E</a></li>
+                                                              href="#tab-2">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
                         <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                     href="#tab-2">DrugEnforceView</a></li>
+                                                                     href="#tab-2">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
                     </ul>
                 </div>
             </div>
