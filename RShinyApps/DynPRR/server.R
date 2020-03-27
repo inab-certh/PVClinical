@@ -316,20 +316,20 @@ buildmergedtable <- reactive({
   if ( length(mydf1)*length(mydf2)*length(mydf3)*length(mydf4)> 0 )
     { 
     mydf_d <- merge(mydf1[, c(1,3)], mydf2[, c(1,3)], by.x='Date', by.y='Date')
-    names(mydf_d) <- c('Date', i18n()$t('Drug_Event Counts'), i18n()$t('Drug Counts'))
+    names(mydf_d) <- c('Date', i18n()$t('Drug Event Counts'), i18n()$t('Drug Counts'))
     mydf_all <- merge(mydf3[, c(1,3)], mydf4[, c(1,3)], by.x='Date', by.y='Date')
     names(mydf_all) <- c('Date', i18n()$t('Event Counts'), i18n()$t('Total Counts'))
     mydf <- merge(mydf_d, mydf_all, by.x='Date', by.y='Date')
     comb <- mydf[ mydf[ , i18n()$t('Event Counts') ] >0, ]
     comb <- comb[ comb[ ,i18n()$t('Total Counts') ] >2 , ]
     oldnames <- names(comb)
-    nij <- comb[,i18n()$t('Drug_Event Counts')]
+    nij <- comb[,i18n()$t('Drug Event Counts')]
     n.j <- comb[, i18n()$t('Drug Counts') ]
     ni. <- comb[, i18n()$t('Event Counts') ]
     n.. <- comb[, i18n()$t('Total Counts') ]
     prrci <- prre_ci( n.., ni., n.j, nij )
     comb <- data.frame(comb, prr=round(prrci[['prr']], 2), sd=round(prrci[['sd']], 2), lb=round(prrci[['lb']], 2), ub=round(prrci[['ub']], 2) )
-    names(comb) <-c(oldnames, 'prr', 'sd', 'lb', 'ub')
+    names(comb) <-c(oldnames, 'PRR', 'SD', 'LB', 'UB')
    start <- paste0( '[',  comb[,1], '01')
    start <- gsub('-', '', start)
    start[1] <- '[19060630'
@@ -347,7 +347,7 @@ buildmergedtable <- reactive({
    
    names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
    values <- c( getbestdrugvar(), getbestterm1(), getbestaevar(), getbestterm2(), gettimevar() )
-   comb[,i18n()$t('Drug_Event Counts')] <- numcoltohyper(comb[,i18n()$t('Drug_Event Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
+   comb[,i18n()$t('Drug Event Counts')] <- numcoltohyper(comb[,i18n()$t('Drug Event Counts')], mycumdates, names, values, type='R', mybaseurl = getcururl(), addquotes=FALSE )
     
    names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
    values <- c( getbestdrugvar(), getbestterm1(), '_exists_', getbestaevar(), gettimevar() )
@@ -419,7 +419,7 @@ getcocounts <- function(whichcount = 'D'){
   #    print(names(mydf))
 #Drug Table
   if (whichcount =='D'){
-    colname <- i18n()$t("Drug Name")
+    colname <- i18n()$t("Drug")
     if (input$v1 != 'patient.drug.medicinalproduct')
     {
       drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -585,7 +585,7 @@ output$coquery2 <- DT::renderDT({
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
-    ),  escape=FALSE)
+    ),  escape=FALSE,rownames= FALSE)
 },
   escape=FALSE)
 
@@ -639,7 +639,7 @@ output$coqueryE2 <- DT::renderDT({
         # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
       )
     )
-    ,  escape=FALSE)},  escape=FALSE)
+    ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -728,7 +728,7 @@ output$query_counts2 <- DT::renderDT({
                      'datatablesGreek.json',
                      'datatablesEnglish.json')
       )
-    ),  escape=FALSE
+    ),  escape=FALSE,rownames= FALSE
     )
 },  escape=FALSE)
 
@@ -774,7 +774,7 @@ output$drugquerytext <- renderText({
 
 output$prrplot <- renderPlot ({
   mydf <- buildmergedtable()
-  mydf <- mydf[ is.finite(mydf[ , 'sd' ] ) , ]  
+  mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
   if ( getterm1( session, FALSE)==''  )
   {
     mydrugs <- 'All Drugs'
@@ -840,12 +840,12 @@ output$prrplot <- renderPlot ({
       showdates <- seq( as.Date(  input$daterange[1] ), as.Date(input$daterange[2] ), 'months' )
       showdates <- substr(showdates, 1, 7)
       mydf <- mydf[mydf$Date %in% showdates,]
-      myylim <- c( min(.5, min(mydf$lb)), max(2, max(mydf$ub) ) )
+      myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$LB) ) )
       xloc <- ymd( mydf$Date, truncated=2 )
       labs <- mydf$Date
       
-      lbgap <-   exp(log(mydf$lb) + .96*mydf$sd) #exp ( log( prr ) - 1.96*sd )
-      ubgap <-   exp(log(mydf$ub) - .96*mydf$sd)
+      lbgap <-   exp(log(mydf$LB) + .96*mydf$SD) #exp ( log( prr ) - 1.96*sd )
+      ubgap <-   exp(log(mydf$UB) - .96*mydf$SD)
    #   title <- paste( 'PRR Plot for', input$t1,  'and', input$t2 )    
       if ( getterm1( session, FALSE)==''  )
       {
@@ -865,15 +865,15 @@ output$prrplot <- renderPlot ({
       }
       # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
       mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
-      plot( xloc, mydf$prr, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
+      plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )
-      if( ! isTRUE( all.equal(mydf$prr, mydf$lb) ) )
+      if( ! isTRUE( all.equal(mydf$PRR, mydf$LB) ) )
         {
-        arrows(x0=xloc[ mydf$prr!=mydf$lb ], x1=xloc[ mydf$prr!=mydf$lb ],
-             y0=lbgap[ mydf$prr!=mydf$lb ], y1=mydf$lb[ mydf$prr!=mydf$lb ], angle=90, length=.025)
-        arrows(x0=xloc[ mydf$prr!=mydf$ub ], x1=xloc[ mydf$prr!=mydf$ub ],
-             y1=mydf$ub[ mydf$prr!=mydf$ub ], y0=ubgap[ mydf$prr!=mydf$ub ], angle=90, length=.025)
+        arrows(x0=xloc[ mydf$PRR!=mydf$LB ], x1=xloc[ mydf$PRR!=mydf$LB ],
+             y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025)
+        arrows(x0=xloc[ mydf$PRR!=mydf$UB ], x1=xloc[ mydf$PRR!=mydf$UB ],
+             y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025)
         }
       abline(h=1)
       grid()
@@ -981,14 +981,14 @@ i18n <- reactive({
 
 output$infoprrplot<-renderUI({
   addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
-             content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database.For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database.")), placement = "left",
+             content=stri_enc_toutf8(i18n()$t("prr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$infoquery_counts2<-renderUI({
-  addPopover(session=session, id="infoquery_counts2", title="Time Series", 
-             content=stri_enc_toutf8(i18n()$t("Monthly and cumulative counts for drug-event combination")), placement = "left",
+  addPopover(session=session, id="infoquery_counts2", title=i18n()$t("Time Series"), 
+             content=paste(i18n()$t("Monthly and cumulative counts for drug-event combination"),"<br><br>",i18n()$t("prr explanation"), "<br><br>",i18n()$t("sd,lb,up explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
@@ -1001,15 +1001,16 @@ output$infoall2<-renderUI({
 })
 
 output$infocoqueryE2<-renderUI({
-  addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
-             content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+  addPopover(session=session, id="infocoqueryE2", title=i18n()$t("Info"), 
+             content=stri_enc_toutf8(i18n()$t("Frequency table for events found in selected reports")), placement = "left",
+             # content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$infocoquery2<-renderUI({
-  addPopover(session=session, id="infocoquery2", title="Concomitant Medications", 
-             content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
+  addPopover(session=session, id="infocoquery2", title=i18n()$t("Info"), 
+             content=stri_enc_toutf8(i18n()$t("Frequency table for events found in selected reports")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
