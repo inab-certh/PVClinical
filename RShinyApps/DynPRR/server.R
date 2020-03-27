@@ -316,10 +316,10 @@ buildmergedtable <- reactive({
   if ( length(mydf1)*length(mydf2)*length(mydf3)*length(mydf4)> 0 )
     { 
     mydf_d <- merge(mydf1[, c(1,3)], mydf2[, c(1,3)], by.x='Date', by.y='Date')
-    names(mydf_d) <- c('Date', i18n()$t('Drug Event Counts'), i18n()$t('Drug Counts'))
+    names(mydf_d) <- c(i18n()$t('Date'), i18n()$t('Drug Event Counts'), i18n()$t('Drug Counts'))
     mydf_all <- merge(mydf3[, c(1,3)], mydf4[, c(1,3)], by.x='Date', by.y='Date')
-    names(mydf_all) <- c('Date', i18n()$t('Event Counts'), i18n()$t('Total Counts'))
-    mydf <- merge(mydf_d, mydf_all, by.x='Date', by.y='Date')
+    names(mydf_all) <- c(i18n()$t('Date'), i18n()$t('Event Counts'), i18n()$t('Total Counts'))
+    mydf <- merge(mydf_d, mydf_all, by.x=i18n()$t('Date'), by.y=i18n()$t(i18n()$t('Date')))
     comb <- mydf[ mydf[ , i18n()$t('Event Counts') ] >0, ]
     comb <- comb[ comb[ ,i18n()$t('Total Counts') ] >2 , ]
     oldnames <- names(comb)
@@ -839,10 +839,10 @@ output$prrplot <- renderPlot ({
       {
       showdates <- seq( as.Date(  input$daterange[1] ), as.Date(input$daterange[2] ), 'months' )
       showdates <- substr(showdates, 1, 7)
-      mydf <- mydf[mydf$Date %in% showdates,]
+      mydf <- mydf[mydf[ , i18n()$t('Date') ] %in% showdates,]
       myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$LB) ) )
-      xloc <- ymd( mydf$Date, truncated=2 )
-      labs <- mydf$Date
+      xloc <- ymd( mydf[ , i18n()$t('Date') ], truncated=2 )
+      labs <- mydf[ , i18n()$t('Date') ]
       
       lbgap <-   exp(log(mydf$LB) + .96*mydf$SD) #exp ( log( prr ) - 1.96*sd )
       ubgap <-   exp(log(mydf$UB) - .96*mydf$SD)
