@@ -129,7 +129,7 @@ shinyServer(function(input, output, session) {
     }
   }
   output$info<-renderUI({
-    addPopover(session=session, id="info", title="Application Info", 
+    addPopover(session=session, id="info", title=i18n()$t("Application Info"), 
                content=stri_enc_toutf8(i18n()$t("descriptionList")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))

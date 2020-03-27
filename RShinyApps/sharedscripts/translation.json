@@ -35,7 +35,7 @@
       {
         "def":"Bayesian changepoint analysis",
         "en": "Bayesian changepoint analysis",
-        "gr": "Ανάλυση αλλαγών Bayesian "
+        "gr": "Ανάλυση Bayesian σημείων αλλαγής"
       },
       {
         "def":"Report counts by date",
@@ -667,7 +667,30 @@
         "def":"sd,lb,up explanation",
         "en":"<b>SD</b>: Standard deviation<br><b>UB</b>: Upper Bound of 95% posterior credible interval<br><b>LB</b>: Lower Bound of 95% posterior credible interval<br>",
         "gr":"<b>SD</b>: Τυπική απόκλιση<br><b>UB</b>: Κάτω φράγμα του 95% διαστήματος εμπιστοσύνης<br><b>LB</b>: Άνω φράγμα του 95% διαστήματος εμπιστοσύνης<br>"
+      },
+      {
+        "def":"changepoint explanation",
+        "en":"A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in mean analysis</b> calculates change points for mean only changes",
+        "gr":"Ένα <b> σημείο αλλαγής</b> είναι ένα χρονικό στιγμιότυπο όπου οι στατιστικές ιδιότητες πριν και μετά από αυτό το χρονικό σημείο διαφέρουν. Λαμβάνοντας υπόψιν ότι στα δεδομένα συμβαίνουν αλλαγές και ότι πολλές στατιστικές μέθοδοι υποθέτουν απότομες αλλαγές, η ανάλυση σημείου αλλαγής είναι σημαντική τόσο στις εφαρμοσμένες όσο και στις θεωρητικές στατιστικές. <br>Η μέθοδος  ChangePoint υπολογίζει τη βέλτιστη τοποθέτηση και (δυνητικά) τον αριθμό των σημείων αλλαγής δεδομένων <br> Η <b>Αλλαγή της μέσης ανάλυσης</b> υπολογίζει τα σημεία αλλαγής μόνο για μέσες αλλαγές"
+      },
+      {
+        "def":"Application Info",
+        "en":"Application Info",
+        "gr":"Πληροφορίες"
+      },
+      {
+        "def":"Bayesian change point explanation",
+        "en":"In <b>Bayesian change point analysis</b> it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant within each block. In the multivariate case, a common change point structure is assumed; means are constant within each block of each sequence, but may differ across sequences within a given block.<bt><br> The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates will not be constant within regions, and no single partition is identified as best. Estimates of the probability of a change point at any given location are provided, however.",
+        "gr":"Στην <b> Bayesian ανάλυση σημείου αλλαγής </ b> υποτίθεται ότι υπάρχει ένα άγνωστο διαμέρισμα μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε ο μέσος όρος να είναι σταθερός σε κάθε μπλοκ. Στην πολυμεταβλητή περίπτωση, θεωρείται μια κοινή δομή σημείου αλλαγής. τα μέσα είναι σταθερά σε κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ. <bt> <br> Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση του posterior mean. Διαφέρωντας από μια συχνοτική ή αλγοριθμική προσέγγιση στο πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη τοποθεσία."
+      },
+      {
+        "def":"Drug-event reports per date diagram",
+        "en":"Drug-event reports per date diagram",
+        "gr":"Αναφορές συμβάντων φαρμάκων ανά διάγραμμα ημερομηνιών"
       }
+      
+      
+      
       
       
       
