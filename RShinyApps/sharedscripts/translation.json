@@ -20,12 +20,12 @@
       {
         "def":"Change in mean analysis for",
         "en": "Change in mean analysis for",
-        "gr": "Αλλαγή στην μέση ανάλυση για"
+        "gr": "Ανάλυση μεταβολής μέσου για"
       },
       {
         "def":"Change in mean analysis",
         "en": "Change in mean analysis",
-        "gr": "Αλλαγή στην μέση ανάλυση"
+        "gr": "Ανάλυση μεταβολής μέσου"
       },
       {
         "def":"Change in variance analysis",
@@ -265,7 +265,7 @@
       {
         "def":"Report counts and PRR",
         "en":"Report counts and PRR",
-        "gr":"Αναφορές μετρήσεων και PRR"
+        "gr":"Πλήθος αναφορών και PRR"
       },
       {
         "def":"PRR over time",

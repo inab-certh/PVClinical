@@ -457,7 +457,7 @@ msgid "Δυναμικό PRR"
 msgstr "Dynamic PRR"
 
 #: app/OpenFDAWorkspace
-msgid "Ανάλυση Αλλαγών"
+msgid "Ανάλυση Αλλαγής Σημείου"
 msgstr "Change Point Analysis"
 
 #: app/OpenFDAWorkspace
