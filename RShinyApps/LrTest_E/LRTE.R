@@ -863,7 +863,7 @@ output$prrtitle <- renderUI({
              'Critical Value =',  round( critval, 2),
              '<br># of Simulations =',  getprr()$numsims
   )
-  addPopover(session=session, id="prrtitle", title="Application Info", 
+  addPopover(session=session, id="prrtitle", title=i18n()$t("Application Info"), 
              content=out, placement = "left",
              trigger = "hover", options = list(html = "true"))
   

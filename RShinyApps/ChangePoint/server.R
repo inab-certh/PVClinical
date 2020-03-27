@@ -751,7 +751,7 @@ output$infocpmeantext <- renderUI ({
     out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
     out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
     
-    out <- paste(out, "<br>A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in mean analysis</b> calculates change points for mean only changes", '<br>' )
+    out <- paste(out, "<br>",i18n()$t('changepoint explanation'), "<br>" )
     if(!is.null(session$calclert))
     {
       closeAlert(session, 'calclert')
@@ -759,7 +759,7 @@ output$infocpmeantext <- renderUI ({
     } else {
       out <- i18n()$t('Insufficient data')
     }
-    addPopover(session=session, id="infocpmeantext", title="Application Info", 
+    addPopover(session=session, id="infocpmeantext", title=i18n()$t('Application Info'), 
              content=out, placement = "left",
              trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
@@ -817,7 +817,7 @@ output$infocpvartext <- renderUI ({
     out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, i18n()$t('with value'), round(s@pen.value, 6), '<br>' )
     out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
     out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
-    out <- paste(out, "<br>A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in variance analysis</b> calculates change points for variance only changes", '<br>' )
+    out <- paste(out,"<br>", i18n()$t('changepoint explanation'), '<br>' )
     } else {
        out<-HTML(i18n()$t('Insufficient Data') )
     }
@@ -885,20 +885,14 @@ output$infocpbayestext <- renderUI ({
     data2<-data[order(data$postprob,decreasing = TRUE),]
     out<-print(data2[1:input$maxcp,])
     outb<-build_infocpbayes_table(out)
-    outb<-paste(outb,"In <b>Bayesian change point analysis</b> it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant
-within each block. In the multivariate case, a common change point structure is assumed; means
-are constant within each block of each sequence, but may differ across sequences within a given
-block.<bt><br>
-The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates
-will not be constant within regions, and no single partition is identified as best. Estimates of the
-probability of a change point at any given location are provided, however."," ")
+    outb<-paste(outb,"<br><br>",i18n()$t("Bayesian change point explanation")," ")
     
     
     
   } else {
     outb<-'Insufficient Data'
   }
-  addPopover(session=session, id="infocpbayestext", title="", 
+  addPopover(session=session, id="infocpbayestext", title="Application Info", 
              content=HTML(outb), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
@@ -920,7 +914,7 @@ the drug-event combination is twice the proportion of the event in overall datab
 })
 
 output$infoReportCountsbyDate<-renderUI({
-  addPopover(session=session, id="infoReportCountsbyDate", title="", 
+  addPopover(session=session, id="infoReportCountsbyDate", title="Application Info", 
              content=stri_enc_toutf8(i18n()$t("Drug-event reports per date diagram")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
