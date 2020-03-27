@@ -74,11 +74,11 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"),  
                             uiOutput("infocpmeantext", style = "position:absolute;right:40px;z-index:10"),
-                            withSpinner(plotOutput_p( 'cpmeanplot' )) 
+                            withSpinner(plotOutput( 'cpmeanplot' )) 
                           ),
                 tabPanel(uiOutput("ChangeinVarianceAnalysis"),  
                            uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10"),
-                         withSpinner(plotOutput_p( 'cpvarplot' ) )
+                         withSpinner(plotOutput( 'cpvarplot' ) )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
                           wellPanel(
@@ -88,17 +88,23 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             # verbatimTextOutput( 'cpbayestext' )
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
-                         # withSpinner(htmlOutput_p("query",
-                         #                HTML( tt('ts1') ), tt('ts2'),
-                         #                placement='top'  ))
+                         wellPanel(
+                           style="background-color:white;height:30px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
+                         ),
                          withSpinner(plotOutput_p('queryplot'))
                          
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                         withSpinner(htmlOutput_p('coquery'))
+                         wellPanel(
+                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                         ),
+                         withSpinner(htmlOutput('coquery'))
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                         withSpinner(htmlOutput_p('coqueryE'))
+                         wellPanel(
+                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                         ),
+                         withSpinner(htmlOutput('coqueryE'))
                 ),
               id='maintabs', selected = uiOutput("ChangeinMeanAnalysis")
             )

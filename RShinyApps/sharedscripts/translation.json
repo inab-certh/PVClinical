@@ -427,14 +427,19 @@
         "gr":"Κάτω 95% CI για PRR"
       },
       {
-        "def":"Drug_Event Counts",
-        "en":"Drug_Event Counts",
-        "gr":"Πλήθος Drug_Event"
+        "def":"Drug Event Counts",
+        "en":"Drug Event Counts",
+        "gr":"Πλήθος φάρμακου συμβάντος"
       },
       {
         "def":"Drug Counts",
         "en":"Drug Counts",
         "gr":"Πλήθος φαρμάκων"
+      },
+      {
+        "def":"Drug",
+        "en":"Drug",
+        "gr":"Φάρμακο"
       },
       {
         "def":"Event Counts",
@@ -627,7 +632,43 @@
         "def":"Definition",
         "en":"Definition",
         "gr":"Ορισμός"
+      },
+      {
+        "def":"prr header",
+        "en":"Proportional Reporting Ratio",
+        "gr":"Proportional Reporting Ratio"
+      },
+      {
+        "def":"prr explanation",
+        "en":"The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database.For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database.",
+        "gr":"Το PRR είναι ένας απλός τρόπος για να ληφθεί μία τιμή που εκφράζει το πόσο συνηθισμένο είναι ένα ανεπιθύμητο συμβάν για ένα συγκεκριμένο φάρμακο σε σύγκριση με το πόσο συνηθισμένο είναι το συμβάν στη συνολική βάση δεδομένων. <br> Μια τιμή PRR> 1 για ένα συνδυασμό φαρμάκου-συμβάντος δείχνει ότι το μεγαλύτερο ποσοστό των αναφορών για το φάρμακο αφορούν το συμβάν σε σχέση με το ποσοστό των συμβάντων στην υπόλοιπη βάση δεδομένων. Για παράδειγμα, μία τιμή PRR=2 για ένα συνδυασμό φαρμάκου-συμβάντος δείχνει ότι η αναλογία των αναφορών για το συνδυασμό φαρμάκου-συμβάντος είναι διπλάσια από την αναλογία του συμβάντος στη συνολική βάση δεδομένων."
+      },
+      {
+        "def":"Monthly and cumulative counts for drug-event combination",
+        "en":"Monthly and cumulative counts for drug-event combination",
+        "gr":"Μηνιαίες και σωρευτικές μετρήσεις για συνδυασμό φαρμάκων-συμβάντων"
+      },
+      {
+        "def":"Time Series",
+        "en":"Time Series",
+        "gr":"Διάγραμμα χρονοσειρών"
+      },
+      {
+        "def":"Frequency table for drugs found in selected reports",
+        "en":"Frequency table for drugs found in selected reports",
+        "gr":"Πίνακας συχνοτήτων για φάρμακα που βρίσκονται σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Frequency table for events found in selected reports",
+        "en":"Frequency table for events found in selected reports",
+        "gr":"Πίνακας συχνοτήτων για συμβάντα που βρίσκονται σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"sd,lb,up explanation",
+        "en":"<b>SD</b>: Standard deviation<br><b>UB</b>: Upper Bound of 95% posterior credible interval<br><b>LB</b>: Lower Bound of 95% posterior credible interval<br>",
+        "gr":"<b>SD</b>: Τυπική απόκλιση<br><b>UB</b>: Κάτω φράγμα του 95% διαστήματος εμπιστοσύνης<br><b>LB</b>: Άνω φράγμα του 95% διαστήματος εμπιστοσύνης<br>"
       }
+      
       
       
       
