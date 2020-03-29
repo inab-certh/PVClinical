@@ -30,6 +30,17 @@ class NCObject(object):
             "{}{}".format(other.name, other.code))
 
 
+class ConditionObject(NCObject):
+    def __init__(self, name, code, type, soc=None,
+                 hlgt=None, hlt=None, pt=None):
+        super().__init__(name, code)
+        self.type = type
+        self.soc = soc
+        self.hlgt = hlgt
+        self.hlt = hlt
+        self.pt = pt
+
+
 class KnowledgeGraphWrapper:
 
     def __init__(self):
@@ -45,35 +56,41 @@ class KnowledgeGraphWrapper:
         :param drugs: the selected drugs
         :return: the synonyms
         """
-        drugs = list(map(lambda d: d.lower(), drugs))
-        # print(str(tuple(drugs)))
-        # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
-        whole_query = """
-                select ?synonym_name, ?drug_code
-                from <http://purl.bioontology.org/ontology/UATC/>
-                from <https://bio2rdf.org/drugbank>
-                where {{
-                ?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.
-                FILTER (lcase(str(?drugbank_drug_name)) IN {})
-                ?drug skos:prefLabel ?drug_name.
-                FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
-                ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-                ?drug skos:notation ?code.
-                bind(str(?code) as ?drug_code)
-                ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
-                ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
-                FILTER(?synonym_name!=?drugbank_drug_name)
-                }}
-                """.format("(\"{}\")".format("\", \"".join(drugs)))
 
-        # print(whole_query)
+        synonyms = []
+        if drugs:
+            drugs = list(map(lambda d: d.lower(), drugs))
 
-        self.sparql.setQuery(whole_query)
-        synonyms = self.sparql.query().bindings
-        synonyms = sorted(["{} - {}".format(
-            synonym["synonym_name"].value,
-            synonym["drug_code"].value.split(":").pop().strip()
-        ) for synonym in synonyms])
+            drugs_union = "UNION".join(["{{?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.\n"
+                                        "?drugbank_drug_name bif:contains \"{}\"}}".format(d) for d in drugs])
+
+            # print(str(tuple(drugs)))
+            # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
+            whole_query = """
+                    select ?synonym_name, ?drug_code
+                    from <http://purl.bioontology.org/ontology/UATC/>
+                    from <https://bio2rdf.org/drugbank>
+                    where {{
+                    {}.
+                    ?drug skos:prefLabel ?drug_name.
+                    FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
+                    ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+                    ?drug skos:notation ?code.
+                    bind(str(?code) as ?drug_code)
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+                    ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
+                    FILTER(?synonym_name!=?drugbank_drug_name)
+                    }}
+                    """.format(drugs_union)
+
+            self.sparql.setQuery(whole_query)
+            synonyms = self.sparql.query().bindings
+
+            # Get synonyms filtering out the ones that already exist in drugs field
+            synonyms = sorted(["{} - {}".format(
+                get_binding_value(synonym, "synonym_name"),
+                get_binding_value(synonym, "drug_code", sep=":")
+            ) for synonym in synonyms if synonym["synonym_name"].value.lower() not in drugs])
         return synonyms
 
     def cache_drugs(self):
@@ -95,8 +112,8 @@ class KnowledgeGraphWrapper:
         drugs = self.sparql.query().bindings
         # drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
         #                           ) for d in drugs])
-        drugs = sorted([NCObject(name=d["drug_name"].value,
-                                 code=d["drug_code"].value.split(":").pop().strip()
+        drugs = sorted([NCObject(name=get_binding_value(d, "drug_name"),
+                                 code=get_binding_value(d, "drug_code", sep=":")
                                  ) for d in drugs])
 
         cache.set("drugs", drugs)
@@ -110,19 +127,46 @@ class KnowledgeGraphWrapper:
         """ Caches the conditions for faster retrieval
         """
         # Change with real service
-        json_dir = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
-            conditions = sorted(json.load(fp).items())
 
-            # #
-            # conditions = sorted([("Pain", "10033371"), ("Stinging", "10033371"),
-            #                      ("Rhinitis", "10039083"), ("Allergic rhinitis", "10039085"),
-            #                      ("Partial visual loss", "10047571"), ("Dry mouth", "10013781"),
-            #                      ("Sprue-like enteropathy", "10079622"), ])
+        whole_query = """
+        prefix meddra: <https://w3id.org/phuse/meddra#> 
+        select ?condition_name, ?soc, ?hlgt, ?hlt, ?pt, ?condition_type, ?condition_code 
+        from <http://english211.meddra.org> where {
+            ?condition a ?condition_type;
+                skos:prefLabel ?condition_name;
+                meddra:hasIdentifier ?condition_code.
+            FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
+            && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept)) 
+            && ! STRSTARTS(STR(?condition_type), STR(meddra:PreferredConcept))).
+            OPTIONAL {?condition meddra:hasPT ?pt}.
+            OPTIONAL {?condition meddra:hasHLT ?hlt}.
+            OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
+            OPTIONAL {?condition meddra:hasSOC ?soc}
+        } LIMIT 3000
+        """
+        self.sparql.setQuery(whole_query)
+        # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
+        conditions = self.sparql.query().bindings
+        # print(conditions)
 
-            conditions = [NCObject(name=n, code=c) for n, c in conditions]
+        conditions = sorted([ConditionObject(name=get_binding_value(c, "condition_name"),
+                                             code=get_binding_value(c, "condition_code"),
+                                             soc=get_binding_value(c, "soc"),
+                                             hlgt=get_binding_value(c, "hlgt"),
+                                             hlt=get_binding_value(c, "hlt"),
+                                             pt=get_binding_value(c, "pt"),
+                                             type=get_binding_value(c, "condition_type"),
+                                             )for c in conditions])
 
-            cache.set("conditions", conditions)
+        cache.set("conditions", conditions)
+
+        # json_dir = os.path.dirname(os.path.realpath(__file__))
+        # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
+        #     conditions = sorted(json.load(fp).items())
+
+            # conditions = [NCObject(name=n, code=c) for n, c in conditions]
+            #
+            # cache.set("conditions", conditions)
 
     def get_conditions(self):
         """ Retrieve drugs from cache
@@ -156,3 +200,24 @@ class KnowledgeGraphWrapper:
 #     conditions = [ConditionStruct(name=c[0], code=c[1]) for c in conditions]
 #
 #     return conditions
+
+def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
+    """ Helper function to get value from sparql bindings
+    :results_dict: the dictionary returned as results from sparql query
+    :attr: the attribute to retrieve value for
+    :sep: the separator by which we should split the contained value
+    :strip_chars: in case we want to strip characters from the value retrieved
+    :return: the value to assign it to an attribute
+    """
+
+    if attr not in results_dict.keys():  # Key does not exist in sparql dictionary keys
+        return ""
+
+    ret_val = results_dict[attr].value
+
+    if sep:
+        ret_val = ret_val.split(sep).pop()
+    if strip_chars:
+        ret_val = ret_val.strip(strip_chars)
+
+    return ret_val
