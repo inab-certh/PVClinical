@@ -40,4 +40,15 @@ a {
     text-decoration-style: initial!important;
     text-decoration-color: initial!important;
 }
+#seriousplot{
+  height:280px!important;
+}
+#cpmeanplot{
+  
+}
+#cpmeanplot img{
+  padding-right:20px;
+  /*width:420px!important;
+  height:350px!important;*/
+}
 

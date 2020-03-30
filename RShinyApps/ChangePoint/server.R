@@ -328,7 +328,7 @@ getcocounts <- function(whichcount = 'D'){
   #    print(names(mydf))
   #Drug Table
   if (whichcount =='D'){
-    colname <- "Drug Name"
+    colname <- stri_enc_toutf8(i18n()$t("Drug Name"))
     if (input$v1 != 'patient.drug.medicinalproduct')
     {
       drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -345,7 +345,7 @@ getcocounts <- function(whichcount = 'D'){
                                append= drugvar )
       
       mydf <- data.frame( mydf)
-      mynames <- c(  colname, "Count", "Cumulative Sum") 
+      mynames <- c(  colname, stri_enc_toutf8(i18n()$t("Count")), stri_enc_toutf8(i18n()$t("Cumulative Sum"))) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
@@ -356,8 +356,8 @@ getcocounts <- function(whichcount = 'D'){
     values <- c(getbestaevar(), getbestterm2(), getexactdrugvar() ) 
     #Event Table
   } else {
-    colname <- "Preferred Term"
-    mynames <- c(colname, 'Count', 'Cumulative Sum') 
+    colname <- stri_enc_toutf8(i18n()$t("Preferred Term"))
+    mynames <- c(colname, stri_enc_toutf8(i18n()$t("Count")), stri_enc_toutf8(i18n()$t("Cumulative Sum"))) 
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
     mydf <- data.frame( mydf) 
     names <- c('v1','t1', 'v2', 't2')
@@ -444,6 +444,7 @@ calccpvar<- reactive({
 calccpbayes<- reactive({
   myts <- getts()
   mydf <- getquerydata()$mydfin$result[, c(1,2)]
+  browser()
   bcp.flu<-bcp(as.double(myts),p0=0.3)
   return(list(bcp.flu=bcp.flu, data=mydf) )
 }) 
@@ -658,8 +659,11 @@ output$coquery <- renderTable({
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
+  browser
   if ( is.data.frame(codrugs) )
   { 
+    # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+    # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
     return(codrugs) 
   } else  {
     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
@@ -751,7 +755,7 @@ output$infocpmeantext <- renderUI ({
     out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
     out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
     
-    out <- paste(out, "<br>A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in mean analysis</b> calculates change points for mean only changes", '<br>' )
+    out <- paste(out, "<br>",i18n()$t('changepoint explanation'), "<br>" )
     if(!is.null(session$calclert))
     {
       closeAlert(session, 'calclert')
@@ -759,7 +763,7 @@ output$infocpmeantext <- renderUI ({
     } else {
       out <- i18n()$t('Insufficient data')
     }
-    addPopover(session=session, id="infocpmeantext", title="Application Info", 
+    addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
              content=out, placement = "left",
              trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
@@ -817,7 +821,7 @@ output$infocpvartext <- renderUI ({
     out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, i18n()$t('with value'), round(s@pen.value, 6), '<br>' )
     out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
     out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
-    out <- paste(out, "<br>A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in variance analysis</b> calculates change points for variance only changes", '<br>' )
+    out <- paste(out,"<br>", i18n()$t('changepoint explanation'), '<br>' )
     } else {
        out<-HTML(i18n()$t('Insufficient Data') )
     }
@@ -867,6 +871,7 @@ output$cpbayestext <- renderPrint ({
     mycp <- calccpbayes()
     data <- mycp$data
     bcp.flu <- mycp$bcp.flu
+    browser()
     data$postprob <- bcp.flu$posterior.prob
     data2<-data[order(data$postprob,decreasing = TRUE),]
     data2[1:input$maxcp,]
@@ -885,20 +890,14 @@ output$infocpbayestext <- renderUI ({
     data2<-data[order(data$postprob,decreasing = TRUE),]
     out<-print(data2[1:input$maxcp,])
     outb<-build_infocpbayes_table(out)
-    outb<-paste(outb,"In <b>Bayesian change point analysis</b> it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant
-within each block. In the multivariate case, a common change point structure is assumed; means
-are constant within each block of each sequence, but may differ across sequences within a given
-block.<bt><br>
-The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates
-will not be constant within regions, and no single partition is identified as best. Estimates of the
-probability of a change point at any given location are provided, however."," ")
+    outb<-paste(outb,"<br><br>",i18n()$t("Bayesian change point explanation")," ")
     
     
     
   } else {
     outb<-'Insufficient Data'
   }
-  addPopover(session=session, id="infocpbayestext", title="", 
+  addPopover(session=session, id="infocpbayestext", title=i18n()$t("Application Info"), 
              content=HTML(outb), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
@@ -907,34 +906,22 @@ probability of a change point at any given location are provided, however."," ")
 })
 
 output$infoCountsForDrugsInSelectedReports<-renderUI({
-  addPopover(session=session, id="infoCountsForDrugsInSelectedReports", title="", 
-             content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations<br><br><h4>Proportional Reporting Ratio (PRR)</h4>
-The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse
-event for a particular drug is compared to how common the event is in the overall database.  <br>
-A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for
-the drug are for the event than the proportion of events in the rest of the database.  
-For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for
-the drug-event combination is twice the proportion of the event in overall database")), placement = "left",
+  addPopover(session=session, id="infoCountsForDrugsInSelectedReports", title=i18n()$t("Application Info"), 
+             content=paste(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations"),"<br><br>",i18n()$t("prr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$infoReportCountsbyDate<-renderUI({
-  addPopover(session=session, id="infoReportCountsbyDate", title="", 
+  addPopover(session=session, id="infoReportCountsbyDate", title=i18n()$t("Application Info"), 
              content=stri_enc_toutf8(i18n()$t("Drug-event reports per date diagram")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$infoCountsForEventsInSelectedReports<-renderUI({
-  addPopover(session=session, id="infoCountsForEventsInSelectedReports", title="", 
-             content=stri_enc_toutf8(i18n()$t("Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations.<br><br><h4>Proportional Reporting Ratio (PRR)</h4>
-The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse
-event for a particular drug is compared to how common the event is in the overall database.  <br>
-A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for
-the drug are for the event than the proportion of events in the rest of the database.  
-For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for
-the drug-event combination is twice the proportion of the event in overall database")), placement = "left",
+  addPopover(session=session, id="infoCountsForEventsInSelectedReports", title=i18n()$t("Application Info"), 
+             content=paste(i18n()$t("Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations."),"<br><br>",i18n()$t("prr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
@@ -989,6 +976,7 @@ output$cpbayesplot <- renderPlot ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
+    browser()
     s <- calccpbayes()$bcp.flu
     labs <-    index( getts() )
     plot(s)
