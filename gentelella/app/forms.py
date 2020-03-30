@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from functools import reduce
 from itertools import chain
@@ -230,15 +231,20 @@ class ScenarioForm(forms.Form):
         drugs_codes = list(map(lambda el: el.code, self.all_drugs))
 
         if selected_drugs:
-            # If not found index is -1, max is used to assure that in case one of the two splitted parts
-            # was found, then this part was chosen to find suspected drug
-            drugs_indexes = [(max(list(map(lambda el: drugs_names.index(el) if el in drugs_names \
-                else drugs_codes.index(el) if el in drugs_codes else -1, sd.split(" - "))))) for sd in selected_drugs]
+            # # If not found index is -1, max is used to assure that in case one of the two splitted parts
+            # # was found, then this part was chosen to find suspected drug
+            # drugs_indexes = [(max(list(map(lambda el: drugs_names.index(el) if el in drugs_names \
+            #     else drugs_codes.index(el) if el in drugs_codes else -1, sd.split(" - "))))) for sd in selected_drugs]
+            #
+            # valid_drugs = list(filter(lambda d: d is not None,
+            #                           (map(lambda indx: self.all_drugs[indx]\
+            #                               if (indx>-1 and indx<len(self.all_drugs)) else None, drugs_indexes))))
+            # valid_drugs = list(map(lambda d: "{} - {}".format(d.name, d.code), valid_drugs))
 
-            valid_drugs = list(filter(lambda d: d is not None,
-                                      (map(lambda indx: self.all_drugs[indx]\
-                                          if (indx>-1 and indx<len(self.all_drugs)) else None, drugs_indexes))))
-            valid_drugs = list(map(lambda d: "{} - {}".format(d.name, d.code), valid_drugs))
+            # Split each one of selected drugs, find ATC part with Regexp and check if it is in valid ATC codes
+            valid_drugs = list(filter(lambda sd: list(filter(
+                lambda d: re.findall("[A-Z]\d{2}[A-Z]{2}\d{2}", d),
+                sd.split(" - "))).pop() in drugs_codes, selected_drugs))
 
             if 'drugs_fld' in self._errors:
                 del self._errors['drugs_fld']
