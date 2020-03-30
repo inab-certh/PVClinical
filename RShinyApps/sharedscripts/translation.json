@@ -687,7 +687,19 @@
         "def":"Drug-event reports per date diagram",
         "en":"Drug-event reports per date diagram",
         "gr":"Αναφορές συμβάντων φαρμάκων ανά διάγραμμα ημερομηνιών"
+      },
+      {
+        "def":"Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations.",
+        "en":"Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations.",
+        "gr":"Πίνακας συχνότητας για τα συμβάντα που βρέθηκαν σε επιλεγμένες αναφορές. Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων."
+      },
+      {
+        "def":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
+        "en":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
+        "gr":"Πίνακας συχνότητας για τα φάρμακα που βρέθηκαν σε επιλεγμένες αναφορές. Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων."
       }
+      
+      
       
       
       
