@@ -3,7 +3,7 @@ require(shinyBS)
 library(shinyjs)
 library(shinycssloaders)
 source( 'sourcedir.R')
-
+options(encoding = 'UTF-8')
 # getdrugvarchoices <- function(){
 #   openfdavars <- c( 
 #     'generic_name',
