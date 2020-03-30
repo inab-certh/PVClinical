@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/gentelella/app/static/vendors/select2-multi-checkboxes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/gentelella/app/static/vendors/select2-to-tree" vcs="Git" />
   </component>
 </project>

@@ -121,5 +121,63 @@ def atc_hierarchy_tree(codes):
 
     return atc_tree
 
+def get_medDRA_children(parent, level, conditions):
+    """ Get children of a specific parent
+    :param parent: the parent of the children
+    :param level: the medDRA level from which we pick the children (HLGT, HLT, PT, LLT)
+    :param conditions: all the conditions to filter in order to get the children
+    :return: the children of the specific parent for the current level
+    """
+
+    if level not in range(2,6):
+        return None
+
+    level_condition_type = {2: "https://w3id.org/phuse/meddra#HighLevelGroupConcept",
+                            3: "https://w3id.org/phuse/meddra#HighLevelConcept",
+                            4: "https://w3id.org/phuse/meddra#PreferredConcept",
+                            5: "https://w3id.org/phuse/meddra#LowLevelConcept"}
+
+    # Children level to parent type for filtering conditions to get children of current level and parent
+    parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt"}
+
+    # Retrieve by filtering the conditions by children level type and parent
+    children = list(filter(lambda c: c.type == level_condition_type[level] and\
+                    c[parent_types[level]] == parent.code, conditions))
+    # print(children)
+
+    if level == 5:
+        return sorted(list(map(lambda ch: {"id":ch.name , "text": "{} - {}".format(ch.name, ch.code)}, children)),
+                      key=lambda v: v["text"])
+
+    # mydata = [
+    #     {id: 1, text: "USA", inc: [
+    #         {id:11, text: "west", inc: [
+    #             {id: 111, text: "California", inc: [
+    #                 {id: 1111, text: "Los Angeles", inc: [
+    #                     {id: 11111, text: "Hollywood"}
+    #                 ]},
+    #                 {id: 1112, text: "San Diego"}
+    #             ]},
+    #             {id: 112, text: "Oregon"}
+    #         ]}
+    #     ]},
+    #     {id: 2, text: "India"},
+    #     {id: 3, text: "中国"}
+    # ];
 
 
+    return sorted([{"id": ch.name, "text": "{} - {}".format(ch.name, ch.code),
+                    "inc": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
+                  key=lambda v: v["text"])
+
+
+def medDRA_hierarchy_tree(conditions):
+    medDRA_tree = []
+    soc_conditions = list(filter(lambda c: c.type == "https://w3id.org/phuse/meddra#SystemOrganClassConcept",
+                                 conditions))
+
+    # Append to/create the medDRA tree for all the soc conditions we have
+    for soc_c in soc_conditions:
+        medDRA_tree.append({"text": root, "inc": get_medDRA_children(soc_c, 2, conditions)})
+
+    return medDRA_tree
