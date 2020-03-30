@@ -136,18 +136,16 @@ class KnowledgeGraphWrapper:
                 skos:prefLabel ?condition_name;
                 meddra:hasIdentifier ?condition_code.
             FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
-            && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept)) 
-            && ! STRSTARTS(STR(?condition_type), STR(meddra:PreferredConcept))).
+            && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept))).
             OPTIONAL {?condition meddra:hasPT ?pt}.
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        } LIMIT 3000
+        } LIMIT 1000
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
         conditions = self.sparql.query().bindings
-        # print(conditions)
 
         conditions = sorted([ConditionObject(name=get_binding_value(c, "condition_name"),
                                              code=get_binding_value(c, "condition_code"),
@@ -157,6 +155,7 @@ class KnowledgeGraphWrapper:
                                              pt=get_binding_value(c, "pt"),
                                              type=get_binding_value(c, "condition_type"),
                                              )for c in conditions])
+        # print(conditions)
 
         cache.set("conditions", conditions)
 
