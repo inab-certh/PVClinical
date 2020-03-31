@@ -1,2 +1,17 @@
 settings.py
 .idea/
+gentelella/app/__pycache__/
+.Rproj.user
+gentelella/app/templatetags/__pycache__/custom_tags.cpython-37.pyc
+gentelella/app/templatetags/__pycache__/__init__.cpython-37.pyc
+gentelella/app/migrations/__pycache__/__init__.cpython-37.pyc
+gentelella/app/migrations/__pycache__/0003_auto_20191212_1312.cpython-37.pyc
+gentelella/app/migrations/__pycache__/0002_auto_20191128_1321.cpython-37.pyc
+gentelella/app/migrations/__pycache__/0001_initial.cpython-37.pyc
+gentelella/gentelella/__pycache__/
+gentelella/users/__pycache__/
+gentelella/users/migrations/__pycache__/
+gentelella/__pycache__/
+.idea/
+RShinyApps/QuickView/rsconnect/shinyapps.io/
+gentelella/gentelella/settings.py

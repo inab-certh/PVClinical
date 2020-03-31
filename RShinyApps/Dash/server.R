@@ -1,5 +1,8 @@
 require(shiny)
 require(shinyBS)
+library(shiny.i18n)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
 
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
@@ -28,6 +31,39 @@ shinyServer(function(input, output, session) {
 #     }
 #     return(0.0)
 #   })
+  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
   
   getqueryvars <- function( num = 1 ) {
     s <- vector(mode = "character", length = 7)
@@ -134,7 +170,10 @@ shinyServer(function(input, output, session) {
     a <- input$t1
     b <- input$v1
     c <- input$useexact
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
   })
   #************************************
   # Get Seriuosness Query
@@ -202,8 +241,8 @@ shinyServer(function(input, output, session) {
     }
     
     mydf <- rbind(conganom, death, disable, hosp, lifethreat, other)
-   mydf[,'term'] <- c('Congenital Anomaly', 'Death', 'Disability', 'Hospitalization',
-                      'Life Threatening', 'Other')
+   mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
+                      i18n()$t("Life Threatening"), i18n()$t("Other"))
     
     mydf <- mydf[order(mydf[,2]), ]
     return( mydf )
@@ -222,9 +261,9 @@ getsexcounts <- reactive({
                     count="patient.patientsex" )
   mydf <- fda_fetch_p( session, myurl)$result
   mydf[,3] <- mydf[,1]
-  mydf[ mydf[,1]==2 , 1] <- 'Female' 
-  mydf[ mydf[,1]==1 , 1] <- 'Male' 
-  mydf[ mydf[,1]==0 , 1] <- 'Unknown' 
+  mydf[ mydf[,1]==2 , 1] <- i18n()$t("Female") 
+  mydf[ mydf[,1]==1 , 1] <- i18n()$t("Male")
+  mydf[ mydf[,1]==0 , 1] <- i18n()$t("Unknown") 
   mydf <- mydf[order(mydf[,2]), ]
   
   return( mydf )
@@ -245,11 +284,11 @@ getsourcecounts <- reactive({
                     count="primarysource.qualification" )
   mydf <- fda_fetch_p( session, myurl)$result
   mydf[,3] <- mydf[,1]
-  mydf[ mydf[,1]==1 , 1] <- 'Physician' 
-  mydf[ mydf[,1]==2 , 1] <- 'Pharmacist' 
-  mydf[ mydf[,1]==3 , 1] <- 'Other Health Professional' 
-  mydf[ mydf[,1]==4 , 1] <- 'Lawyer' 
-  mydf[ mydf[,1]==5 , 1] <- 'Consumer or non-health...' 
+  mydf[ mydf[,1]==1 , 1] <- i18n()$t("Physician") 
+  mydf[ mydf[,1]==2 , 1] <- i18n()$t("Pharmacist") 
+  mydf[ mydf[,1]==3 , 1] <- i18n()$t("Other Health Professional") 
+  mydf[ mydf[,1]==4 , 1] <- i18n()$t("Lawyer")
+  mydf[ mydf[,1]==5 , 1] <- i18n()$t("Consumer or non-health...") 
   mydf <- mydf[order(mydf[,2]), ]
   
   return( mydf )
@@ -285,8 +324,8 @@ getsourcecounts <- reactive({
     myurl <- mydf$myurl
     mydf <- mydf$mydf
     sourcedf <- mydf
-    mydf <- data.frame( rep('M', nrow(mydf) ), mydf )
-    mydf[,1] <- makemedlinelink(mydf[,2], mydf[,1])
+    # mydf <- data.frame( rep('M', nrow(mydf) ), mydf )
+    # mydf[,1] <- makemedlinelink(mydf[,2], mydf[,1])
     names <- c('v1','t1' ,'v2', 't2')
     values <- c(getbestdrugvarname(), getbestdrugname(), geteventvarname() )
     mydf[,3] <- numcoltohyper(mydf[ , 3], sourcedf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
@@ -318,7 +357,7 @@ getcocounts <- reactive({
     {
       drugvar <- gsub( "patient.drug.","" ,input$v1, fixed=TRUE)
       drugvar <- paste0( "&v1=",URLencode(drugvar, reserved = TRUE )   )
-      medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+      medlinelinks <- coltohyper( sourcedf[,1], 'L', 
                                   mybaseurl = getcururl(), 
                                   display= rep('L', nrow( sourcedf ) ), 
                                   append= drugvar )
@@ -349,8 +388,8 @@ getindcounts <- reactive({
   medlinelinks <- makemedlinelink(sourcedf[,1], 'M')
   names <- c('v1','t1', 'v2', 't2')
   values <- c( getbestdrugvarname(), getbestdrugname(), paste0( 'patient.drug.drugindication', '.exact') )
-  mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
-  mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
+  # mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
+  # mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
   
   return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
 })   
@@ -425,7 +464,7 @@ output$seriousplot <- renderPlot({
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Serious', 'Case Counts' )
-    return( dotchart(mydf[,2], labels=mydf[,1], main='Seriousness') ) 
+    return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }, height=300)  
 
@@ -434,7 +473,7 @@ output$seriouspie <- renderPlot({
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Serious', 'Case Counts' )
-    return( pie(mydf[,2], labels=mydf[,1], main='Seriousness') ) 
+    return( pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 })  
 output$sex <- renderTable({ 
@@ -457,7 +496,7 @@ output$sexplot <- renderPlot({
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Gender', 'Case Counts', 'Code' )
-    return( dotchart(mydf[,2], labels=mydf[,1], main='Gender') ) 
+    return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 } , height=300) 
 
@@ -466,17 +505,17 @@ output$sexpie <- renderPlot({
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Gender', 'Case Counts', 'Code' )
-    return( pie(mydf[,2], labels=mydf[,1], main='Gender') ) 
+    return( pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }) 
 output$sourceplot <- renderPlot({
   mydf <- getsourcecounts()
-  return(dotchart(mydf[,2], labels=mydf[,1], main='Primary Source Qualifications') )
+  return(dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications") ))
 }, height=300)
 
 output$sourcepie <- renderPlot({
   mydf <- getsourcecounts()
-  return(pie(mydf[,2], labels=mydf[,1], main='Primary Source Qualifications') )
+  return(pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications")) )
 })
 
 output$source <- renderTable({ 
@@ -499,7 +538,7 @@ output$query <- renderTable({
   mydf <- getdrugcountstable()$mydf
   if ( is.data.frame(mydf) )
   {
-    names(mydf) <- c( 'M', 'Preferred Term', paste( 'Case Counts for', getdrugname()), '% Count' )
+    names(mydf) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
     return(mydf) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 },  sanitize.text.function = function(x) x)
@@ -570,7 +609,7 @@ output$coquery <- renderTable({
   codrugs <- getcocounts()$mydf
   if ( is.data.frame(codrugs) )
   { 
-    names(codrugs) <- c('L', 'Drug',  'Counts' )
+    names(codrugs) <- c('L', i18n()$t("Drug"),  i18n()$t("Counts") )
     return(codrugs) 
   } else  {
     return( data.frame(Term=paste( 'No events for', getdrugname() ) ) )
@@ -584,7 +623,7 @@ output$cocloud <- renderPlot({
   codrugs <- getcocounts()$sourcedf
   if ( is.data.frame(codrugs) )
   { 
-    names(codrugs) <- c('Drug',  'Counts' )
+    names(codrugs) <- c(i18n()$t("Drug"),  i18n()$t("Counts") )
     mytitle <- paste('Medications in Reports That Contain', getdrugname() )
     return( getcloud(codrugs, title=mytitle ) ) 
   } else  {
@@ -598,7 +637,7 @@ output$indquery <- renderTable({
   codinds <- getindcounts()$mydf
   if ( is.data.frame(codinds) )
   { 
-    names(codinds) <- c('Indication',  'Counts' )
+    names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
     return(codinds) 
   } else  {
     return( data.frame(Term=paste( 'No', getsearchtype(), 'for', getdrugname() ) ) )
@@ -613,7 +652,7 @@ output$indcloud <- renderPlot({
   codinds <- getindcounts()$sourcedf  } )
   if ( is.data.frame(codinds) )
   { 
-    names(codinds) <- c('Indication',  'Counts' )
+    names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
     mytitle <- paste('Indications in Reports That Contain', getdrugname() )
     return( getcloud(codinds, title=mytitle ) ) 
   } else  {
@@ -676,9 +715,9 @@ output$useexact_in <- renderUI( {
 })
 
 
-output$date1 <- renderText({ 
+output$date1 <- renderUI({ 
   l <- getdaterange()
-  paste( '<b>', l[3] , 'from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
+  HTML(paste( '<b>', i18n()$t(l[3]) , i18n()$t("from"), as.Date(l[1],  "%Y%m%d")  ,i18n()$t("to"), as.Date(l[2],  "%Y%m%d"), '</b>'))
 })
 
 # Return the components of the URL in a string:
@@ -735,5 +774,108 @@ output$help <- renderUI({
                 'none')
   return( HTML(out[[1]]) )
 })
+i18n <- reactive({
+  selected <- input$selected_language
+  if (length(selected) > 0 && selected %in% translator$languages) {
+    translator$set_translation_language(selected)
+  }
+  translator
+})
+
+output$dashboard <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Dashboard")))
+  
+})
+output$productsummary <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Product Summary")))
+  
+})
+output$table <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Table")))
+  
+})
+output$dotchart <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Dotchart")))
+  
+})
+output$piechart <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Piechart")))
+  
+})
+output$table2 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Table")))
+  
+})
+output$dotchart2 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Dotchart")))
+  
+})
+output$piechart2 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Piechart")))
+  
+})
+output$table3 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Table")))
+  
+})
+output$dotchart3 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Dotchart")))
+  
+})
+output$piechart3 <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Piechart")))
+  
+})
+output$AdverseEventsConcomitantMedications <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Adverse Events and Concomitant Medications")))
+  
+})
+
+
+
+output$Events <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Events")))
+  
+})
+output$ConcomitantMedications <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Concomitant Medications")))
+  
+})
+output$Indications <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Indications")))
+  
+})
+output$OtherApps <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+  
+})
+output$DataReference <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+  
+})
+output$About <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("About")))
+  
+})
+getTranslatedNames <- function(){
+  return (c( i18n()$t("Tables"),i18n()$t("Word Cloud")))
+}
+output$wordcloudtabset <- renderUI({
+  wordcloudtabset('eventcloud', 'query', 
+                  popheads=c( tt('event1'), tt('word1') ), poptext=c( tt('event2'), tt('word2') ),names=getTranslatedNames())
+})
+# getTranslatedWordCloud <- function(){
+#   return (i18n()$t("WordCloud"))
+# }
+# output$Tables <- renderText({
+#   browser()
+#   HTML(stri_enc_toutf8(i18n()$t("Tables")))
+#   
+# })
+# output$WordCloud <- renderText({ 
+#   browser()
+#   HTML(stri_enc_toutf8(i18n()$t("Word Cloud")))
+#   
+# })
 #addPopover(session, 'applinks', "", tt('applinks'), placement='top')
 })

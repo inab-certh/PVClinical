@@ -1,5 +1,5 @@
 library(shiny)
-
+library(shinycssloaders)
 source('sourcedir.R')
 
 
@@ -107,7 +107,7 @@ rendert3 <- function() {
   ( htmlOutput( 't3' ) )
   
 } 
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(
                     column(width=4,
                            a(href='https://open.fda.gov', 

@@ -57,9 +57,9 @@
                 <tbody>
                   {% for scenario in scenarios %}
                     <tr>
-                      <td><a href="{% url 'OpenFDAWorkspace_detailedView' scenario.id %}">{{ forloop.counter }}</a></td>
+                      <td><a href="{% url 'OpenFDAWorkspace' scenario.id %}">{{ forloop.counter }}</a></td>
                       <td>
-                        <a class="has-popover" href="{% url 'OpenFDAWorkspace_detailedView' scenario.id %}" data-html="true" data-content="
+                        <a class="has-popover" href="{% url 'OpenFDAWorkspace' scenario.id %}" data-html="true" data-content="
                           <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
                                   <thead>
                                     <tr>
@@ -106,14 +106,14 @@
                       </td>
 
                       <td>
-                        <a href="{% url 'OpenFDAWorkspace_detailedView' scenario.id %}">
+                        <a href="{% url 'OpenFDAWorkspace' scenario.id %}">
                           <!--<i class="fa fa-eye"></i>-->
 
                             <img class="img-icon" src="{% static 'images/openFDA.png' %}">
                         </a>
 
 
-                        <!--<a href="{% url 'OpenFDAWorkspace_detailedView' scenario.id %}">-->
+                        <!--<a href="{% url 'OpenFDAWorkspace' scenario.id %}">-->
                           <!--&lt;!&ndash;<i class="fa fa-eye"></i>&ndash;&gt;-->
                           <!--&lt;!&ndash;<span class="badge">&ndash;&gt;-->
                             <!--<img class="img-icon" src="{% static 'images/openFDA.png' %}">-->
@@ -121,7 +121,7 @@
 
                         <!--</a>-->
 
-                        <!--<a href="{% url 'OpenFDAWorkspace_detailedView' scenario.id %}">-->
+                        <!--<a href="{% url 'OpenFDAWorkspace' scenario.id %}">-->
                           <!--&lt;!&ndash;<i class="fa fa-eye"></i>&ndash;&gt;-->
                           <!--&lt;!&ndash;<span class="badge">&ndash;&gt;-->
                             <!--<img class="img-icon" src="{% static 'images/openFDA.png' %}">-->

@@ -8,6 +8,7 @@ require(shinyBS)
 #   out <- shiny::HTML(out1, out2)
 #   return(out)
 # }
+language<-''
 
 getquarters <- function() {
   #  browser()
@@ -77,6 +78,9 @@ wordcloudtabset <- function(cloud, table,
     ), selected = names[1]
   )
 }
+makeDataTableOutput<- function( output){
+  dataTableOutput( output )
+}
 maketabset <- function( outputs, types=c('html', 'plot'), 
                         names=c( "Table2","Word Cloud2" )
                         , 
@@ -93,7 +97,7 @@ maketabset <- function( outputs, types=c('html', 'plot'),
                               placement='top' )
                } else if ( types[1] == 'datatable' )
                {
-               dataTableOutput( outputs[1] )
+                 dataTableOutput( outputs[1] )
                }
                else {
                  plotOutput(outputs[1])
@@ -178,7 +182,6 @@ maketabset2 <- function( outputs, types=c('html', 'plot'),
 getpopstrings <- function( myname, pophead, poptext )
   {
   helpfunname <- paste0('pop', myname )
-#  browser()
 # if function called popmyname exists, call it to get pop heads
 # otherwise if pophead or poptext are null get tt(mynametext) or tt(mynamehead)
   if ( exists( helpfunname ) )
@@ -208,7 +211,7 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
   poptext <- s['poptext']
   if( !is.null(pophead) )
       {
-      popify(
+        popify(
         htmlOutput(table),
       HTML(  paste('<b>', pophead,'</b>') ), poptext,
       placement=placement)
@@ -218,9 +221,9 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
     tableOutput(table)
     }
   }     
-
 dataTableOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
 {
+  
   s <- getpopstrings( table, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
@@ -228,21 +231,23 @@ dataTableOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top'
   {
     popify(
       dataTableOutput(table),
-      HTML(  paste('<b>', pophead,'</b>') ), poptext,
+      HTML( pophead ), HTML(poptext),
       placement=placement)
   }
   else
   {
     dataTableOutput(table)
   }
-}     
+}  
+
+
 
 plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 {
   s <- getpopstrings( plot, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
-  if( !is.null(pophead) )
+  if( !is.null(pophead) && !is.na(pophead ))
   {
     popify(
       plotOutput(plot, brush = "plot_brush", hover=hoverOpts(id='plot_hover'), ...),
@@ -329,7 +334,7 @@ usepopup <- function()
 
 renderDates <- function() { 
   
-  ( htmlOutput('date1') )
+  ( uiOutput('date1') )
   
 }  
 
