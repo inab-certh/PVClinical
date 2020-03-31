@@ -253,7 +253,7 @@ getcountstable <- function()
       return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
     }
 
-output$query_counts2 <- renderDataTable({  
+output$query_counts2 <- shiny::renderDataTable({  
   #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getcountstable()
   #   print(head(mydf))

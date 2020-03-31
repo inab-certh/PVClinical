@@ -1,0 +1,719 @@
+{
+  "languages": ["def","en", "gr"],
+  "translation": [
+      {"def":"Seriousness","en": "Seriousness", "gr": "Σημαντικότητα"},
+      {
+        "def":"quickview",
+        "en": "quickview",
+        "gr": "γρήγορη ματιά"
+      },
+      {
+        "def":"descriptionList",
+        "en": "<ul><li>Dashboard- Overview of reports for a drug</li><li>Change Point Analysis- Change point analysis for a drug-event pair over time</li><li>PRR for a Drug- Calculate Proportional Reporting Rates for Common Events for a drug</li></ul>",
+        "gr": "<ul><li>Πίνακας ελέγχου - Επισκόπηση των αναφορών για ένα φάρμακο</li><li>Ανάλυση σημείων αλλαγής - Ανάλυση αλλαγής σημείου για ένα ζεύγος φαρμάκων-συμβάντων με την πάροδο του χρόνου</li><li>PRR για ένα φάρμακο - Υπολογίστε αναλογικά ποσοστά αναφοράς για κοινά συμβάντα για ένα φάρμακο</li></ul>"
+      },
+      {
+        "def":"Frequency",
+        "en": "Frequency",
+        "gr": "Συχνότητα"
+      },
+      {
+        "def":"Change in mean analysis for",
+        "en": "Change in mean analysis for",
+        "gr": "Ανάλυση μεταβολής μέσου για"
+      },
+      {
+        "def":"Change in mean analysis",
+        "en": "Change in mean analysis",
+        "gr": "Ανάλυση μεταβολής μέσου"
+      },
+      {
+        "def":"Change in variance analysis",
+        "en": "Change in variance analysis",
+        "gr": "Αλλαγή ανάλυσης διακύμανσης"
+      },
+      {
+        "def":"Bayesian changepoint analysis",
+        "en": "Bayesian changepoint analysis",
+        "gr": "Ανάλυση Bayesian σημείων αλλαγής"
+      },
+      {
+        "def":"Report counts by date",
+        "en": "Report counts by date",
+        "gr": "Πλήθος αναφορών κατά ημερομηνία"
+      },
+      {
+        "def":"and",
+        "en": "and",
+        "gr": "και"
+      },
+      {
+        "def":"All Drugs",
+        "en": "All Drugs",
+        "gr": "Όλα τα φάρμακα"
+      },
+      {
+        "def":"All Events",
+        "en": "All Events",
+        "gr": "όλες οι παρενέργειες"
+      },
+      {
+        "def":"Change language",
+        "en": "Change language",
+        "gr": "Αλλαγή γλώσσας"
+      },
+      {
+        "def":"Please enter a Drug name",
+        "en":"Please enter a Drug name",
+        "gr":"Παρακαλώ εισάγετε όνομα φαρμάκου"
+      },
+      {
+        "def":"Please enter a Reaction name",
+        "en":"Please enter a Reaction name",
+        "gr":"Παρακαλώ εισάγετε όνομα ανεπιθύμητης ενέργειας"
+      },
+      {
+        "def":"from",
+        "en":"from",
+        "gr":"από"
+      },
+      {
+        "def":"to",
+        "en":"to",
+        "gr":"εώς"
+      },
+      {
+        "def":"receivedate",
+        "en":"receivedate",
+        "gr":"ημερομηνία"
+      },
+      {
+        "def":"Dashboard",
+        "en":"Dashboard",
+        "gr":"Dashboard"
+      },
+      {
+        "def":"Product Summary",
+        "en":"Product Summary",
+        "gr":"Σύνοψη προϊόντων"
+      },
+      {
+        "def":"Table",
+        "en":"Table",
+        "gr":"Πίνακας"
+      },
+      {
+        "def":"Dotchart",
+        "en":"Dotchart",
+        "gr":"Διάγραμμα σημείων"
+      },
+      {
+        "def":"Piechart",
+        "en":"Piechart",
+        "gr":"Διάγραμμα πίτας"
+      },
+      {
+        "def":"Adverse Events and Concomitant Medications",
+        "en":"Adverse Events and Concomitant Medications",
+        "gr":"Ανεπιθύμητες ενέργειες και συγχορηγούμενα φάρμακα"
+      },
+      {
+        "def":"Events",
+        "en":"Events",
+        "gr":"Συμβάντα"
+      },
+      {
+        "def":"Concomitant Medications",
+        "en":"Concomitant Medications",
+        "gr":"Συγχορηγούμενα φάρμακα"
+      },
+      {
+        "def":"Indications",
+        "en":"Indications",
+        "gr":"Ενδείξεις"
+      },
+      {
+        "def":"Indication",
+        "en":"Indication",
+        "gr":"Ένδειξη"
+      },
+      {
+        "def":"Other Apps",
+        "en":"Other Apps",
+        "gr":"Άλλες εφαρμογές"
+      },
+      {
+        "def":"Data Reference",
+        "en":"Data Reference",
+        "gr":"Αναφορά δεδομένων"
+      },
+      {
+        "def":"About",
+        "en":"About",
+        "gr":"Σχετικά"
+      },
+      {
+        "def":"Primary Source Qualifications",
+        "en":"Primary Source Qualifications",
+        "gr":"Πρωτογενή προσόντα πηγών"
+      },
+      {
+        "def":"Gender",
+        "en":"Gender",
+        "gr":"Γένος"
+      },
+      {
+        "def":"Preferred Term",
+        "en":"Preferred Term",
+        "gr":"Προτιμώμενος όρος"
+      },
+      {
+        "def":"Case Counts for",
+        "en":"Case Counts for",
+        "gr":"Πλήθος περιπτώσεων για"
+      },
+      {
+        "def":"Count",
+        "en":"Count",
+        "gr":"Πλήθος"
+      },
+      {
+        "def":"Tables",
+        "en":"Tables",
+        "gr":"Πίνακες"
+      },
+      {
+        "def":"Word Cloud",
+        "en":"Word Cloud",
+        "gr":"Λέξεις"
+      },
+      {
+        "def":"UseReportsBetween",
+        "en":"Use Reports Between:",
+        "gr":"Χρήση αναφορών μεταξύ"
+      },
+      {
+        "def":"Plot PRR between",
+        "en":"Plot PRR between",
+        "gr":"Σχέδιο PRR μεταξύ"
+      }
+      
+      
+      
+      
+      ,
+      {
+        "def":"Analyzed Event Counts for Specified Drug",
+        "en":"Analyzed Event Counts for Specified Drug",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο"
+      },
+      {
+        "def":"Analyzed Event Counts for All Drugs",
+        "en":"Analyzed Event Counts for All Drugs",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα"
+      },
+      {
+        "def":"Analyzed Drug Counts for All Events",
+        "en":"Analyzed Drug Counts for All Events",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα"
+      },
+      {
+        "def":"Ranked Event Counts for Drug",
+        "en":"Ranked Event Counts for Drug",
+        "gr":"Πλήθος συμβάντων ανά φάρμακο"
+      },
+      {
+        "def":"Ranked Drug Counts for Event",
+        "en":"Ranked Drug Counts for Event",
+        "gr":"Πλήθος φαρμάκων ανά συμβάν"
+      },
+      {
+        "def":"Counts for drugs in selected reports",
+        "en":"Counts for drugs in selected reports",
+        "gr":"Πλήθος φαρμάκων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts for events in selected reports",
+        "en":"Counts for events in selected reports",
+        "gr":"Πλήθος συμβάντων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts for indications in selected reports",
+        "en":"Counts for indications in selected reports",
+        "gr":"Πλήθος ενδείξεων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts for Entire Database",
+        "en":"Counts for Entire Database",
+        "gr":"Πλήθος για ολόκληρη τη βάση δεδομένων"
+      },
+      {
+        "def":"text Plot",
+        "en":"text Plot",
+        "gr":"Γράφημα κειμένου"
+      },
+      {
+        "def":"Reporting Ratios: Results sorted by PRR",
+        "en":"Reporting Ratios: Results sorted by PRR",
+        "gr":"Αναλογίες αναφορών: Αποτελέσματα ταξινομημένα κατά PRR"
+      },
+      {
+        "def":"MetaData and Queries",
+        "en":"MetaData and Queries",
+        "gr":"MetaData και ερωτήματα"
+      },
+      {
+        "def":"Report counts and PRR",
+        "en":"Report counts and PRR",
+        "gr":"Πλήθος αναφορών και PRR"
+      },
+      {
+        "def":"PRR over time",
+        "en":"PRR over time",
+        "gr":"PRR στον χρόνο"
+      },
+      
+      
+      {
+        "def":"Please select a drug and event",
+        "en":"Please select a drug and event",
+        "gr":"Επιλέξτε ένα φάρμακο και ένα συμβάν"
+      },
+      {
+        "def":"Changepoint type      : Change in",
+        "en":"Changepoint type      : Change in",
+        "gr":"Τύπος αλλαγής         : Αλλαγή σε"
+      },
+      {
+        "def":"Method of analysis    :",
+        "en":"Method of analysis    :",
+        "gr":"Μέθοδος ανάλυσης      :"
+      },
+      {
+        "def":"Test Statistic  :",
+        "en":"Test Statistic  :",
+        "gr":"Δοκιμαστική Στατιστική  :"
+      },
+      {
+        "def":"Type of penalty       :",
+        "en":"Type of penalty       :",
+        "gr":"Είδος ποινής          "
+      },
+      {
+        "def":"with value",
+        "en":"with value",
+        "gr":"με αξία"
+      },
+      {
+        "def":"Maximum no. of cpts   : ",
+        "en":"Maximum no. of cpts   : ",
+        "gr":"Μέγιστο αριθ. των cpts"
+      },
+      {
+        "def":"Changepoint Locations :",
+        "en":"Changepoint Locations :",
+        "gr":"Σημεία αλλαγής σημείου"
+      },
+      {
+        "def":"Date Report Was First Received by FDA.",
+        "en":"Date Report Was First Received by FDA.",
+        "gr":"Η αναφορά ημερομηνίας λήφθηκε για πρώτη φορά από τον FDA."
+      },
+      
+      
+      
+      {
+        "def":"LRT Results based on Total Events",
+        "en":"LRT Results based on Total Events",
+        "gr":"Αποτελέσματα LRT βάσει των συνολικών εκδηλώσεων"
+      },
+      {
+        "def":"Simulation Results for Event Based LRT",
+        "en":"Simulation Results for Event Based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT με βάση τα συμβάντα"
+      },
+      {
+        "def":"Analyzed Event Counts for Drug",
+        "en":"Analyzed Event Counts for Drug",
+        "gr":"Αναλυθείσες μετρήσεις συμβάντων για φάρμακα"
+      },
+      {
+        "def":"Use Reports Between",
+        "en":"Use Reports Between",
+        "gr":"Χρήση αναφορών μεταξύ"
+      },
+      {
+        "def":"LRT signal analysis for a drug",
+        "en":"LRT signal analysis for a drug",
+        "gr":"Ανάλυση σήματος LRT για ένα φάρμακο"
+      },
+      {
+        "def":"LRT signal analysis for an event",
+        "en":"LRT signal analysis for an event",
+        "gr":"Ανάλυση σήματος LRT για ένα συμβάν"
+      },
+      
+      
+      
+      
+      {
+        "def":"LRT results based on total Drugs",
+        "en":"LRT results based on total Drugs",
+        "gr":"Αποτελέσματα LRT βάσει των συνολικών φαρμάκων"
+      },
+      {
+        "def":"Simulation Results for Drug Based LRT",
+        "en":"Simulation Results for Drug Based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT με βάση τα φάρμακα"
+      },
+      {
+        "def":"Analyzed Drug Counts for Event",
+        "en":"Analyzed Drug Counts for Event",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για συμβάντα"
+      },
+      {
+        "def":"Change Point Analysis",
+        "en":"Change Point Analysis",
+        "gr":"Ανάλυση Change Point"
+      },
+      {
+        "def":"PRR Plot",
+        "en":"PRR Plot",
+        "gr":"Διάγραμμα PRR"
+      },
+      {
+        "def":"95% Confidence Interval for PRR",
+        "en":"95% Confidence Interval for PRR",
+        "gr":"95% διάστημα εμπιστοσύνης για PRR"
+      },
+      {
+        "def":"Date",
+        "en":"Date",
+        "gr":"Ημερομηνία"
+      },
+      {
+        "def":"Cumulative Count",
+        "en":"Cumulative Count",
+        "gr":"Αθροιστικό πλήθος"
+      },
+      {
+        "def":"Cumulative Sum",
+        "en":"Cumulative Sum",
+        "gr":"Άθροισμα"
+      },
+      {
+        "def":"Drug Name",
+        "en":"Drug Name",
+        "gr":"Όνομα φαρμάκου"
+      },
+      {
+        "def":"% Count",
+        "en":"% Count",
+        "gr":"% Πλήθος"
+      },
+      {
+        "def":"Counts for All Reports",
+        "en":"Counts for All Reports",
+        "gr":"Υπολογισμός για όλες τις αναφορές"
+      },
+      {
+        "def":"Lower 95% CI for PRR",
+        "en":"Lower 95% CI for PRR",
+        "gr":"Κάτω 95% CI για PRR"
+      },
+      {
+        "def":"Upper 95% CI for PRR",
+        "en":"Upper 95% CI for PRR",
+        "gr":"Κάτω 95% CI για PRR"
+      },
+      {
+        "def":"Drug Event Counts",
+        "en":"Drug Event Counts",
+        "gr":"Πλήθος φάρμακου συμβάντος"
+      },
+      {
+        "def":"Drug Counts",
+        "en":"Drug Counts",
+        "gr":"Πλήθος φαρμάκων"
+      },
+      {
+        "def":"Drug",
+        "en":"Drug",
+        "gr":"Φάρμακο"
+      },
+      {
+        "def":"Event Counts",
+        "en":"Event Counts",
+        "gr":"Πλήθος παρενεργειών"
+      },
+      {
+        "def":"Total Counts",
+        "en":"Total Counts",
+        "gr":"Συνολικό πλήθος"
+      },
+      {
+        "def":"Simulation results for drug based LRT",
+        "en":"Simulation results for drug based LRT",
+        "gr":"Αποτελέσματα προσομοίωσης για LRT που βασίζεται σε φάρμακα"
+      },
+      {
+        "def":"Analyzed drug counts for event",
+        "en":"Analyzed drug counts for event",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για συμβάν"
+      },
+      {
+        "def":"Analyzed drug counts for all events",
+        "en":"Analyzed drug counts for all events",
+        "gr":"Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα"
+      },
+      {
+        "def":"Drug counts for event",
+        "en":"Drug counts for event",
+        "gr":"Πλήθος φαρμάκων για συμβάν"
+      },
+      {
+        "def":"Counts for all drugs",
+        "en":"Counts for all drugs",
+        "gr":"Πλήθος όλων των φαρμάκων"
+      },
+      {
+        "def":"Counts for",
+        "en":"Counts for",
+        "gr":"Μετρήσεις για"
+      },
+      {
+        "def":"Label",
+        "en":"Label",
+        "gr":"Ετικέτα"
+      },
+      {
+        "def":"PRR and ROR Results",
+        "en":"PRR and ROR Results",
+        "gr":"Αποτελέσματα PRR και ROR"
+      },
+      {
+        "def":"Counts For Events In Selected Reports",
+        "en":"Counts For Events In Selected Reports",
+        "gr":"Πλήθος συμβάντων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Counts For Indications In Selected Reports",
+        "en":"Counts For Indications In Selected Reports",
+        "gr":"Πλήθος ενδείξεων σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Term",
+        "en":"Term",
+        "gr":"Όρος"
+      },
+      {
+        "def":"Significant?",
+        "en":"Significant?",
+        "gr":"Σημαντικότητα"
+      },
+      {
+        "def":"Histogram of Simulated Distribution of LLR",
+        "en":"Histogram of Simulated Distribution of LLR",
+        "gr":"Ιστόγραμμα προσομοιωμένης κατανομής LLR"
+      },
+      {
+        "def":"Rejection Region, LLR >",
+        "en":"Rejection Region, LLR >",
+        "gr":"Περιοχή απόρριψης, LLR >"
+      },
+      {
+        "def":"No records for",
+        "en":"No records for",
+        "gr":"Δεν υπάρχουν εγγραφές για"
+      },
+      {
+        "def":"Rejection Region,\n LLR >",
+        "en":"Rejection Region,\n LLR >",
+        "gr":"Περιοχή απόρριψης, \n LLR >"
+      },
+      {
+        "def":"Loglikelihood Ratio",
+        "en":"Loglikelihood Ratio",
+        "gr":"Αναλογία πιθανότητας σύνδεσης"
+      },
+      {
+        "def":"NEPHROGENIC SYSTEMIC FIBROSIS",
+        "en":"NEPHROGENIC SYSTEMIC FIBROSIS",
+        "gr":"ΝΕΦΡΟΓΕΝΗΤΙΚΗ ΣΥΣΤΗΜΑΤΙΚΗ FIBROSIS"
+      },
+      
+      
+      {
+        "def":"Congenital Anomaly",
+        "en":"Congenital Anomaly",
+        "gr":"Συγγενής ανωμαλία"
+      },
+      {
+        "def":"Death",
+        "en":"Death",
+        "gr":"Θάνατος"
+      },
+      {
+        "def":"Disability",
+        "en":"Disability",
+        "gr":"Αναπηρία"
+      },
+      {
+        "def":"Hospitalization",
+        "en":"Hospitalization",
+        "gr":"Νοσηλεία σε νοσοκομείο"
+      },
+      {
+        "def":"Life Threatening",
+        "en":"Life Threatening",
+        "gr":"Απειλή ζωής"
+      },
+      {
+        "def":"Other",
+        "en":"Other",
+        "gr":"Άλλο"
+      },
+      
+      
+      
+      {
+        "def":"Physician",
+        "en":"Physician",
+        "gr":"Γιατρός"
+      },
+      {
+        "def":"Pharmacist",
+        "en":"Pharmacist",
+        "gr":"Φαρμακοποιός"
+      },
+      {
+        "def":"Other Health Professional",
+        "en":"Other Health Professional",
+        "gr":"Άλλος επαγγελματίας υγείας"
+      },
+      {
+        "def":"Lawyer",
+        "en":"Lawyer",
+        "gr":"Δικηγόρος"
+      },
+      {
+        "def":"Consumer or non-health...",
+        "en":"Consumer or non-health...",
+        "gr":"Καταναλωτές"
+      },
+      
+      
+      {
+        "def":"Female",
+        "en":"Female",
+        "gr":"Γυναίκα"
+      },
+      {
+        "def":"Male",
+        "en":"Male",
+        "gr":"Άνδρας"
+      },
+      {
+        "def":"Unknown",
+        "en":"Unknown",
+        "gr":"Άγνωστο"
+      },
+      {
+        "def":"Event counts for drug",
+        "en":"Event counts for drug",
+        "gr":"Πλήθος συμβάντων για φάρμακα"
+      },
+      {
+        "def":"Counts for all events",
+        "en":"Counts for all events",
+        "gr":"Πλήθος για όλα τα συμβάντα"
+      },
+      {
+        "def":"Definition",
+        "en":"Definition",
+        "gr":"Ορισμός"
+      },
+      {
+        "def":"prr header",
+        "en":"Proportional Reporting Ratio",
+        "gr":"Proportional Reporting Ratio"
+      },
+      {
+        "def":"prr explanation",
+        "en":"The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database.For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database.",
+        "gr":"Το PRR είναι ένας απλός τρόπος για να ληφθεί μία τιμή που εκφράζει το πόσο συνηθισμένο είναι ένα ανεπιθύμητο συμβάν για ένα συγκεκριμένο φάρμακο σε σύγκριση με το πόσο συνηθισμένο είναι το συμβάν στη συνολική βάση δεδομένων. <br> Μια τιμή PRR> 1 για ένα συνδυασμό φαρμάκου-συμβάντος δείχνει ότι το μεγαλύτερο ποσοστό των αναφορών για το φάρμακο αφορούν το συμβάν σε σχέση με το ποσοστό των συμβάντων στην υπόλοιπη βάση δεδομένων. Για παράδειγμα, μία τιμή PRR=2 για ένα συνδυασμό φαρμάκου-συμβάντος δείχνει ότι η αναλογία των αναφορών για το συνδυασμό φαρμάκου-συμβάντος είναι διπλάσια από την αναλογία του συμβάντος στη συνολική βάση δεδομένων."
+      },
+      {
+        "def":"Monthly and cumulative counts for drug-event combination",
+        "en":"Monthly and cumulative counts for drug-event combination",
+        "gr":"Μηνιαίες και σωρευτικές μετρήσεις για συνδυασμό φαρμάκων-συμβάντων"
+      },
+      {
+        "def":"Time Series",
+        "en":"Time Series",
+        "gr":"Διάγραμμα χρονοσειρών"
+      },
+      {
+        "def":"Frequency table for drugs found in selected reports",
+        "en":"Frequency table for drugs found in selected reports",
+        "gr":"Πίνακας συχνοτήτων για φάρμακα που βρίσκονται σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Frequency table for events found in selected reports",
+        "en":"Frequency table for events found in selected reports",
+        "gr":"Πίνακας συχνοτήτων για συμβάντα που βρίσκονται σε επιλεγμένες αναφορές"
+      },
+      {
+        "def":"sd,lb,up explanation",
+        "en":"<b>SD</b>: Standard deviation<br><b>UB</b>: Upper Bound of 95% posterior credible interval<br><b>LB</b>: Lower Bound of 95% posterior credible interval<br>",
+        "gr":"<b>SD</b>: Τυπική απόκλιση<br><b>UB</b>: Κάτω φράγμα του 95% διαστήματος εμπιστοσύνης<br><b>LB</b>: Άνω φράγμα του 95% διαστήματος εμπιστοσύνης<br>"
+      },
+      {
+        "def":"changepoint explanation",
+        "en":"A <b>changepoint</b> is an instance in time where the statistical properties before and after this time point differ. With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis is important in both applied and theoretical statistics.<br>ChangePoint Calculates the optimal positioning and (potentially) number of changepoints of data<br><b>Change in mean analysis</b> calculates change points for mean only changes",
+        "gr":"Ένα <b> σημείο αλλαγής</b> είναι ένα χρονικό στιγμιότυπο όπου οι στατιστικές ιδιότητες πριν και μετά από αυτό το χρονικό σημείο διαφέρουν. Λαμβάνοντας υπόψιν ότι στα δεδομένα συμβαίνουν αλλαγές και ότι πολλές στατιστικές μέθοδοι υποθέτουν απότομες αλλαγές, η ανάλυση σημείου αλλαγής είναι σημαντική τόσο στις εφαρμοσμένες όσο και στις θεωρητικές στατιστικές. <br>Η μέθοδος  ChangePoint υπολογίζει τη βέλτιστη τοποθέτηση και (δυνητικά) τον αριθμό των σημείων αλλαγής δεδομένων <br> Η <b>Αλλαγή της μέσης ανάλυσης</b> υπολογίζει τα σημεία αλλαγής μόνο για μέσες αλλαγές"
+      },
+      {
+        "def":"Application Info",
+        "en":"Application Info",
+        "gr":"Πληροφορίες"
+      },
+      {
+        "def":"Bayesian change point explanation",
+        "en":"In <b>Bayesian change point analysis</b> it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant within each block. In the multivariate case, a common change point structure is assumed; means are constant within each block of each sequence, but may differ across sequences within a given block.<bt><br> The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates will not be constant within regions, and no single partition is identified as best. Estimates of the probability of a change point at any given location are provided, however.",
+        "gr":"Στην <b> Bayesian ανάλυση σημείου αλλαγής </ b> υποτίθεται ότι υπάρχει ένα άγνωστο διαμέρισμα μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε ο μέσος όρος να είναι σταθερός σε κάθε μπλοκ. Στην πολυμεταβλητή περίπτωση, θεωρείται μια κοινή δομή σημείου αλλαγής. τα μέσα είναι σταθερά σε κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ. <bt> <br> Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση του posterior mean. Διαφέρωντας από μια συχνοτική ή αλγοριθμική προσέγγιση στο πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη τοποθεσία."
+      },
+      {
+        "def":"Drug-event reports per date diagram",
+        "en":"Drug-event reports per date diagram",
+        "gr":"Αναφορές συμβάντων φαρμάκων ανά διάγραμμα ημερομηνιών"
+      },
+      {
+        "def":"Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations.",
+        "en":"Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations.",
+        "gr":"Πίνακας συχνότητας για τα συμβάντα που βρέθηκαν σε επιλεγμένες αναφορές. Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων."
+      },
+      {
+        "def":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
+        "en":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
+        "gr":"Πίνακας συχνότητας για τα φάρμακα που βρέθηκαν σε επιλεγμένες αναφορές. Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων."
+      }
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    ]
+}

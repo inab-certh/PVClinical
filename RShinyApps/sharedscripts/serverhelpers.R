@@ -139,7 +139,11 @@ fda_fetch_p <- function(session, myurl,
   starttime <- Sys.time()
   mytitle <- paste('Fetching Data', message )
   
-  closeAlert(session, 'alert2')
+  if(!is.null(session$alert2))
+  {
+    closeAlert(session, 'alert2')  
+  }
+  
   createAlert(session, 'alert', 'fetchalert',title=mytitle, content = substr(dispurl, 37,100), dismiss = FALSE)
 #   if ( length(flag) < 1 )
 #   { 
@@ -178,13 +182,19 @@ fda_fetch_p <- function(session, myurl,
         }
         #    out<- data.frame(term='error', count=NA)
       } else {
+        if(!is.null(session$erroralert))
+        {
         closeAlert(session, 'erroralert')
+        }
         break
       }
   }
 
   #Sys.sleep( max(0, .31 - as.double(Sys.time()-starttime) ) )
-  closeAlert(session, 'fetchalert')
+  if(!is.null(session$fetchalert))
+  {
+    closeAlert(session, 'fetchalert')
+  }
   return(out)
 }
 
@@ -370,25 +380,25 @@ getbaseurl <- function( which, mycururl=NULL, appname= 'cpa' ){
   } else if(which == 'EAS' ) {
     s <- 'RR_E_Activesubstance'
   }  else if(which == 'R' ){
-    s <- 'reportview'
+    s <- 'ReportView'
   } else if(which == 'P' ){
-    s <- 'dynprr'
+    s <- 'DynPRR'
   } else if(which == 'DPS' ){
     s <- 'dynprr_Activesubstance'
   } else if(which == 'DA' ){
-    s <- 'dash'
+    s <- 'Dash'
   } else if(which == 'L' ){
-    s <- 'labelview'
+    s <- 'LabelView'
   } else if(which == 'LR' ){
-    s <- 'LRTest' 
+    s <- 'LrTest' 
   } else if (which=='LRDAS'){
     s <- 'LR_D_Activesubstancename'
   } else if(which == 'LRE' ){
-    s <- 'LRTest_E' 
+    s <- 'LrTest_E' 
   } else if (which=='LREAS'){
     s <- 'LR_E_Activesubstancename'
   } else if(which == 'ENFD' ){
-    s <- 'drugenforceview'
+    s <- 'DrugEnforceView'
   }  else if(which == 'AEDEV' ){
       s <- 'devicereports'
   }  else if(which == 'ENFDEV' ){
@@ -471,8 +481,9 @@ coltohyper <- function(col, which, mybaseurl=NULL, display=NULL, makequery=TRUE,
     out[i] <- makehyper(baseurl , name, paste0('' ,col[i] , append  ), display[i], makequery=makequery)
   }
   
-  return(out)
-}
+  # return(out)
+  return(col)
+  }
 numcoltohyper <- function( dispcol, valcol, names, values, type='R', mybaseurl=NULL, addquotes=FALSE, append='' ){
   baseurl <- getbaseurl( type, mybaseurl )
   out <- vector(mode='character', length=length(dispcol))
@@ -496,7 +507,8 @@ numcoltohyper <- function( dispcol, valcol, names, values, type='R', mybaseurl=N
     #     print(paste('dispcol[i]=',dispcol[i]))
     out[i] <- makehyper( baseurl , names, paste0('' ,curvals , append  ), prettyNum(dispcol[i], big.mark=',') )
   }
-  return(out)
+  # return(out)
+  return(dispcol)
 }
 
 buildURL <- function (v, t, count='' ,limit=NULL, skip=0,  usekey=TRUE, 

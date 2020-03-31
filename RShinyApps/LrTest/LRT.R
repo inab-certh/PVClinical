@@ -1,3 +1,9 @@
+require(shiny)
+require(shinyBS)
+library(shiny.i18n)
+library(DT)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
 
 popcoquery <- function()
 {
@@ -7,12 +13,42 @@ popcoquery <- function()
 }
 #*****************************************************
 shinyServer(function(input, output, session) {
-  
   mywait <- 0.5
   
 # Getters ======  
 
-  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
   getqueryvars <- function( num = 1 ) {
    s <- vector(mode = "character", length = 7)
    if (getwhich() == 'D')
@@ -444,13 +480,17 @@ shinyServer(function(input, output, session) {
       {
         drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
         drugvar <- paste0( "&v1=", drugvar )
-        medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+        # medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
+        #                             mybaseurl = getcururl(), 
+        #                             display= rep('L', nrow( sourcedf ) ), 
+        #                             append= drugvar )
+        medlinelinks <- coltohyper( sourcedf[,1], 'L', 
                                     mybaseurl = getcururl(), 
                                     display= rep('L', nrow( sourcedf ) ), 
                                     append= drugvar )
         
         drugvar <- paste0( "&v1=", input$v1 )
-        dashlinks <- coltohyper( paste0( '%22' , sourcedf[, 'term' ], '%22' ), 'DA', 
+        dashlinks <- coltohyper(  sourcedf[, 'term' ], 'DA', 
                                  mybaseurl = getcururl(), 
                                  display= rep('D', nrow( sourcedf ) ), 
                                  append= drugvar )
@@ -465,10 +505,12 @@ shinyServer(function(input, output, session) {
       #Event Table
     } else {
       linkapp <- 'LRE'
-      colname <- 'Preferred Term'
-      mynames <- c('M', colname, 'Count', 'Cum Sum') 
+      colname <- i18n()$t("Preferred Term")
+      # mynames <- c('M', colname, 'Count', 'Cum Sum') 
+      mynames <- c(colname, 'Count', 'Cum Sum')
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-      mydf <- data.frame(M=medlinelinks, mydf) 
+      # mydf <- data.frame(M=medlinelinks, mydf) 
+      
     }
 #     names <- c('v1','t1')
 #     values <- c(getbestterm1var() ) 
@@ -629,7 +671,7 @@ getindcounts <- reactive({
 #      print( names(comb) )
       sourcedf <- comb
 #      sourcedf2 <- comb2
-      colname <- 'Preferred Term'
+      colname <- i18n()$t("Preferred Term")
       iname <- 'M'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     }
@@ -666,8 +708,8 @@ getindcounts <- reactive({
 #                        'Dynamic PRR', 'Change Point Analysis', 'PRR2', 'LLR', 'PRRE', 'PRRD' )
 #    print(  comb2[, 'n..'])
  #   print((comb2$pri.))
-    keptcols1 <-  c( iname, colname, "Significant?", 'LLR',
-                    'RR', 'nij' )
+    # keptcols1 <-  c( iname, colname, "Significant?", 'LLR', 'RR', 'nij' )
+    keptcols1 <-  c( colname, "Significant?", 'LLR', 'RR', 'nij' )
 #     keptcols2 <-  c( iname, colname, "Significant?", 'LLR',
 #                      'PRR' )
     #    mydf <- mydf[, c(1:4, 7,8,9)]
@@ -879,9 +921,9 @@ simplot <- function(){
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
     truehist(vals , breaks=mybreaks, 
-             main="Histogram of Simulated Distribution of LLR", 
-             xlab='Loglikelihood Ratio', xaxt='n' )
-    text(mycrit,.3, paste('Rejection Region, LLR >', round(mycrit, 2) ), pos=4, col='red')
+             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
+    text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
     smallbreaks <- seq(0, max(mybreaks), 1)
     
     smallbreaks <-  c( round(mycrit, 2), smallbreaks )
@@ -890,7 +932,7 @@ simplot <- function(){
     if ( is.data.frame(mydf) ) 
     {
     } else {
-      return(data.frame(Term= paste('No records for', getterm1(session)), Count=0))
+      return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
     }
   }
 }
@@ -905,7 +947,7 @@ AnalyzedEventCountsforDrug <- reactive(
   {
     mydf <- getdrugcountstable()$mydfE
     checkdf(mydf, getterm1(session),
-            names=c('Term', paste( 'Counts for', getterm1(session)) ),
+            names=c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1(session)) ),
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
   }
 )
@@ -1005,7 +1047,7 @@ output$alltitle <- renderText({
 all <- function(){  
   all <- geteventtotalstable()$mydf
   checkdf(all, paste(getsearchtype(), getterm1(session)), 
-          names=c('Term', paste( 'Counts for All Reports'), 'Query' ), 
+          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), 'Query' ), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
 
@@ -1270,5 +1312,78 @@ getcururl <- reactive({
     },
     contentType="text/csv"
   )
+ 
+ output$LRTResultsbasedonTotalEvents <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("LRT Results based on Total Events")))
+   
+ })
+ output$SimulationResultsforEventBasedLRT <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Simulation Results for Event Based LRT")))
+   
+ })
+ output$AnalyzedEventCountsforDrugText <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for Drug")))
+   
+ })
+ output$AnalyzedEventCountsforAllDrugs <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for All Drugs")))
+   
+ })
+ output$CountsForDrugsInSelectedReports <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+   
+ })
+ output$EventCountsforDrug <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Event counts for drug")))
+   
+ })
+ output$CountsForAllEvents <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Counts for all events")))
+   
+ })
+ output$CountsForIndicationsInSelectedReports <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+   
+ })
+ output$OtherApps <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+   
+ })
+ output$DataReference <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+   
+ })
+ output$About <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("About")))
+   
+ })
+ output$UseReportsBetween <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("Use Reports Between")))
+   
+ })
+ output$LRTSignalAnalysisforaDrug <- renderUI({ 
+   HTML(stri_enc_toutf8(i18n()$t("LRT signal analysis for a drug")))
+   
+ })
+ output$makeTabsetLRTResultsbasedonTotalEvents <- renderUI({ 
+   maketabset( c('prr', 'cloudprr', 'textplot'), 
+               types=c('html', "plot", 'plot'),
+               names=getTranslatedTabsetNamesWithTextPlot() )
+   
+ })
+ 
+ 
+ getTranslatedTabsetNamesWithTextPlot <- function(){
+   return (c( i18n()$t("Tables"),i18n()$t("Word Cloud"),i18n()$t("text Plot")))
+ }
+ 
+ i18n <- reactive({
+   selected <- input$selected_language
+   if (length(selected) > 0 && selected %in% translator$languages) {
+     translator$set_translation_language(selected)
+   }
+   translator
+ })
+ 
   
 })

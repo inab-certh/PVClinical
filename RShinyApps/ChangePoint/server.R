@@ -4,6 +4,10 @@ require('lubridate')
 require('bcp')
 require('changepoint')
 require('zoo')
+library(shiny.i18n)
+library(DT)
+library(tableHTML)
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
   library(openfda)
@@ -18,7 +22,39 @@ source( 'sourcedir.R')
 #CPA
 #**************************************************
 shinyServer(function(input, output, session) {
- 
+  
+  output$page_content <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    
+  })
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    translator$set_translation_language(selectedLang)
+    #browser()
+    # if (!is.null(query[['lang']])) {
+    #   updateSelectInput(session, "selected_language",
+    #                     i18n()$t("Change language"),
+    #                     choices = c("en","gr"),
+    #                     selected = selectedLang
+    #   )
+    # }
+    
+  })
 #Getters
   getwaittime <- reactive({ 
     if(session$clientData$url_hostname == '10.12.207.87')
@@ -233,7 +269,10 @@ getquerydata <- reactive({
               content = 'Calculating Time Series...', 
               dismiss = FALSE)
   mydfin <- gettstable( tmp )
-  closeAlert(session,  'calcalert')
+  if(!is.null(session$calcalert))
+  {
+    closeAlert(session,  'calcalert')
+  }
   return( list( mydfin= mydfin, mydf=mydf, myurl= mydf$myurl, mysum = mydfin$total ) )
 })
 
@@ -289,7 +328,7 @@ getcocounts <- function(whichcount = 'D'){
   #    print(names(mydf))
   #Drug Table
   if (whichcount =='D'){
-    colname <- 'Drug Name'
+    colname <- stri_enc_toutf8(i18n()$t("Drug Name"))
     if (input$v1 != 'patient.drug.medicinalproduct')
     {
       drugvar <- gsub( "patient.drug.","" , input$v1, fixed=TRUE)
@@ -305,24 +344,26 @@ getcocounts <- function(whichcount = 'D'){
                                display= rep('D', nrow( sourcedf ) ), 
                                append= drugvar )
       
-      mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
-      mynames <- c( 'D', 'L', colname, 'Count', 'Cumulative Sum') 
+      mydf <- data.frame( mydf)
+      mynames <- c(  colname, stri_enc_toutf8(i18n()$t("Count")), stri_enc_toutf8(i18n()$t("Cumulative Sum"))) 
     }
     else {
       medlinelinks <- rep(' ', nrow( sourcedf ) )
-      mynames <- c('-', colname, 'Count') 
+      mynames <- c('-', colname, i18n()$t("Count")) 
     }
+    
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestaevar(), getbestterm2(), getexactdrugvar() ) 
     #Event Table
   } else {
-    colname <- 'Preferred Term'
-    mynames <- c('M', colname, 'Count', 'Cumulative Sum') 
+    colname <- stri_enc_toutf8(i18n()$t("Preferred Term"))
+    mynames <- c(colname, stri_enc_toutf8(i18n()$t("Count")), stri_enc_toutf8(i18n()$t("Cumulative Sum"))) 
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
-    mydf <- data.frame(M=medlinelinks, mydf) 
+    mydf <- data.frame( mydf) 
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestdrugvar(), getbestterm1(), getexactaevar() ) 
   }
+  
   mydf[,'count'] <- numcoltohyper(mydf[ , 'count' ], mydf[ , 'term'], names, values, mybaseurl = getcururl(), addquotes=TRUE )
   mydf[,'term'] <- coltohyper(mydf[,'term'], whichcount , mybaseurl = getcururl(), 
                               append= paste0( "&v1=", input$v1) )
@@ -356,7 +397,7 @@ gettstable <- function( tmp ){
     mydates <- gsub('-', '', as.character( mydates ))
     mycumdates <- paste0(start[1],  '+TO+', mydates ,']')
     mydates <- paste0(start,  '+TO+', mydates ,']')
-    names(mydf) <- c('Date', 'Count', 'Cumulative Count')
+    names(mydf) <- c("Date", "Count","Cumulative Count")
 #    mydf <- mydf[ (mydf[,'Cumulative Count'] > 0), ]
     mydf_d <- mydf
     names <- c('v1','t1', 'v2' ,'t2', 'v3', 't3')
@@ -403,6 +444,7 @@ calccpvar<- reactive({
 calccpbayes<- reactive({
   myts <- getts()
   mydf <- getquerydata()$mydfin$result[, c(1,2)]
+  browser()
   bcp.flu<-bcp(as.double(myts),p0=0.3)
   return(list(bcp.flu=bcp.flu, data=mydf) )
 }) 
@@ -423,8 +465,10 @@ anychanged <- reactive({
   d <- input$v2
   e <- input$useexactD
   f <- input$useexactE
-  
-  closeAlert(session, 'erroralert')
+  if(!is.null(session$erroralert))
+  {
+    closeAlert(session, 'erroralert')
+  }
 })
 #SETTERS
 output$mymodal <- renderText({
@@ -453,27 +497,64 @@ output$querycotextE <- renderText({
   paste( '<b>Query:</b>', removekey( makelink( l['myurl'] ) ), '<br>')
 })
 
-output$coquery <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsD()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)  
+# output$coquery <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsD()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)  
 
-output$coqueryE <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+output$coquery <- DT::renderDT({
+  codrugs <- getcocountsD()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
+      )
+    ))
+},  escape=FALSE)
+
+
+# output$coqueryE <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsE()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)
+
+
+output$coquery <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+},  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -525,6 +606,35 @@ output$maxcp <- renderText({
   out <- paste( '<b>Maximum Number of Changepoints:<i>', s, '</i></b>' )
   return(out)
 })
+output$queryplot <- renderPlot({  
+  fetchalldata()
+  #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+  mydf <- getquerydata()$mydfin
+  lapply(mydf$display['Date'][[1]], function(x) {
+    x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+    x
+  })
+  if ( is.data.frame(mydf$display) )
+  {
+    labs <-    mydf$display[[1]]
+    Date<-mydf$display[[1]]
+    Counts<-mydf$display[[2]]
+    # plot(x,y)
+    
+    
+    plot(Counts, axes=FALSE, xlab="",ylab=i18n()$t("Count"))
+    axis(2)
+    axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
+    box()
+    
+    # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
+    # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
+    # plot(Count ~ Date, mydf$display)
+    
+    grid()
+  } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
+})
+
 
 output$query <- renderTable({  
   fetchalldata()
@@ -549,8 +659,11 @@ output$coquery <- renderTable({
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
+  browser
   if ( is.data.frame(codrugs) )
   { 
+    # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+    # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
     return(codrugs) 
   } else  {
     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
@@ -623,7 +736,7 @@ output$allquerytext <- renderText({
 })
 
 
-output$cpmeantext <- renderText ({
+output$infocpmeantext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
@@ -631,21 +744,33 @@ output$cpmeantext <- renderText ({
                 title='Calculating...', 
                 content = 'Calculating meanCP', 
                 dismiss = FALSE)
-
     s <- calccpmean()
+    
     mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
     mycpts <-paste(mycpts, collapse=', ')
-    out <- paste( 'Changepoint type      : Change in', s@cpttype, '<br>' )
-    out <- paste(out,  'Method of analysis    :' , s@method , '<br>' )
-    out <- paste(out, 'Test Statistic  :' , s@test.stat, '<br>' )
-    out <- paste(out, 'Type of penalty       :' , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
-    out <- paste(out, 'Maximum no. of cpts   : ' , s@ncpts.max, '<br>' )
-    out <- paste(out, 'Changepoint Locations :' , mycpts , '<br>' )
-    closeAlert(session, 'calclert')
-    } else {
-      out <- "Insufficient data"
+    out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+    out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+    out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+    out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
+    out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+    out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
+    
+    out <- paste(out, "<br>",i18n()$t('changepoint explanation'), "<br>" )
+    if(!is.null(session$calclert))
+    {
+      closeAlert(session, 'calclert')
     }
-return(out)
+    } else {
+      out <- i18n()$t('Insufficient data')
+    }
+    addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
+             content=out, placement = "left",
+             trigger = "hover", options = list(html = "true"))
+    #attr(session, "cpmeanplottext") <- out
+    # browser()
+    # l <- append( l, c('cpmeanplottext' =  out ) )
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  
 })
 
 output$cpmeanplot <- renderPlot ({
@@ -659,7 +784,7 @@ output$cpmeanplot <- renderPlot ({
     
     if ( getterm1( session, FALSE )==''  )
       {
-      mydrugs <- 'All Drugs'
+      mydrugs <- i18n()$t("All Drugs")
       }
     else 
       {
@@ -667,14 +792,15 @@ output$cpmeanplot <- renderPlot ({
       }
     if ( getterm2( session, FALSE )=='' )
       {
-        myevents <- 'All Events'
+        myevents <- i18n()$t("All Events")
       }
     else 
       {
         myevents <- getterm2( session, FALSE )
       }
-    mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
-    plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+    # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
+    mytitle <-  i18n()$t("Change in mean analysis")
+    plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
     axis(1, pos,  labs[pos], las=2  )
     grid(nx=NA, ny=NULL)
     abline(v=pos, col = "lightgray", lty = "dotted",
@@ -682,23 +808,27 @@ output$cpmeanplot <- renderPlot ({
     }
 })
 
-output$cpvartext <- renderText ({
+output$infocpvartext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
     s <- calccpvar()
     mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
     mycpts <-paste(mycpts, collapse=', ')
-    out <- paste( 'Changepoint type      : Change in', s@cpttype, '<br>' )
-    out <- paste(out,  'Method of analysis    :' , s@method , '<br>' )
-    out <- paste(out, 'Test Statistic  :' , s@test.stat, '<br>' )
-    out <- paste(out, 'Type of penalty       :' , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
-    out <- paste(out, 'Maximum no. of cpts   : ' , s@ncpts.max, '<br>' )
-    out <- paste(out, 'Changepoint Locations :' , mycpts , '<br>' )
-    return(out)
+    out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+    out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+    out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+    out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, i18n()$t('with value'), round(s@pen.value, 6), '<br>' )
+    out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+    out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
+    out <- paste(out,"<br>", i18n()$t('changepoint explanation'), '<br>' )
     } else {
-      return ( 'Insufficient Data' )
+       out<-HTML(i18n()$t('Insufficient Data') )
     }
+    addPopover(session=session, id="infocpvartext", title="", 
+               content=out, placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$cpvarplot <- renderPlot ({
@@ -724,8 +854,9 @@ output$cpvarplot <- renderPlot ({
     {
       myevents <- getterm2( session,FALSE)
     }
-    mytitle <- paste( "Change in Variance Analysis for", mydrugs, 'and', myevents )
-    plot(s, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+    # mytitle <- paste( "Change in variance analysis for", mydrugs, 'and', myevents )
+    mytitle <- i18n()$t("Change in variance analysis")
+    plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
     axis(1, pos,  labs[pos], las=2  )
     grid(nx=NA, ny=NULL)
     abline(v=pos, col = "lightgray", lty = "dotted",
@@ -740,6 +871,7 @@ output$cpbayestext <- renderPrint ({
     mycp <- calccpbayes()
     data <- mycp$data
     bcp.flu <- mycp$bcp.flu
+    browser()
     data$postprob <- bcp.flu$posterior.prob
     data2<-data[order(data$postprob,decreasing = TRUE),]
     data2[1:input$maxcp,]
@@ -747,10 +879,104 @@ output$cpbayestext <- renderPrint ({
       return ( 'Insufficient Data', file='' )
     }
 })
+output$infocpbayestext <- renderUI ({
+  mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0)
+  {
+    mycp <- calccpbayes()
+    data <- mycp$data
+    bcp.flu <- mycp$bcp.flu
+    data$postprob <- bcp.flu$posterior.prob
+    data2<-data[order(data$postprob,decreasing = TRUE),]
+    out<-print(data2[1:input$maxcp,])
+    outb<-build_infocpbayes_table(out)
+    outb<-paste(outb,"<br><br>",i18n()$t("Bayesian change point explanation")," ")
+    
+    
+    
+  } else {
+    outb<-'Insufficient Data'
+  }
+  addPopover(session=session, id="infocpbayestext", title=i18n()$t("Application Info"), 
+             content=HTML(outb), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  
+  
+})
+
+output$infoCountsForDrugsInSelectedReports<-renderUI({
+  addPopover(session=session, id="infoCountsForDrugsInSelectedReports", title=i18n()$t("Application Info"), 
+             content=paste(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations"),"<br><br>",i18n()$t("prr explanation")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoReportCountsbyDate<-renderUI({
+  addPopover(session=session, id="infoReportCountsbyDate", title=i18n()$t("Application Info"), 
+             content=stri_enc_toutf8(i18n()$t("Drug-event reports per date diagram")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoCountsForEventsInSelectedReports<-renderUI({
+  addPopover(session=session, id="infoCountsForEventsInSelectedReports", title=i18n()$t("Application Info"), 
+             content=paste(i18n()$t("Frequency table for events found in selected reports. Event name is linked to PRR results for drug-event combinations."),"<br><br>",i18n()$t("prr explanation")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+
+build_infocpbayes_table <- function(out)({
+  outb<-'row '
+  outb<-paste(outb,attr(out,'names')[1],' ')
+  outb<-paste(outb,formatC(attr(out,'names')[2], format = "f", width=-8, ),' ')
+  outb<-paste(outb,attr(out,'names')[3],' ')
+  outb<-paste(outb,'<br>')
+  for(i in 1:length(out))
+  {
+    outb<-paste(outb,attr(out,'row.names')[i])
+    outb<-paste(outb,out[1:input$maxcp,]$Date[i],' ')
+    outb<-paste(outb,out[1:input$maxcp,]$Count[i],' ')
+    outb<-paste(outb,out[1:input$maxcp,]$postprob[i], ' ')
+    outb<-paste(outb,'<br><br>')
+  }
+  return(outb)
+})
+# output$infocpbayestext <- renderPrint ({
+#   mydf <-getquerydata()$mydfin$result
+#   browser()
+#   if (length(mydf) > 0)
+#   {
+#     mycp <- calccpbayes()
+#     data <- mycp$data
+#     bcp.flu <- mycp$bcp.flu
+#     data$postprob <- bcp.flu$posterior.prob
+#     data2<-data[order(data$postprob,decreasing = TRUE),]
+#     out<-print(data2[1:input$maxcp,])
+#     outb<-data.frame()
+#     for (i in 1:length(out)){
+#       outb<-paste(outb,out[i],sep="")
+#     }
+#     # out<-paste(typeof(data2[1:input$maxcp,]),data2[1:input$maxcp,])
+#     # out<-paste( out, collapse='<br>')
+#     
+#   } else {
+#     outb<-'Insufficient Data'
+#   }
+#   
+#   addPopover(session=session, id="infocpbayestext", title="", 
+#              content=HTML(outb), placement = "left",
+#              trigger = "hover", options = list(html = "true"))
+#   return(HTML('<button type="button" class="btn btn-info">i</button>'))
+#   
+#   
+# })
 output$cpbayesplot <- renderPlot ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
+    browser()
     s <- calccpbayes()$bcp.flu
     labs <-    index( getts() )
     plot(s)
@@ -805,6 +1031,63 @@ geturlquery <- reactive({
   updateRadioButtons(session, 'useexactE', selected = q$exactE)
   return(q)
 })
+output$ChangeinMeanAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change in mean analysis")))
+  
+})
+output$ChangeinVarianceAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change in variance analysis")))
+  
+})
+output$BayesianChangepointAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Bayesian changepoint analysis")))
+  
+})
+output$ReportCountsbyDate <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Report counts by date")))
+  
+})
+output$CountsForDrugsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+  
+})
+output$CountsForEventsInSelectedReports <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+  
+})
+output$OtherApps <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Other Apps")))
+  
+})
+output$DataReference <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
+  
+})
+output$About <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("About")))
+  
+})
+output$DateReportWasFirstReceivedbyFDA <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Date Report Was First Received by FDA.")))
+  
+})
+output$ChangePointAnalysis <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("Change Point Analysis")))
+  
+})
+
+
+
+
+i18n <- reactive({
+  selected <- input$selected_language
+  if (length(selected) > 0 && selected %in% translator$languages) {
+    translator$set_translation_language(selected)
+  }
+  translator
+})
+
+
 
 
 })
