@@ -38,8 +38,8 @@ from app.models import Status
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
 
-def OpenFDAWorkspace_detailedView(request, scenario_id=None):
-    template = loader.get_template('app/OpenFDAWorkspace_detailedView.html')
+def OpenFDAWorkspace(request, scenario_id=None):
+    template = loader.get_template('app/OpenFDAWorkspace.html')
     scenario = {}
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]

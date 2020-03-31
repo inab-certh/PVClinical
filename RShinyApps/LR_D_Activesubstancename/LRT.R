@@ -349,7 +349,7 @@ prrnohyper <- reactive({
   return(out)
 })
 
-output$prr <- renderDataTable({   
+output$prr <- shiny::renderDataTable({   
   prr()
 },  escape=FALSE)
 
@@ -432,9 +432,9 @@ simplot <- function(){
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
     mytruehist <- hist(vals , breaks=mybreaks, 
-             main="Histogram of Simulated Distribution of LLR", 
-             xlab='Loglikelihood Ratio', xaxt='n', col='cyan' )
-    text(mycrit, .75*max(mytruehist$counts), paste('Rejection Region,\n LLR >', round(mycrit, 2) ), pos=4, col='red')
+             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n', col='cyan' )
+    text(mycrit, .75*max(mytruehist$counts), paste(i18n()$t("Rejection Region,\n LLR >"), round(mycrit, 2) ), pos=4, col='red')
     mystep <- max(1, floor( ( myrange[2] - myrange[1] )/20) )
     smallbreaks <- seq(0, max(mybreaks), mystep )
     
@@ -555,7 +555,7 @@ getcururl <- reactive({
     contentType="text/csv"
   )
  
- output$fulltable <- renderDataTable({  
+ output$fulltable <- shiny::renderDataTable({  
     mytable <- getprr()[['prrtab']]
     mytable[, 'PRR'] <- round( mytable[, 'PRR'], digits = 2 )
     mynames <- names(mytable)

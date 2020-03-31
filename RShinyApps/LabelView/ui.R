@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 source('sourcedir.R')
 

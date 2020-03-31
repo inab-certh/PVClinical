@@ -1,8 +1,9 @@
 library(shiny)
 require(shinyBS)
-
+library(shinyjs)
+library(shinycssloaders)
 source( 'sourcedir.R')
-
+options(encoding = 'UTF-8')
 # getdrugvarchoices <- function(){
 #   openfdavars <- c( 
 #     'generic_name',
@@ -27,162 +28,88 @@ rendermaxcp <- function() {
   ( htmlOutput('maxcp') )
   
 } 
-shinyUI(fluidPage(
-                  fluidRow(
-                    column(width=4,
-                           a(href='https://open.fda.gov/', 
-                             img(src='l_openFDA.png', align='bottom')),
-                           renderDates()
-                     ),
-                    column(width=8,
-                           titlePanel("Change Point Analysis" ) )
-                  ),
-#                   img(src='l_openFDA.png'),
-#                   titlePanel( "Change Point Analysis"),
-
-  sidebarLayout(
-    sidebarPanel(
-      tabsetPanel(
-        tabPanel('Select Inputs',
-                 selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
+  fluidRow(useShinyjs(),style = "margin-top:15px;",
+           column(width=12, 
+                  
+                  hidden(
+                    uiOutput('page_content'),
+                    
+                    selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
                  selectInput_p("v2", 'Time Variable' , c('receivedate', 'receiptdate'), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top', selected='receiptdate'), 
-                 conditionalPanel(
-                   condition = "1 == 2",
+                 
                  textInput_p("t1", "Name of Drug", '', 
                              HTML( tt('drugname1') ), tt('drugname2'),
                              placement='bottom'), 
                  textInput_p("t2", "Adverse Events", '', 
                              HTML( tt('eventname1') ), tt('eventname2'),
                              placement='bottom'),
+                 textInput_p("lang", "lang", '', 
+                             HTML( tt('en') ), tt('gr'),
+                             placement='bottom'),
                  numericInput_p('maxcp', "Maximum Number of Change Points", 3, 1, step=1,
                                 HTML( tt('cplimit1') ), tt('cplimit2'),
-                                placement='bottom')
-                 ), 
-                 wellPanel(
-                 bsButton("tabBut", "Select Drug and Event...", style='primary'),
-                 br(),
-                 renderDrugName(),
+                                placement='bottom'),
+                  
+                 
                  radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
-                 renderEventName(),
                  radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any' ),
-                 rendermaxcp()
-                 ),
-                 dateRangeInput('daterange', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'), 
-                          textInput_p("drugname", "Name of Drug", '', 
-                                      HTML( tt('drugname1') ), tt('drugname2'),
-                                      placement='left'), 
-                          textInput_p("eventname", "Adverse Events", '', 
+                 
+                 
+                 textInput_p("drugname", "Name of Drug", '', HTML( tt('drugname1') ), tt('drugname2'), placement='left'), textInput_p("eventname", "Adverse Events", '', 
                                       HTML( tt('eventname1') ), tt('eventname2'),
-                                      placement='left'),               
-                          numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
-                                         HTML( tt('cplimit1') ), tt('cplimit2'),
-                                         placement='left'),
-                #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                          bsButton("update", "Update Variables", style='primary')),
+                                      placement='left'),              
+                 numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
+                               HTML( tt('cplimit1') ), tt('cplimit2'),
+                               placement='left')
                 
-                bsAlert("alert")
-                  )
-        ,
-    id='sidetabs', selected='Select Inputs')
-    ),
-    mainPanel(
-      bsAlert("alert2"),
+                  ),
+        
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
+
       tabsetPanel(
-                 tabPanel("Change in Mean Analysis",  
-                          wellPanel( 
-                            plotOutput_p( 'cpmeanplot' ), 
-                            htmlOutput_p( 'cpmeantext' )
-                            )
+                 tabPanel(uiOutput("ChangeinMeanAnalysis"),  
+                            uiOutput("infocpmeantext", style = "position:absolute;right:40px;z-index:10"),
+                            withSpinner(plotOutput( 'cpmeanplot' )) 
                           ),
-                tabPanel("Change in Variance Analysis",  
-                         wellPanel( 
-                           plotOutput_p( 'cpvarplot' ), 
-                           htmlOutput_p( 'cpvartext' )
-                          )
+                tabPanel(uiOutput("ChangeinVarianceAnalysis"),  
+                           uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10"),
+                         withSpinner(plotOutput( 'cpvarplot' ) )
                          ),
-                 tabPanel("Bayesian Changepoint Analysis",  
-                          wellPanel( 
-                            plotOutput_p( 'cpbayesplot' ), 
-                            verbatimTextOutput( 'cpbayestext' )
-                            )
+                 tabPanel(uiOutput("BayesianChangepointAnalysis"),  
+                          wellPanel(
+                            style="background-color:white;height:30px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
                           ),
-                tabPanel("Report Counts by Date",  
-                         wellPanel( 
-                           htmlOutput_p( 'allquerytext',
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom'  ),
-                           htmlOutput_p( 'metatext' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' )
-                         ),
-                         wellPanel( 
-                           htmlOutput( 'querytitle' ),
-                           htmlOutput_p( 'querytext',
-                                       HTML( tt('gquery1') ), tt('gquery2'),
-                                       placement='bottom' ),
-                           htmlOutput_p("query",
-                                        HTML( tt('ts1') ), tt('ts2'),
-                                        placement='top'  )
-                         )
-                ),
-                tabPanel("Counts For Drugs In Selected Reports",
-                         wellPanel( 
-                           htmlOutput( 'cotext' ),
-                           htmlOutput_p( 'querycotext' ,
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom' )
-                         ),
+                          withSpinner(plotOutput_p( 'cpbayesplot' ))
+                            # verbatimTextOutput( 'cpbayestext' )
+                          ),
+                tabPanel(uiOutput("ReportCountsbyDate"),  
                          wellPanel(
-                           htmlOutput( 'cotitle' )
+                           style="background-color:white;height:30px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         htmlOutput_p( 'coquerytext' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' ),
-                         wordcloudtabset('cloudcoquery', 'coquery',
-                                         popheads=c( tt('codrug1'), tt('word1') ), 
-                                         poptext=c( tt('codrug3'), tt('word2') ))
+                         withSpinner(plotOutput_p('queryplot'))
+                         
                 ),
-                tabPanel("Counts For Events In Selected Reports",
-                         wellPanel( 
-                           htmlOutput( 'cotextE' ),
-                           htmlOutput_p( 'querycotextE' ,
-                                         tt('gquery1'), tt('gquery2'),
-                                         placement='bottom' )
-                         ),
+                tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                          wellPanel(
-                           htmlOutput( 'cotitleE' )
+                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         htmlOutput_p( 'coquerytextE' ,
-                                       tt('gquery1'), tt('gquery2'),
-                                       placement='bottom' ),
-                         wordcloudtabset('cloudcoqueryE', 'coqueryE',
-                                         popheads=c( tt('codrug1'), tt('word1') ), 
-                                         poptext=c( tt('codrug3'), tt('word2') ))
+                         withSpinner(htmlOutput('coquery'))
                 ),
-                tabPanel("Other Apps",  
-                         wellPanel( 
-                           htmlOutput( 'applinks' )
-                         )
+                tabPanel(uiOutput("CountsForEventsInSelectedReports"),
+                         wellPanel(
+                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                         ),
+                         withSpinner(htmlOutput('coqueryE'))
                 ),
-                tabPanel('Data Reference', HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-                ),
-                tabPanel('About', 
-                         img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
-              id='maintabs', selected = 'Change in Mean Analysis'
+              id='maintabs', selected = uiOutput("ChangeinMeanAnalysis")
             )
           )
         )
       )
     )
+
