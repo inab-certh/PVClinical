@@ -1,0 +1,146 @@
+library(rsconnect)
+library(shinyjs)
+library(shiny)
+library(shinyWidgets)
+library(DT)
+library(shinycssloaders)
+
+
+options(encoding = 'UTF-8')
+
+
+source('sourcedir.R')
+
+renderDrugName <- function() { 
+  
+  ( htmlOutput('drugname') )
+  
+} 
+renderLimit <- function() { 
+  
+  ( htmlOutput('limit') )
+  
+}  
+
+renderStart <- function() { 
+  
+
+  ( htmlOutput('start') )
+  
+}  
+
+renderStart2 <- function() { 
+  ( htmlOutput('start2') )
+  
+}  
+
+getcurtab <- function() { 
+#  browser()
+#  print( textOutput('curtab') )
+  
+#  browser()
+   s<-( textOutput('limit') )
+   print(s)
+#   ss <- strsplit( as.character(s), ">" , fixed=TRUE)
+#   ss <- strsplit( as.character(ss[[1]][2]), "<" , fixed=TRUE)
+#   print(ss[[1]][1])
+  return(  "PRR and ROR Results" )
+  
+}  
+countries <- c("en", "gr")
+
+flags <- c(
+  "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gb.svg",
+  "https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/gr.svg"
+)
+
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
+                  
+                            
+                  fluidRow(useShinyjs(),
+                           column(width=12, dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
+                                  fluidRow( withSpinner(plotOutput_p( 'cpmeanplot' )))
+                                  
+                                  
+                                  
+                                 # wellPanel(
+                                 #   plotOutput_p( 'cpmeanplot' ),
+                                 #   htmlOutput_p( 'cpmeantext' )
+                                 # )
+                           ),
+                                  
+                           hidden(
+                             uiOutput('page_content'),
+                             
+                             selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
+                                           HTML( tt('drugvar1') ), tt('drugvar2'),
+                                           placement='top'), 
+                             selectInput_p("v2", 'Time Variable' , c('receivedate', 'receiptdate'), 
+                                           HTML( tt('drugvar1') ), tt('drugvar2'),
+                                           placement='top', selected='receiptdate'), 
+                             
+                             textInput_p("t1", "Name of Drug", '', 
+                                         HTML( tt('drugname1') ), tt('drugname2'),
+                                         placement='bottom'), 
+                             textInput_p("t2", "Adverse Events", '', 
+                                         HTML( tt('eventname1') ), tt('eventname2'),
+                                         placement='bottom'),
+                             textInput_p("lang", "lang", '', 
+                                         HTML( tt('en') ), tt('gr'),
+                                         placement='bottom'),
+                             numericInput_p('maxcp', "Maximum Number of Change Points", 3, 1, step=1,
+                                            HTML( tt('cplimit1') ), tt('cplimit2'),
+                                            placement='bottom'),
+                             numericInput_p(
+                               'limit',
+                               'Maximum number of drugs',
+                               50,
+                               1,
+                               100,
+                               step = 1,
+                               HTML(tt('limit1')),
+                               tt('limit2'),
+                               placement = 'bottom'
+                             ),
+                             radioButtons(
+                               'useexact',
+                               'Match Event Term:',
+                               c('Exactly' = 'exact', 'Any Term' = 'any'),
+                               selected = 'any'
+                             ),
+                             radioButtons('useexactD', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any'),
+                             radioButtons('useexactE', 'Match event name:', c('Exactly'='exact', 'Any Term'='any'), selected = 'any' ),
+                             
+                             
+                             textInput_p("drugname", "Name of Drug", '', HTML( tt('drugname1') ), tt('drugname2'), placement='left'), textInput_p("eventname", "Adverse Events", '', 
+                                                                                                                                                  HTML( tt('eventname1') ), tt('eventname2'),
+                                                                                                                                                  placement='left'),              
+                             numericInput_p(
+                               'start',
+                               'Rank of first event',
+                               1,
+                               1,
+                               999,
+                               step = 1,
+                               HTML(tt('limit1')),
+                               tt('limit2'),
+                               placement = 'bottom'
+                             ),
+                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1,,  step=1,
+                                            HTML( tt('cplimit1') ), tt('cplimit2'),
+                                            placement='left')
+                             
+                           )
+                    
+                    
+                    
+                      
+                      
+                      
+                    )
+                  
+                  
+                  
+        )
+      )
+

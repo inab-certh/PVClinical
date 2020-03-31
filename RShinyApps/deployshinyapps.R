@@ -11,18 +11,21 @@ exclude<- c(
 )
 app <- setdiff(dirlist, exclude)
 app <- c(
- "510kview", 
- "ChangePoint", 
- "Dash" ,  
+ "ChangePoint",
+ "Dash" ,
  "RR_E",
  "DrugEnforceView",
  "DynPRR" ,
- "deviceenforceview",
- "LabelView"  ,
  "LRTest_E" ,
- "LRTest",  
- "ReportView" , 
+ "LRTest",
  "RR_D" , 
+ "QuickViewDrug",
+ "QuickViewDrugEvent",
+ "QuickViewEvent",
+ "LabelView"  ,
+ # "ReportView" , 
+ # "deviceenforceview",
+ # "510kview", 
  NULL
 )
 #  "deviceclassview",
