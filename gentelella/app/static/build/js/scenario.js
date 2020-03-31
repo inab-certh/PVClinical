@@ -63,7 +63,7 @@ $(function() {
             });
         }).toArray();
 
-        $("#atcTree").treeview('checkNode', [nodes_to_check]);
+        $("#atcTree").treeview('checkNode', [nodes_to_check, {silent: true}]);
         // $("#atcTree").treeview('uncheckNode', [nodes_to_uncheck]);
         // $("#atcTree").treeview('checkNode', [more_to_check]);
         $("#atcTree").treeview('revealNode', [nodes_to_check, {silent: true}]);
@@ -306,11 +306,29 @@ function move_to_selected_drugs() {
         return $(this).val()
     }).toArray();
 
-    var selected_synonyms = all_drugs.filter(function (drug) {
-        return checked_synonyms.indexOf(drug.split(' - ').shift()) != -1;
-    });
+    // var selected_synonyms = all_drugs.filter(function (drug) {
+    //     return checked_synonyms.indexOf(drug.split(' - ').shift()) != -1;
+    // });
 
     var all_selected_drugs = $("[name='drugs_fld']").val();
-    var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
+    // console.log(checked_synonyms);
+    // console.log(all_selected_drugs);
+
+    var all_selected_drugs = all_selected_drugs.concat(checked_synonyms);
+
+    var options_arr = [];
+
+    // Get all options from drug field and concantenate with selected synonyms
+    all_selected_drugs.forEach(function (all_opts, index) {
+        options_arr.push(new Option(all_opts, all_opts))
+    });
+
+    console.log(all_selected_drugs);
+
+
+    // Change/update drug options and send trigger
+    $("[name='drugs_fld']").html(options_arr).trigger("change");
+
+    // var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
     $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 }
