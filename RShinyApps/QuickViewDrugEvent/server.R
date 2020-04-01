@@ -48,6 +48,7 @@ shinyServer(function(input, output, session) {
       selectedLang='en'
     }
     translator$set_translation_language(selectedLang)
+    
     #browser()
     # if (!is.null(query[['lang']])) {
     #   updateSelectInput(session, "selected_language",
@@ -701,38 +702,46 @@ shinyServer(function(input, output, session) {
   })
 
   output$cpmeanplot <- renderPlot ({
-    mydf <-getquerydata()$mydfin$result
-    # write.xlsx(mydf, "../mydf.xlsx")
-    if (length(mydf) > 0)
-    {
+    if(getterm1( session)!=""){
+      
+      mydf <-getquerydata()$mydfin$result
+      # write.xlsx(mydf, "../mydf.xlsx")
+      if (length(mydf) > 0)
+      {
+        s <- calccpmean()
+        labs <-    index( getts() )
+        pos <- seq(1, length(labs), 3)
+  
+        if ( getterm1( session, FALSE )==''  )
+        {
+          mydrugs <- i18n()$t("All Drugs")
+        }
+        else
+        {
+          mydrugs <- getterm1( session, FALSE )
+        }
+        if ( getterm2( session, FALSE )=='' )
+        {
+          myevents <- i18n()$t("All Events")
+        }
+        else
+        {
+          myevents <- getterm2( session, FALSE )
+        }
+        # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
+        mytitle <- i18n()$t("Change in mean analysis")
+        # par(bg = "gray")
+        plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
+        axis(1, pos,  labs[pos], las=2  )
+        grid(nx=NA, ny=NULL,col = "lightgray")
+        abline(v=pos, col = "lightgray", lty = "dotted",
+               lwd = par("lwd") )
+        
+      }
+      
+    }
+    else{
       s <- calccpmean()
-      labs <-    index( getts() )
-      pos <- seq(1, length(labs), 3)
-
-      if ( getterm1( session, FALSE )==''  )
-      {
-        mydrugs <- i18n()$t("All Drugs")
-      }
-      else
-      {
-        mydrugs <- getterm1( session, FALSE )
-      }
-      if ( getterm2( session, FALSE )=='' )
-      {
-        myevents <- i18n()$t("All Events")
-      }
-      else
-      {
-        myevents <- getterm2( session, FALSE )
-      }
-      # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
-      mytitle <- i18n()$t("Change in mean analysis")
-      # par(bg = "gray")
-      plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
-      axis(1, pos,  labs[pos], las=2  )
-      grid(nx=NA, ny=NULL,col = "lightgray")
-      abline(v=pos, col = "lightgray", lty = "dotted",
-             lwd = par("lwd") )
     }
   })
 
