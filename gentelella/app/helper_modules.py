@@ -142,31 +142,16 @@ def get_medDRA_children(parent, level, conditions):
 
     # Retrieve by filtering the conditions by children level type and parent
     children = list(filter(lambda c: c.type == level_condition_type[level] and\
-                    c[parent_types[level]] == parent.code, conditions))
-    # print(children)
+                                     getattr(c, parent_types[level]) == parent.code, conditions))
 
+    # Last level return from recursion
     if level == 5:
-        return sorted(list(map(lambda ch: {"id":ch.name , "text": "{} - {}".format(ch.name, ch.code)}, children)),
+        return sorted(list(map(lambda ch: {"id": "{} - {}".format(ch.name, ch.code),
+                                           "text": "{} - {}".format(ch.name, ch.code)}, children)),
                       key=lambda v: v["text"])
 
-    # mydata = [
-    #     {id: 1, text: "USA", inc: [
-    #         {id:11, text: "west", inc: [
-    #             {id: 111, text: "California", inc: [
-    #                 {id: 1111, text: "Los Angeles", inc: [
-    #                     {id: 11111, text: "Hollywood"}
-    #                 ]},
-    #                 {id: 1112, text: "San Diego"}
-    #             ]},
-    #             {id: 112, text: "Oregon"}
-    #         ]}
-    #     ]},
-    #     {id: 2, text: "India"},
-    #     {id: 3, text: "中国"}
-    # ];
-
-
-    return sorted([{"id": ch.name, "text": "{} - {}".format(ch.name, ch.code),
+    return sorted([{"id":"{} - {}".format(ch.name, ch.code),
+                    "text": "{} - {}".format(ch.name, ch.code),
                     "inc": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
                   key=lambda v: v["text"])
 
@@ -178,6 +163,7 @@ def medDRA_hierarchy_tree(conditions):
 
     # Append to/create the medDRA tree for all the soc conditions we have
     for soc_c in soc_conditions:
-        medDRA_tree.append({"text": root, "inc": get_medDRA_children(soc_c, 2, conditions)})
+        medDRA_tree.append({"text": "{} - {}".format(soc_c.name, soc_c.code),
+                            "inc": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree

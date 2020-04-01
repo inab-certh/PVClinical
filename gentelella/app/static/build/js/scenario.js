@@ -31,12 +31,12 @@ $(function() {
 
 
     $("[name='drugs_fld']").change(function () {
-        // $('#atcTree').treeview('collapseAll', {silent: true});
-        // $('#atcTree').treeview('uncheckAll', {silent: true});
+        // $("#atcTree").treeview('collapseAll', {silent: true});
+        // $("#atcTree").treeview('uncheckAll', {silent: true});
         var selected = $(this).val();
 
         if(selected===null) {
-            $('#atcTree').treeview('uncheckAll', {silent: true});
+            $("#atcTree").treeview('uncheckAll', {silent: true});
         }
 
         var selected_drugs = selected != null?selected.map(function (drug) {
@@ -53,7 +53,7 @@ $(function() {
             return ch_atc.text.length==7 && selected_atcs.indexOf(ch_atc.text) == -1;
         })
 
-        $('#atcTree').treeview('uncheckNode', [atcs_to_uncheck]);
+        $("#atcTree").treeview('uncheckNode', [atcs_to_uncheck]);
 
 
         var nodes_to_check = $("li.node-atcTree").map(function () {
@@ -294,6 +294,11 @@ $(function() {
         return drugs;
     }
 
+    console.log($("#medDRATree").data());
+    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: $("#medDRATree").data()}, maximumSelectionLength: 3,
+				templateResult: formatState, templateSelection: formatState});
+
+
 });
 
 function move_to_selected_drugs() {
@@ -331,4 +336,13 @@ function move_to_selected_drugs() {
 
     // var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
     $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
+}
+
+function formatState (state) {
+    if (state.id >= 1 && state.id <= 3) {
+        return $(
+            '<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
+        );
+    }
+    else return state.text;
 }
