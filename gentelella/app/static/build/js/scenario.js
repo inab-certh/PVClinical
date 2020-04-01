@@ -294,8 +294,8 @@ $(function() {
         return drugs;
     }
 
-    console.log($("#medDRATree").data());
-    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: $("#medDRATree").data()}, maximumSelectionLength: 3,
+    console.log(JSON.parse($("#medDRATree").text()));
+    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: JSON.parse($("#medDRATree").text())}, maximumSelectionLength: 3,
 				templateResult: formatState, templateSelection: formatState});
 
 
