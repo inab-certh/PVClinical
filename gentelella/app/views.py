@@ -25,6 +25,7 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 
 from app.helper_modules import atc_hierarchy_tree
+from app.helper_modules import medDRA_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
@@ -222,10 +223,14 @@ def add_edit_scenario(request, scenario_id=None):
         scform = ScenarioForm(label_suffix='',  instance=scenario)
 
     all_drug_codes = list(map(lambda d: d.code, scform.all_drugs))
+    all_conditions = scform.all_conditions
+
+    # print(all_conditions)
 
     context = {
         "title": _("Σενάριο"),
         "atc_tree": json.dumps(atc_hierarchy_tree(all_drug_codes)),
+        "medDRA_tree": json.dumps(medDRA_hierarchy_tree(all_conditions)),
         "delete_switch": delete_switch,
         "scenario_id": scenario.id,
         "form": scform,

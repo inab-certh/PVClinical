@@ -11,7 +11,6 @@ from django.utils.safestring import mark_safe
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
-
 from app.models import Drug
 from app.models import Condition
 from app.models import Scenario
