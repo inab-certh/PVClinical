@@ -293,7 +293,7 @@ $(function() {
             dataType: "json",
             async: false
         }).done(function(data) {
-            drugs = data.results;
+            drugs = data.drugs;
         }).fail(function () {
             drugs = [];
         });
@@ -308,7 +308,7 @@ $(function() {
             dataType: "json",
             async: false
         }).done(function(data) {
-            medDRA_tree = data.results;
+            medDRA_tree = data.medra_tree;
         }).fail(function () {
             medDRA_tree = [];
         });

@@ -115,7 +115,7 @@ def get_all_drugs(request):
         el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
 
     data={}
-    data["results"] = all_drugs
+    data["drugs"] = all_drugs
     return JsonResponse(data)
 
 
