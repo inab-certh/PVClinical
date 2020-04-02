@@ -1,7 +1,9 @@
 import json
+import os
 
 from itertools import chain
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 
@@ -25,7 +27,7 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 
 from app.helper_modules import atc_hierarchy_tree
-from app.helper_modules import medDRA_hierarchy_tree
+
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
@@ -111,6 +113,20 @@ def get_all_drugs(request):
 
     data={}
     data["results"] = all_drugs
+    return JsonResponse(data)
+
+
+def get_medDRA_tree(request):
+    """ Get the medDRA hierarchy tree
+    :param request: The request from which the medDRA tree will be retrieved
+    :return: The medDRA hierarchy tree
+    """
+
+    with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
+        medDRA_tree = json.load(fp)
+
+    data={}
+    data["medDRA_tree"] = medDRA_tree
     return JsonResponse(data)
 
 
@@ -223,14 +239,14 @@ def add_edit_scenario(request, scenario_id=None):
         scform = ScenarioForm(label_suffix='',  instance=scenario)
 
     all_drug_codes = list(map(lambda d: d.code, scform.all_drugs))
-    all_conditions = scform.all_conditions
+    # all_conditions = scform.all_conditions
+
 
     # print(all_conditions)
 
     context = {
         "title": _("Σενάριο"),
         "atc_tree": json.dumps(atc_hierarchy_tree(all_drug_codes)),
-        "medDRA_tree": json.dumps(medDRA_hierarchy_tree(all_conditions)),
         "delete_switch": delete_switch,
         "scenario_id": scenario.id,
         "form": scform,
