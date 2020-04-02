@@ -114,7 +114,7 @@ class KnowledgeGraphWrapper:
         drugs = self.sparql.query().bindings
         # drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
         #                           ) for d in drugs])
-        drugs = sorted([NCObject(name=get_binding_value(d, "drug_name"),
+        drugs = sorted([NCObject(name=get_binding_value(d, "drug_name").capitalize(),
                                  code=get_binding_value(d, "drug_code", sep=":")
                                  ) for d in drugs])
 
@@ -143,7 +143,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        }
+        } 
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -158,8 +158,8 @@ class KnowledgeGraphWrapper:
                                              type=get_binding_value(c, "condition_type"),
                                              )for c in conditions])
         # print(conditions)
-        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
-            json.dump(medDRA_hierarchy_tree(conditions), fp)
+        # with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
+        #     json.dump(medDRA_hierarchy_tree(conditions), fp)
 
         cache.set("conditions", conditions)
 
