@@ -308,7 +308,7 @@ $(function() {
             dataType: "json",
             async: false
         }).done(function(data) {
-            medDRA_tree = data.medra_tree;
+            medDRA_tree = data.medDRA_tree;
         }).fail(function () {
             medDRA_tree = [];
         });
