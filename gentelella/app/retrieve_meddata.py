@@ -10,6 +10,8 @@ from SPARQLWrapper import JSON
 from django.conf import settings
 from django.core.cache import cache
 
+from app.helper_modules import medDRA_hierarchy_tree
+
 
 class NCObject(object):
     def __init__(self, name, code):
@@ -156,6 +158,8 @@ class KnowledgeGraphWrapper:
                                              type=get_binding_value(c, "condition_type"),
                                              )for c in conditions])
         # print(conditions)
+        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
+            json.dump(medDRA_hierarchy_tree(conditions), fp)
 
         cache.set("conditions", conditions)
 

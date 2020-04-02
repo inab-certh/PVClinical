@@ -18,6 +18,7 @@ urlpatterns = [
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
     path('ajax/filter-whole-set', views.filter_whole_set, name='filter_whole_set'),
     path('ajax/all-drugs', views.get_all_drugs, name='get_all_drugs'),
+    path('ajax/medDRA-tree', views.get_medDRA_tree, name='get_medDRA_tree'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
 

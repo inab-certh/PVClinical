@@ -279,6 +279,12 @@ $(function() {
     // A fake change trigger to initialize form
     $("[name='drugs_fld']").trigger("change");
 
+
+    var medDRA_tree = get_medDRA_tree();
+    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
+        maximumSelectionLength: 5, templateResult: formatState, templateSelection: formatState});
+
+
     function get_all_drugs() {
         var drugs=[];
         $.ajax({
@@ -294,9 +300,20 @@ $(function() {
         return drugs;
     }
 
-    console.log(JSON.parse($("#medDRATree").text()));
-    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: JSON.parse($("#medDRATree").text())}, maximumSelectionLength: 3,
-				templateResult: formatState, templateSelection: formatState});
+    function get_medDRA_tree() {
+        var medDRA_tree=[];
+        $.ajax({
+            url: "/ajax/medDRA-tree",
+            type: "GET",
+            dataType: "json",
+            async: false
+        }).done(function(data) {
+            medDRA_tree = data.results;
+        }).fail(function () {
+            medDRA_tree = [];
+        });
+        return medDRA_tree;
+    }
 
 
 });
@@ -328,8 +345,6 @@ function move_to_selected_drugs() {
         options_arr.push(new Option(all_opts, all_opts))
     });
 
-    console.log(all_selected_drugs);
-
 
     // Change/update drug options and send trigger
     $("[name='drugs_fld']").html(options_arr).trigger("change");
@@ -339,10 +354,13 @@ function move_to_selected_drugs() {
 }
 
 function formatState (state) {
-    if (state.id >= 1 && state.id <= 3) {
-        return $(
+    // if (state.id >= 1 && state.id <= 3) {
+    //     return $(
+    //         '<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
+    //     );
+    // }
+    // else return state.text;
+    return $(
             '<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
-        );
-    }
-    else return state.text;
+    );
 }
