@@ -59,7 +59,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             
                   fluidRow(useShinyjs(),
                            column(width=12, dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
-                                  fluidRow( withSpinner(plotOutput_p( 'cpmeanplot' )))
+                                  fluidRow( bsAlert("qvde_cpmeanplot"),withSpinner(plotOutput( 'cpmeanplot' )))
                                   
                                   
                                   

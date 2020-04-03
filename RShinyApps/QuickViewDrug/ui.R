@@ -78,7 +78,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
                            column(width=6,
                                   fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
-                                  fluidRow( column(width=12,offset=1,withSpinner(plotOutput_p( 'cpmeanplot') )))
+                                  fluidRow( column(width=11,offset=1,withSpinner(plotOutput_p( 'cpmeanplot') )))
                                   
                                   
                                   
