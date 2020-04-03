@@ -1,4 +1,5 @@
 require(shiny)
+# library(shinyalert)
 require(shinyBS)
 require('lubridate')
 require('bcp')
@@ -708,6 +709,7 @@ shinyServer(function(input, output, session) {
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
+        closeAlert(session, "exampleAlert")
         s <- calccpmean()
         labs <-    index( getts() )
         pos <- seq(1, length(labs), 3)
@@ -737,6 +739,12 @@ shinyServer(function(input, output, session) {
         abline(v=pos, col = "lightgray", lty = "dotted",
                lwd = par("lwd") )
         
+      }
+      else
+      {
+        createAlert(session, "qvde_cpmeanplot", "exampleAlert", title = i18n()$t("Error"),
+                     content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+        # shinyalert("Oops!", "Something went wrong.", type = "error")
       }
       
     }
