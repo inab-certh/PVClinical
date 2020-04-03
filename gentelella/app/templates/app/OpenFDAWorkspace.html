@@ -216,26 +216,71 @@
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        var sessionAppId = sessionStorage.getItem("shinnyAppId");
         if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
         {
             app='QuickViewDrugEvent';
+            if(sessionAppId!=null && DrugEventApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                DrugEventApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
         else if(scenarioConditionsLength>0)
         {
             app='QuickViewEvent';
+            if(sessionAppId!=null && OnlyEventApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                OnlyEventApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
         else{
             app='QuickViewDrug';
+            if(sessionAppId!=null && OnlyDrugApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                OnlyDrugApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
+        var sessionSelectedEvent = sessionStorage.getItem("shinnySelectedEvent");
+        var sessionSelectedDrug = sessionStorage.getItem("shinnySelectedDrug");
+        event=sessionSelectedEvent;
+        drug=sessionSelectedDrug;
+        if(drug!=null){
+            var drugRadio=$("input[value="+drug+"][Type=radio] ");
+            if(drugRadio.length>0)
+            {
+                drugRadio[0].checked=true;
+            }
+        }
+      if(event!=null) {
+          var eventRadio=$("input[value="+event+"][Type=radio] ");
+            if(eventRadio.length>0)
+            {
+                eventRadio[0].checked=true;
+            }
+      }
+
+
+
 
 
         keepAppropriateAppsBasedOnParameters();
+
         buildUrl(app, drug, event);
         //keepButtonsBasedOnApp(app);
         // initializeDropdowns();
 
         $('#shinnyAppsTabs a').click(function (e) {
             app=e.target.parentElement.id;
+            sessionStorage.setItem("shinnyAppId", app);
             {#app = e.target.childNodes[0].textContent;#}
             getCheckedElementOfRadios();
             keepAppropriateAppsBasedOnParameters();
@@ -243,13 +288,14 @@
         })
         $('.drugSelectionCol input').click(function (e) {
             drug = e.target.value;
+            sessionStorage.setItem("shinnySelectedDrug", drug);
             buildUrl(app, drug, event);
         })
         $('.eventSelectionCol input').click(function (e) {
             event = e.target.value;
+            sessionStorage.setItem("shinnySelectedEvent", event);
             buildUrl(app, drug, event);
         })
-
         function getCheckedElementOfRadios() {
             if (app != 'QuickView2') {
                 var ele = document.getElementsByName('drugRadio');
