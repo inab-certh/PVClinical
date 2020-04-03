@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d5b23b3f-98bb-428a-b966-f230371c74e2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/helper_modules.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/helper_modules.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/retrieve_meddata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/static/vendors/select2-to-tree/src/select2totree.css" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/static/vendors/select2-to-tree/src/select2totree.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/templates/app/add_edit_scenario.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/app/templates/app/base_site.html" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/app/templates/app/base_site.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gentelella/db_b.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/gentelella/db_b.sqlite3" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1Zm5I4B1yjM9QVbEGSavcXLV9hY" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="sqlite" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="editor.config.ad.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/gentelella/locale/en/LC_MESSAGES" />
+      <recent name="$PROJECT_DIR$/gentelella/locale" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/gentelella/app" />
+      <recent name="$PROJECT_DIR$/gentelella/app/static/tr/datatables" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="django-gentelella" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d5b23b3f-98bb-428a-b966-f230371c74e2" name="Default Changelist" comment="" />
+      <created>1571055776376</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1571055776376</updated>
+      <workItem from="1571055777542" duration="6021000" />
+      <workItem from="1571121059459" duration="27243000" />
+      <workItem from="1571206629448" duration="25353000" />
+      <workItem from="1571292676113" duration="26276000" />
+      <workItem from="1571404086272" duration="603000" />
+      <workItem from="1571730106189" duration="17025000" />
+      <workItem from="1571810727490" duration="15722000" />
+      <workItem from="1571900634429" duration="8008000" />
+      <workItem from="1571985012311" duration="241000" />
+      <workItem from="1572335017465" duration="5757000" />
+      <workItem from="1572420429242" duration="2726000" />
+      <workItem from="1572425573659" duration="18053000" />
+      <workItem from="1572446407405" duration="2047000" />
+      <workItem from="1572448610224" duration="153000" />
+      <workItem from="1572507350440" duration="6706000" />
+      <workItem from="1572517518364" duration="3049000" />
+      <workItem from="1572595505070" duration="622000" />
+      <workItem from="1572616360881" duration="1016000" />
+      <workItem from="1572852255442" duration="23746000" />
+      <workItem from="1572938807192" duration="4419000" />
+      <workItem from="1572962620421" duration="3202000" />
+      <workItem from="1573828643528" duration="698000" />
+      <workItem from="1573831184951" duration="916000" />
+      <workItem from="1574063095233" duration="4119000" />
+      <workItem from="1574075398422" duration="5730000" />
+      <workItem from="1574089303265" duration="61000" />
+      <workItem from="1574155795860" duration="10288000" />
+      <workItem from="1574234893553" duration="10258000" />
+      <workItem from="1574320880122" duration="42000" />
+      <workItem from="1574416509455" duration="19286000" />
+      <workItem from="1574671242020" duration="17619000" />
+      <workItem from="1574752572491" duration="19698000" />
+      <workItem from="1574839891353" duration="5580000" />
+      <workItem from="1574846616879" duration="19072000" />
+      <workItem from="1574928786964" duration="24306000" />
+      <workItem from="1575011820317" duration="18714000" />
+      <workItem from="1575271187271" duration="22769000" />
+      <workItem from="1575361458368" duration="14649000" />
+      <workItem from="1575443660843" duration="16603000" />
+      <workItem from="1575616584211" duration="23490000" />
+      <workItem from="1575876206219" duration="12361000" />
+      <workItem from="1575962270141" duration="34454000" />
+      <workItem from="1576049729946" duration="25074000" />
+      <workItem from="1576135227895" duration="26695000" />
+      <workItem from="1576222063282" duration="6819000" />
+      <workItem from="1576242907256" duration="10674000" />
+      <workItem from="1576481766527" duration="1221000" />
+      <workItem from="1576593133848" duration="2958000" />
+      <workItem from="1576654521651" duration="20784000" />
+      <workItem from="1576739610558" duration="9618000" />
+      <workItem from="1576752306486" duration="799000" />
+      <workItem from="1578559838995" duration="18451000" />
+      <workItem from="1585431367522" duration="10029000" />
+      <workItem from="1585548412240" duration="21819000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="311" y="58" width="800" height="677" key="#Notifications" timestamp="1585570761377">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="311" y="58" width="800" height="677" key="#Notifications/67.27.1299.741/1366.0.1366.768@67.27.1299.741" timestamp="1585433820974" />
+    <state x="311" y="58" key="#Notifications/67.27.1299.741@67.27.1299.741" timestamp="1585570761377" />
+    <state x="167" y="125" width="1099" height="543" key="DiffContextDialog" timestamp="1585432551189">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="167" y="125" width="1099" height="543" key="DiffContextDialog/67.27.1299.741/1366.0.1366.768@67.27.1299.741" timestamp="1585432551189" />
+    <state x="499" y="154" width="424" height="484" key="FileChooserDialogImpl" timestamp="1585432500721">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="499" y="154" width="424" height="484" key="FileChooserDialogImpl/67.27.1299.741/1366.0.1366.768@67.27.1299.741" timestamp="1585432500721" />
+    <state x="205" y="31" key="SettingsEditor" timestamp="1585570768058">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="205" y="31" key="SettingsEditor/67.27.1299.741/1366.0.1366.768@67.27.1299.741" timestamp="1585433973154" />
+    <state x="205" y="31" key="SettingsEditor/67.27.1299.741@67.27.1299.741" timestamp="1585570768058" />
+  </component>
+</project>
