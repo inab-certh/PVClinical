@@ -282,7 +282,10 @@ $(function() {
 
     var medDRA_tree = get_medDRA_tree();
     $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
-        maximumSelectionLength: 5, templateResult: formatState, templateSelection: formatState});
+        maximumSelectionLength: 5});
+
+    // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
+    //     maximumSelectionLength: 5, templateResult: formatState, templateSelection: formatState});
 
 
     function get_all_drugs() {
