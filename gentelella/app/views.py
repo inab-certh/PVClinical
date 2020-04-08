@@ -108,6 +108,10 @@ def filter_whole_set(request):
 
 
 def get_all_drugs(request):
+    """ Get all cached drugs
+    :param request:
+    :return: all cached drugs
+    """
     knw = KnowledgeGraphWrapper()
 
     all_drugs = knw.get_drugs()
@@ -124,12 +128,10 @@ def get_medDRA_tree(request):
     :param request: The request from which the medDRA tree will be retrieved
     :return: The medDRA hierarchy tree
     """
-
-    with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
-        medDRA_tree = json.load(fp)
+    knw = KnowledgeGraphWrapper()
 
     data={}
-    data["medDRA_tree"] = medDRA_tree
+    data["medDRA_tree"] = knw.get_medDRA_tree()
     return JsonResponse(data)
 
 

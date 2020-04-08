@@ -143,7 +143,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        } 
+        } ORDER BY ?condition_name ?condition_code
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -158,12 +158,17 @@ class KnowledgeGraphWrapper:
                                              type=get_binding_value(c, "condition_type"),
                                              )for c in conditions])
         # print(conditions)
-        # with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
-        #     json.dump(medDRA_hierarchy_tree(conditions), fp)
+        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
+            json.dump(medDRA_hierarchy_tree(conditions), fp)
 
         cache.set("conditions", conditions)
 
-        # json_dir = os.path.dirname(os.path.realpath(__file__))
+        # Cache medDRA hierarchy tree too
+        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree_ch.json")) as fp:
+            medDRA_tree = json.load(fp)
+
+        cache.set("medDRA_tree", medDRA_tree)
+
         # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
         #     conditions = sorted(json.load(fp).items())
 
@@ -172,9 +177,14 @@ class KnowledgeGraphWrapper:
             # cache.set("conditions", conditions)
 
     def get_conditions(self):
-        """ Retrieve drugs from cache
+        """ Retrieve conditions from cache
         """
         return cache.get("conditions")
+
+    def get_medDRA_tree(self):
+        """ Retrieve medDRA_tree from cache
+        """
+        return cache.get("medDRA_tree")
 
 # def get_drugs():
 #
