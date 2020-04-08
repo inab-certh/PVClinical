@@ -14,15 +14,25 @@ $(function() {
             dataType: "json",
             type: "GET",
             quietMillis: 50,
-            data: function(term) {
+            data: function(params) {
                 return {
                     type: $(this).attr("name").replace("_fld",""),
-                    term: term.term
+                    term: params.term,
+                    page: params.page
                 };
             },
-            processResults: function (response) {
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                page_size = 7;
+
                 return {
-                    results: response.results
+                    results: data.results.slice((params.page - 1) * page_size, params.page * page_size),
+                    pagination: {
+                      more: (params.page * page_size) < data.total_count
+                    }
+
+                // return {
+                //     results: data.results
                 };
             },
             cache: true
@@ -281,8 +291,14 @@ $(function() {
 
 
     var medDRA_tree = get_medDRA_tree();
-    $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
-        maximumSelectionLength: 5});
+    $("#medDRATree").jstree({
+        "core" : {
+            "multiple": true,
+            "data": medDRA_tree
+        }
+    });
+    // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
+    //     maximumSelectionLength: 5});
 
     // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
     //     maximumSelectionLength: 5, templateResult: formatState, templateSelection: formatState});

@@ -149,12 +149,14 @@ def get_medDRA_children(parent, level, conditions):
     # Last level return from recursion
     if level == 5:
         return sorted(list(map(lambda ch: {"id": "{} - {}".format(ch.name, ch.code),
-                                           "text": "{} - {}".format(ch.name, ch.code)}, children)),
+                                           "text": "{} - {}".format(ch.name, ch.code),
+                                           "icon": "{}".format(parent_types[level]),}, children)),
                       key=lambda v: v["text"])
 
     return sorted([{"id":"{} - {}".format(ch.name, ch.code),
                     "text": "{} - {}".format(ch.name, ch.code),
-                    "inc": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
+                    "icon": "{}".format(parent_types[level]),
+                    "ch": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
                   key=lambda v: v["text"])
 
 
@@ -165,7 +167,9 @@ def medDRA_hierarchy_tree(conditions):
 
     # Append to/create the medDRA tree for all the soc conditions we have
     for soc_c in soc_conditions:
-        medDRA_tree.append({"text": "{} - {}".format(soc_c.name, soc_c.code),
-                            "inc": get_medDRA_children(soc_c, 2, conditions)})
+        medDRA_tree.append({"id":"{} - {}".format(ch.name, ch.code),
+                            "text": "{} - {}".format(soc_c.name, soc_c.code),
+                            "icon": "soc",
+                            "ch": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree
