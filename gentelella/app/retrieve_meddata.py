@@ -33,14 +33,29 @@ class NCObject(object):
 
 
 class ConditionObject(NCObject):
-    def __init__(self, name, code, type, soc=None,
-                 hlgt=None, hlt=None, pt=None):
+    def __init__(self, name, code, type, soc=None, hlgt=None, hlt=None, pt=None):
         super().__init__(name, code)
         self.type = type
         self.soc = soc
         self.hlgt = hlgt
         self.hlt = hlt
         self.pt = pt
+
+        # self.soc = None
+        # self.hlgt = None
+        # self.hlt = None
+        # self.pt = None
+
+        # # Select main ancestor to set by type of condition
+        # type_to_main_ancestor = {"https://w3id.org/phuse/meddra#HighLevelGroupConcept": "soc",
+        #                          "https://w3id.org/phuse/meddra#HighLevelConcept": "hlgt",
+        #                          "https://w3id.org/phuse/meddra#PreferredConcept": "hlt",
+        #                          "https://w3id.org/phuse/meddra#LowLevelConcept": "pt",
+        #                          "https://w3id.org/phuse/meddra#SystemOrganClassConcept": ""}
+        #
+        # # Set only main ancestor (one level up) for condition
+        # setattr(self, type_to_main_ancestor[self.type],
+        #         eval(type_to_main_ancestor[self.type]) if type_to_main_ancestor[self.type] else None)
 
 
 class KnowledgeGraphWrapper:
@@ -118,7 +133,7 @@ class KnowledgeGraphWrapper:
                                  code=get_binding_value(d, "drug_code", sep=":")
                                  ) for d in drugs])
 
-        cache.set("drugs", drugs)
+        cache.set("drugs", drugs, timeout=None)
 
     def get_drugs(self):
         """ Retrieve drugs from cache
@@ -143,7 +158,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        } ORDER BY ?condition_name ?condition_code
+        }
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -157,17 +172,19 @@ class KnowledgeGraphWrapper:
                                              pt=get_binding_value(c, "pt"),
                                              type=get_binding_value(c, "condition_type"),
                                              )for c in conditions])
+
+
         # print(conditions)
         with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
             json.dump(medDRA_hierarchy_tree(conditions), fp)
 
-        cache.set("conditions", conditions)
+        cache.set("conditions", conditions, timeout=None)
 
         # Cache medDRA hierarchy tree too
-        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree_ch.json")) as fp:
+        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
             medDRA_tree = json.load(fp)
 
-        cache.set("medDRA_tree", medDRA_tree)
+        cache.set("medDRA_tree", medDRA_tree, timeout=None)
 
         # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
         #     conditions = sorted(json.load(fp).items())
@@ -223,8 +240,9 @@ def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
     :return: the value to assign it to an attribute
     """
 
-    if attr not in results_dict.keys():  # Key does not exist in sparql dictionary keys
-        return ""
+    # Key does not exist in sparql dictionary keys or is in nullify_attrs list
+    if attr not in results_dict.keys():
+        return None
 
     ret_val = results_dict[attr].value
 
@@ -234,3 +252,30 @@ def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
         ret_val = ret_val.strip(strip_chars)
 
     return ret_val
+
+# def keep_one_level_parent(condition):
+#     """ Keep only one level parent for the condition
+#     :param condition: the condition
+#     :return: the condition
+#     """
+#
+#     parent_by_level = ["pt", "hlt", "hlgt", "soc"]
+#     for el in parent_by_level:
+#         if getattr(condition, parent_by_level.pop(0)):
+#             for lvl in parent_by_level:
+#                 setattr(condition, lvl, None)
+
+# def ancestors_to_nullify(condition):
+#     """ Return attributes (ancestors) of condition to nullify (None).
+#     That way we keep only the main ancestor of the current condition
+#     :param condition: the current condition
+#     :return: second level and upper ancestors to nullify
+#     """
+#
+#     by_type_nullify_ancestors = {"https://w3id.org/phuse/meddra#HighLevelGroupConcept": [],
+#                                 "https://w3id.org/phuse/meddra#HighLevelConcept": ["soc"],
+#                                 "https://w3id.org/phuse/meddra#PreferredConcept": ["hlgt", "soc"],
+#                                 "https://w3id.org/phuse/meddra#LowLevelConcept": ["soc", "hlgt", "hlt"],
+#                                 "https://w3id.org/phuse/meddra#SystemOrganClassConcept": []}
+#
+#     return by_type_nullify_ancestors[condition.type]

@@ -138,7 +138,8 @@ def get_medDRA_children(parent, level, conditions):
                             5: "https://w3id.org/phuse/meddra#LowLevelConcept"}
 
     # Children level to parent type for filtering conditions to get children of current level and parent
-    parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt"}
+    # On level 6 there is not parent, it's just used for icons
+    parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt", 6: "llt"}
 
     # Retrieve by filtering the conditions by children level type and parent
     children = list(
@@ -148,15 +149,15 @@ def get_medDRA_children(parent, level, conditions):
 
     # Last level return from recursion
     if level == 5:
-        return sorted(list(map(lambda ch: {"id": "{} - {}".format(ch.name, ch.code),
+        return sorted(list(map(lambda ch: {"id": "{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
                                            "text": "{} - {}".format(ch.name, ch.code),
-                                           "icon": "{}".format(parent_types[level]),}, children)),
+                                           "icon": "{}".format(parent_types[level+1]),}, children)),
                       key=lambda v: v["text"])
 
-    return sorted([{"id":"{} - {}".format(ch.name, ch.code),
+    return sorted([{"id":"{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
                     "text": "{} - {}".format(ch.name, ch.code),
-                    "icon": "{}".format(parent_types[level]),
-                    "ch": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
+                    "icon": "{}".format(parent_types[level+1]),
+                    "children": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
                   key=lambda v: v["text"])
 
 
@@ -167,9 +168,9 @@ def medDRA_hierarchy_tree(conditions):
 
     # Append to/create the medDRA tree for all the soc conditions we have
     for soc_c in soc_conditions:
-        medDRA_tree.append({"id":"{} - {}".format(ch.name, ch.code),
+        medDRA_tree.append({"id":"{} - {}___soc".format(soc_c.name, soc_c.code),
                             "text": "{} - {}".format(soc_c.name, soc_c.code),
                             "icon": "soc",
-                            "ch": get_medDRA_children(soc_c, 2, conditions)})
+                            "children": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree

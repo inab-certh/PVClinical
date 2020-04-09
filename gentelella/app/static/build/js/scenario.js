@@ -291,11 +291,13 @@ $(function() {
 
 
     var medDRA_tree = get_medDRA_tree();
+    console.log(medDRA_tree);
     $("#medDRATree").jstree({
         "core" : {
             "multiple": true,
             "data": medDRA_tree
-        }
+        },
+        "plugins":["checkbox"],
     });
     // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
     //     maximumSelectionLength: 5});

@@ -12,6 +12,20 @@
     min-width: 48px;
 }
 
+#medDRATree .soc,.hlgt,.hlt,.pt,.llt {
+    background-repeat: no-repeat;
+    background-size: 16px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+#medDRATree .soc {background-image: url("/static/images/medDRA/soc.png");}
+#medDRATree .hlgt {background-image: url("/static/images/medDRA/hlgt.png");}
+#medDRATree .hlt {background-image: url("/static/images/medDRA/hlt.png");}
+#medDRATree .pt { background-image: url("/static/images/medDRA/pt.png");}
+#medDRATree .llt { background-image: url("/static/images/medDRA/llt.png");}
+
 .popover{
     max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
