@@ -291,7 +291,7 @@ $(function() {
 
 
     var medDRA_tree = get_medDRA_tree();
-    console.log(medDRA_tree);
+    // console.log(medDRA_tree);
     $("#medDRATree").jstree({
         "core" : {
             "multiple": true,
