@@ -56,6 +56,10 @@ class ConditionObject(NCObject):
         # setattr(self, type_to_main_ancestor[self.type],
         #         eval(type_to_main_ancestor[self.type]) if type_to_main_ancestor[self.type] else None)
 
+    def __hash__(self):
+        return hash(('name', self.name, 'code', self.code, self.type,
+                     self.soc, self.hlgt, self.hlt, self.pt))
+
     def __eq__(self, other):
         return "{}-{}-{}-{}-{}-{}-{}".format(
             self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__eq__(
