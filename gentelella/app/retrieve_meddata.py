@@ -26,7 +26,6 @@ class NCObject(object):
         return "{}{}".format(self.name, self.code).__lt__(
             "{}{}".format(other.name, other.code))
 
-
     def __gt__(self, other):
         return "{}{}".format(self.name, self.code).__gt__(
             "{}{}".format(other.name, other.code))
@@ -56,6 +55,24 @@ class ConditionObject(NCObject):
         # # Set only main ancestor (one level up) for condition
         # setattr(self, type_to_main_ancestor[self.type],
         #         eval(type_to_main_ancestor[self.type]) if type_to_main_ancestor[self.type] else None)
+
+    def __eq__(self, other):
+        return "{}-{}-{}-{}-{}-{}-{}".format(
+            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__eq__(
+            "{}-{}-{}-{}-{}-{}-{}".format(
+                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
+
+    def __lt__(self, other):
+        return "{}-{}-{}-{}-{}-{}-{}".format(
+            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__lt__(
+            "{}-{}-{}-{}-{}-{}-{}".format(
+                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
+
+    def __gt__(self, other):
+        return "{}-{}-{}-{}-{}-{}-{}".format(
+            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__gt__(
+            "{}-{}-{}-{}-{}-{}-{}".format(
+                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
 
 
 class KnowledgeGraphWrapper:
@@ -158,7 +175,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        }
+        } LIMIT 10000
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -171,12 +188,12 @@ class KnowledgeGraphWrapper:
                                              hlt=get_binding_value(c, "hlt"),
                                              pt=get_binding_value(c, "pt"),
                                              type=get_binding_value(c, "condition_type"),
-                                             )for c in conditions])
+                                             ) for c in conditions])
 
-
-        # print(conditions)
-        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
-            json.dump(medDRA_hierarchy_tree(conditions), fp)
+        print(len(conditions))
+        print(len(list(set(conditions))))
+        # with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
+        #     json.dump(medDRA_hierarchy_tree(conditions), fp)
 
         cache.set("conditions", conditions, timeout=None)
 
@@ -189,9 +206,9 @@ class KnowledgeGraphWrapper:
         # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
         #     conditions = sorted(json.load(fp).items())
 
-            # conditions = [NCObject(name=n, code=c) for n, c in conditions]
-            #
-            # cache.set("conditions", conditions)
+        # conditions = [NCObject(name=n, code=c) for n, c in conditions]
+        #
+        # cache.set("conditions", conditions)
 
     def get_conditions(self):
         """ Retrieve conditions from cache
@@ -202,6 +219,7 @@ class KnowledgeGraphWrapper:
         """ Retrieve medDRA_tree from cache
         """
         return cache.get("medDRA_tree")
+
 
 # def get_drugs():
 #

@@ -93,7 +93,7 @@
                 </div>
                 <div class="well collapse" id="drugsNameCollapsible" data-synonyms-url="{% url 'drugs_synonyms' %}">
                     <div class="row">
-                        <div class="col-xs-6 parent-height">
+                        <div id="drugsEntity" class="col-xs-6 parent-height">
                             <div class="row">
                                 {{ form.drugs_fld|as_crispy_field }}
                             </div>
@@ -148,13 +148,14 @@
                 </div>
                 <div class="well collapse" id="conditionsNameCollapsible">
                     {{ form.conditions_fld|as_crispy_field }}
-                </div>
-                <div id="medDRATreeEntity">
+
+                    <div id="medDRATreeEntity">
                     <!--<button  type="button" class="btn btn-outline btn-block" onclick="atcToSelectedDrugs()">-->
                         <!--<i class="fa fa-angle-double-left"></i> <span class="visible-lg">{% trans "Μεταφορά" %}</span>-->
                     <!--</button>-->
-                    <label for="medDRATree">{% trans "Ιεραρχική απεικόνιση κατά MedDRA:" %}</label>
-                    <div id="medDRATree">
+                        <label for="medDRATree">{% trans "Ιεραρχική απεικόνιση κατά MedDRA:" %}</label>
+                        <div id="medDRATree">
+                        </div>
                     </div>
                 </div>
 <!--                <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>-->
