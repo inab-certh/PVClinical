@@ -3,6 +3,9 @@ require(shinyBS)
 library(shinyjs)
 library(shinycssloaders)
 source( 'sourcedir.R')
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
 options(encoding = 'UTF-8')
 # getdrugvarchoices <- function(){
 #   openfdavars <- c( 
@@ -91,7 +94,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                          wellPanel(
                            style="background-color:white;height:30px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         withSpinner(plotOutput_p('queryplot'))
+                         withSpinner(dygraphOutput('queryplot'))
                          
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),

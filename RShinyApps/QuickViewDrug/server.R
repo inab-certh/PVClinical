@@ -1,5 +1,8 @@
+
 require(shiny)
+
 require(shinyBS)
+
 require('lubridate')
 require('bcp')
 require('changepoint')
@@ -15,8 +18,16 @@ require(wordcloud)
 library(shiny)
 library(shiny.i18n)
 library("rjson")
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+library(ggplot2)
+library(hrbrthemes)
+
+
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
+
 
 # i18n$set_translation_language("gr")
 
@@ -707,7 +718,7 @@ shinyServer(function(input, output, session) {
     return(out)
   })
 
-  output$cpmeanplot <- renderPlot ({
+  output$cpmeanplot <- renderDygraph ({
     mydf <-getquerydata()$mydfin$result
     write.xlsx(mydf, "../mydf.xlsx")
     if (length(mydf) > 0)
@@ -736,12 +747,31 @@ shinyServer(function(input, output, session) {
       mytitle <- i18n()$t("Change in mean analysis")
       # par(bg = "gray")
       # points(mydf)
-      plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
-      # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgray")
-      # points(s1@data.set)
-      axis(1, pos,  labs[pos], las=2  )
-      grid(nx=NA, ny=NULL,col = "lightgray")
-      abline(v=pos, col = "lightgray", lty = "dotted",     lwd = par("lwd") )
+      
+      # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+      # # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgray")
+      # # points(s1@data.set)
+      # axis(1, pos,  labs[pos], las=2  )
+      # grid(nx=NA, ny=NULL,col = "lightgray")
+      # abline(v=pos, col = "lightgray", lty = "dotted",     lwd = par("lwd") )
+      values<-as.data.frame(s1@data.set)
+      Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
+        # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+        x <- paste(x,'-01',sep = '')
+        x
+      })
+      datetime <- ymd(Dates2)
+      don <- xts(x =as.vector(values), order.by = datetime)
+
+      # Finally the plot
+      p <- dygraph(don) %>%
+        dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+        # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+        dyRangeSelector() %>%
+        dyCrosshair(direction = "vertical") %>%
+        dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+        dyRoller(rollPeriod = 1)
+      p
     }
   })
 
@@ -1178,7 +1208,7 @@ shinyServer(function(input, output, session) {
     {
       names(mydf) <- c('Serious', 'Case Counts' )
       mysum <- sum( mydf[,'Case Counts'] )
-      #    browser()
+      browser()
       mydf <- data.frame(mydf, percent =  100*mydf[,'Case Counts']/mysum )
       names(mydf) <- c('Serious', 'Case Counts', '%' )
       mydf[,'Case Counts'] <- prettyNum( mydf[,'Case Counts'], big.mark=',' )
@@ -1192,8 +1222,49 @@ shinyServer(function(input, output, session) {
     mydf <- getseriouscounts()
     if ( is.data.frame(mydf) )
     {
-      names(mydf) <- c('Serious', 'Case Counts' )
-      dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand",col="black",type = "n")
+      names(mydf) 
+      # dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand",col="black",type = "n")
+      H <- mydf[,2]
+      M <- mydf[,1]
+      width2 = c(0.8, 0.8, 0.8, 3.5, 4, 1)
+      
+      # Give the chart file a name
+      # png(file = "barchart_months_revenue.png")
+      
+      # Plot the bar chart 
+      # p<-barplot(H,names.arg=M,xlab="Month",ylab="Revenue",col="blue",
+      #         main="Seriousness",border="red")
+      # p
+      data <- data.frame(
+        name=M ,  
+        value=H,
+        width=width2
+      )
+      p<-ggplot(data, aes(x=name, y=value)) +
+        geom_bar(stat = "identity", width=0.5) + 
+        theme(
+          panel.background = element_rect(fill = "white",
+                                          colour = "white",
+                                          size = 0.5, linetype = "solid"),
+          panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                          colour = "white"), 
+          panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                          colour = "white")
+        )+
+        theme_classic(base_size = 18)+
+        theme(text=element_text(size=20,  family="'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif",colour ="#73879C"))
+      p
+      
+      # p <- plot_ly(data)
+      # p <- p %>% plottly::add_bars(
+      #   x= ~x,
+      #   y= ~y,
+      #   width = ~width
+      # )
+      # 
+      # p
+      # Save the file
+      # dev.off()
       # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "yellow")
       # points(mydf[,2],1:6)
       
