@@ -7,6 +7,12 @@ require('zoo')
 library(shiny.i18n)
 library(DT)
 library(tableHTML)
+library("ggplot2")
+
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
@@ -444,7 +450,6 @@ calccpvar<- reactive({
 calccpbayes<- reactive({
   myts <- getts()
   mydf <- getquerydata()$mydfin$result[, c(1,2)]
-  browser()
   bcp.flu<-bcp(as.double(myts),p0=0.3)
   return(list(bcp.flu=bcp.flu, data=mydf) )
 }) 
@@ -606,32 +611,67 @@ output$maxcp <- renderText({
   out <- paste( '<b>Maximum Number of Changepoints:<i>', s, '</i></b>' )
   return(out)
 })
-output$queryplot <- renderPlot({  
+output$queryplot <- renderDygraph({  
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
-  lapply(mydf$display['Date'][[1]], function(x) {
-    x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+  Dates2<-lapply(mydf$display['Date'], function(x) {
+    # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+    x <- paste(x,'-01',sep = '')
     x
   })
+  Dates2<-unlist(Dates2, use.names=FALSE)
   if ( is.data.frame(mydf$display) )
   {
     labs <-    mydf$display[[1]]
     Date<-mydf$display[[1]]
-    Counts<-mydf$display[[2]]
+    Counts<-as.vector(mydf$display[,2])
+    
+    # p <- ggplot(mydf$display, aes(x=Date, y=Count,group = 1)) +
+    #   geom_line() + 
+    #   xlab("") +
+    #   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    # p
+    
+    
     # plot(x,y)
     
     
-    plot(Counts, axes=FALSE, xlab="",ylab=i18n()$t("Count"))
-    axis(2)
-    axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
-    box()
+    #from here vagelis
+    # plot(Counts, axes=FALSE, xlab="",ylab=i18n()$t("Count"))
+    # axis(2)
+    # axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
+    # box()
+    # 
+    # # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
+    # # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
+    # # plot(Count ~ Date, mydf$display)
+    # 
+    # grid()
+    #to here vagelis
     
-    # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
-    # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
-    # plot(Count ~ Date, mydf$display)
+    data <- read.table("https://python-graph-gallery.com/wp-content/uploads/bike.csv", header=T, sep=",") %>% head(300)
     
-    grid()
+    # Check type of variable
+    # str(data)
+    
+    # Since my time is currently a factor, I have to convert it to a date-time format!
+    #data$datetime <- ymd_hms(data$datetime)
+    browser()
+    datetime <- ymd(Dates2)
+    
+    # Then you can create the xts necessary to use dygraph
+    don <- xts(x = Counts, order.by = datetime)
+    
+    # Finally the plot
+    p <- dygraph(don) %>%
+      dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+      # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+      dyRangeSelector() %>%
+      dyCrosshair(direction = "vertical") %>%
+      dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+      dyRoller(rollPeriod = 1)
+    p
   } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
 })
 
