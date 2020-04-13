@@ -1,4 +1,4 @@
-
+library(plotly)
 require(shiny)
 
 require(shinyBS)
@@ -1218,7 +1218,7 @@ shinyServer(function(input, output, session) {
   }, height=300, align=c("rllr"), sanitize.text.function = function(x) x)
 
 
-  output$seriousplot <- renderPlot({
+  output$seriousplot <- renderPlotly({
     mydf <- getseriouscounts()
     if ( is.data.frame(mydf) )
     {
@@ -1240,36 +1240,36 @@ shinyServer(function(input, output, session) {
         value=H,
         width=width2
       )
-      p<-ggplot(data, aes(x=name, y=value)) +
-        geom_bar(stat = "identity", width=0.5) + 
-        theme(
-          panel.background = element_rect(fill = "white",
-                                          colour = "white",
-                                          size = 0.5, linetype = "solid"),
-          panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                          colour = "white"), 
-          panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
-                                          colour = "white")
-        )+
-        theme_classic(base_size = 18)+
-        theme(text=element_text(size=20,  family="'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif",colour ="#73879C"))
-      p
-      
-      # p <- plot_ly(data)
-      # p <- p %>% plottly::add_bars(
-      #   x= ~x,
-      #   y= ~y,
-      #   width = ~width
-      # )
-      # 
+      # p<-ggplot(data, aes(x=name, y=value, text2=paste("Date: ", name,
+      #                                                 "<br>Revenue: $", name,
+      #                                                 "<br>Target: $", name))) +
+      #   geom_bar(stat = "identity", width=0.5) + 
+      #   geom_point(aes(text=sprintf('letter: %s\nLetter: %s', name, value)))
+      #   theme(
+      #     panel.background = element_rect(fill = "white",
+      #                                     colour = "white",
+      #                                     size = 0.5, linetype = "solid"),
+      #     panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+      #                                     colour = "white"), 
+      #     panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+      #                                     colour = "white")
+      #   )+
+      #   theme_classic(base_size = 18)+
+      #   theme(text=element_text(size=20,  family="'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif",colour ="#73879C"))
+      # (pp <- ggplotly(p, tooltip = "text2"))
       # p
-      # Save the file
-      # dev.off()
-      # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "yellow")
-      # points(mydf[,2],1:6)
+      
+      fig <- plot_ly(
+        x = data$name,
+        y = data$value,
+        name = "SF Zoo",
+        type = "bar"
+      )
+      
+      fig
       
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-  }, height=300)
+  })
 
   output$seriouspie <- renderPlot({
     mydf <- getseriouscounts()
