@@ -194,8 +194,6 @@ class KnowledgeGraphWrapper:
                                              type=get_binding_value(c, "condition_type"),
                                              ) for c in conditions])
 
-        print(len(conditions))
-        print(len(list(set(conditions))))
         # with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
         #     json.dump(medDRA_hierarchy_tree(conditions), fp)
 

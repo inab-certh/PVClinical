@@ -142,10 +142,11 @@ def get_medDRA_children(parent, level, conditions):
     parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt", 6: "llt"}
 
     # Retrieve by filtering the conditions by children level type and parent
-    children = list(set(
-        filter(lambda c: c.type == level_condition_type[level] and\
-                         getattr(c, parent_types[level]).replace("https://w3id.org/phuse/meddra#m", "")\
-                         == parent.code, conditions)))
+    children = list(filter(lambda c: c.type == level_condition_type[level] and\
+                                     getattr(c, parent_types[level]).replace("https://w3id.org/phuse/meddra#m", "")\
+                                     == parent.code, conditions))
+
+    children = list({v['id']: v for v in children}.values())
 
     # Last level return from recursion
     if level == 5:
