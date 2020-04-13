@@ -1,4 +1,4 @@
-library(plotly)
+
 library(rsconnect)
 library(shinyjs)
 library(shiny)
@@ -9,6 +9,7 @@ library(shinyalert)
 library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
+library(plotly)
 
 options(encoding = 'UTF-8')
 
@@ -81,7 +82,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
                            column(width=6,
                                   # fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
-                                  fluidRow( withSpinner(plotOutput("seriousplot"))),
+                                  fluidRow( withSpinner(plotlyOutput("seriousplot"))),
                                   fluidRow( column(width=12,withSpinner(dygraphOutput( 'cpmeanplot') )))
                                   
                                   
