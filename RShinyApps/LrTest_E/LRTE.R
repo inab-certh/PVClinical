@@ -1028,9 +1028,9 @@ output$alltitle <- renderText({
 })
 
 all <- function(){  
-  all <- geteventtotalstable()$mydf
+  all <- geteventtotalstable()$mydf[,c(1,2)]
   checkdf(all, paste(getsearchtype(), getterm1(session)), 
-          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ), 
+          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")) ), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
 allnohyper <- function(){  

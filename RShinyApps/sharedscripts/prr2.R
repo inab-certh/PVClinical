@@ -833,9 +833,10 @@ output$all2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf1<-geteventtotalstable()$mydf[,c(1,2)]
   datatable(
-    tableout(mydf = geteventtotalstable()$mydf,  
-             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
+    tableout(mydf = mydf1,  
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports"))),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
