@@ -2,6 +2,7 @@ require(shiny)
 require(shinyBS)
 library(shiny.i18n)
 library(DT)
+library(plotly)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -915,20 +916,31 @@ simplot <- function(){
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
     mydf <- getprr()
+    browser()
     mycrit <- mydf$critval$critval
     vals <- mydf$critval$mymax
     myrange <- range(vals)
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
-    truehist(vals , breaks=mybreaks, 
-             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+    truehist(vals , breaks=mybreaks,
+             main=i18n()$t("Histogram of Simulated Distribution of LLR"),
              xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
     text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
     smallbreaks <- seq(0, max(mybreaks), 1)
-    
+
     smallbreaks <-  c( round(mycrit, 2), smallbreaks )
     axis(1, smallbreaks, las=3 )
     abline(v=mycrit, col='red', lwd=2)
+    # valframe<-cbind(read.table(text = names(vals)), vals)
+    # browser()
+    # fig <- plot_ly(
+    #   as.factor(vals),
+    #   name = "SF Zoo",
+    #   type = "histogram"
+    # )%>% layout(title=i18n()$t("Seriousness"))
+    # 
+    # fig
+    
     if ( is.data.frame(mydf) ) 
     {
     } else {

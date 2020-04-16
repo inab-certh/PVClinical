@@ -1,14 +1,15 @@
 body{
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
-  color:#73879C!important;
-  /*font-style: italic!important;*/
+  color:#667!important;
+  /*color:#73879C!important;
+  font-style: italic!important;*/
 }
 .popover{
-  max-width: 100%;
-  width:500px;
+  max-width: 100%!important;
+  width:500px!important;
 }
 .shiny-plot-output, .datatables {
-  /*color:blue;*/
+  color:#667!important;
 }
 .tooltip > .tooltip-inner {
   background-color: #FFFFFF;
@@ -51,4 +52,12 @@ a {
   width:420px!important;
   height:350px!important;*/
 }
+.dataTables_length, .dataTables_filter, .paginate_button, .paginate_button a, .dataTables_info {
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTable, .plotly{
+  font-size:13px!important;
+}
+
 

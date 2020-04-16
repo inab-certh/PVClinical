@@ -42,7 +42,7 @@ getcurtab <- function() {
   
 }  
 
-shinyUI(fluidPage(
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(), 
                     
                     column(width=12,

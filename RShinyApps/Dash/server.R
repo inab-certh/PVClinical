@@ -1,3 +1,4 @@
+library(plotly)
 require(shiny)
 require(shinyBS)
 library(shiny.i18n)
@@ -9,6 +10,7 @@ if (!require('openfda') ) {
   library(openfda)
   print('loaded open FDA')
 }
+library(ggplot2)
 
 source('sourcedir.R')
 
@@ -459,14 +461,23 @@ output$serious <- renderTable({
 }, height=300, align=c("rllr"), sanitize.text.function = function(x) x)  
 
 
-output$seriousplot <- renderPlot({ 
+output$seriousplot <- renderPlotly({ 
   mydf <- getseriouscounts()
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Serious', 'Case Counts' )
-    return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) ) 
+    # return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) ) 
+    fig <- plot_ly(
+      title = i18n()$t("Seriousness"),
+      x = mydf[,1],
+      y = mydf[,2],
+      name = "SF Zoo",
+      type = "bar"
+    )%>% layout(title=i18n()$t("Seriousness"),height = 300,autosize = F)
+    
+    fig
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-}, height=300)  
+})  
 
 output$seriouspie <- renderPlot({ 
   mydf <- getseriouscounts()
@@ -491,16 +502,25 @@ output$sex <- renderTable({
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }, height=300, align=c("rlllr"), sanitize.text.function = function(x) x)  
 
-output$sexplot <- renderPlot({ 
+output$sexplot <- renderPlotly({ 
   mydf <- getsexcounts()
   if ( is.data.frame(mydf) )
   {
-    names(mydf) <- c('Gender', 'Case Counts', 'Code' )
-    return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
+    # names(mydf) <- c('Gender', 'Case Counts', 'Code' )
+    # return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
+    fig <- plot_ly(
+      title = i18n()$t("Gender"),
+      x = mydf[,1],
+      y = mydf[,2],
+      name = "Gender",
+      type = "bar"
+    )%>% layout(title=i18n()$t("Gender"),height = 300,autosize = F)
+    
+    fig
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-} , height=300) 
+} ) 
 
-output$sexpie <- renderPlot({ 
+output$sexpie <- renderPlotly({ 
   mydf <- getsexcounts()
   if ( is.data.frame(mydf) )
   {
@@ -508,10 +528,19 @@ output$sexpie <- renderPlot({
     return( pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }) 
-output$sourceplot <- renderPlot({
+output$sourceplot <- renderPlotly({
   mydf <- getsourcecounts()
-  return(dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications") ))
-}, height=300)
+  # return(dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications") ))
+  fig <- plot_ly(
+    title = i18n()$t("Primary Source Qualifications"),
+    x = mydf[,1],
+    y = mydf[,2],
+    name = "SF Zoo",
+    type = "bar"
+  )%>% layout(title=i18n()$t("Primary Source Qualifications"),height = 300,autosize = F)
+  
+  fig
+})
 
 output$sourcepie <- renderPlot({
   mydf <- getsourcecounts()
