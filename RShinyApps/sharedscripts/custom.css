@@ -42,10 +42,11 @@ a {
     text-decoration-color: initial!important;
 }
 #seriousplot{
+  margin-top:30px;
   /*height:280px!important;*/
 }
 #cpmeanplot{
-  
+  margin-top:50px;
 }
 #cpmeanplot img{
   /*padding-right:20px;
@@ -58,6 +59,18 @@ a {
 }
 .dataTable, .plotly{
   font-size:13px!important;
+}
+.dygraph-legend{
+  font-size:13px !important;
+}
+.dygraph-title{
+  color:#667!important;
+  font-size:13px !important;
+  font-weight: normal!important;
+}
+
+.datatables label,th{
+  font-weight:normal!important; 
 }
 
 

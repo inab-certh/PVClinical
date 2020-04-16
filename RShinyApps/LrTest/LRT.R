@@ -916,7 +916,6 @@ simplot <- function(){
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
     mydf <- getprr()
-    browser()
     mycrit <- mydf$critval$critval
     vals <- mydf$critval$mymax
     myrange <- range(vals)
@@ -1057,9 +1056,9 @@ output$alltitle <- renderText({
 })
 
 all <- function(){  
-  all <- geteventtotalstable()$mydf
+  all <- geteventtotalstable()$mydf[,c(1,2)]
   checkdf(all, paste(getsearchtype(), getterm1(session)), 
-          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), 'Query' ), 
+          names=c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports"))), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
 

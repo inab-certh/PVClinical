@@ -1280,8 +1280,8 @@ shinyServer(function(input, output, session) {
         y = data$value,
         name = "SF Zoo",
         type = "bar",
-        textfont = list(color = '#667', size = 36)
-      )%>% layout(title=i18n()$t("Seriousness"),textfont = list(color = '#667', size = 13),xaxis = list(color='#667',tickfont=list(size=13)), 
+        textfont = list(color = '#667', size = 13)
+      )%>% layout(title=i18n()$t("Seriousness"),titlefont = list(color = '#667', size = 13),textfont = list(color = '#667', size = 13),xaxis = list(color='#667',tickfont=list(size=13)), 
                   yaxis = list(color='#667',tickfont=list(size=13)))
         
       
