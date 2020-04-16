@@ -264,3 +264,18 @@ iframe {
 .legend-margins{
     margin-bottom:10px;
 }
+
+.drug-event-radio{
+    margin: auto;
+    margin-left:20px;
+}
+.drug-event-radio > *{
+    float:left;
+    display:inline;
+}
+.custom-control-input{
+    margin-right:5px!important;
+}
+.custom-control-label{
+    margin-top:1px!important;
+}
