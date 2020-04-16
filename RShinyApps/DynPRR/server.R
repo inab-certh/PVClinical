@@ -981,7 +981,7 @@ i18n <- reactive({
 
 output$infoprrplot<-renderUI({
   addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
-             content=stri_enc_toutf8(i18n()$t("prr explanation")), placement = "left",
+             content=paste(i18n()$t("prr explanation"),"<br><br>",i18n()$t("dynprr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })

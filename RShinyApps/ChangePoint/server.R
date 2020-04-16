@@ -657,7 +657,7 @@ output$queryplot <- renderDygraph({
     
     # Since my time is currently a factor, I have to convert it to a date-time format!
     #data$datetime <- ymd_hms(data$datetime)
-    browser()
+    # browser()
     datetime <- ymd(Dates2)
     
     # Then you can create the xts necessary to use dygraph
@@ -699,7 +699,7 @@ output$coquery <- renderTable({
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
-  browser
+  # browser
   if ( is.data.frame(codrugs) )
   { 
     # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
@@ -804,7 +804,7 @@ output$infocpmeantext <- renderUI ({
       out <- i18n()$t('Insufficient data')
     }
     addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
-             content=out, placement = "left",
+             content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
              trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
     # browser()
@@ -866,7 +866,7 @@ output$infocpvartext <- renderUI ({
        out<-HTML(i18n()$t('Insufficient Data') )
     }
     addPopover(session=session, id="infocpvartext", title="", 
-               content=out, placement = "left",
+               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in variance analysis explanation')), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
@@ -911,7 +911,7 @@ output$cpbayestext <- renderPrint ({
     mycp <- calccpbayes()
     data <- mycp$data
     bcp.flu <- mycp$bcp.flu
-    browser()
+    # browser()
     data$postprob <- bcp.flu$posterior.prob
     data2<-data[order(data$postprob,decreasing = TRUE),]
     data2[1:input$maxcp,]
@@ -1016,7 +1016,7 @@ output$cpbayesplot <- renderPlot ({
   mydf <-getquerydata()$mydfin$result
   if (length(mydf) > 0)
     {
-    browser()
+    # browser()
     s <- calccpbayes()$bcp.flu
     labs <-    index( getts() )
     plot(s)

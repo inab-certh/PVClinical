@@ -1,6 +1,7 @@
 library(shiny)
 library(shinyjs)
 library(shinycssloaders)
+library(plotly)
 
 source('sourcedir.R')
 

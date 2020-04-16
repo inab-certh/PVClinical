@@ -1226,41 +1226,41 @@ getcururl <- reactive({
   })
   output$infoprr2<-renderUI({
     addPopover(session=session, id="infoprr2", title="Proportional Reporting Ratio", 
-               content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>")), placement = "left",
+               content=paste(i18n()$t("prr explanation"),"<br><br><br>",i18n()$t("ror explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infospecifieddrug2<-renderUI({
     addPopover(session=session, id="infospecifieddrug2", title="Frequency Table", 
-               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               content=stri_enc_toutf8(i18n()$t("rr explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infoall2<-renderUI({
     addPopover(session=session, id="infoall2", title="Frequency Table", 
-               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               content=stri_enc_toutf8(i18n()$t("rr explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infocoqueryE2<-renderUI({
     addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infocoquery2<-renderUI({
     addPopover(session=session, id="infocoquery2", title="Concomitant Medications", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   output$infoindquery2<-renderUI({
     addPopover(session=session, id="infoindquery2", title="Reported Indication for Drug", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })

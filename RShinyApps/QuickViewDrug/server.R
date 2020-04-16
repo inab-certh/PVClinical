@@ -22,7 +22,7 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(ggplot2)
-library(hrbrthemes)
+# library(hrbrthemes)
 
 
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
@@ -720,9 +720,10 @@ shinyServer(function(input, output, session) {
 
   output$cpmeanplot <- renderDygraph ({
     mydf <-getquerydata()$mydfin$result
-    write.xlsx(mydf, "../mydf.xlsx")
+    
     if (length(mydf) > 0)
     {
+      # write.xlsx(mydf, "../mydf.xlsx")
       s1 <- calccpmean()
       labs <-    index( getts() )
       pos <- seq(1, length(labs), 3)
@@ -762,17 +763,21 @@ shinyServer(function(input, output, session) {
       })
       datetime <- ymd(Dates2)
       don <- xts(x =as.vector(values), order.by = datetime)
-
+      
       # Finally the plot
-      p <- dygraph(don) %>%
-        dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+      p <- dygraph(don,main = i18n()$t("Change in mean analysis")) %>%
+        dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#667",axisLabelColor ="#667",axisLabelFontSize=13) %>%
         # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
         dyRangeSelector() %>%
+        # dyLimit(s1@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
         dyCrosshair(direction = "vertical") %>%
         dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
         dyRoller(rollPeriod = 1)
+      
+      
       p
     }
+    
   })
 
   output$cpvartext <- renderText ({
@@ -999,11 +1004,23 @@ shinyServer(function(input, output, session) {
     }
 
     mydf <- rbind(conganom, death, disable, hosp, lifethreat, other)
-    mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
-                       i18n()$t("Life Threatening"), i18n()$t("Other"))
-
-    mydf <- mydf[order(mydf[,2]), ]
-    return( mydf )
+    
+    
+    if("term" %in% colnames(mydf))
+    {
+      mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
+                         i18n()$t("Life Threatening"), i18n()$t("Other"))
+      # mydf[,'term'] <- c("Congenital Anomaly", "Death", "Disability", "Hospitalization",
+      #                    "Life Threatening", "Other")
+      
+      mydf <- mydf[order(mydf[,2]), ]
+      return( mydf )
+    }
+    else 
+    {
+      return (NULL);
+    }
+    
   })
 
   #************************************
@@ -1208,7 +1225,7 @@ shinyServer(function(input, output, session) {
     {
       names(mydf) <- c('Serious', 'Case Counts' )
       mysum <- sum( mydf[,'Case Counts'] )
-      browser()
+      #browser()
       mydf <- data.frame(mydf, percent =  100*mydf[,'Case Counts']/mysum )
       names(mydf) <- c('Serious', 'Case Counts', '%' )
       mydf[,'Case Counts'] <- prettyNum( mydf[,'Case Counts'], big.mark=',' )
@@ -1258,13 +1275,15 @@ shinyServer(function(input, output, session) {
       #   theme(text=element_text(size=20,  family="'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif",colour ="#73879C"))
       # (pp <- ggplotly(p, tooltip = "text2"))
       # p
-      
       fig <- plot_ly(
         x = data$name,
         y = data$value,
         name = "SF Zoo",
-        type = "bar"
-      )
+        type = "bar",
+        textfont = list(color = '#667', size = 36)
+      )%>% layout(title=i18n()$t("Seriousness"),textfont = list(color = '#667', size = 13),xaxis = list(color='#667',tickfont=list(size=13)), 
+                  yaxis = list(color='#667',tickfont=list(size=13)))
+        
       
       fig
       
@@ -2000,13 +2019,12 @@ shinyServer(function(input, output, session) {
     #     comb <- comb[order(comb$prr, decreasing = TRUE),]
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
-    
     countname <- paste( i18n()$t("Counts for"), getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c( iname, colname,countname, 
+    keptcols <-  c(  colname,countname, 
                     'PRR')
     
     #    mydf <- mydf[, c(1:4, 7,8,9)]

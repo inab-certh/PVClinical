@@ -11,10 +11,12 @@ if (!require('openfda') ) {
   library(openfda)
   print('loaded open FDA')
 }
-require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -702,9 +704,8 @@ shinyServer(function(input, output, session) {
     return(out)
   })
 
-  output$cpmeanplot <- renderPlot ({
+  output$cpmeanplot <- renderDygraph ({
     if(getterm1( session)!=""){
-      
       mydf <-getquerydata()$mydfin$result
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
@@ -733,11 +734,30 @@ shinyServer(function(input, output, session) {
         # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
         mytitle <- i18n()$t("Change in mean analysis")
         # par(bg = "gray")
-        plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
-        axis(1, pos,  labs[pos], las=2  )
-        grid(nx=NA, ny=NULL,col = "lightgray")
-        abline(v=pos, col = "lightgray", lty = "dotted",
-               lwd = par("lwd") )
+        # plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL,col = "lightgray")
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #        lwd = par("lwd") )
+        values<-as.data.frame(s@data.set)
+        Dates2<-lapply(attr(s@data.set, "index"), function(x) {
+          # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+          x <- paste(x,'-01',sep = '')
+          x
+        })
+        datetime <- ymd(Dates2)
+        don <- xts(x =as.vector(values), order.by = datetime)
+        p <- dygraph(don,main = "Change in mean analysis") %>%
+          dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+          # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+          dyRangeSelector() %>%
+          # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+          dyCrosshair(direction = "vertical") %>%
+          dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+          dyRoller(rollPeriod = 1)
+        
+        
+        p
         
       }
       else

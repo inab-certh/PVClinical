@@ -82,8 +82,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
                            column(width=6,
                                   # fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
-                                  fluidRow( withSpinner(plotlyOutput("seriousplot"))),
-                                  fluidRow( column(width=12,withSpinner(dygraphOutput( 'cpmeanplot') )))
+                                  fluidRow( column(width=10,offset=1,withSpinner(plotlyOutput("seriousplot")))),
+                                  fluidRow( column(width=10,offset=1,withSpinner(dygraphOutput( 'cpmeanplot') )))
                                   
                                   
                                   
@@ -93,8 +93,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                  # )
                            ),
                                   
-                    column(width=6,
-                           fluidRow( align="center",style="width:90%; margin-top:60px;",uiOutput('PRRTitle',style="font-weight:bold" ),
+                    column(width=5,offset=1,
+                           fluidRow( align="center",style="width:90%; margin-top:60px;",
+                                     # uiOutput('PRRTitle',style="font-weight:bold" ),
                                      withSpinner(makeDataTableOutput( 'prr2' ))),
                            #htmlOutput( 'prrtitle' ),
                            
