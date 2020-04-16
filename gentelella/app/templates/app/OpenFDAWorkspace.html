@@ -251,16 +251,18 @@
         }
         var sessionSelectedEvent = sessionStorage.getItem("shinnySelectedEvent");
         var sessionSelectedDrug = sessionStorage.getItem("shinnySelectedDrug");
-        event=sessionSelectedEvent;
-        drug=sessionSelectedDrug;
-        if(drug!=null){
+
+
+        if(sessionSelectedDrug!=null){
+            drug=sessionSelectedDrug;
             var drugRadio=$("input[value="+drug+"][Type=radio] ");
             if(drugRadio.length>0)
             {
                 drugRadio[0].checked=true;
             }
         }
-      if(event!=null) {
+      if(sessionSelectedEvent!=null) {
+          event=sessionSelectedEvent;
           var eventRadio=$("input[value="+event+"][Type=radio] ");
             if(eventRadio.length>0)
             {
