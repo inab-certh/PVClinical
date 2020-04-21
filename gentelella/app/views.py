@@ -1,12 +1,12 @@
 import json
 import os
+import re
 
 from itertools import chain
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
-
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -17,7 +17,6 @@ from django.http import HttpResponseForbidden
 from django.http import QueryDict
 from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
-
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -133,6 +132,27 @@ def get_medDRA_tree(request):
     data={}
     data["medDRA_tree"] = knw.get_medDRA_tree()
     return JsonResponse(data)
+
+
+def get_conditions_nodes_ids(request):
+    """ Get the ids of the tree nodes containing the condition we want
+    :param request:
+    :return:
+    """
+
+    conditions = json.loads(request.GET.get("conditions", None))
+
+    with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
+        fp_rd = fp.read()
+        # Find in json string all conditions with ids relevant to conditions' requested
+        rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+            "{}___[\S]+?,".format(condition), fp_rd))) for condition in conditions]
+
+        data = {}
+        data["conds_nodes_ids"] = list(chain.from_iterable(rel_conds_lst))
+
+        return JsonResponse(data)
+
 
 
 @login_required()

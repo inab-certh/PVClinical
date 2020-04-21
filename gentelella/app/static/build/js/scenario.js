@@ -297,8 +297,85 @@ $(function() {
             "multiple": true,
             "data": medDRA_tree
         },
-        "plugins":["checkbox"],
+        "plugins": ["checkbox", "search"],
+        "search": {
+                    "case_sensitive": false,
+                    "show_only_matches": false
+                }
     });
+
+    var final_sel_conditions = [];
+
+    $("[name='conditions_fld']").change(function () {
+        // var searchString = $(this).val();
+        // console.log(searchString);
+        // $("#medDRATree").jstree("search", searchString);
+        // $("#medDRATree").jstree("deselect_all", true);
+        // $("#medDRATree").jstree("close_all");
+
+
+        var sel_conditions = $(this).val();
+        // var socs = sel_conditions?sel_conditions.map(x => x + "___soc"):[];
+        // var hlgts = sel_conditions?sel_conditions.map(x => x + "___hlgt"):[];
+        // var hlts = sel_conditions?sel_conditions.map(x => x + "___hlt"):[];
+        // var pts = sel_conditions?sel_conditions.map(x => x + "___pt"):[];
+        // var llts = sel_conditions?sel_conditions.map(x => x + "___llt"):[];
+
+        var previous_final_sel_conditions = final_sel_conditions;
+        // final_sel_conditions = [].concat(socs, hlgts, hlts, pts, llts);
+
+        final_sel_conditions = get_conditions_ids(sel_conditions);
+
+        // final_sel_conditions = $("#medDRATree *[id*='"+sel_conditions+"']");
+        // console.log(final_sel_conditions);
+        // Find differences in the selected conditions and deselect the ones
+        // that do not exist anymore
+        var difference_sel_conditions = previous_final_sel_conditions.filter(
+            x => final_sel_conditions.indexOf(x) === -1);
+
+        console.log(difference_sel_conditions);
+        $("#medDRATree").jstree("deselect_node", difference_sel_conditions);
+        // for (var i = 0; i < difference_sel_conditions.length; i++) {
+        //     var node = $('#medDRATree').jstree(true).get_node(difference_sel_conditions[i]);
+        //     console.log(node);
+        //
+        //     if (node) {
+        //         $("#medDRATree").jstree("deselect_node", node);
+        //         // $("#medDRATree").jstree()._close_to(node.id);
+        //     }
+        // }
+
+        for (var i = 0; i < final_sel_conditions.length; i++) {
+            var node = $('#medDRATree').jstree(true).get_node(final_sel_conditions[i]);
+            // console.log(node);
+
+            if(node) {
+                $("#medDRATree").jstree()._open_to(node.id);
+                $("#medDRATree").jstree("check_node", node);
+            }
+        }
+    });
+
+    $('#medDRATree')
+      // listen for event
+      .on('changed.jstree', function (e, data) {
+        var i, j, r = [];
+        for(i = 0, j = data.selected.length; i < j; i++) {
+            if(r.indexOf(data.instance.get_node(data.selected[i]).text) === -1){
+                r.push(data.instance.get_node(data.selected[i]).text);
+            }
+        }
+        // var bottom_checked = $("#medDRATree").jstree("get_bottom_checked", true);
+        $("[name='conditions_fld']").val(r).trigger("change");
+      })
+      // create the instance
+      .jstree();
+
+
+///////////////////////////////////////////////////////////////////
+
+
+
     // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
     //     maximumSelectionLength: 5});
 
@@ -307,6 +384,8 @@ $(function() {
 
 
     function get_all_drugs() {
+        /* Make an ajax call using all-drugs python callback
+        to retrieve all drugs */
         var drugs=[];
         $.ajax({
             url: "/ajax/all-drugs",
@@ -322,6 +401,8 @@ $(function() {
     }
 
     function get_medDRA_tree() {
+        /* Make an ajax call using medDRA-tree python callback
+        to retrieve all drugs */
         var medDRA_tree=[];
         $.ajax({
             url: "/ajax/medDRA-tree",
@@ -336,6 +417,28 @@ $(function() {
         return medDRA_tree;
     }
 
+    function get_conditions_ids(conditions) {
+        /* Make an ajax call using conds-nodes-ids python callback
+        to retrieve all drugs */
+        var conds_nodes_ids=[];
+
+        conditions = conditions?conditions:[];
+
+        $.ajax({
+            url: "/ajax/conds-nodes-ids",
+            data: {"conditions": JSON.stringify(conditions)},
+            type: "GET",
+            dataType: "json",
+            async: false
+        }).done(function(data) {
+            conds_nodes_ids = data.conds_nodes_ids;
+            // console.log(conds_nodes_ids);
+        }).fail(function () {
+            conds_nodes_ids = [];
+        });
+        return conds_nodes_ids;
+    }
+
 
 });
 
@@ -346,7 +449,7 @@ function move_to_selected_drugs() {
 
     // Move checked synonyms to selected drugs list
     var all_drugs = $("[name='drugs_fld'] option").map(function () {
-        return $(this).val()
+        return $(this).val();
     }).toArray();
 
     // var selected_synonyms = all_drugs.filter(function (drug) {
@@ -374,14 +477,3 @@ function move_to_selected_drugs() {
     $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 }
 
-function formatState (state) {
-    // if (state.id >= 1 && state.id <= 3) {
-    //     return $(
-    //         '<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
-    //     );
-    // }
-    // else return state.text;
-    return $(
-            '<span><img src="./' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
-    );
-}

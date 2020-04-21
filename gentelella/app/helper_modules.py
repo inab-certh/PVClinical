@@ -146,7 +146,7 @@ def get_medDRA_children(parent, level, conditions):
                                      getattr(c, parent_types[level]).replace("https://w3id.org/phuse/meddra#m", "")\
                                      == parent.code, conditions))
 
-    children = list({v['id']: v for v in children}.values())
+    children = list(set(children))
 
     # Last level return from recursion
     if level == 5:
