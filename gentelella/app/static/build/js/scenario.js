@@ -293,15 +293,32 @@ $(function() {
     var medDRA_tree = get_medDRA_tree();
     // console.log(medDRA_tree);
     $("#medDRATree").jstree({
-        "core" : {
+        "core": {
             "multiple": true,
             "data": medDRA_tree
         },
-        "plugins": ["checkbox", "search"],
+        // "conditionalselect": function (node) {
+        //     // Check node and call some method
+        //     console.log(node.parents.length);
+        //     return node.parents.length===5;
+        // },
+        "plugins": ["search", "checkbox"],
+        "checkbox": {
+            "whole_node" : false,
+            "tie_selection" : false
+            },
+
         "search": {
                     "case_sensitive": false,
                     "show_only_matches": false
                 }
+    })
+    .bind("loaded.jstree", function (event, data) {
+        //https://stackoverflow.com/questions/6112567/jstree-hide-checkbox
+        $("[aria-level='1']").find('i.jstree-checkbox').hide();
+        var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
+        init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
+        check_open_leaves(init_sel_conditions);
     });
 
     var final_sel_conditions = [];
@@ -315,25 +332,22 @@ $(function() {
 
 
         var sel_conditions = $(this).val();
-        // var socs = sel_conditions?sel_conditions.map(x => x + "___soc"):[];
-        // var hlgts = sel_conditions?sel_conditions.map(x => x + "___hlgt"):[];
-        // var hlts = sel_conditions?sel_conditions.map(x => x + "___hlt"):[];
-        // var pts = sel_conditions?sel_conditions.map(x => x + "___pt"):[];
-        // var llts = sel_conditions?sel_conditions.map(x => x + "___llt"):[];
+
 
         var previous_final_sel_conditions = final_sel_conditions;
-        // final_sel_conditions = [].concat(socs, hlgts, hlts, pts, llts);
+        // var previous_final_sel_conditions = $("#medDRATree").jstree('get_selected', true);
 
         final_sel_conditions = get_conditions_ids(sel_conditions);
 
-        // final_sel_conditions = $("#medDRATree *[id*='"+sel_conditions+"']");
-        // console.log(final_sel_conditions);
+
         // Find differences in the selected conditions and deselect the ones
         // that do not exist anymore
         var difference_sel_conditions = previous_final_sel_conditions.filter(
             x => final_sel_conditions.indexOf(x) === -1);
 
-        console.log(difference_sel_conditions);
+        // console.log(difference_sel_conditions);
+        // console.log(previous_final_sel_conditions);
+
         $("#medDRATree").jstree("deselect_node", difference_sel_conditions);
         // for (var i = 0; i < difference_sel_conditions.length; i++) {
         //     var node = $('#medDRATree').jstree(true).get_node(difference_sel_conditions[i]);
@@ -345,27 +359,41 @@ $(function() {
         //     }
         // }
 
-        for (var i = 0; i < final_sel_conditions.length; i++) {
-            var node = $('#medDRATree').jstree(true).get_node(final_sel_conditions[i]);
-            // console.log(node);
+        check_open_leaves(final_sel_conditions);
 
-            if(node) {
-                $("#medDRATree").jstree()._open_to(node.id);
-                $("#medDRATree").jstree("check_node", node);
-            }
-        }
+
     });
 
     $('#medDRATree')
       // listen for event
       .on('changed.jstree', function (e, data) {
         var i, j, r = [];
+        // var options_arr = [];
+        // console.log(options_arr);
         for(i = 0, j = data.selected.length; i < j; i++) {
-            if(r.indexOf(data.instance.get_node(data.selected[i]).text) === -1){
-                r.push(data.instance.get_node(data.selected[i]).text);
+            var node_txt = data.instance.get_node(data.selected[i]).text;
+            if(r.indexOf(node_txt) === -1){
+                r.push(node_txt);
+                // console.log(data.instance.get_node(data.selected[i]).text);
+                if($("option:contains('"+node_txt+"')").length===0) {
+                    $("[name='conditions_fld']").append(
+                        "<option id=\""+node_txt+"\">"+node_txt+"</option>");
+                }
+
+                // options_arr.push({"id": data.instance.get_node(data.selected[i]).text,
+                //     "text": data.instance.get_node(data.selected[i]).text,
+                //     "selected": true})
             }
         }
+
+        // sel2_data = {"results": options_arr};
+        // console.log(sel2_data);
+        // $("[name='conditions_fld']").select2({data: options_arr});
+        // $("[name='conditions_fld']").select2("updateResults");
+        // console.log(r);
+        // console.log(options_arr);
         // var bottom_checked = $("#medDRATree").jstree("get_bottom_checked", true);
+        // $("[name='conditions_fld']").trigger("change");
         $("[name='conditions_fld']").val(r).trigger("change");
       })
       // create the instance
@@ -439,6 +467,20 @@ $(function() {
         return conds_nodes_ids;
     }
 
+    function check_open_leaves(sel_conditions) {
+        $("#medDRATree").jstree("check_node", sel_conditions);
+        for (var i = 0; i < sel_conditions.length; i++) {
+            $("#medDRATree").jstree()._open_to(sel_conditions[i]);
+
+            // var node = $('#medDRATree').jstree(true).get_node(sel_conditions[i]);
+            // // console.log(node);
+            //
+            // if(node) {
+            //     $("#medDRATree").jstree()._open_to(node.id);
+            //     $("#medDRATree").jstree("check_node", node, true);
+            // }
+        }
+    }
 
 });
 
