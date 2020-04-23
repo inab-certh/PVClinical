@@ -146,7 +146,7 @@ def get_conditions_nodes_ids(request):
         fp_rd = fp.read()
         # Find in json string all conditions with ids relevant to conditions' requested
         rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-            "{}___[\S]+?,".format(condition), fp_rd))) for condition in conditions]
+            "{}___[\S]+?,".format(condition.split(" - ").pop()), fp_rd))) for condition in conditions]
 
         data = {}
         data["conds_nodes_ids"] = list(chain.from_iterable(rel_conds_lst))

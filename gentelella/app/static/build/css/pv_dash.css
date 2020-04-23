@@ -7,6 +7,22 @@
     max-width: 5rem;
 }
 
+.jstree-disabled{
+    background: transparent!important;
+    color: inherit!important;
+}
+
+.jstree-disabled>.jstree-icon {
+    opacity: 1!important;
+    filter: none!important;
+}
+
+[id*='___soc___']>i.jstree-checkbox,
+[id*='___hlgt___']>i.jstree-checkbox,
+[id*='___hlt___']>i.jstree-checkbox {
+    display: none;
+}
+
 .img-icon {
     width: 17%;
     min-width: 48px;
