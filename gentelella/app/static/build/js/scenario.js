@@ -303,23 +303,41 @@ $(function() {
         //     return node.parents.length===5;
         // },
         "plugins": ["search", "checkbox"],
-        "checkbox": {
-            "whole_node" : false,
-            "tie_selection" : false
-            },
+        // "checkbox": {
+        //     "whole_node" : false,
+        //     "tie_selection" : false
+        //     },
 
         "search": {
                     "case_sensitive": false,
                     "show_only_matches": false
                 }
     })
-    .bind("loaded.jstree", function (event, data) {
-        //https://stackoverflow.com/questions/6112567/jstree-hide-checkbox
-        $("[aria-level='1']").find('i.jstree-checkbox').hide();
-        var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
-        init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
-        check_open_leaves(init_sel_conditions);
-    });
+        .bind("ready.jstree", function (event, data) {
+            // console.log(data.instance._model);
+            // i=0;
+            // for(var node_id in data.instance._model.data) {
+            //     var node = data.instance.get_node(node_id);
+            //     node.state.disabled = true;
+            //     console.log(node);
+            //     if(i===5) {
+            //         break;
+            //     }
+            //     i=i+1;
+            //   }
+
+            var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
+            init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
+            check_open_leaves(init_sel_conditions);
+        });
+
+    // $('#medDRATree').each( function() {
+    //     console.log(this);
+    //     if (this.parents.length<4) {
+    //         $("#medDRATree").jstree().disable_node(this.id);
+    //         this.a_attr["class"] = "no_checkbox";
+    //     }
+    // });
 
     var final_sel_conditions = [];
 
@@ -329,7 +347,6 @@ $(function() {
         // $("#medDRATree").jstree("search", searchString);
         // $("#medDRATree").jstree("deselect_all", true);
         // $("#medDRATree").jstree("close_all");
-
 
         var sel_conditions = $(this).val();
 
