@@ -314,18 +314,6 @@ $(function() {
                 }
     })
         .bind("ready.jstree", function (event, data) {
-            // console.log(data.instance._model);
-            // i=0;
-            // for(var node_id in data.instance._model.data) {
-            //     var node = data.instance.get_node(node_id);
-            //     node.state.disabled = true;
-            //     console.log(node);
-            //     if(i===5) {
-            //         break;
-            //     }
-            //     i=i+1;
-            //   }
-
             var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
             init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
             check_open_leaves(init_sel_conditions);
@@ -339,7 +327,7 @@ $(function() {
     //     }
     // });
 
-    var final_sel_conditions = [];
+    var cur_sel_conditions = [];
 
     $("[name='conditions_fld']").change(function () {
         // var searchString = $(this).val();
@@ -350,22 +338,24 @@ $(function() {
 
         var sel_conditions = $(this).val();
 
-
-        var previous_final_sel_conditions = final_sel_conditions;
+        var prev_sel_conditions = cur_sel_conditions;
         // var previous_final_sel_conditions = $("#medDRATree").jstree('get_selected', true);
 
-        final_sel_conditions = get_conditions_ids(sel_conditions);
+        cur_sel_conditions = get_conditions_ids(sel_conditions);
 
 
         // Find differences in the selected conditions and deselect the ones
         // that do not exist anymore
-        var difference_sel_conditions = previous_final_sel_conditions.filter(
-            x => final_sel_conditions.indexOf(x) === -1);
+        var desel_conditions = prev_sel_conditions.filter(
+            x => cur_sel_conditions.indexOf(x) === -1);
+
+        var new_sel_conditions = cur_sel_conditions.filter(
+            x => prev_sel_conditions.indexOf(x) === -1);
 
         // console.log(difference_sel_conditions);
         // console.log(previous_final_sel_conditions);
 
-        $("#medDRATree").jstree("deselect_node", difference_sel_conditions);
+        $("#medDRATree").jstree("deselect_node", desel_conditions);
         // for (var i = 0; i < difference_sel_conditions.length; i++) {
         //     var node = $('#medDRATree').jstree(true).get_node(difference_sel_conditions[i]);
         //     console.log(node);
@@ -376,14 +366,20 @@ $(function() {
         //     }
         // }
 
-        check_open_leaves(final_sel_conditions);
-
-
+        check_open_leaves(new_sel_conditions);
     });
+
+    // $("[name='conditions_fld']").on("select2:select", function (evt) {
+    //     var cond_fld_val = $(this).val();
+    //     cond_fld_val = cond_fld_val.sort();
+    //     console.log(cond_fld_val);
+    //     $(this).val(cond_fld_val).trigger("change");
+    // });
 
     $('#medDRATree')
       // listen for event
-      .on('changed.jstree', function (e, data) {
+    .on('changed.jstree', function (e, data) {
+        $("#loaderOverlay").fadeIn();
         var i, j, r = [];
         // var options_arr = [];
         // console.log(options_arr);
@@ -403,6 +399,7 @@ $(function() {
             }
         }
 
+        $("#loaderOverlay").fadeOut();
         // sel2_data = {"results": options_arr};
         // console.log(sel2_data);
         // $("[name='conditions_fld']").select2({data: options_arr});
@@ -411,6 +408,7 @@ $(function() {
         // console.log(options_arr);
         // var bottom_checked = $("#medDRATree").jstree("get_bottom_checked", true);
         // $("[name='conditions_fld']").trigger("change");
+
         $("[name='conditions_fld']").val(r).trigger("change");
       })
       // create the instance
@@ -484,7 +482,9 @@ $(function() {
         return conds_nodes_ids;
     }
 
+    // Function to check leaves and open the whole paths to those leaves
     function check_open_leaves(sel_conditions) {
+        // sel_conditions.sort();
         $("#medDRATree").jstree("check_node", sel_conditions);
         for (var i = 0; i < sel_conditions.length; i++) {
             $("#medDRATree").jstree()._open_to(sel_conditions[i]);

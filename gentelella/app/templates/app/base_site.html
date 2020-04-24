@@ -62,7 +62,13 @@
       <!--<img src="/static/images/pvclinical_w.png" class="logo-block img-responsive">-->
     </a>
 
-
+    <div id="loaderOverlay">
+        <div class="cssload-loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+        </div>
+    </div>
 
     <form class="mt-1" name="languageForm" id="languageForm" action="{% url 'set_language' %}" method="post">{% csrf_token %}
         <input name="next" type="hidden" value="{{ redirect_to }}">

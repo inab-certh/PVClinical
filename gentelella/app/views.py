@@ -96,7 +96,6 @@ def filter_whole_set(request):
     whole_set = ["{}{}".format(
         el.name, " - {}".format(el.code) if el.code else "") for el in whole_set]
     subset = list(filter(lambda el: term.lower().strip() in el.lower(), whole_set))
-
     subset = sorted(subset, key=lambda x: 'a' + x if\
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
