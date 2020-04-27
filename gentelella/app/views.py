@@ -1,21 +1,19 @@
 import json
+import re
 
 from itertools import chain
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
-
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.shortcuts import redirect
 from django.template import loader
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.http import QueryDict
 from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
-
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -25,15 +23,13 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 
 from app.helper_modules import atc_hierarchy_tree
+
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
 
-from app.models import Drug
-from app.models import Condition
 from app.models import Scenario
-from app.models import Status
 
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
@@ -61,16 +57,7 @@ def get_synonyms(request):
     """
 
     drugs = json.loads(request.GET.get("drugs", None))
-    # print(drugs, type(drugs))
 
-    # Replace with real service
-    # all_synonyms = {"omeprazole":["esomeprazole"], "esomeprazole": ["omeprazole"],
-    #                 "etybenzatropine": ["benzatropine"], "benzatropine": ["etybenzatropine"]}
-    # synonyms = list(chain.from_iterable([all_synonyms[d.lower()] for d in drugs
-    #                                      if d.lower() in all_synonyms.keys()])) if drugs else []
-
-    # whole_query = whole_query.format(" ".join(drugs))
-    # print(whole_query)
     knw = KnowledgeGraphWrapper()
     synonyms = knw.get_synonyms(drugs)
 
@@ -94,6 +81,8 @@ def filter_whole_set(request):
     whole_set = ["{}{}".format(
         el.name, " - {}".format(el.code) if el.code else "") for el in whole_set]
     subset = list(filter(lambda el: term.lower().strip() in el.lower(), whole_set))
+    subset = sorted(subset, key=lambda x: 'a' + x if\
+        x.lower().startswith(term.lower().strip()) else 'b' + x)
 
     data={}
     data["results"]=[{"id":elm, "text":elm} for elm in subset]
@@ -102,6 +91,10 @@ def filter_whole_set(request):
 
 
 def get_all_drugs(request):
+    """ Get all cached drugs
+    :param request:
+    :return: all cached drugs
+    """
     knw = KnowledgeGraphWrapper()
 
     all_drugs = knw.get_drugs()
@@ -109,45 +102,48 @@ def get_all_drugs(request):
         el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
 
     data={}
-    data["results"] = all_drugs
+    data["drugs"] = all_drugs
+    return JsonResponse(data)
+
+
+def get_medDRA_tree(request):
+    """ Get the medDRA hierarchy tree
+    :param request: The request from which the medDRA tree will be retrieved
+    :return: The medDRA hierarchy tree
+    """
+    knw = KnowledgeGraphWrapper()
+
+    data={}
+    data["medDRA_tree"] = knw.get_medDRA_tree()
+    return JsonResponse(data)
+
+
+def get_conditions_nodes_ids(request):
+    """ Get the ids of the tree nodes containing the condition we want
+    :param request:
+    :return:
+    """
+
+    conditions = json.loads(request.GET.get("conditions", None))
+
+    knw = KnowledgeGraphWrapper()
+    medDRA_tree_str = json.dumps(knw.get_medDRA_tree())
+
+    # Find in json string all conditions with ids relevant to conditions' requested
+    rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in conditions]
+
+    data = {}
+    data["conds_nodes_ids"] = list(chain.from_iterable(rel_conds_lst))
+
     return JsonResponse(data)
 
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
-    # sc = Scenario.objects.create(title="Test title 1", owner=request.user, status=Status.objects.get(status="CREATING"))
-    # tdrugs = [Drug.objects.create(name="Omeprazole"),
-    #           Drug.objects.create(code="A24AB12"),
-    #           Drug.objects.create(name="Omeprazol"),
-    #           Drug.objects.create(code="A24AB11"),
-    #           Drug.objects.create(code="N02BE01"),
-    #           Drug.objects.create(name="Etybenzatropine", code="N04AC30"),
-    #           Drug.objects.create(name="Benzatropine", code="N04AC01")]
-    #
-    # d1 = Drug.objects.get(code="N04AC30")
-    # d2 = Drug.objects.get(code="N04AC01")
-    #
-    # d1.synonyms.add(d2)
-    # d2.synonyms.add(d1)
-    #
-    # sc.drugs.add(*tdrugs)
-    #
-    # tconditions = [Condition.objects.create(code="12345678"),
-    #                Condition.objects.create(name="gastrointestinal tract")]
-    # sc.conditions.add(*tconditions)
-    # sc.save()
-
-    # "drug": ["Omeprazole", "A24AB12", "Omeprazol", "A24AB11"],
-    # "condition": ["12345678", "gastrointestinal tract"],
-    # "owner": request.user.username
-    # }
-
-
     scenarios = []
     for sc in Scenario.objects.all():
-        # drugs = [d for d in sc.drugs.all()]
-        # conditions = [c for c in sc.conditions.all()]
         scenarios.append({
             "id": sc.id,
             "title": sc.title,
