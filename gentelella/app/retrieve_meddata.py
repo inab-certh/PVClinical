@@ -1,14 +1,11 @@
-import json
-import os
-import time
-
-from collections import namedtuple
-
 from SPARQLWrapper import SPARQLWrapper2
 from SPARQLWrapper import JSON
 
 from django.conf import settings
 from django.core.cache import cache
+
+# from app.helper_modules import medDRA_hierarchy_tree
+from app.helper_modules import medDRA_flat_tree
 
 
 class NCObject(object):
@@ -24,21 +21,26 @@ class NCObject(object):
         return "{}{}".format(self.name, self.code).__lt__(
             "{}{}".format(other.name, other.code))
 
-
     def __gt__(self, other):
         return "{}{}".format(self.name, self.code).__gt__(
             "{}{}".format(other.name, other.code))
 
 
 class ConditionObject(NCObject):
-    def __init__(self, name, code, type, soc=None,
-                 hlgt=None, hlt=None, pt=None):
+    def __init__(self, name, code, type, soc=None, hlgt=None, hlt=None, pt=None):
         super().__init__(name, code)
         self.type = type
         self.soc = soc
         self.hlgt = hlgt
         self.hlt = hlt
         self.pt = pt
+
+    def __hash__(self):
+        return hash(("name", self.name, "code", self.code, "type", self.type))
+
+    def __eq__(self, other):
+        return "{}-{}-{}".format(self.name, self.code, self.type).__eq__(
+            "{}-{}-{}".format(other.name, other.code, other.type))
 
 
 class KnowledgeGraphWrapper:
@@ -110,13 +112,12 @@ class KnowledgeGraphWrapper:
         #
         self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings
-        # drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
-        #                           ) for d in drugs])
-        drugs = sorted([NCObject(name=get_binding_value(d, "drug_name"),
+
+        drugs = sorted([NCObject(name=get_binding_value(d, "drug_name").capitalize(),
                                  code=get_binding_value(d, "drug_code", sep=":")
                                  ) for d in drugs])
 
-        cache.set("drugs", drugs)
+        cache.set("drugs", drugs, timeout=None)
 
     def get_drugs(self):
         """ Retrieve drugs from cache
@@ -141,7 +142,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        } LIMIT 1000
+        }
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -154,51 +155,34 @@ class KnowledgeGraphWrapper:
                                              hlt=get_binding_value(c, "hlt"),
                                              pt=get_binding_value(c, "pt"),
                                              type=get_binding_value(c, "condition_type"),
-                                             )for c in conditions])
-        # print(conditions)
+                                             ) for c in conditions])
 
-        cache.set("conditions", conditions)
+        # Make sure conditions are unique
+        conditions = list(set(conditions))
 
-        # json_dir = os.path.dirname(os.path.realpath(__file__))
-        # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
-        #     conditions = sorted(json.load(fp).items())
+        # Keep only specific level concepts
+        condition_types = ["https://w3id.org/phuse/meddra#PreferredConcept",
+                           "https://w3id.org/phuse/meddra#LowLevelConcept"]
 
-            # conditions = [NCObject(name=n, code=c) for n, c in conditions]
-            #
-            # cache.set("conditions", conditions)
+        # Just the nodes for the JStree
+        medDRA_tree = medDRA_flat_tree(conditions)
+
+        # Allow only llt and pt conditions for select2 conditions_fld
+        conditions = list(filter(lambda c: c.type in condition_types, conditions))
+        cache.set("conditions", conditions, timeout=None)
+
+        cache.set("medDRA_tree", medDRA_tree, timeout=None)
 
     def get_conditions(self):
-        """ Retrieve drugs from cache
+        """ Retrieve conditions from cache
         """
         return cache.get("conditions")
 
-# def get_drugs():
-#
-#     # Change with real service
-#     drugs = sorted([("Omeprazole", "A02BC01"), ("Esomeprazole", "A02BC05"),
-#              ("Etybenzatropine", "N04AC30"), ("Benzatropine", "N04AC01"),
-#              ("Phenytoin", "N03AB02"), ("Olmesartan", "C09CA08")])
-#
-#     # Turn drugs into objects with name and code
-#     DrugStruct = namedtuple("DrugStruct", "name, code")
-#     drugs = [DrugStruct(name=d[0], code=d[1]) for d in drugs]
-#
-#     return drugs
-#
-#
-# def get_conditions():
-#
-#     # Change with real service
-#     conditions = sorted([("Pain","10033371"), ("Stinging", "10033371"),
-#                   ("Rhinitis", "10039083"), ("Allergic rhinitis", "10039085"),
-#                   ("Partial visual loss", "10047571"), ("Dry mouth", "10013781"),
-#                          ("Sprue-like enteropathy", "10079622"),])
-#
-#     # Turn conditions into objects with name and code
-#     ConditionStruct = namedtuple("ConditionStruct", "name, code")
-#     conditions = [ConditionStruct(name=c[0], code=c[1]) for c in conditions]
-#
-#     return conditions
+    def get_medDRA_tree(self):
+        """ Retrieve medDRA_tree from cache
+        """
+        return cache.get("medDRA_tree")
+
 
 def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
     """ Helper function to get value from sparql bindings
@@ -209,8 +193,9 @@ def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
     :return: the value to assign it to an attribute
     """
 
-    if attr not in results_dict.keys():  # Key does not exist in sparql dictionary keys
-        return ""
+    # Key does not exist in sparql dictionary keys or is in nullify_attrs list
+    if attr not in results_dict.keys():
+        return None
 
     ret_val = results_dict[attr].value
 
