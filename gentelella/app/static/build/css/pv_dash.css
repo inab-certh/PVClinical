@@ -230,9 +230,9 @@
     filter: none!important;
 }
 
-[id*='___soc___']>i.jstree-checkbox,
-[id*='___hlgt___']>i.jstree-checkbox,
-[id*='___hlt___']>i.jstree-checkbox {
+[id*='___soc']>i.jstree-checkbox,
+[id*='___hlgt']>i.jstree-checkbox,
+[id*='___hlt']>i.jstree-checkbox {
     display: none;
 }
 

@@ -1,5 +1,3 @@
-// var all_drugs = [];
-
 $(function() {
     var languages = {"Greek": "el", "English": "en"};
 
@@ -41,8 +39,6 @@ $(function() {
 
 
     $("[name='drugs_fld']").change(function () {
-        // $("#atcTree").treeview('collapseAll', {silent: true});
-        // $("#atcTree").treeview('uncheckAll', {silent: true});
         var selected = $(this).val();
 
         if(selected===null) {
@@ -74,8 +70,7 @@ $(function() {
         }).toArray();
 
         $("#atcTree").treeview('checkNode', [nodes_to_check, {silent: true}]);
-        // $("#atcTree").treeview('uncheckNode', [nodes_to_uncheck]);
-        // $("#atcTree").treeview('checkNode', [more_to_check]);
+
         $("#atcTree").treeview('revealNode', [nodes_to_check, {silent: true}]);
 
         $.ajax({
@@ -278,68 +273,41 @@ $(function() {
 
             $("[name='drugs_fld']").val(selected_fld_drugs).trigger("change");
 
-
-            // Append selected drugs to drugs_fld box
-            // var all_selected_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
-            // all_selected_drugs = all_selected_drugs.concat(selected_drugs_by_atc.filter((item) => all_selected_drugs.indexOf(item) == -1));
-
         }
     });
 
     // A fake change trigger to initialize form
     $("[name='drugs_fld']").trigger("change");
 
-
     var medDRA_tree = get_medDRA_tree();
+    $("#loaderOverlay").fadeIn();
     // console.log(medDRA_tree);
     $("#medDRATree").jstree({
         "core": {
             "multiple": true,
             "data": medDRA_tree
         },
-        // "conditionalselect": function (node) {
-        //     // Check node and call some method
-        //     console.log(node.parents.length);
-        //     return node.parents.length===5;
-        // },
-        "plugins": ["search", "checkbox"],
-        // "checkbox": {
-        //     "whole_node" : false,
-        //     "tie_selection" : false
-        //     },
 
+        "plugins": ["search", "checkbox"],
         "search": {
                     "case_sensitive": false,
                     "show_only_matches": false
                 }
     })
         .bind("ready.jstree", function (event, data) {
+            $("#loaderOverlay").fadeOut();
             var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
             init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
             check_open_leaves(init_sel_conditions);
         });
 
-    // $('#medDRATree').each( function() {
-    //     console.log(this);
-    //     if (this.parents.length<4) {
-    //         $("#medDRATree").jstree().disable_node(this.id);
-    //         this.a_attr["class"] = "no_checkbox";
-    //     }
-    // });
-
     var cur_sel_conditions = [];
 
     $("[name='conditions_fld']").change(function () {
-        // var searchString = $(this).val();
-        // console.log(searchString);
-        // $("#medDRATree").jstree("search", searchString);
-        // $("#medDRATree").jstree("deselect_all", true);
-        // $("#medDRATree").jstree("close_all");
 
         var sel_conditions = $(this).val();
 
         var prev_sel_conditions = cur_sel_conditions;
-        // var previous_final_sel_conditions = $("#medDRATree").jstree('get_selected', true);
 
         cur_sel_conditions = get_conditions_ids(sel_conditions);
 
@@ -352,37 +320,17 @@ $(function() {
         var new_sel_conditions = cur_sel_conditions.filter(
             x => prev_sel_conditions.indexOf(x) === -1);
 
-        // console.log(difference_sel_conditions);
-        // console.log(previous_final_sel_conditions);
 
         $("#medDRATree").jstree("deselect_node", desel_conditions);
-        // for (var i = 0; i < difference_sel_conditions.length; i++) {
-        //     var node = $('#medDRATree').jstree(true).get_node(difference_sel_conditions[i]);
-        //     console.log(node);
-        //
-        //     if (node) {
-        //         $("#medDRATree").jstree("deselect_node", node);
-        //         // $("#medDRATree").jstree()._close_to(node.id);
-        //     }
-        // }
-
         check_open_leaves(new_sel_conditions);
     });
-
-    // $("[name='conditions_fld']").on("select2:select", function (evt) {
-    //     var cond_fld_val = $(this).val();
-    //     cond_fld_val = cond_fld_val.sort();
-    //     console.log(cond_fld_val);
-    //     $(this).val(cond_fld_val).trigger("change");
-    // });
 
     $('#medDRATree')
       // listen for event
     .on('changed.jstree', function (e, data) {
         $("#loaderOverlay").fadeIn();
         var i, j, r = [];
-        // var options_arr = [];
-        // console.log(options_arr);
+
         for(i = 0, j = data.selected.length; i < j; i++) {
             var node_txt = data.instance.get_node(data.selected[i]).text;
             if(r.indexOf(node_txt) === -1){
@@ -393,37 +341,16 @@ $(function() {
                         "<option id=\""+node_txt+"\">"+node_txt+"</option>");
                 }
 
-                // options_arr.push({"id": data.instance.get_node(data.selected[i]).text,
-                //     "text": data.instance.get_node(data.selected[i]).text,
-                //     "selected": true})
             }
         }
 
         $("#loaderOverlay").fadeOut();
-        // sel2_data = {"results": options_arr};
-        // console.log(sel2_data);
-        // $("[name='conditions_fld']").select2({data: options_arr});
-        // $("[name='conditions_fld']").select2("updateResults");
-        // console.log(r);
-        // console.log(options_arr);
-        // var bottom_checked = $("#medDRATree").jstree("get_bottom_checked", true);
-        // $("[name='conditions_fld']").trigger("change");
+
 
         $("[name='conditions_fld']").val(r).trigger("change");
       })
       // create the instance
       .jstree();
-
-
-///////////////////////////////////////////////////////////////////
-
-
-
-    // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
-    //     maximumSelectionLength: 5});
-
-    // $("[name='conditions_fld']").select2ToTree({treeData: {dataArr: medDRA_tree},
-    //     maximumSelectionLength: 5, templateResult: formatState, templateSelection: formatState});
 
 
     function get_all_drugs() {
@@ -488,14 +415,6 @@ $(function() {
         $("#medDRATree").jstree("check_node", sel_conditions);
         for (var i = 0; i < sel_conditions.length; i++) {
             $("#medDRATree").jstree()._open_to(sel_conditions[i]);
-
-            // var node = $('#medDRATree').jstree(true).get_node(sel_conditions[i]);
-            // // console.log(node);
-            //
-            // if(node) {
-            //     $("#medDRATree").jstree()._open_to(node.id);
-            //     $("#medDRATree").jstree("check_node", node, true);
-            // }
         }
     }
 
@@ -511,13 +430,7 @@ function move_to_selected_drugs() {
         return $(this).val();
     }).toArray();
 
-    // var selected_synonyms = all_drugs.filter(function (drug) {
-    //     return checked_synonyms.indexOf(drug.split(' - ').shift()) != -1;
-    // });
-
     var all_selected_drugs = $("[name='drugs_fld']").val();
-    // console.log(checked_synonyms);
-    // console.log(all_selected_drugs);
 
     var all_selected_drugs = all_selected_drugs.concat(checked_synonyms);
 

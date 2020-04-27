@@ -1,16 +1,11 @@
-import json
-import os
-import time
-
-from collections import namedtuple
-
 from SPARQLWrapper import SPARQLWrapper2
 from SPARQLWrapper import JSON
 
 from django.conf import settings
 from django.core.cache import cache
 
-from app.helper_modules import medDRA_hierarchy_tree
+# from app.helper_modules import medDRA_hierarchy_tree
+from app.helper_modules import medDRA_flat_tree
 
 
 class NCObject(object):
@@ -40,43 +35,12 @@ class ConditionObject(NCObject):
         self.hlt = hlt
         self.pt = pt
 
-        # self.soc = None
-        # self.hlgt = None
-        # self.hlt = None
-        # self.pt = None
-
-        # # Select main ancestor to set by type of condition
-        # type_to_main_ancestor = {"https://w3id.org/phuse/meddra#HighLevelGroupConcept": "soc",
-        #                          "https://w3id.org/phuse/meddra#HighLevelConcept": "hlgt",
-        #                          "https://w3id.org/phuse/meddra#PreferredConcept": "hlt",
-        #                          "https://w3id.org/phuse/meddra#LowLevelConcept": "pt",
-        #                          "https://w3id.org/phuse/meddra#SystemOrganClassConcept": ""}
-        #
-        # # Set only main ancestor (one level up) for condition
-        # setattr(self, type_to_main_ancestor[self.type],
-        #         eval(type_to_main_ancestor[self.type]) if type_to_main_ancestor[self.type] else None)
-
     def __hash__(self):
-        return hash(("name", self.name, "code", self.code, "type", self.type,
-                     "soc", self.soc, "hlgt", self.hlgt, "hlt", self.hlt, "pt", self.pt))
+        return hash(("name", self.name, "code", self.code, "type", self.type))
 
     def __eq__(self, other):
-        return "{}-{}-{}-{}-{}-{}-{}".format(
-            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__eq__(
-            "{}-{}-{}-{}-{}-{}-{}".format(
-                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
-
-    def __lt__(self, other):
-        return "{}-{}-{}-{}-{}-{}-{}".format(
-            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__lt__(
-            "{}-{}-{}-{}-{}-{}-{}".format(
-                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
-
-    def __gt__(self, other):
-        return "{}-{}-{}-{}-{}-{}-{}".format(
-            self.name, self.code, self.type, self.soc, self.hlgt, self.hlt, self.pt).__gt__(
-            "{}-{}-{}-{}-{}-{}-{}".format(
-                other.name, other.code, other.type, other.soc, other.hlgt, other.hlt, other.pt))
+        return "{}-{}-{}".format(self.name, self.code, self.type).__eq__(
+            "{}-{}-{}".format(other.name, other.code, other.type))
 
 
 class KnowledgeGraphWrapper:
@@ -148,8 +112,7 @@ class KnowledgeGraphWrapper:
         #
         self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings
-        # drugs = sorted([NCObject(name=d["name"].value.lower(), code=d["code"].value
-        #                           ) for d in drugs])
+
         drugs = sorted([NCObject(name=get_binding_value(d, "drug_name").capitalize(),
                                  code=get_binding_value(d, "drug_code", sep=":")
                                  ) for d in drugs])
@@ -179,7 +142,7 @@ class KnowledgeGraphWrapper:
             OPTIONAL {?condition meddra:hasHLT ?hlt}.
             OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
             OPTIONAL {?condition meddra:hasSOC ?soc}
-        } LIMIT 10000
+        }
         """
         self.sparql.setQuery(whole_query)
         # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
@@ -194,23 +157,21 @@ class KnowledgeGraphWrapper:
                                              type=get_binding_value(c, "condition_type"),
                                              ) for c in conditions])
 
-        # with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json"), "w", encoding="utf8") as fp:
-        #     json.dump(medDRA_hierarchy_tree(conditions), fp)
+        # Make sure conditions are unique
+        conditions = list(set(conditions))
 
+        # Keep only specific level concepts
+        condition_types = ["https://w3id.org/phuse/meddra#PreferredConcept",
+                           "https://w3id.org/phuse/meddra#LowLevelConcept"]
+
+        # Just the nodes for the JStree
+        medDRA_tree = medDRA_flat_tree(conditions)
+
+        # Allow only llt and pt conditions for select2 conditions_fld
+        conditions = list(filter(lambda c: c.type in condition_types, conditions))
         cache.set("conditions", conditions, timeout=None)
 
-        # Cache medDRA hierarchy tree too
-        with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
-            medDRA_tree = json.load(fp)
-
         cache.set("medDRA_tree", medDRA_tree, timeout=None)
-
-        # with open(os.path.join(json_dir, "med_data", "medDRA.json"), "r") as fp:
-        #     conditions = sorted(json.load(fp).items())
-
-        # conditions = [NCObject(name=n, code=c) for n, c in conditions]
-        #
-        # cache.set("conditions", conditions)
 
     def get_conditions(self):
         """ Retrieve conditions from cache
@@ -222,34 +183,6 @@ class KnowledgeGraphWrapper:
         """
         return cache.get("medDRA_tree")
 
-
-# def get_drugs():
-#
-#     # Change with real service
-#     drugs = sorted([("Omeprazole", "A02BC01"), ("Esomeprazole", "A02BC05"),
-#              ("Etybenzatropine", "N04AC30"), ("Benzatropine", "N04AC01"),
-#              ("Phenytoin", "N03AB02"), ("Olmesartan", "C09CA08")])
-#
-#     # Turn drugs into objects with name and code
-#     DrugStruct = namedtuple("DrugStruct", "name, code")
-#     drugs = [DrugStruct(name=d[0], code=d[1]) for d in drugs]
-#
-#     return drugs
-#
-#
-# def get_conditions():
-#
-#     # Change with real service
-#     conditions = sorted([("Pain","10033371"), ("Stinging", "10033371"),
-#                   ("Rhinitis", "10039083"), ("Allergic rhinitis", "10039085"),
-#                   ("Partial visual loss", "10047571"), ("Dry mouth", "10013781"),
-#                          ("Sprue-like enteropathy", "10079622"),])
-#
-#     # Turn conditions into objects with name and code
-#     ConditionStruct = namedtuple("ConditionStruct", "name, code")
-#     conditions = [ConditionStruct(name=c[0], code=c[1]) for c in conditions]
-#
-#     return conditions
 
 def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
     """ Helper function to get value from sparql bindings
@@ -272,30 +205,3 @@ def get_binding_value(results_dict, attr, sep=None, strip_chars=None):
         ret_val = ret_val.strip(strip_chars)
 
     return ret_val
-
-# def keep_one_level_parent(condition):
-#     """ Keep only one level parent for the condition
-#     :param condition: the condition
-#     :return: the condition
-#     """
-#
-#     parent_by_level = ["pt", "hlt", "hlgt", "soc"]
-#     for el in parent_by_level:
-#         if getattr(condition, parent_by_level.pop(0)):
-#             for lvl in parent_by_level:
-#                 setattr(condition, lvl, None)
-
-# def ancestors_to_nullify(condition):
-#     """ Return attributes (ancestors) of condition to nullify (None).
-#     That way we keep only the main ancestor of the current condition
-#     :param condition: the current condition
-#     :return: second level and upper ancestors to nullify
-#     """
-#
-#     by_type_nullify_ancestors = {"https://w3id.org/phuse/meddra#HighLevelGroupConcept": [],
-#                                 "https://w3id.org/phuse/meddra#HighLevelConcept": ["soc"],
-#                                 "https://w3id.org/phuse/meddra#PreferredConcept": ["hlgt", "soc"],
-#                                 "https://w3id.org/phuse/meddra#LowLevelConcept": ["soc", "hlgt", "hlt"],
-#                                 "https://w3id.org/phuse/meddra#SystemOrganClassConcept": []}
-#
-#     return by_type_nullify_ancestors[condition.type]
