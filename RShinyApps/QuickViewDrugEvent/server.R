@@ -704,14 +704,14 @@ shinyServer(function(input, output, session) {
     return(out)
   })
 
-  output$cpmeanplot <- renderDygraph ({
+  output$cpmeanplot <- renderPlotly ({
     if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
         closeAlert(session, "exampleAlert")
-        s <- calccpmean()
+        s1 <- calccpmean()
         labs <-    index( getts() )
         pos <- seq(1, length(labs), 3)
   
@@ -739,26 +739,50 @@ shinyServer(function(input, output, session) {
         # grid(nx=NA, ny=NULL,col = "lightgray")
         # abline(v=pos, col = "lightgray", lty = "dotted",
         #        lwd = par("lwd") )
-        values<-as.data.frame(s@data.set)
-        Dates2<-lapply(attr(s@data.set, "index"), function(x) {
+        
+        values<-as.data.frame(s1@data.set)
+        Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
           # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
           x <- paste(x,'-01',sep = '')
           x
         })
-        datetime <- ymd(Dates2)
-        don <- xts(x =as.vector(values), order.by = datetime)
-        p <- dygraph(don,main = "Change in mean analysis") %>%
-          dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
-          # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
-          dyRangeSelector() %>%
-          # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
-          dyCrosshair(direction = "vertical") %>%
-          dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
-          dyRoller(rollPeriod = 1)
+        # datetime <- ymd(Dates2)
+        # don <- xts(x =as.vector(values), order.by = datetime)
+        # browser()
+        # p <- dygraph(don,main = "Change in mean analysis") %>%
+        #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+        #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+        #   dyRangeSelector() %>%
+        #   # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+        #   dyCrosshair(direction = "vertical") %>%
+        #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+        #   dyRoller(rollPeriod = 1)
+        #   # %>%
+        #   # dyLimit(s1@cpts[2], color = "red")
+        # p
         
         
+        datetimeValues <- ymd(Dates2)
+        values2 =values$x
+        data <- data.frame(datetimeValues, values)
+        p <- plot_ly(x = attr(s1@data.set,'index'))
+        p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+        
+        # range = 
+        #   c(as.numeric(as.POSIXct("2005-08-01", format="%Y-%m-%d"))*1000,
+        #     as.numeric(as.POSIXct("2020-01-31", format="%Y-%m-%d"))*1000),
+        range_0<-1   
+        for (i in 1:(length(s1@param.est$mean))){
+          mean_i<-s1@param.est$mean[i]
+          range_1<-s1@cpts[i]
+          limit1<-c(rep(mean_i, (range_1-range_0+1) ))
+          x_range<-attr(s1@data.set,'index')[range_0:range_1]
+          t1<-paste(length(x_range),length(limit1))
+          p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '##ff7f0e'))
+          
+          range_0<-range_1
+        }
         p
-        
       }
       else
       {
@@ -769,7 +793,8 @@ shinyServer(function(input, output, session) {
       
     }
     else{
-      s <- calccpmean()
+      s1 <- calccpmean()
+      return (NULL)
     }
   })
 

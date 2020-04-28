@@ -791,48 +791,7 @@ output$prrplot <- renderPlot ({
   {
     myevents <- getterm2( session, FALSE)
   }
-  #****************************************
-  #* maketiff
-#   if ( !is.null(mydf) & (1==2) )
-#   {
-#     filename <- paste0( getterm1(), getterm2(), '.tif')
-# #    print(filename)
-#     filename <- gsub('%22', '', filename)
-#     if ( nrow(mydf) >0 )
-#     {
-#       print(filename)
-#       tiff(file = filename, res=600, compression='lzw',height=4, width=6, units="in",  bg = "transparent" )
-#       showdates <- seq( as.Date(  input$daterange[1] ), as.Date(input$daterange[2] ), 'months' )
-#       showdates <- substr(showdates, 1, 7)
-#       mydf <- mydf[mydf$Date %in% showdates,]
-#       myylim <- c( min(.5, min(mydf$lb)), max(2, max(mydf$ub) ) )
-#       xloc <- ymd( mydf$Date, truncated=2 )
-#       labs <- mydf$Date
-#       
-#       lbgap <-   exp(log(mydf$lb) + .96*mydf$sd) #exp ( log( prr ) - 1.96*sd )
-#       ubgap <-   exp(log(mydf$ub) - .96*mydf$sd)
-#       #   title <- paste( 'PRR Plot for', input$t1,  'and', input$t2 )  
-#       mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
-#       plot( xloc, mydf$prr, ylim=myylim, ylab='95% Confidence Interval for PRR',
-#             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
-#       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )
-#       if( ! isTRUE( all.equal(mydf$prr, mydf$lb) ) )
-#       {
-#         arrows(x0=xloc[ mydf$prr!=mydf$lb ], x1=xloc[ mydf$prr!=mydf$lb ],
-#                y0=lbgap[ mydf$prr!=mydf$lb ], y1=mydf$lb[ mydf$prr!=mydf$lb ], angle=90, length=.025)
-#         arrows(x0=xloc[ mydf$prr!=mydf$ub ], x1=xloc[ mydf$prr!=mydf$ub ],
-#                y1=mydf$ub[ mydf$prr!=mydf$ub ], y0=ubgap[ mydf$prr!=mydf$ub ], angle=90, length=.025)
-#       }
-#       abline(h=1)
-#       grid()
-#     } else  {
-#       mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
-#       plot( xloc, mydf$prr, ylim=myylim, ylab='95% Confidence Interval for PRR',
-#             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
-#       }
-#     dev.off()
-#   }
-  #end maketiff
+  
   if ( !is.null(mydf) & getterm1( session, FALSE)!='' & getterm2( session, FALSE)!='' )
     {
     if ( nrow(mydf) >0 )
@@ -840,7 +799,7 @@ output$prrplot <- renderPlot ({
       showdates <- seq( as.Date(  input$daterange[1] ), as.Date(input$daterange[2] ), 'months' )
       showdates <- substr(showdates, 1, 7)
       mydf <- mydf[mydf[ , i18n()$t('Date') ] %in% showdates,]
-      myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$LB) ) )
+      myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$UB) ) )
       xloc <- ymd( mydf[ , i18n()$t('Date') ], truncated=2 )
       labs <- mydf[ , i18n()$t('Date') ]
       
@@ -865,6 +824,7 @@ output$prrplot <- renderPlot ({
       }
       # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
       mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
+      browser()
       plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
             xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )

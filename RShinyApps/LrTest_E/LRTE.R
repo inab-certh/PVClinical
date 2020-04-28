@@ -2,6 +2,7 @@ require(shiny)
 require(shinyBS)
 library(shiny.i18n)
 library(DT)
+library(plotly)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -897,23 +898,26 @@ simplot <- function(){
     myrange <- range(vals)
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
-    truehist(vals , breaks=mybreaks, 
-             main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
-             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
-    text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
-    smallbreaks <- seq(0, max(mybreaks), 1)
-    
-    smallbreaks <-  c( round(mycrit, 2), smallbreaks )
-    axis(1, smallbreaks, las=3 )
-    abline(v=mycrit, col='red', lwd=2)
-    if ( is.data.frame(mydf) ) 
-    {
-    } else {
-      return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
-    }
+    # truehist(vals , breaks=mybreaks, 
+    #          main=i18n()$t("Histogram of Simulated Distribution of LLR"), 
+    #          xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
+    # text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
+    # smallbreaks <- seq(0, max(mybreaks), 1)
+    # 
+    # smallbreaks <-  c( round(mycrit, 2), smallbreaks )
+    # axis(1, smallbreaks, las=3 )
+    # abline(v=mycrit, col='red', lwd=2)
+    # if ( is.data.frame(mydf) ) 
+    # {
+    # } else {
+    #   return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
+    # }
+    fig <- plot_ly(x = ~vals, nbinsx = 20,type = "histogram",histnorm='probability')
+    fig <- fig %>% layout(title = i18n()$t("Histogram of Simulated Distribution of LLR"),yaxis=list(type='linear'), xaxis = list(title = i18n()$t("Likelihood Ratio"), zeroline = FALSE))
+    fig
   }
 }
-output$simplot <- renderPlot({  
+output$simplot <- renderPlotly({  
   getcururl()
   simplot()
 } )
