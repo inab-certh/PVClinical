@@ -315,6 +315,11 @@
         "gr":"Σημεία αλλαγής σημείου"
       },
       {
+        "def":"Location",
+        "en":"Location",
+        "gr":"Θέση"
+      },
+      {
         "def":"Date Report Was First Received by FDA.",
         "en":"Date Report Was First Received by FDA.",
         "gr":"Η αναφορά ημερομηνίας λήφθηκε για πρώτη φορά από τον FDA."
@@ -534,7 +539,12 @@
       {
         "def":"Loglikelihood Ratio",
         "en":"Loglikelihood Ratio",
-        "gr":"Αναλογία πιθανότητας σύνδεσης"
+        "gr":"Λογαριθμική Αναλογία πιθανότητας"
+      },
+      {
+        "def":"Likelihood Ratio",
+        "en":"Likelihood Ratio",
+        "gr":"Αναλογία πιθανότητας"
       },
       {
         "def":"NEPHROGENIC SYSTEMIC FIBROSIS",
@@ -647,6 +657,21 @@
         "def":"No data for the specific Drug-Event combination",
         "en":"No data for the specific Drug-Event combination",
         "gr":"Δεν υπάρχουν δεδομένα για τον συγκεκριμένο συνδυασμό φαρμάκων-συμβάντων"
+      },
+      {
+        "def":"Posterior Means and Probabilities of Change",
+        "en":"Posterior Means and Probabilities of Change",
+        "gr":"Εκ των υστέρων μέσες τιμές και πιθανότητες αλλαγής"
+      },
+      {
+        "def":"Posterior Means",
+        "en":"Posterior Means",
+        "gr":"Εκ των υστέρων μέσες τιμές"
+      },
+      {
+        "def":"Posterior Probability",
+        "en":"Posterior Probability",
+        "gr":"Εκ των υστέρων πιθανότητες"
       },
       {
         "def":"prr explanation",

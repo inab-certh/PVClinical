@@ -718,7 +718,7 @@ shinyServer(function(input, output, session) {
     return(out)
   })
 
-  output$cpmeanplot <- renderDygraph ({
+  output$cpmeanplot <- renderPlotly ({
     mydf <-getquerydata()$mydfin$result
     
     if (length(mydf) > 0)
@@ -761,20 +761,35 @@ shinyServer(function(input, output, session) {
         x <- paste(x,'-01',sep = '')
         x
       })
-      datetime <- ymd(Dates2)
-      don <- xts(x =as.vector(values), order.by = datetime)
+      # datetime <- ymd(Dates2)
+      # don <- xts(x =as.vector(values), order.by = datetime)
+      # p <- dygraph(don,main = i18n()$t("Change in mean analysis")) %>%
+      #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#667",axisLabelColor ="#667",axisLabelFontSize=13) %>%
+      #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+      #   dyRangeSelector() %>%
+      #   # dyLimit(s1@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+      #   dyCrosshair(direction = "vertical") %>%
+      #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+      #   dyRoller(rollPeriod = 1)
+      # p
       
-      # Finally the plot
-      p <- dygraph(don,main = i18n()$t("Change in mean analysis")) %>%
-        dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#667",axisLabelColor ="#667",axisLabelFontSize=13) %>%
-        # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
-        dyRangeSelector() %>%
-        # dyLimit(s1@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
-        dyCrosshair(direction = "vertical") %>%
-        dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
-        dyRoller(rollPeriod = 1)
+      datetimeValues <- ymd(Dates2)
+      values2 =values$x
+      data <- data.frame(datetimeValues, values)
+      p <- plot_ly(x = attr(s1@data.set,'index'))
+      p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
       
-      
+      range_0<-1   
+      for (i in 1:(length(s1@param.est$mean))){
+        mean_i<-s1@param.est$mean[i]
+        range_1<-s1@cpts[i]
+        limit1<-c(rep(mean_i, (range_1-range_0+1) ))
+        x_range<-attr(s1@data.set,'index')[range_0:range_1]
+        t1<-paste(length(x_range),length(limit1))
+        p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '##ff7f0e'),name=paste('cp',i) )
+        
+        range_0<-range_1
+      }
       p
     }
     

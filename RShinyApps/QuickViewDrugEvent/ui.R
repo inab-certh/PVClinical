@@ -1,3 +1,4 @@
+library(plotly)
 library(rsconnect)
 library(shinyjs)
 library(shiny)
@@ -64,7 +65,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            column(width=12, dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
                                   fluidRow( bsAlert("qvde_cpmeanplot"),
                                             # withSpinner(plotOutput( 'cpmeanplot' ))
-                                            withSpinner(dygraphOutput( 'cpmeanplot'))
+                                            withSpinner(plotlyOutput( 'cpmeanplot'))
                                             )
                                   
                                   

@@ -3,7 +3,6 @@ library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
-library(DT)
 library(shinycssloaders)
 library(shinyalert)
 library(dygraphs)
@@ -83,7 +82,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            column(width=6,
                                   # fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
                                   fluidRow( column(width=10,offset=1,withSpinner(plotlyOutput("seriousplot")))),
-                                  fluidRow( column(width=10,offset=1,withSpinner(dygraphOutput( 'cpmeanplot') )))
+                                  fluidRow( column(width=10,offset=1,withSpinner(plotlyOutput( 'cpmeanplot') )))
                                   
                                   
                                   

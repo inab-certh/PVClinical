@@ -921,33 +921,40 @@ simplot <- function(){
     myrange <- range(vals)
     interval <- (mycrit - myrange[1])/20
     mybreaks <- c( seq(myrange[1], mycrit, interval ),  seq(mycrit+interval,  myrange[2] + interval, interval ) )
-    truehist(vals , breaks=mybreaks,
-             main=i18n()$t("Histogram of Simulated Distribution of LLR"),
-             xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
-    text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
-    smallbreaks <- seq(0, max(mybreaks), 1)
-
-    smallbreaks <-  c( round(mycrit, 2), smallbreaks )
-    axis(1, smallbreaks, las=3 )
-    abline(v=mycrit, col='red', lwd=2)
-    # valframe<-cbind(read.table(text = names(vals)), vals)
-    # browser()
-    # fig <- plot_ly(
-    #   as.factor(vals),
-    #   name = "SF Zoo",
-    #   type = "histogram"
-    # )%>% layout(title=i18n()$t("Seriousness"))
-    # 
-    # fig
     
-    if ( is.data.frame(mydf) ) 
-    {
-    } else {
-      return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
+    # truehist(vals , breaks=mybreaks,
+    #          main=i18n()$t("Histogram of Simulated Distribution of LLR"),
+    #          xlab=i18n()$t("Loglikelihood Ratio"), xaxt='n' )
+    # text(mycrit,.3, paste(i18n()$t("Rejection Region, LLR >"), round(mycrit, 2) ), pos=4, col='red')
+    # smallbreaks <- seq(0, max(mybreaks), 1)
+    # 
+    # smallbreaks <-  c( round(mycrit, 2), smallbreaks )
+    # axis(1, smallbreaks, las=3 )
+    # abline(v=mycrit, col='red', lwd=2)
+    
+    mybreaks_numberOfVals<-c(rep(0, length(mybreaks)))
+    for (value in vals) {
+      index<-as.integer(value/mybreaks[2])+1
+      mybreaks_numberOfVals[index]<-mybreaks_numberOfVals[index]+1
     }
+    #browser()
+    mybreaks<-paste(mybreaks[1:length(mybreaks)])
+    mybreaks_numberOfVals<-paste(mybreaks_numberOfVals[1:length(mybreaks_numberOfVals)])
+    fig <- plot_ly(x = ~vals,nbinsx = 20, type = "histogram",histnorm='probability')
+    #fig <- plot_ly(y=mybreaks_numberOfVals, x=mybreaks, histfunc='sum', type = "histogram")
+    # fig <- plot_ly(y=mybreaks_numberOfVals, x=mybreaks, histnorm='probability', type = "histogram")
+    fig <- fig %>% layout(title = i18n()$t("Histogram of Simulated Distribution of LLR"),yaxis=list(type='linear'), xaxis = list(title = i18n()$t("Likelihood Ratio"), zeroline = FALSE))
+    
+    fig
+    
+    # if ( is.data.frame(mydf) ) 
+    # {
+    # } else {
+    #   return(data.frame(Term= paste(i18n()$t("No records for"), getterm1(session)), Count=0))
+    # }
   }
 }
-output$simplot <- renderPlot({  
+output$simplot <- renderPlotly({  
   getcururl()
   simplot()
 } )
