@@ -96,24 +96,13 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                   tabsetPanel(
                                     tabPanel(
                                       uiOutput("LRTResultsbasedonTotalDrugs"),
-                                      wellPanel(
                                         uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10"),
-                                        withSpinner(htmlOutput_p("prr"))
-                                        # htmlOutput( 'prrtitle' ), 
-                                        # helpText('Results sorted by LRR')
-                                        
+                                        withSpinner(htmlOutput_p("prr")
                                       )
-                                      #                          wordcloudtabset('cloudprr', 'prr', 
-                                      #                                          popheads=c( tt('prr1'), tt('word1') ), 
-                                      #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                                      
-                                      
                                       
                                     ),
                                     tabPanel(uiOutput("SimulationResultsforDrugBasedLRT"),
-                                             wellPanel( 
-                                               plotlyOutput( 'simplot')
-                                             )
+                                             plotlyOutput( 'simplot')
                                     ),
                                     tabPanel(uiOutput("AnalyzedDrugCountsforEventText")   ,
                                              withSpinner(htmlOutput_p( 'AnalyzedEventCountsforDrug' ))

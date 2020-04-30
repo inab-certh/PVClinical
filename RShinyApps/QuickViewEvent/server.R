@@ -2091,7 +2091,7 @@ shinyServer(function(input, output, session) {
       prr,
       options = list(
         autoWidth = TRUE,
-        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
         language = list(
           url = ifelse(selectedLang=='gr', 
                        'datatablesGreek.json', 

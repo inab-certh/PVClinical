@@ -103,9 +103,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                              
                     ),
                     tabPanel(uiOutput("SimulationResultsforEventBasedLRT"),
-                             wellPanel( 
-                               plotlyOutput( 'simplot')
-                             )
+                             plotlyOutput( 'simplot')
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforDrugText")   ,
                              htmlOutput_p('AnalyzedEventCountsforDrug')

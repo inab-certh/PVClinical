@@ -703,7 +703,42 @@ shinyServer(function(input, output, session) {
     }
     return(out)
   })
-
+  output$infocpmeantext <- renderUI ({
+    mydf <-getquerydata()$mydfin$result
+    if (length(mydf) > 0)
+    {
+      createAlert(session, 'alert', 'calclert',
+                  title='Calculating...', 
+                  content = 'Calculating meanCP', 
+                  dismiss = FALSE)
+      s <- calccpmean()
+      
+      mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
+      mycpts <-paste(mycpts, collapse=', ')
+      out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+      out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+      out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+      out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
+      out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+      out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
+      
+      out <- paste(out, "<br>",i18n()$t('changepoint explanation'), "<br>" )
+      if(!is.null(session$calclert))
+      {
+        closeAlert(session, 'calclert')
+      }
+    } else {
+      out <- i18n()$t('Insufficient data')
+    }
+    addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
+               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    #attr(session, "cpmeanplottext") <- out
+    # browser()
+    # l <- append( l, c('cpmeanplottext' =  out ) )
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+    
+  })
   output$cpmeanplot <- renderPlotly ({
     if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
@@ -761,13 +796,21 @@ shinyServer(function(input, output, session) {
         #   # dyLimit(s1@cpts[2], color = "red")
         # p
         
-        
+        f <- list(
+          family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+          color = '#667', 
+          size = 13
+        )
         datetimeValues <- ymd(Dates2)
         values2 =values$x
         data <- data.frame(datetimeValues, values)
-        p <- plot_ly(x = attr(s1@data.set,'index'))
+        p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
         p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
-        
+        p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+        p <- p %>% layout(yaxis = list(
+          title = i18n()$t("Count"),
+          titlefont = f
+        ))
         # range = 
         #   c(as.numeric(as.POSIXct("2005-08-01", format="%Y-%m-%d"))*1000,
         #     as.numeric(as.POSIXct("2020-01-31", format="%Y-%m-%d"))*1000),
@@ -778,7 +821,7 @@ shinyServer(function(input, output, session) {
           limit1<-c(rep(mean_i, (range_1-range_0+1) ))
           x_range<-attr(s1@data.set,'index')[range_0:range_1]
           t1<-paste(length(x_range),length(limit1))
-          p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '##ff7f0e'))
+          p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '#ff7f0e'))
           
           range_0<-range_1
         }
@@ -2071,7 +2114,7 @@ shinyServer(function(input, output, session) {
       prr,
       options = list(
         autoWidth = TRUE,
-        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
         initComplete = JS('function(setting, json) { alert("done"); }'),
         language = list(
           url = ifelse(input$selected_language=='gr', 

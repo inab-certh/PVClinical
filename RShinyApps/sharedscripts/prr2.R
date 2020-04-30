@@ -671,7 +671,7 @@ output$prr2 <- DT::renderDT({
     prr(),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json', 
@@ -780,7 +780,7 @@ output$specifieddrug2 <- DT::renderDT({
              error = paste( 'No results for', getterm1( session ) )),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -840,7 +840,7 @@ output$all2 <- DT::renderDT({
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -903,7 +903,7 @@ output$coqueryE2 <- DT::renderDT({
     coqueryE(),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -968,7 +968,7 @@ output$coquery2 <- DT::renderDT({
     coquery2(),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -1010,7 +1010,7 @@ output$indquery2 <- DT::renderDT({
              error = paste( 'No results for', getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -1039,7 +1039,7 @@ output$coqueryEex2 <- DT::renderDT({
     ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(input$selected_language=='gr',
                      'datatablesGreek.json',
