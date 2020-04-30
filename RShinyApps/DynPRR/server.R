@@ -579,7 +579,7 @@ output$coquery2 <- DT::renderDT({
     codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -630,7 +630,7 @@ output$coqueryE2 <- DT::renderDT({
     codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      grlang,
@@ -722,7 +722,7 @@ output$query_counts2 <- DT::renderDT({
     mydfIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -824,18 +824,18 @@ output$prrplot <- renderPlot ({
       }
       # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
       mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
-      browser()
       plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
-            xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21)
-      axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2   )
+            xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21,col.lab="#929292", col="#929292",col.axis="#929292",col.main="#929292")
+      
+      axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2, col.lab="#929292",col="#80638f" ,col.axis="#929292",col.main="#929292"  )
       if( ! isTRUE( all.equal(mydf$PRR, mydf$LB) ) )
         {
         arrows(x0=xloc[ mydf$PRR!=mydf$LB ], x1=xloc[ mydf$PRR!=mydf$LB ],
-             y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025)
+             y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025,col="#929292")
         arrows(x0=xloc[ mydf$PRR!=mydf$UB ], x1=xloc[ mydf$PRR!=mydf$UB ],
-             y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025)
+             y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025,col="#929292")
         }
-      abline(h=1)
+      abline(h=1, col="#ff7f0e")
       grid()
     } 
   } else  {

@@ -531,7 +531,7 @@ output$coquery <- DT::renderDT({
       return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -540,6 +540,30 @@ output$coquery <- DT::renderDT({
     ))
 },  escape=FALSE)
 
+output$coqueryE <- DT::renderDT({
+  codrugs <- getcocountsE()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
+      )
+    ))
+},  escape=FALSE)
 
 # output$coqueryE <- renderTable({  
 #   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
@@ -553,15 +577,15 @@ output$coquery <- DT::renderDT({
 # }, sanitize.text.function = function(x) x)
 
 
-output$coquery <- DT::renderDT({
-  codrugs <- getcocountsE()$mydf
-  datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
-},  escape=FALSE)
+# output$coquery <- DT::renderDT({
+#   codrugs <- getcocountsE()$mydf
+#   datatable(
+#     if ( is.data.frame(codrugs) )
+#     { 
+#       return(codrugs) 
+#     } else  {
+#       return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+# },  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -674,11 +698,23 @@ output$queryplot <- renderPlotly({
     #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
     #   dyRoller(rollPeriod = 1)
     # p
-    
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
     datetimeValues <- ymd(Dates2)
     values2 =Counts
     data <- data.frame(datetimeValues, values2)
-    p <- plot_ly(x = datetimeValues, y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+    p <- plot_ly(x = datetimeValues, y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'),showlegend=FALSE)
+    p <- p %>% layout(
+      yaxis = list(
+        title = i18n()$t("Count"),
+        titlefont = f
+      ))
+    
+    p <- p %>% layout(title = i18n()$t("Report Counts By Date"),titlefont = f)
+    
     p
   } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
 })
@@ -693,30 +729,30 @@ output$query <- renderTable({
     return(mydf$display) 
   } else  {return(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0))}
   }, include.rownames = FALSE, sanitize.text.function = function(x) x)
-output$coquery <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsD()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)  
+# output$coquery <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsD()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)  
 
-output$coqueryE <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsE()$mydf
-  # browser
-  if ( is.data.frame(codrugs) )
-  { 
-    # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
-    # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)
+# output$coqueryE <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsE()$mydf
+#   # browser
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+#     # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -880,13 +916,22 @@ output$cpmeanplot <- renderPlotly ({
     # p
     
     
-    
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
     datetimeValues <- ymd(Dates2)
     values2 =values$x
     data <- data.frame(datetimeValues, values)
     # p <- plot_ly(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
-    p <- plot_ly(x = attr(s1@data.set,'index'))
+    p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
     p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+    p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+    p <- p %>% layout(yaxis = list(
+      title = i18n()$t("Count"),
+      titlefont = f
+    ))
     range_0<-1   
     for (i in 1:(length(s1@param.est$mean))){
       mean_i<-s1@param.est$mean[i]
@@ -894,7 +939,7 @@ output$cpmeanplot <- renderPlotly ({
       limit1<-c(rep(mean_i, (range_1-range_0+1) ))
       x_range<-attr(s1@data.set,'index')[range_0:range_1]
       t1<-paste(length(x_range),length(limit1))
-      p <- p %>% add_trace(x=x_range,y = limit1,  type = 'scatter', mode = 'lines',line = list(color = '##ff7f0e'))
+      p <- p %>% add_trace(x=x_range,y = limit1,  type = 'scatter', mode = 'lines',line = list(color = '#ff7f0e'))
       
       range_0<-range_1
     }
@@ -978,11 +1023,23 @@ output$cpvarplot <- renderPlotly ({
     #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
     #   dyRoller(rollPeriod = 1)
     # p
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
     datetimeValues <- ymd(Dates2)
     values2 =values$x
     data <- data.frame(datetimeValues, values)
-    p <- plot_ly(x = attr(s1@data.set,'index'))
+    p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
     p<- p%>% add_trace( y = values2,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
+    p <-p %>% layout(
+      yaxis = list(
+        title = i18n()$t("Count"),
+        titlefont = f
+      ))
+    
+    p <-p %>% layout(title = i18n()$t("Change in variance analysis"),titlefont = f)
     
     range_0<-1 
     maxy<-max(values2)
@@ -1115,7 +1172,7 @@ output$cpbayesplot <- renderPlotly ({
     # values2 =values$x
     datamean <- s1$posterior.mean
     datameanframe<-as.data.frame(datamean)
-    p <- plot_ly(datameanframe)
+    p <- plot_ly(datameanframe,showlegend=FALSE)
     p <- p %>% add_trace(datameanframe,y=~X1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
     data <- s1$data
     dataframe<-as.data.frame(data)
@@ -1142,7 +1199,7 @@ output$cpbayesplot <- renderPlotly ({
     
     dataPosterior <- s1$posterior.var
     dataPosteriorFrame<-as.data.frame(dataPosterior)
-    p2<-plot_ly(dataPosteriorFrame,y=~V1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292')) %>% 
+    p2<-plot_ly(dataPosteriorFrame,y=~V1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'),showlegend=FALSE) %>% 
       layout(xaxis = list(
         title = i18n()$t("Location"),
         titlefont = f
