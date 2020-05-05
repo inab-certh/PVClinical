@@ -2,6 +2,7 @@ library(shiny)
 library(shinyjs)
 library(shinycssloaders)
 library(plotly)
+library(DT)
 
 source('sourcedir.R')
 
@@ -99,29 +100,29 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   
                   tabsetPanel(
                     tabPanel(uiOutput("LRTResultsbasedonTotalEvents"),
-                             htmlOutput_p('prr')
+                             dataTableOutput('prr')
                              
                     ),
                     tabPanel(uiOutput("SimulationResultsforEventBasedLRT"),
                              plotlyOutput( 'simplot')
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforDrugText")   ,
-                             htmlOutput_p('AnalyzedEventCountsforDrug')
+                             dataTableOutput('AnalyzedEventCountsforDrug')
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
-                             htmlOutput_p( 'all' )
+                             dataTableOutput( 'all' )
                     ),
                     tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                             htmlOutput_p('coquery')
+                             dataTableOutput('coquery')
                     ),
                     tabPanel(uiOutput("EventCountsforDrug"),
-                             htmlOutput_p('coqueryE')
+                             dataTableOutput('coqueryE')
                     ),
                     tabPanel(uiOutput("CountsForAllEvents"),
-                             htmlOutput_p('coqueryA')
+                             dataTableOutput('coqueryA')
                     ),
                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
-                             htmlOutput_p('indquery')
+                             dataTableOutput('indquery')
                     )
                     
                   )

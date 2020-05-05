@@ -824,10 +824,10 @@ output$prrplot <- renderPlot ({
       }
       # mytitle <- paste( "PRR Plot for", mydrugs, 'and', myevents )
       mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
-      plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),
-            xlab='', las=2, xaxt='n', bg='red', cex=.5,  main=mytitle, pch=21,col.lab="#929292", col="#929292",col.axis="#929292",col.main="#929292")
+      plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),lwd = 0.2,
+            xlab='', las=2, xaxt='n', bg='red', cex=0.7, cex.main=1, cex.lab=1,cex.axis=1,  main=mytitle, pch=21,col.lab="#929292", col="#929292",col.axis="#929292",col.main="#929292",font.main = 1)
       
-      axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2, col.lab="#929292",col="#80638f" ,col.axis="#929292",col.main="#929292"  )
+      axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2, col.lab="#929292",col="#929292" ,col.axis="#929292",col.main="#929292"  )
       if( ! isTRUE( all.equal(mydf$PRR, mydf$LB) ) )
         {
         arrows(x0=xloc[ mydf$PRR!=mydf$LB ], x1=xloc[ mydf$PRR!=mydf$LB ],

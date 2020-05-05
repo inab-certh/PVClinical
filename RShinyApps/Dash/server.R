@@ -563,14 +563,43 @@ output$source <- renderTable({
 }, height=300, align=c("rlllr"), sanitize.text.function = function(x) x)  
 
 
-output$query <- renderTable({  
+# output$query <- renderTable({  
+#   mydf <- getdrugcountstable()$mydf
+#   if ( is.data.frame(mydf) )
+#   {
+#     names(mydf) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+#     return(mydf) 
+#   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
+# },  sanitize.text.function = function(x) x)
+
+
+output$query <- DT::renderDT({
+  grlang<-'datatablesGreek.json'
+  enlang<-'datatablesEnglish.json'
   mydf <- getdrugcountstable()$mydf
-  if ( is.data.frame(mydf) )
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
   {
-    names(mydf) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
-    return(mydf) 
-  } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-},  sanitize.text.function = function(x) x)
+    selectedLang='en'
+  }
+  if ( is.data.frame(mydf) )
+  { 
+    mydfIndatatable<-mydf
+  } else  {
+    mydfIndatatable<- data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  datatable(
+    mydf,
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(className = 'dt-right', targets = c(1,2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     grlang,
+                     enlang)
+      )
+    )
+    ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
 
 output$eventcloud <- renderPlot({  
   mydf <- getdrugcountstable()$sourcedf
@@ -634,17 +663,44 @@ output$querycotext <- renderText({
   paste( '<b>Query:</b>', removekey( makelink( l['myurl'] ) ), '<br>')
 })
 
-output$coquery <- renderTable({  
+# output$coquery <- renderTable({  
+#   codrugs <- getcocounts()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     names(codrugs) <- c('L', i18n()$t("Drug"),  i18n()$t("Counts") )
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No events for', getdrugname() ) ) )
+#   }  
+#   
+# }, sanitize.text.function = function(x) x)
+
+
+output$coquery <- DT::renderDT({
   codrugs <- getcocounts()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   if ( is.data.frame(codrugs) )
   { 
-    names(codrugs) <- c('L', i18n()$t("Drug"),  i18n()$t("Counts") )
-    return(codrugs) 
+    codrugsIndataTable<-codrugs
   } else  {
-    return( data.frame(Term=paste( 'No events for', getdrugname() ) ) )
-  }  
-  
-}, sanitize.text.function = function(x) x)
+    codrugsIndataTable<- data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  datatable(
+    codrugsIndataTable,
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
+      )
+    ),  escape=FALSE,rownames= FALSE)
+},  escape=FALSE)
 
 
 #addTooltip(session, 'cocloud', tt('cocloud'), placement='top')
@@ -661,18 +717,44 @@ output$cocloud <- renderPlot({
   
 }, height=900, width=900)
 
-output$indquery <- renderTable({  
-  # if ( getdrugname() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+# output$indquery <- renderTable({  
+#   # if ( getdrugname() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codinds <- getindcounts()$mydf
+#   if ( is.data.frame(codinds) )
+#   { 
+#     names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
+#     return(codinds) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No', getsearchtype(), 'for', getdrugname() ) ) )
+#   }  
+#   
+# }, sanitize.text.function = function(x) x)
+
+output$indquery <- DT::renderDT({
   codinds <- getindcounts()$mydf
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
   if ( is.data.frame(codinds) )
   { 
-    names(codinds) <- c(i18n()$t("Indication"),  i18n()$t("Counts") )
-    return(codinds) 
+    codindsIndataTable<-codinds
   } else  {
-    return( data.frame(Term=paste( 'No', getsearchtype(), 'for', getdrugname() ) ) )
-  }  
-  
-}, sanitize.text.function = function(x) x)
+    codindsIndataTable<- data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  datatable(
+    codindsIndataTable,
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
+      )
+    ),  escape=FALSE,rownames= FALSE)
+},  escape=FALSE)
 
 
 output$indcloud <- renderPlot({ 

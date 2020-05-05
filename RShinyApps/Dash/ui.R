@@ -3,6 +3,7 @@ require(shinyBS)
 library(shinycssloaders)
 library(shinyjs)
 library(plotly)
+library(DT)
 
 source('sourcedir.R')
 
@@ -128,14 +129,14 @@ hidden(
       tabsetPanel(
 
 
-        tabPanel(uiOutput( "Events"), htmlOutput_p('query')
+        tabPanel(uiOutput( "Events"), makeDataTableOutput('query')
                  # withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
-                 htmlOutput_p('coquery')
+                 makeDataTableOutput('coquery')
                  
             ),
-        tabPanel(uiOutput("Indications"),htmlOutput_p('indquery')
+        tabPanel(uiOutput("Indications"),makeDataTableOutput('indquery')
                  
         )
         
