@@ -1,8 +1,10 @@
-import uuid
+import os
+import json
 
-from functools import reduce
 from itertools import chain
 from itertools import product
+
+from json import JSONEncoder
 
 from SPARQLWrapper import SPARQLWrapper2
 from SPARQLWrapper import JSON
@@ -40,6 +42,23 @@ class ConditionObject(NCObject):
 
         self.id = "{}___{}".format(code, parent)
         self.parent = "{}___{}".format(parent, grandparent) if parent else ""
+
+
+# subclass JSONEncoder
+class ConditionEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__
+
+
+class ConditionDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+
+    def object_hook(self, obj):
+        return ConditionObject(obj.get("name"), obj.get("code"),
+                               obj.get("id").split("___").pop(0),
+                               obj.get("parent").split("___").pop(),
+                               obj.get("type"))
 
 
 class KnowledgeGraphWrapper:
@@ -126,61 +145,49 @@ class KnowledgeGraphWrapper:
         """ Caches the conditions for faster retrieval
         """
 
-        whole_query = """
-        prefix meddra: <https://w3id.org/phuse/meddra#> 
-        select ?condition_name, ?soc, ?hlgt, ?hlt, ?pt, ?condition_type, ?condition_code 
-        from <http://english211.meddra.org> where {
-            ?condition a ?condition_type;
-                skos:prefLabel ?condition_name;
-                meddra:hasIdentifier ?condition_code.
-            FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
-            && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept))).
-            OPTIONAL {?condition meddra:hasPT ?pt}.
-            OPTIONAL {?condition meddra:hasHLT ?hlt}.
-            OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
-            OPTIONAL {?condition meddra:hasSOC ?soc}
-        } order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
-        """
-        self.sparql.setQuery(whole_query)
-        # self.sparql.addDefaultGraph(settings.SPARQL_MEDDRA_URI)
-
-        # Map conditions retrieved by sparql query to dictionary for faster retrieval
-        # global conditions_dict
-        # conditions_dict = dict(
-        #     ((get_binding_value(c, "condition_code"), get_binding_value(c, "condition_type")
-        #      ), c) for c in self.sparql.query().bindings)
-
-        sparql_conditions = self.sparql.query().bindings
-
-        conditions = []
-
-        for c in sparql_conditions:
-            cond_type = type_2_abbrv(get_binding_value(c, "condition_type"))
-            possible_parents = self.get_parents(get_binding_value(c, "condition_code"), cond_type)
-            possible_grandparents = [self.get_parents(parent, type_2_ptype(cond_type)) for parent in possible_parents]
-            ancestor_pairs = list(chain(*[product(*el) for el in zip(possible_parents, possible_grandparents)]))
-            conditions.extend([ConditionObject(name=get_binding_value(c, "condition_name"),
-                                              code=get_binding_value(c, "condition_code"),
-                                              parent=parent,
-                                              grandparent=grandparent,
-                                              type=cond_type,
-                                              ) for parent, grandparent in ancestor_pairs])
-
+        # whole_query = """
+        # prefix meddra: <https://w3id.org/phuse/meddra#>
+        # select ?condition_name, ?soc, ?hlgt, ?hlt, ?pt, ?condition_type, ?condition_code
+        # from <http://english211.meddra.org> where {
+        #     ?condition a ?condition_type;
+        #         skos:prefLabel ?condition_name;
+        #         meddra:hasIdentifier ?condition_code.
+        #     FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
+        #     && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept))).
+        #     OPTIONAL {?condition meddra:hasPT ?pt}.
+        #     OPTIONAL {?condition meddra:hasHLT ?hlt}.
+        #     OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
+        #     OPTIONAL {?condition meddra:hasSOC ?soc}
+        # } order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
+        # """
+        # self.sparql.setQuery(whole_query)
         #
-        # conditions = sorted([ConditionObject(name=get_binding_value(c, "condition_name"),
-        #                                      code=get_binding_value(c, "condition_code"),
-        #                                      parent=get_binding_value(c, type_2_abbrv.get(
-        #                                          get_binding_value(c, "condition_type"))
-        #                                                               ).strip("https://w3id.org/phuse/meddra#m"),
-        #                                      # soc=get_binding_value(c, "soc"),
-        #                                      # hlgt=get_binding_value(c, "hlgt"),
-        #                                      # hlt=get_binding_value(c, "hlt"),
-        #                                      # pt=get_binding_value(c, "pt"),
-        #                                      type=type_2_abbrv.get(get_binding_value(c, "condition_type")),
-        #                                      ) for c in conditions])
+        # sparql_conditions = self.sparql.query().bindings
+        #
+        # print(len(sparql_conditions))
+        #
+        # conditions = []
+        #
+        # for c in sparql_conditions:
+        #     cond_type = type_2_abbrv(get_binding_value(c, "condition_type"))
+        #     possible_parents = self.get_parents(get_binding_value(c, "condition_code"), cond_type)
+        #     possible_grandparents = [self.get_parents(parent, type_2_ptype(cond_type)) for parent in possible_parents]
+        #     ancestor_pairs = list(chain(*[product(*el) for el in zip([[p] for p in possible_parents],
+        #                                                              possible_grandparents)]))
+        #     conditions.extend([ConditionObject(name=get_binding_value(c, "condition_name"),
+        #                                       code=get_binding_value(c, "condition_code"),
+        #                                       parent=parent,
+        #                                       grandparent=grandparent,
+        #                                       type=cond_type,
+        #                                       ) for parent, grandparent in ancestor_pairs])
 
-        with open(os.path.join(settings.JSONS_DIR, "conditions.json"), "w") as fp:
-            json.dump(conditions, fp)
+        # with open(os.path.join(settings.JSONS_DIR, "conditions.json"), "w") as fp:
+        #     json.dump(conditions, fp, cls=ConditionEncoder)
+
+        with open(os.path.join(settings.JSONS_DIR, "conditions.json"), "r") as fp:
+            conditions = json.load(fp, cls=ConditionDecoder)
+
+        print(len(conditions))
 
         # Just the nodes for the JStree
         medDRA_tree = medDRA_flat_tree(conditions)
@@ -223,7 +230,7 @@ class KnowledgeGraphWrapper:
 
         parent_type = type_2_ptype(node_type)
 
-        parents = []
+        parents = [""]
 
         if parent_type:
             whole_query = """
@@ -241,8 +248,8 @@ class KnowledgeGraphWrapper:
             # print(whole_query)
             self.sparql.setQuery(whole_query)
             results = self.sparql.query().bindings
-            parents = list(map(lambda res: get_binding_value(res, "parent").strip(
-                "https://w3id.org/phuse/meddra#m"), results)) if results else []
+            parents = list(set(map(lambda res: get_binding_value(res, "parent").strip(
+                "https://w3id.org/phuse/meddra#m"), results))) if results else ["None"]
         return parents
 
 
