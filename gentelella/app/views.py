@@ -121,20 +121,25 @@ def get_medDRA_tree(request):
 def get_conditions_nodes_ids(request):
     """ Get the ids of the tree nodes containing the condition we want
     :param request:
-    :return:
+    :return: the condition ids containing the ids of the conditions contained in
+    the url as parameters
     """
 
-    conditions = json.loads(request.GET.get("conditions", None))
+    req_conditions = json.loads(request.GET.get("conditions", None))
 
     knw = KnowledgeGraphWrapper()
     medDRA_tree_str = json.dumps(knw.get_medDRA_tree())
 
     # Find in json string all conditions with ids relevant to conditions' requested
-    rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in conditions]
+    # rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+    #     "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
+    all_conditions = knw.get_conditions()
+    rel_conds_lst = [filter(lambda c: c.code == condition.split(" - ").pop(),
+                            all_conditions) for  condition in req_conditions]
+    rel_conds_lst = list(map(lambda cond: cond.id, chain.from_iterable(rel_conds_lst)))
 
     data = {}
-    data["conds_nodes_ids"] = list(chain.from_iterable(rel_conds_lst))
+    data["conds_nodes_ids"] = rel_conds_lst
 
     return JsonResponse(data)
 

@@ -281,7 +281,6 @@ $(function() {
 
     var medDRA_tree = get_medDRA_tree();
     $("#loaderOverlay").fadeIn();
-    // console.log(medDRA_tree);
     $("#medDRATree").jstree({
         "core": {
             "multiple": true,
@@ -306,11 +305,8 @@ $(function() {
     $("[name='conditions_fld']").change(function () {
 
         var sel_conditions = $(this).val();
-
         var prev_sel_conditions = cur_sel_conditions;
-
         cur_sel_conditions = get_conditions_ids(sel_conditions);
-
 
         // Find differences in the selected conditions and deselect the ones
         // that do not exist anymore
