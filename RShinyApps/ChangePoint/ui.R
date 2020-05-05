@@ -80,39 +80,39 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 
                           wellPanel(
-                            style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
+                            style="background-color:white;height:60px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                           ),
                             withSpinner(plotlyOutput( 'cpmeanplot' )) 
                           ),
                 tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(plotlyOutput( 'cpvarplot' ) )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
                           wellPanel(
-                            style="background-color:white;height:30px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
+                            style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
                           ),
                           withSpinner(plotlyOutput( 'cpbayesplot' ))
                             # verbatimTextOutput( 'cpbayestext' )
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(plotlyOutput('queryplot'))
                          
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(dataTableOutput('coquery'))
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(dataTableOutput('coqueryE'))
                 ),

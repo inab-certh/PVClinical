@@ -96,8 +96,10 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                   tabsetPanel(
                                     tabPanel(
                                       uiOutput("LRTResultsbasedonTotalDrugs"),
-                                        uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10"),
-                                        withSpinner(htmlOutput_p("prr")
+                                      wellPanel(
+                                        style="background-color:white;height:60px;border:none",uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10")
+                                      ),
+                                        withSpinner(dataTableOutput("prr")
                                       )
                                       
                                     ),
@@ -105,22 +107,22 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                              plotlyOutput( 'simplot')
                                     ),
                                     tabPanel(uiOutput("AnalyzedDrugCountsforEventText")   ,
-                                             withSpinner(htmlOutput_p( 'AnalyzedEventCountsforDrug' ))
+                                             withSpinner(dataTableOutput( 'AnalyzedEventCountsforDrug' ))
                                     ),
                                     tabPanel(uiOutput("AnalyzedDrugCountsforAllEvents"),
-                                             withSpinner(htmlOutput_p( 'all' ))
+                                             withSpinner(dataTableOutput( 'all' ))
                                     ),
                                     tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                                             withSpinner(htmlOutput_p( 'coquery' ))
+                                             withSpinner(dataTableOutput( 'coquery' ))
                                     ),
                                     tabPanel(uiOutput("DrugCountsforEvent"),
-                                             withSpinner(htmlOutput_p( 'coqueryEex' ))
+                                             withSpinner(dataTableOutput( 'coqueryEex' ))
                                     ),
                                     tabPanel(uiOutput("CountsForAllDrugs"),
-                                             withSpinner(htmlOutput_p( 'coqueryA' ))
+                                             withSpinner(dataTableOutput( 'coqueryA' ))
                                     ),
                                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
-                                             withSpinner(htmlOutput_p( 'indquery' ))
+                                             withSpinner(dataTableOutput( 'indquery' ))
                                     ),
                                     tabPanel(uiOutput("OtherApps"),  
                                              wellPanel( 

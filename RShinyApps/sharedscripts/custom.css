@@ -51,7 +51,11 @@ a {
   width:420px!important;
   height:350px!important;*/
 }
-.dataTables_length, .dataTables_filter, .paginate_button, .paginate_button a, .dataTables_info {
+.dataTables_length, .dataTables_filter, .paginate_button, .paginate_button a,a.paginate_button, .dataTables_info, .dataTables_paginate, .dataTables_wrapper .dataTables_paginate .paginate_button  {
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
   color:#667!important;
   font-size:13px!important;
 }
@@ -70,9 +74,12 @@ a {
 .datatables label,th{
   font-weight:normal!important; 
 }
-
+.dataTable td,th{
+  color:#5A738E!important;
+}
 .btn.btn-info {
   margin-bottom:20px;
+  pointer-events: none;
 }
 
 

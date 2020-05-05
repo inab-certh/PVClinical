@@ -1172,7 +1172,7 @@ output$cpbayesplot <- renderPlotly ({
     # values2 =values$x
     datamean <- s1$posterior.mean
     datameanframe<-as.data.frame(datamean)
-    p <- plot_ly(datameanframe,showlegend=FALSE)
+    p <- plot_ly(datameanframe,showlegend=FALSE,height = 500)
     p <- p %>% add_trace(datameanframe,y=~X1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
     data <- s1$data
     dataframe<-as.data.frame(data)
@@ -1185,28 +1185,28 @@ output$cpbayesplot <- renderPlotly ({
       color = '#667', 
       size = 13
     )
-    f2 <- list(
-      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
-      color = '#667', 
-      size = 11
-    )
+    # f2 <- list(
+    #   family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+    #   color = '#667', 
+    #   size = 11
+    # )
     
     p <- p %>% add_trace(x=~trace_1,y=~trace_2, mode = 'markers',marker = list( size = 4))%>% 
       layout(yaxis = list(
         title = i18n()$t("Posterior Means"),
-        titlefont = f2
+        titlefont = f
       ))
     
     dataPosterior <- s1$posterior.var
     dataPosteriorFrame<-as.data.frame(dataPosterior)
-    p2<-plot_ly(dataPosteriorFrame,y=~V1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'),showlegend=FALSE) %>% 
+    p2<-plot_ly(dataPosteriorFrame,y=~V1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'),showlegend=FALSE,height = 500) %>% 
       layout(xaxis = list(
         title = i18n()$t("Location"),
         titlefont = f
       ), 
       yaxis = list(
         title = i18n()$t("Posterior Probability"),
-        titlefont = f2
+        titlefont = f
       ))
     
       
