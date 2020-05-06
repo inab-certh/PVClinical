@@ -285,6 +285,9 @@ getsourcecounts <- reactive({
   myurl <- buildURL(v= getbestdrugvarname(), t=getbestdrugname(),
                     count="primarysource.qualification" )
   mydf <- fda_fetch_p( session, myurl)$result
+  if(is.null(mydf)){
+    return(NULL)
+  }
   mydf[,3] <- mydf[,1]
   mydf[ mydf[,1]==1 , 1] <- i18n()$t("Physician") 
   mydf[ mydf[,1]==2 , 1] <- i18n()$t("Pharmacist") 
@@ -530,6 +533,19 @@ output$sexpie <- renderPlotly({
 }) 
 output$sourceplot <- renderPlotly({
   mydf <- getsourcecounts()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_dash", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   # return(dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications") ))
   fig <- plot_ly(
     title = i18n()$t("Primary Source Qualifications"),

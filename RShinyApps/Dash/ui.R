@@ -56,6 +56,7 @@ renderuseexact <- function() {
   
 } 
 shinyUI(fluidPage(useShinyjs(), includeCSS("../sharedscripts/custom.css"),
+                  fluidRow(column(width=12,bsAlert("nodata_dash"))),
                    fluidRow(
                      column(width=4,
                             # a(href='https://open.fda.gov/', 

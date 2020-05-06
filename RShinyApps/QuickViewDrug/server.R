@@ -720,6 +720,19 @@ shinyServer(function(input, output, session) {
 
   output$cpmeanplot <- renderPlotly ({
     mydf <-getquerydata()$mydfin$result
+    if (length(mydf) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     
     if (length(mydf) > 0)
     {
@@ -1260,6 +1273,19 @@ shinyServer(function(input, output, session) {
 
   output$seriousplot <- renderPlotly({
     mydf <- getseriouscounts()
+    if (length(mydf) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     if ( is.data.frame(mydf) )
     {
       names(mydf) 
@@ -2136,6 +2162,19 @@ shinyServer(function(input, output, session) {
       selectedLang='en'
     }
     prr<-prr()
+    if (length(prr) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
       prr,

@@ -2086,6 +2086,20 @@ shinyServer(function(input, output, session) {
     }
     translator$set_translation_language(selectedLang)
     prr<-prr()
+    
+    if ("Error" %in% colnames(prr) )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qve", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
       prr,
