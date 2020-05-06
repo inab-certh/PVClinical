@@ -483,11 +483,16 @@ shinyServer(function(input, output, session) {
 #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
     comb <- comblist$comb
+    if(is.null(comb)){
+      return(NULL)
+    }
+    browser()
     if (length(comb) < 1)
     {
-      tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
-                         count=0 )
-      return( list( comb=tmp, sourcedf=tmp) )
+      return(NULL)
+      # tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
+      #                    count=0 )
+      # return( list( comb=tmp, sourcedf=tmp) )
     }
 #    ror <- comblist$ror
     if (getwhich() =='D'){ 
@@ -622,10 +627,18 @@ output$prrtitleBlank <- renderUI({
 
 prr <- reactive({  
   if (getterm1( session )=="") {
-    #browser()
+    browser()
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
-    tableout(mydf = getprr()$comb,  
+    browser()
+    prr<-getprr()
+    if(is.null(prr)){
+      mydf1<-NULL
+    }
+    else{
+      mydf1<-prr$comb
+    }
+    tableout(mydf = mydf1,  
              mynames = NULL,
              error = paste('No records for', getterm1( session ))
     )
@@ -667,8 +680,21 @@ output$prr2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf<-prr()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    prr(),
+    mydf,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
@@ -774,8 +800,21 @@ output$specifieddrug2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf1 = getdrugcountstable()$mydf
+  if (length(mydf1) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    tableout(mydf = getdrugcountstable()$mydf,  
+    tableout(mydf = mydf1,  
              mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) )),
     options = list(
@@ -834,6 +873,19 @@ output$all2 <- DT::renderDT({
   }
   translator$set_translation_language(selectedLang)
   mydf1<-geteventtotalstable()$mydf[,c(1,2)]
+  if (length(mydf1) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   datatable(
     tableout(mydf = mydf1,  
              mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports"))),
@@ -899,8 +951,21 @@ output$coqueryE2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf<-coqueryE()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    coqueryE(),
+    mydf,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
@@ -964,8 +1029,22 @@ output$coquery2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  mydf<-coquery2()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   datatable(
-    coquery2(),
+    mydf,
     options = list(
       autoWidth = TRUE,
       columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),

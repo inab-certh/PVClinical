@@ -29,7 +29,7 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12, 
+                           column(width=12, bsAlert("nodata_lrteste"),
                                   # titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                                   
                                   hidden(

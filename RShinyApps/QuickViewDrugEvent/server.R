@@ -745,7 +745,7 @@ shinyServer(function(input, output, session) {
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
-        closeAlert(session, "exampleAlert")
+        closeAlert(session, "nodataAlert")
         s1 <- calccpmean()
         labs <-    index( getts() )
         pos <- seq(1, length(labs), 3)
@@ -829,7 +829,7 @@ shinyServer(function(input, output, session) {
       }
       else
       {
-        createAlert(session, "qvde_cpmeanplot", "exampleAlert", title = i18n()$t("Error"),
+        createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
         # shinyalert("Oops!", "Something went wrong.", type = "error")
       }

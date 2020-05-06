@@ -414,6 +414,10 @@ getcocounts <- function(whichcount = 'D'){
     mylist <- getcoeventlist()
   )
   mydf <- mylist$mydf
+  if(is.null(mydf) || length(mydf$cumsum)==0)
+  {
+    return(NULL)
+  }
   myurl <- mylist$myurl
   sourcedf <- mydf
   #    print(names(mydf))
@@ -564,6 +568,18 @@ output$coquery2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsD()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -615,6 +631,18 @@ output$coqueryE2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsE()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -707,6 +735,18 @@ output$query_counts <- renderTable({
 
 output$query_counts2 <- DT::renderDT({
   mydf <- buildmergedtable()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -774,6 +814,19 @@ output$drugquerytext <- renderText({
 
 output$prrplot <- renderPlot ({
   mydf <- buildmergedtable()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
   if ( getterm1( session, FALSE)==''  )
   {

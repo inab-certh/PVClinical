@@ -60,7 +60,7 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow( useShinyjs(),useShinyalert(),
-                            column(width=12,uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
+                            column(width=12,bsAlert("nodata_qvd"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                    # pickerInput("countries", "countries",
                                    # 
                                    #             choices = countries,

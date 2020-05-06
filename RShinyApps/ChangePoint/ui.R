@@ -36,7 +36,7 @@ rendermaxcp <- function() {
 } 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),style = "margin-top:15px;",
-           column(width=12, 
+           column(width=12, bsAlert("nodata_changepoint"),
                   
                   hidden(
                     uiOutput('page_content'),

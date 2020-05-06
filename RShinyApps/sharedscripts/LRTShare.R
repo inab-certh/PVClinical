@@ -192,7 +192,7 @@ checkdf <- function(mydf, myinput, names=NULL, changecell=NULL)
       mydf[changecell['row'], changecell['column']] <- changecell['val']
     }
     return(mydf) 
-  } else  {return(data.frame(Term=paste( 'No results for', myinput ), Count=0))}
+  } else  {return(data.frame(Error=paste( 'No results for', myinput ), Count=0))}
 }
 
 

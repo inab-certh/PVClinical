@@ -331,6 +331,10 @@ getcocounts <- function(whichcount = 'D'){
     mylist <- getcoeventlist()
   )
   mydf <- mylist$mydf
+  if(is.null(mydf) || length(mydf$cumsum)==0)
+  {
+    return(NULL)
+  }
   myurl <- mylist$myurl
   sourcedf <- mydf
   #    print(names(mydf))
@@ -517,6 +521,18 @@ output$querycotextE <- renderText({
 
 output$coquery <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -542,6 +558,18 @@ output$coquery <- DT::renderDT({
 
 output$coqueryE <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -641,6 +669,19 @@ output$queryplot <- renderPlotly({
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   Dates2<-lapply(mydf$display['Date'], function(x) {
     # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
     x <- paste(x,'-01',sep = '')
@@ -859,6 +900,19 @@ output$infocpmeantext <- renderUI ({
 
 output$cpmeanplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
     s1 <- calccpmean()
@@ -977,6 +1031,19 @@ output$infocpvartext <- renderUI ({
 
 output$cpvarplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
     s1 <- calccpvar()
@@ -1160,6 +1227,19 @@ build_infocpbayes_table <- function(out)({
 # })
 output$cpbayesplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
     
