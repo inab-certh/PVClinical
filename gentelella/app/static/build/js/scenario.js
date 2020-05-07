@@ -280,6 +280,8 @@ $(function() {
     $("[name='drugs_fld']").trigger("change");
 
     var medDRA_tree = get_medDRA_tree();
+    var refresh = true;
+    // console.log(medDRA_tree);
     $("#loaderOverlay").fadeIn();
     $("#medDRATree").jstree({
         "core": {
@@ -306,6 +308,7 @@ $(function() {
 
         var sel_conditions = $(this).val();
         var prev_sel_conditions = cur_sel_conditions;
+
         cur_sel_conditions = get_conditions_ids(sel_conditions);
 
         // Find differences in the selected conditions and deselect the ones
@@ -316,34 +319,46 @@ $(function() {
         var new_sel_conditions = cur_sel_conditions.filter(
             x => prev_sel_conditions.indexOf(x) === -1);
 
+        // console.log("desel_conditions: "+ desel_conditions)
 
-        $("#medDRATree").jstree("deselect_node", desel_conditions);
+        // $("#medDRATree").jstree("deselect_node", desel_conditions);
+        uncheck_close_leaves(desel_conditions);
         check_open_leaves(new_sel_conditions);
     });
 
     $('#medDRATree')
       // listen for event
     .on('changed.jstree', function (e, data) {
+        // console.log(refresh);
+        // console.log(data.selected);
         $("#loaderOverlay").fadeIn();
         var i, j, r = [];
+        // console.log(e);
+        // console.log(data.selected.length);
+        // console.log($("[name='conditions_fld']").val().length);
+        if (refresh) {
+            for(i = 0, j = data.selected.length; i < j; i++) {
+                var node_txt = data.instance.get_node(data.selected[i]).text;
+                if(r.indexOf(node_txt) === -1){
+                    r.push(node_txt);
+                    // console.log(data.instance.get_node(data.selected[i]).text);
+                    if($("option:contains('"+node_txt+"')").length===0) {
+                        $("[name='conditions_fld']").append(
+                            "<option id=\""+node_txt+"\">"+node_txt+"</option>");
+                    }
 
-        for(i = 0, j = data.selected.length; i < j; i++) {
-            var node_txt = data.instance.get_node(data.selected[i]).text;
-            if(r.indexOf(node_txt) === -1){
-                r.push(node_txt);
-                // console.log(data.instance.get_node(data.selected[i]).text);
-                if($("option:contains('"+node_txt+"')").length===0) {
-                    $("[name='conditions_fld']").append(
-                        "<option id=\""+node_txt+"\">"+node_txt+"</option>");
                 }
-
             }
+
+            // console.log(data.selected);
+
+            $("[name='conditions_fld']").val(r).trigger("change");
+
         }
 
         $("#loaderOverlay").fadeOut();
 
 
-        $("[name='conditions_fld']").val(r).trigger("change");
       })
       // create the instance
       .jstree();
@@ -391,6 +406,12 @@ $(function() {
         conditions = conditions?conditions:[];
 
         $.ajax({
+            // beforesend: function(){
+            //     $("#loaderOverlay").fadeIn();
+            // },
+            // complete: function(){
+            //     $("#loaderOverlay").fadeOut();
+            // },
             url: "/ajax/conds-nodes-ids",
             data: {"conditions": JSON.stringify(conditions)},
             type: "GET",
@@ -408,10 +429,31 @@ $(function() {
     // Function to check leaves and open the whole paths to those leaves
     function check_open_leaves(sel_conditions) {
         // sel_conditions.sort();
-        $("#medDRATree").jstree("check_node", sel_conditions);
+        refresh = false;
+        // $("medDRATree").jstree("select_node", sel_conditions, false, false);
         for (var i = 0; i < sel_conditions.length; i++) {
+            if(i==sel_conditions.length-1){
+                refresh = true;
+            }
+            $("#medDRATree").jstree("check_node", sel_conditions[i]);
             $("#medDRATree").jstree()._open_to(sel_conditions[i]);
         }
+        refresh = true;
+    }
+
+    // Function to uncheck leaves and close the whole paths to those leaves
+    function uncheck_close_leaves(desel_conditions) {
+        // sel_conditions.sort();
+        refresh = false;
+        // $("medDRATree").jstree("select_node", sel_conditions, false, false);
+        for (var i = 0; i < desel_conditions.length; i++) {
+            if(i==desel_conditions.length-1){
+                refresh = true;
+            }
+            $("#medDRATree").jstree("uncheck_node", desel_conditions[i]);
+            // $("#medDRATree").jstree()._open_to(desel_conditions[i]);
+        }
+        refresh = true;
     }
 
 });
