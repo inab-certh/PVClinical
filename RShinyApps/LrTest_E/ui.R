@@ -1,6 +1,7 @@
 library(shiny)
 library(shinyjs)
 library(shinycssloaders)
+library(plotly)
 source('sourcedir.R')
 
 
@@ -28,7 +29,7 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12, 
+                           column(width=12, bsAlert("nodata_lrteste"),
                                   # titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                                   
                                   hidden(
@@ -96,126 +97,32 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                     tabPanel(
                                       uiOutput("LRTResultsbasedonTotalDrugs"),
                                       wellPanel(
-                                        uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10"),
-                                        withSpinner(htmlOutput_p("prr"))
-                                        # htmlOutput( 'prrtitle' ), 
-                                        # helpText('Results sorted by LRR')
-                                        
+                                        style="background-color:white;height:60px;border:none",uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10")
+                                      ),
+                                        withSpinner(dataTableOutput("prr")
                                       )
-                                      #                          wordcloudtabset('cloudprr', 'prr', 
-                                      #                                          popheads=c( tt('prr1'), tt('word1') ), 
-                                      #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                                      
-                                      
                                       
                                     ),
                                     tabPanel(uiOutput("SimulationResultsforDrugBasedLRT"),
-                                             wellPanel( 
-                                               plotOutput( 'simplot')
-                                             )
+                                             plotlyOutput( 'simplot')
                                     ),
                                     tabPanel(uiOutput("AnalyzedDrugCountsforEventText")   ,
-                                             # wellPanel( 
-                                             #   htmlOutput( 'alldrugtextAnalyzedEventCountsforDrug' ),
-                                             #   htmlOutput_p( 'alldrugqueryAnalyzedEventCountsforDrug' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ), 
-                                             # wellPanel( 
-                                             #   htmlOutput( 'titleAnalyzedEventCountsforDrug' ), 
-                                             #   #                          tableOutput("query"),
-                                             #   htmlOutput_p( 'queryAnalyzedEventCountsforDrug' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wordcloudtabset('cloudAnalyzedEventCountsforDrug', 'AnalyzedEventCountsforDrug'
-                                             withSpinner(htmlOutput_p( 'AnalyzedEventCountsforDrug' ))
+                                             withSpinner(dataTableOutput( 'AnalyzedEventCountsforDrug' ))
                                     ),
                                     tabPanel(uiOutput("AnalyzedDrugCountsforAllEvents"),
-                                             # wellPanel( 
-                                             #   htmlOutput( 'alltext' ),
-                                             #   htmlOutput_p( 'queryalltext' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'alltitle' ), 
-                                             #   htmlOutput_p( 'allquerytext' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' ) ),
-                                             # wordcloudtabset('cloudall', 'all')
-                                             withSpinner(htmlOutput_p( 'all' ))
+                                             withSpinner(dataTableOutput( 'all' ))
                                     ),
                                     tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                                             # wellPanel( 
-                                             #   htmlOutput( 'cotext' ),
-                                             #   htmlOutput_p( 'querycotext' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'cotitle' )
-                                             # ),
-                                             # htmlOutput_p( 'coquerytext' ,
-                                             #               tt('gquery1'), tt('gquery2'),
-                                             #               placement='bottom' ),
-                                             # wordcloudtabset('cloudcoquery', 'coquery')
-                                             withSpinner(htmlOutput_p( 'coquery' ))
+                                             withSpinner(dataTableOutput( 'coquery' ))
                                     ),
                                     tabPanel(uiOutput("DrugCountsforEvent"),
-                                             # wellPanel( 
-                                             #   htmlOutput( 'cotextE' ),
-                                             #   htmlOutput_p( 'querycotextE' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'cotitleD' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'cotitleEex' )
-                                             #   #                          htmlOutput( 'coqueryEex' )
-                                             # ),
-                                             # #                          htmlOutput_p( 'coquerytextE' ,
-                                             # #                                        tt('gquery1'), tt('gquery2'),
-                                             # #                                        placement='bottom' ),
-                                             # wordcloudtabset('coqueryEex', 'coqueryE', names=c('Tables', 'Tables'),
-                                             #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                                             #                 poptext=c( tt('codrug3'), tt('word2') ))
-                                             withSpinner(htmlOutput_p( 'coqueryEex' ))
+                                             withSpinner(dataTableOutput( 'coqueryEex' ))
                                     ),
                                     tabPanel(uiOutput("CountsForAllDrugs"),
-                                             # wellPanel( 
-                                             #   htmlOutput( 'cotextA' ),
-                                             #   htmlOutput_p( 'querycotextA' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'cotitleA' )
-                                             # ),
-                                             # htmlOutput_p( 'coquerytextA' ,
-                                             #               tt('gquery1'), tt('gquery2'),
-                                             #               placement='bottom' ),
-                                             # wordcloudtabset('cloudcoqueryA', 'coqueryA',
-                                             #                 popheads=c( tt('codrug1'), tt('word1') ), 
-                                             #                 poptext=c( tt('codrug3'), tt('word2') ))
-                                             withSpinner(htmlOutput_p( 'coqueryA' ))
+                                             withSpinner(dataTableOutput( 'coqueryA' ))
                                     ),
                                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
-                                             # wellPanel( 
-                                             #   htmlOutput( 'indtext' ),
-                                             #   htmlOutput_p( 'queryindtext' ,
-                                             #                 tt('gquery1'), tt('gquery2'),
-                                             #                 placement='bottom' )
-                                             # ),
-                                             # wellPanel(
-                                             #   htmlOutput( 'indtitle' )
-                                             # ),
-                                             # wordcloudtabset('cloudindquery', 'indquery',
-                                             #                 popheads=c( tt('indication1'), tt('word1') ),
-                                             #                 poptext=c( tt('indication2'), tt('word2') ) )
-                                             withSpinner(htmlOutput_p( 'indquery' ))
+                                             withSpinner(dataTableOutput( 'indquery' ))
                                     ),
                                     tabPanel(uiOutput("OtherApps"),  
                                              wellPanel( 

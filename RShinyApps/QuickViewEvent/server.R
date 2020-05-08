@@ -2086,12 +2086,26 @@ shinyServer(function(input, output, session) {
     }
     translator$set_translation_language(selectedLang)
     prr<-prr()
+    
+    if ("Error" %in% colnames(prr) )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qve", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
       prr,
       options = list(
         autoWidth = TRUE,
-        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
         language = list(
           url = ifelse(selectedLang=='gr', 
                        'datatablesGreek.json', 

@@ -11,10 +11,12 @@ if (!require('openfda') ) {
   library(openfda)
   print('loaded open FDA')
 }
-require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -701,16 +703,50 @@ shinyServer(function(input, output, session) {
     }
     return(out)
   })
-
-  output$cpmeanplot <- renderPlot ({
-    if(getterm1( session)!=""){
+  output$infocpmeantext <- renderUI ({
+    mydf <-getquerydata()$mydfin$result
+    if (length(mydf) > 0)
+    {
+      createAlert(session, 'alert', 'calclert',
+                  title='Calculating...', 
+                  content = 'Calculating meanCP', 
+                  dismiss = FALSE)
+      s <- calccpmean()
       
+      mycpts <- attr( s@data.set, 'index')[s@cpts[1:length(s@cpts)-1] ]
+      mycpts <-paste(mycpts, collapse=', ')
+      out <- paste( i18n()$t('Changepoint type      : Change in'), s@cpttype, '<br>' )
+      out <- paste(out,  i18n()$t('Method of analysis    :') , s@method , '<br>' )
+      out <- paste(out, i18n()$t('Test Statistic  :') , s@test.stat, '<br>' )
+      out <- paste(out, i18n()$t('Type of penalty       :') , s@pen.type, 'with value', round(s@pen.value, 6), '<br>' )
+      out <- paste(out, i18n()$t('Maximum no. of cpts   : ') , s@ncpts.max, '<br>' )
+      out <- paste(out, i18n()$t('Changepoint Locations :') , mycpts , '<br>' )
+      
+      out <- paste(out, "<br>",i18n()$t('changepoint explanation'), "<br>" )
+      if(!is.null(session$calclert))
+      {
+        closeAlert(session, 'calclert')
+      }
+    } else {
+      out <- i18n()$t('Insufficient data')
+    }
+    addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
+               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    #attr(session, "cpmeanplottext") <- out
+    # browser()
+    # l <- append( l, c('cpmeanplottext' =  out ) )
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+    
+  })
+  output$cpmeanplot <- renderPlotly ({
+    if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
-        closeAlert(session, "exampleAlert")
-        s <- calccpmean()
+        closeAlert(session, "nodataAlert")
+        s1 <- calccpmean()
         labs <-    index( getts() )
         pos <- seq(1, length(labs), 3)
   
@@ -733,23 +769,75 @@ shinyServer(function(input, output, session) {
         # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
         mytitle <- i18n()$t("Change in mean analysis")
         # par(bg = "gray")
-        plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
-        axis(1, pos,  labs[pos], las=2  )
-        grid(nx=NA, ny=NULL,col = "lightgray")
-        abline(v=pos, col = "lightgray", lty = "dotted",
-               lwd = par("lwd") )
+        # plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL,col = "lightgray")
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #        lwd = par("lwd") )
         
+        values<-as.data.frame(s1@data.set)
+        Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
+          # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+          x <- paste(x,'-01',sep = '')
+          x
+        })
+        # datetime <- ymd(Dates2)
+        # don <- xts(x =as.vector(values), order.by = datetime)
+        # browser()
+        # p <- dygraph(don,main = "Change in mean analysis") %>%
+        #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+        #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+        #   dyRangeSelector() %>%
+        #   # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+        #   dyCrosshair(direction = "vertical") %>%
+        #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+        #   dyRoller(rollPeriod = 1)
+        #   # %>%
+        #   # dyLimit(s1@cpts[2], color = "red")
+        # p
+        
+        f <- list(
+          family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+          color = '#667', 
+          size = 13
+        )
+        datetimeValues <- ymd(Dates2)
+        values2 =values$x
+        data <- data.frame(datetimeValues, values)
+        p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
+        p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+        p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+        p <- p %>% layout(yaxis = list(
+          title = i18n()$t("Count"),
+          titlefont = f
+        ))
+        # range = 
+        #   c(as.numeric(as.POSIXct("2005-08-01", format="%Y-%m-%d"))*1000,
+        #     as.numeric(as.POSIXct("2020-01-31", format="%Y-%m-%d"))*1000),
+        range_0<-1   
+        for (i in 1:(length(s1@param.est$mean))){
+          mean_i<-s1@param.est$mean[i]
+          range_1<-s1@cpts[i]
+          limit1<-c(rep(mean_i, (range_1-range_0+1) ))
+          x_range<-attr(s1@data.set,'index')[range_0:range_1]
+          t1<-paste(length(x_range),length(limit1))
+          p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '#ff7f0e'))
+          
+          range_0<-range_1
+        }
+        p
       }
       else
       {
-        createAlert(session, "qvde_cpmeanplot", "exampleAlert", title = i18n()$t("Error"),
+        createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
         # shinyalert("Oops!", "Something went wrong.", type = "error")
       }
       
     }
     else{
-      s <- calccpmean()
+      s1 <- calccpmean()
+      return (NULL)
     }
   })
 
@@ -2026,7 +2114,7 @@ shinyServer(function(input, output, session) {
       prr,
       options = list(
         autoWidth = TRUE,
-        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
         initComplete = JS('function(setting, json) { alert("done"); }'),
         language = list(
           url = ifelse(input$selected_language=='gr', 
