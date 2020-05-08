@@ -1,3 +1,4 @@
+import json
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import HttpResponse
 
@@ -130,29 +131,90 @@ def medDRA_flat_tree(conditions):
     :param conditions: all the possible conditions
     :return: all condition nodes in proper format, containing the data about their parents
     """
-    condition_type_level = {"https://w3id.org/phuse/meddra#SystemOrganClassConcept": 1,
-                            "https://w3id.org/phuse/meddra#HighLevelGroupConcept": 2,
-                            "https://w3id.org/phuse/meddra#HighLevelConcept": 3,
-                            "https://w3id.org/phuse/meddra#PreferredConcept": 4,
-                            "https://w3id.org/phuse/meddra#LowLevelConcept": 5}
+    # Type to parent type (for tree)
+    # type_2_ptype = {"soc": None,
+    #                 "hlgt": "soc",
+    #                 "hlt": "hlgt",
+    #                 "pt": "hlt",
+    #                 "llt": "pt"}
+    #
+    # type_2_code = dict([((c.type, c.code), c.anc_lvl1) for c in conditions])
+
+    # Enabled nodes by level type
+    enabled_level_types = ["pt", "llt"]
+
+    nodes = [{"id": c.id,
+              "text": "{} - {}".format(c.name, c.code),
+              "icon": c.type,
+              "state": {"disabled": c.type not in enabled_level_types},
+              "parent": c.parent if c.type!="soc" else "#"
+              # "parent": "{}___{}___{}".format(
+              #     c.anc_lvl1,
+              #     type_2_ptype.get(c.type),
+              #     type_2_code.get((type_2_ptype.get(c.type), c.anc_lvl1))
+              #     # ([""]+list(filter(
+              #     #     lambda cond: cond.code == c.anc_lvl1 and cond.type == type_2_ptype.get(c.type),
+              #     #     conditions))).pop().parent
+              # ).strip("_") if c.type!="soc" else "#"
+              } for c in sorted(conditions, key=lambda x: x.name)]
+
+    with open("taratatzoym_nodes.json", "w") as fp:
+        json.dump(nodes, fp)
+
+    return nodes
+
+
+def get_medDRA_children(parent, level, conditions):
+    """ Get children of a specific parent
+    :param parent: the parent of the children
+    :param level: the medDRA level from which we pick the children (HLGT, HLT, PT, LLT)
+    :param conditions: all the conditions to filter in order to get the children
+    :return: the children of the specific parent for the current level
+    """
+
+    if level not in range(2,6):
+        return None
+
+    level_condition_type = {2: "https://w3id.org/phuse/meddra#HighLevelGroupConcept",
+                            3: "https://w3id.org/phuse/meddra#HighLevelConcept",
+                            4: "https://w3id.org/phuse/meddra#PreferredConcept",
+                            5: "https://w3id.org/phuse/meddra#LowLevelConcept"}
 
     # Children level to parent type for filtering conditions to get children of current level and parent
     # On level 6 there is not parent, it's just used for icons
     parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt", 6: "llt"}
 
-    # Enabled nodes by level type
-    enabled_level_types = ["https://w3id.org/phuse/meddra#PreferredConcept",
-                           "https://w3id.org/phuse/meddra#LowLevelConcept"]
+    # Retrieve by filtering the conditions by children level type and parent
+    children = list(filter(lambda c: c.type == level_condition_type[level] and\
+                                     getattr(c, parent_types[level]).replace("https://w3id.org/phuse/meddra#m", "")\
+                                     == parent.code, conditions))
 
-    nodes = [{"id": "{}___{}".format(c.code, parent_types.get(condition_type_level.get(c.type)+1)),
-              "text": "{} - {}".format(c.name, c.code),
-              "icon": parent_types.get(condition_type_level.get(c.type)+1),
-              "state": {"disabled": c.type not in enabled_level_types},
-              "parent": "{}___{}".format(
-                  getattr(c, parent_types.get(condition_type_level.get(c.type))).replace(
-                      "https://w3id.org/phuse/meddra#m", ""),
-                  parent_types.get(condition_type_level.get(c.type)))
-              if condition_type_level.get(c.type)!=1 else "#"
-              } for c in sorted(conditions, key=lambda x: x.name)]
+    children = list(set(children))
 
-    return nodes
+    # Last level return from recursion
+    if level == 5:
+        return sorted(list(map(lambda ch: {"id": "{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
+                                           "text": "{} - {}".format(ch.name, ch.code),
+                                           "icon": "{}".format(parent_types[level+1]),}, children)),
+                      key=lambda v: v["text"])
+
+    return sorted([{"id":"{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
+                    "text": "{} - {}".format(ch.name, ch.code),
+                    "icon": "{}".format(parent_types[level+1]),
+                    "children": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
+                  key=lambda v: v["text"])
+
+
+def medDRA_hierarchy_tree(conditions):
+    medDRA_tree = []
+    soc_conditions = list(filter(lambda c: c.type == "https://w3id.org/phuse/meddra#SystemOrganClassConcept",
+                                 conditions))
+
+    # Append to/create the medDRA tree for all the soc conditions we have
+    for soc_c in soc_conditions:
+        medDRA_tree.append({"id":"{} - {}___soc".format(soc_c.name, soc_c.code),
+                            "text": "{} - {}".format(soc_c.name, soc_c.code),
+                            "icon": "soc",
+                            "children": get_medDRA_children(soc_c, 2, conditions)})
+
+    return medDRA_tree
