@@ -30,7 +30,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
   useShinyjs(),
   
   column(
-    width = 12,
+    width = 12,bsAlert("nodata_rrd"),
     # titlePanel("RR-Event"),
     
     hidden(

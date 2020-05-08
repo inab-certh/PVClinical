@@ -1,14 +1,15 @@
 body{
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
-  color:#73879C!important;
-  /*font-style: italic!important;*/
+  color:#667!important;
+  /*color:#73879C!important;
+  font-style: italic!important;*/
 }
 .popover{
-  max-width: 100%;
-  width:500px;
+  max-width: 100%!important;
+  width:500px!important;
 }
 .shiny-plot-output, .datatables {
-  /*color:blue;*/
+  color:#667!important;
 }
 .tooltip > .tooltip-inner {
   background-color: #FFFFFF;
@@ -40,15 +41,50 @@ a {
     text-decoration-style: initial!important;
     text-decoration-color: initial!important;
 }
-#seriousplot{
+.plotly{
+  margin-top:40px;
   /*height:280px!important;*/
 }
-#cpmeanplot{
-  
-}
+
 #cpmeanplot img{
   /*padding-right:20px;
   width:420px!important;
   height:350px!important;*/
 }
+.dataTables_length, .dataTables_filter, .paginate_button, .paginate_button a,a.paginate_button, .dataTables_info, .dataTables_paginate, .dataTables_wrapper .dataTables_paginate .paginate_button  {
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTable, .plotly{
+  font-size:13px!important;
+}
+.dygraph-legend{
+  font-size:13px !important;
+}
+.dygraph-title{
+  color:#667!important;
+  font-size:13px !important;
+  font-weight: normal!important;
+}
+
+.datatables label,th{
+  font-weight:normal!important; 
+}
+.dataTable td,th{
+  color:#5A738E!important;
+}
+.btn.btn-info {
+  margin-bottom:20px;
+  pointer-events: none;
+}
+.alert-info{
+  width:80%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 

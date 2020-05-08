@@ -154,8 +154,11 @@ fda_fetch_p <- function(session, myurl,
    { 
     out <-  try( fda_fetch( myurl ) )
     if( class(out) == "try-error" )
-      {        
-      closeAlert(session, 'erroralert')
+      {
+      if(!is.null(session$erroralert))
+      {
+        closeAlert(session, 'erroralert')
+      }
       err <- out
       createAlert(session, 'alert2', 'erroralert', title=paste( '<font color="red">Error:', err,' </font>' ), 
                   content= flag )
@@ -165,7 +168,10 @@ fda_fetch_p <- function(session, myurl,
         s <- GET(myurl)
         if( !is.null( httr::content(s)$error) )
         {
-          closeAlert(session, 'erroralert')
+          if(!is.null(session$erroralert))
+          {
+            closeAlert(session, 'erroralert')
+          }
           err <- ( httr::content(s) )
           createAlert(session, 'alert2', 'erroralert', title=paste( '<font color="red">Error:', err$error$message,' </font>' ), 
                       content= flag )
@@ -184,7 +190,7 @@ fda_fetch_p <- function(session, myurl,
       } else {
         if(!is.null(session$erroralert))
         {
-        closeAlert(session, 'erroralert')
+          closeAlert(session, 'erroralert')
         }
         break
       }

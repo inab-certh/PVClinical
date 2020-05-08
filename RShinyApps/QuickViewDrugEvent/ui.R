@@ -1,9 +1,13 @@
+library(plotly)
 library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
 library(DT)
 library(shinycssloaders)
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
 
 
 options(encoding = 'UTF-8')
@@ -59,7 +63,13 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             
                   fluidRow(useShinyjs(),
                            column(width=12, dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
-                                  fluidRow( bsAlert("qvde_cpmeanplot"),withSpinner(plotOutput( 'cpmeanplot' )))
+                                  fluidRow( bsAlert("nodata_qvde"),
+                                            wellPanel(
+                                              style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
+                                            ),
+                                            # withSpinner(plotOutput( 'cpmeanplot' ))
+                                            withSpinner(plotlyOutput( 'cpmeanplot'))
+                                            )
                                   
                                   
                                   
