@@ -40,8 +40,6 @@
         <!-- JQVMap -->
         <link href='{% static "vendors/jqvmap/dist/jqvmap.min.css" %}' rel="stylesheet"/>
 
-        <link href='{% static "vendors/select2-to-tree/src/select2totree.css" %}'  rel="stylesheet">
-
         <!-- Custom Theme Style -->
         <link href='{% static "build/css/custom.css" %}' rel="stylesheet">
         <link href='{% static "vendors/flag-icon-css/css/flag-icon.min.css" %}' rel="stylesheet" type="text/css">
@@ -64,7 +62,13 @@
       <!--<img src="/static/images/pvclinical_w.png" class="logo-block img-responsive">-->
     </a>
 
-
+    <div id="loaderOverlay">
+        <div class="cssload-loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+        </div>
+    </div>
 
     <form class="mt-1" name="languageForm" id="languageForm" action="{% url 'set_language' %}" method="post">{% csrf_token %}
         <input name="next" type="hidden" value="{{ redirect_to }}">
@@ -194,7 +198,6 @@
         <script src='{% static "vendors/jszip/dist/jszip.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/pdfmake.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/vfs_fonts.js" %}'></script>
-	    <script src='{% static "vendors/select2-to-tree/src/select2totree.js" %}'></script>
 
         <script src='{% static "build/js/pv_dash.js" %}'></script>
 
