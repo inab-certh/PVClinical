@@ -1,8 +1,10 @@
 import json
 import re
+import os
 
 from itertools import chain
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -127,8 +129,10 @@ def get_conditions_nodes_ids(request):
 
     req_conditions = json.loads(request.GET.get("conditions", None))
 
-    knw = KnowledgeGraphWrapper()
-    medDRA_tree_str = json.dumps(knw.get_medDRA_tree())
+    # knw = KnowledgeGraphWrapper()
+    # medDRA_tree_str = json.dumps(knw.get_medDRA_tree())
+    with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
+        medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
