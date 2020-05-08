@@ -2,6 +2,7 @@ Django==2.2.6
 django-appconf==1.0.3
 django-autocomplete-light==3.5.0
 django-crispy-forms==1.7.2
+django-redis==4.11.0
 django-select2==7.1.1
 django-translation-flags==1.0.6
 isodate==0.6.0
@@ -11,6 +12,7 @@ pyparsing==2.4.6
 python-memcached==1.59
 pytz==2018.9
 rdflib==4.2.2
+redis==3.5.0
 six==1.12.0
 SPARQLWrapper==1.8.4
 sqlparse==0.3.0
