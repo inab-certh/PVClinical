@@ -451,7 +451,7 @@ $(function() {
                 refresh = true;
             }
             $("#medDRATree").jstree("uncheck_node", desel_conditions[i]);
-            // $("#medDRATree").jstree()._open_to(desel_conditions[i]);
+            $("#medDRATree").jstree("close_node", desel_conditions[i]);
         }
         refresh = true;
     }
