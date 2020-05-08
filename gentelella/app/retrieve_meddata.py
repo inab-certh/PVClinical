@@ -115,6 +115,23 @@ class ConditionObject(NCObject):
 #                                obj.get("type"))
 
 
+# subclass JSONEncoder
+class ConditionEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__
+
+
+class ConditionDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+
+    def object_hook(self, obj):
+        return ConditionObject(obj.get("name"), obj.get("code"),
+                               obj.get("id").split("___").pop(0),
+                               obj.get("parent").split("___").pop(),
+                               obj.get("type"))
+
+
 class KnowledgeGraphWrapper:
 
     def __init__(self):
@@ -235,6 +252,7 @@ class KnowledgeGraphWrapper:
         #
         # conditions = []
         #
+
         # for c in sparql_conditions:
         #     cond_type = type_2_abbrv(get_binding_value(c, "condition_type"))
         #     possible_parents = self.get_parents(get_binding_value(c, "condition_code"), cond_type)
@@ -327,6 +345,7 @@ class KnowledgeGraphWrapper:
             results = self.sparql.query().bindings
             parents = list(set(map(lambda res: get_binding_value(res, "parent").strip(
                 "https://w3id.org/phuse/meddra#m"), results))) if results else [""]
+
         return parents
 
 
