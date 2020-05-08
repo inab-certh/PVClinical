@@ -1,5 +1,7 @@
+import json
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import HttpResponse
+
 
 def is_in_group(user, group):
     """ Check whether a user belongs to a specific group or not
@@ -11,6 +13,7 @@ def is_in_group(user, group):
     if user:
         return user.groups.filter(name=group)
     return False
+
 
 def is_doctor(user):
     """ Check if user is a doctor
@@ -34,6 +37,7 @@ def is_pv_expert(user):
     :return: True or False
     """
     return is_in_group(user, "PV Expert")
+
 
 def sorted_choices(choices_tpl):
     """ Returns choices_tpl sorted alphabetically
@@ -121,6 +125,45 @@ def atc_hierarchy_tree(codes):
 
     return atc_tree
 
+
+def medDRA_flat_tree(conditions):
+    """ Create the flat tree of all nodes with every node containing its parents
+    :param conditions: all the possible conditions
+    :return: all condition nodes in proper format, containing the data about their parents
+    """
+    # Type to parent type (for tree)
+    # type_2_ptype = {"soc": None,
+    #                 "hlgt": "soc",
+    #                 "hlt": "hlgt",
+    #                 "pt": "hlt",
+    #                 "llt": "pt"}
+    #
+    # type_2_code = dict([((c.type, c.code), c.anc_lvl1) for c in conditions])
+
+    # Enabled nodes by level type
+    enabled_level_types = ["pt", "llt"]
+
+    nodes = [{"id": c.id,
+              "text": "{} - {}".format(c.name, c.code),
+              "icon": c.type,
+              "state": {"disabled": c.type not in enabled_level_types},
+              "parent": c.parent if c.type!="soc" else "#"
+              # "parent": "{}___{}___{}".format(
+              #     c.anc_lvl1,
+              #     type_2_ptype.get(c.type),
+              #     type_2_code.get((type_2_ptype.get(c.type), c.anc_lvl1))
+              #     # ([""]+list(filter(
+              #     #     lambda cond: cond.code == c.anc_lvl1 and cond.type == type_2_ptype.get(c.type),
+              #     #     conditions))).pop().parent
+              # ).strip("_") if c.type!="soc" else "#"
+              } for c in sorted(conditions, key=lambda x: x.name)]
+
+    with open("taratatzoym_nodes.json", "w") as fp:
+        json.dump(nodes, fp)
+
+    return nodes
+
+
 def get_medDRA_children(parent, level, conditions):
     """ Get children of a specific parent
     :param parent: the parent of the children
@@ -138,36 +181,27 @@ def get_medDRA_children(parent, level, conditions):
                             5: "https://w3id.org/phuse/meddra#LowLevelConcept"}
 
     # Children level to parent type for filtering conditions to get children of current level and parent
-    parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt"}
+    # On level 6 there is not parent, it's just used for icons
+    parent_types = {2: "soc", 3: "hlgt", 4: "hlt", 5: "pt", 6: "llt"}
 
     # Retrieve by filtering the conditions by children level type and parent
     children = list(filter(lambda c: c.type == level_condition_type[level] and\
-                    c[parent_types[level]] == parent.code, conditions))
-    # print(children)
+                                     getattr(c, parent_types[level]).replace("https://w3id.org/phuse/meddra#m", "")\
+                                     == parent.code, conditions))
 
+    children = list(set(children))
+
+    # Last level return from recursion
     if level == 5:
-        return sorted(list(map(lambda ch: {"id":ch.name , "text": "{} - {}".format(ch.name, ch.code)}, children)),
+        return sorted(list(map(lambda ch: {"id": "{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
+                                           "text": "{} - {}".format(ch.name, ch.code),
+                                           "icon": "{}".format(parent_types[level+1]),}, children)),
                       key=lambda v: v["text"])
 
-    # mydata = [
-    #     {id: 1, text: "USA", inc: [
-    #         {id:11, text: "west", inc: [
-    #             {id: 111, text: "California", inc: [
-    #                 {id: 1111, text: "Los Angeles", inc: [
-    #                     {id: 11111, text: "Hollywood"}
-    #                 ]},
-    #                 {id: 1112, text: "San Diego"}
-    #             ]},
-    #             {id: 112, text: "Oregon"}
-    #         ]}
-    #     ]},
-    #     {id: 2, text: "India"},
-    #     {id: 3, text: "中国"}
-    # ];
-
-
-    return sorted([{"id": ch.name, "text": "{} - {}".format(ch.name, ch.code),
-                    "inc": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
+    return sorted([{"id":"{} - {}___{}".format(ch.name, ch.code, parent_types[level+1]),
+                    "text": "{} - {}".format(ch.name, ch.code),
+                    "icon": "{}".format(parent_types[level+1]),
+                    "children": get_medDRA_children(ch, level + 1, conditions)} for ch in children],
                   key=lambda v: v["text"])
 
 
@@ -178,6 +212,9 @@ def medDRA_hierarchy_tree(conditions):
 
     # Append to/create the medDRA tree for all the soc conditions we have
     for soc_c in soc_conditions:
-        medDRA_tree.append({"text": root, "inc": get_medDRA_children(soc_c, 2, conditions)})
+        medDRA_tree.append({"id":"{} - {}___soc".format(soc_c.name, soc_c.code),
+                            "text": "{} - {}".format(soc_c.name, soc_c.code),
+                            "icon": "soc",
+                            "children": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree
