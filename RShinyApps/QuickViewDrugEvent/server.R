@@ -17,6 +17,7 @@ library(shiny.i18n)
 library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
+library(DT)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -29,6 +30,7 @@ source('sourcedir.R')
 
 
 shinyServer(function(input, output, session) {
+  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -766,8 +768,8 @@ shinyServer(function(input, output, session) {
         {
           myevents <- getterm2( session, FALSE )
         }
-        # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
-        mytitle <- i18n()$t("Change in mean analysis")
+        mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
+        #mytitle <- i18n()$t("Change in mean analysis")
         # par(bg = "gray")
         # plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
         # axis(1, pos,  labs[pos], las=2  )
@@ -806,7 +808,7 @@ shinyServer(function(input, output, session) {
         data <- data.frame(datetimeValues, values)
         p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
         p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
-        p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+        p <- p %>% layout(title = i18n()$t(mytitle),titlefont = f)
         p <- p %>% layout(yaxis = list(
           title = i18n()$t("Count"),
           titlefont = f
@@ -829,6 +831,11 @@ shinyServer(function(input, output, session) {
       }
       else
       {
+        hide("PRRRORPanel")
+        hide("daterange")
+        hide("prr2")
+        hide("infocpmeantext")
+        
         createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
         # shinyalert("Oops!", "Something went wrong.", type = "error")
@@ -934,6 +941,12 @@ shinyServer(function(input, output, session) {
     l <- getdaterange()
     paste( '<b>', l[3] , 'from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
   })
+  
+  
+  output$PRRRORResults <- renderUI({
+    HTML(stri_enc_toutf8(i18n()$t("PRR and ROR Results")))
+
+  })
 
   #URL management
   getcururl <- reactive({
@@ -961,8 +974,12 @@ shinyServer(function(input, output, session) {
     updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
-    updateRadioButtons(session, 'useexactD', selected = q$exactD)
-    updateRadioButtons(session, 'useexactE', selected = q$exactE)
+    updateRadioButtons(session, 'useexact',
+                       selected = if(length(q$exact)==0) "exact" else q$exact)
+    updateRadioButtons(session, 'useexactD',
+                       selected = if(length(q$exactD)==0) "exact" else q$exactD)
+    updateRadioButtons(session, 'useexactE',
+                       selected = if(length(q$exactE)==0) "exact" else q$exactE)
     return(q)
   })
 
@@ -1506,6 +1523,8 @@ shinyServer(function(input, output, session) {
       t1 <- textInput_p("t1", "Name of Drug", '',
                         HTML( tt('drugname1') ), tt('drugname2'),
                         placement='bottom')
+    # useexact <- radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'),
+    #                          selected='exact', inline=TRUE)
     useexact <- radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'),
                              selected='any', inline=TRUE)
     drugname <- textInput_p("drugname", "Name of Drug", '',
@@ -1533,7 +1552,8 @@ shinyServer(function(input, output, session) {
     s <- 'aspirin'
   })
   output$useexact_in <- renderUI( {
-
+    # s <- radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'),
+    #                   selected='exact', inline=TRUE)
     s <- radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'),
                       selected='any', inline=TRUE)
   })
@@ -1966,6 +1986,7 @@ shinyServer(function(input, output, session) {
                          count=0 )
       return( list( comb=tmp, sourcedf=tmp) )
     }
+    comb$ror <- round(comb$ror, 2)
     #    ror <- comblist$ror
     if (getwhich() =='D'){ 
       names <- c('exactD', 'exactE','v1', 'term1','term2')
@@ -2026,8 +2047,8 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c( iname, colname,countname, 
-                    'PRR')
+    keptcols <-  c( iname, colname, countname, 
+                    'PRR', 'ROR')
     
     #    mydf <- mydf[, c(1:4, 7,8,9)]
     return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
@@ -2110,18 +2131,26 @@ shinyServer(function(input, output, session) {
   output$prr2 <- DT::renderDT({  
     prr<-prr()
     write.xlsx(prr, "../mydata.xlsx")
+    js_callback = paste0("function( row, data, index ) {
+          if (data[2] != '", toupper(input$t2),"') {
+            $(row).hide();
+          }
+        }")
     datatable(
       prr,
       options = list(
         autoWidth = TRUE,
+        dom = 'tr', #fltipr default (f: filter, l: length, i: info, p: pages)
+        rowCallback = JS(js_callback),
         columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
-        initComplete = JS('function(setting, json) { alert("done"); }'),
+        #initComplete = JS('function(setting, json) { alert("done"); }'),
         language = list(
           url = ifelse(input$selected_language=='gr', 
                        'datatablesEnglish.json', 
                        'datatablesGreek.json')
         )
-      ),  escape=FALSE
+      ),
+      escape=FALSE
     )
   },  escape=FALSE)
   

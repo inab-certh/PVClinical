@@ -486,7 +486,7 @@ shinyServer(function(input, output, session) {
     if(is.null(comb)){
       return(NULL)
     }
-    browser()
+    #browser()
     if (length(comb) < 1)
     {
       return(NULL)
@@ -494,7 +494,8 @@ shinyServer(function(input, output, session) {
       #                    count=0 )
       # return( list( comb=tmp, sourcedf=tmp) )
     }
-#    ror <- comblist$ror
+    # ror <- comblist$ror
+    comb$ror <- round(comb$ror, 2)
     if (getwhich() =='D'){ 
       names <- c('exactD', 'exactE','v1', 'term1','term2')
       values <- c(input$useexact , 'exact', getvar1(), gsub( '"', '', getbestterm1(), fixed=TRUE  ) )
@@ -554,8 +555,8 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c(  colname,countname, 
-                     'PRR')
+    keptcols <-  c(  colname, countname, 
+                     'PRR', 'ROR')
 
     #    mydf <- mydf[, c(1:4, 7,8,9)]
     return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
@@ -627,10 +628,10 @@ output$prrtitleBlank <- renderUI({
 
 prr <- reactive({  
   if (getterm1( session )=="") {
-    browser()
+    #browser()
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
-    browser()
+    #browser()
     prr<-getprr()
     if(is.null(prr)){
       mydf1<-NULL
@@ -681,6 +682,7 @@ output$prr2 <- DT::renderDT({
   }
   translator$set_translation_language(selectedLang)
   mydf<-prr()
+  print(mydf)
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -697,7 +699,7 @@ output$prr2 <- DT::renderDT({
     mydf,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2, 3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json', 
