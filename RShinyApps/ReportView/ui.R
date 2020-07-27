@@ -243,16 +243,16 @@ fluidRow(
                                      tableOutput( 'openfda2' )
                          )
                 ),
-                tabPanel("Other Apps",  
-                         wellPanel( 
-                           htmlOutput( 'applinks' )
-                         )
-                ),
-                tabPanel('Data Reference', HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-                ),
-                tabPanel('About', 
-                         img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  ),
+                # tabPanel("Other Apps",  
+                #          wellPanel( 
+                #            htmlOutput( 'applinks' )
+                #          )
+                # ),
+                # tabPanel('Data Reference', HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
+                # ),
+                # tabPanel('About',
+                #          img(src='l_openFDA.png'),
+                #          HTML( (loadhelp('about') ) )  ),
               id='maintabs'
             )
         )
