@@ -218,3 +218,5 @@ def medDRA_hierarchy_tree(conditions):
                             "children": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree
+
+
