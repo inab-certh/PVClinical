@@ -86,12 +86,13 @@ $(function() {
                 });
 
                 valid_synonyms.forEach(function (syn, index, valid_synonyms) {
-                    options_arr.push(new Option(syn, syn))
+                    options_arr.push(new Option(syn, syn));
                 });
 
 
                 // Change synonyms and send trigger
                 $("#drugsSynonyms").html(options_arr).trigger("change");
+                console.log($("#drugsSynonyms"));
 
               },
               error: function (data) {

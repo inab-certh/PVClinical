@@ -158,8 +158,8 @@ def medDRA_flat_tree(conditions):
               # ).strip("_") if c.type!="soc" else "#"
               } for c in sorted(conditions, key=lambda x: x.name)]
 
-    with open("taratatzoym_nodes.json", "w") as fp:
-        json.dump(nodes, fp)
+    # with open("taratatzoym_nodes.json", "w") as fp:
+    #     json.dump(nodes, fp)
 
     return nodes
 
@@ -218,3 +218,5 @@ def medDRA_hierarchy_tree(conditions):
                             "children": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree
+
+

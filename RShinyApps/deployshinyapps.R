@@ -23,7 +23,7 @@ app <- c(
  "QuickViewDrugEvent",
  "QuickViewEvent",
  "LabelView"  ,
- # "ReportView" , 
+ # "ReportView" ,
  # "deviceenforceview",
  # "510kview", 
  NULL
