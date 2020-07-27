@@ -1,5 +1,8 @@
+library(plotly)
 require(shiny)
+
 require(shinyBS)
+
 require('lubridate')
 require('bcp')
 require('changepoint')
@@ -15,8 +18,16 @@ require(wordcloud)
 library(shiny)
 library(shiny.i18n)
 library("rjson")
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+library(ggplot2)
+# library(hrbrthemes)
+
+
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
+
 
 # i18n$set_translation_language("gr")
 
@@ -707,11 +718,25 @@ shinyServer(function(input, output, session) {
     return(out)
   })
 
-  output$cpmeanplot <- renderPlot ({
+  output$cpmeanplot <- renderPlotly ({
     mydf <-getquerydata()$mydfin$result
-    write.xlsx(mydf, "../mydf.xlsx")
+    if (length(mydf) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
+    
     if (length(mydf) > 0)
     {
+      # write.xlsx(mydf, "../mydf.xlsx")
       s1 <- calccpmean()
       labs <-    index( getts() )
       pos <- seq(1, length(labs), 3)
@@ -736,13 +761,59 @@ shinyServer(function(input, output, session) {
       mytitle <- i18n()$t("Change in mean analysis")
       # par(bg = "gray")
       # points(mydf)
-      plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
-      # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgray")
-      # points(s1@data.set)
-      axis(1, pos,  labs[pos], las=2  )
-      grid(nx=NA, ny=NULL,col = "lightgray")
-      abline(v=pos, col = "lightgray", lty = "dotted",     lwd = par("lwd") )
+      
+      # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+      # # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgray")
+      # # points(s1@data.set)
+      # axis(1, pos,  labs[pos], las=2  )
+      # grid(nx=NA, ny=NULL,col = "lightgray")
+      # abline(v=pos, col = "lightgray", lty = "dotted",     lwd = par("lwd") )
+      values<-as.data.frame(s1@data.set)
+      Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
+        # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+        x <- paste(x,'-01',sep = '')
+        x
+      })
+      # datetime <- ymd(Dates2)
+      # don <- xts(x =as.vector(values), order.by = datetime)
+      # p <- dygraph(don,main = i18n()$t("Change in mean analysis")) %>%
+      #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#667",axisLabelColor ="#667",axisLabelFontSize=13) %>%
+      #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+      #   dyRangeSelector() %>%
+      #   # dyLimit(s1@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+      #   dyCrosshair(direction = "vertical") %>%
+      #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+      #   dyRoller(rollPeriod = 1)
+      # p
+      f <- list(
+        family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+        color = '#667', 
+        size = 13
+      )
+      datetimeValues <- ymd(Dates2)
+      values2 =values$x
+      data <- data.frame(datetimeValues, values)
+      p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
+      p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
+      p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+      p <- p %>% layout(yaxis = list(
+        title = i18n()$t("Count"),
+        titlefont = f
+      ))
+      range_0<-1   
+      for (i in 1:(length(s1@param.est$mean))){
+        mean_i<-s1@param.est$mean[i]
+        range_1<-s1@cpts[i]
+        limit1<-c(rep(mean_i, (range_1-range_0+1) ))
+        x_range<-attr(s1@data.set,'index')[range_0:range_1]
+        t1<-paste(length(x_range),length(limit1))
+        p <- p %>% add_trace(x=x_range,y = limit1, type = 'scatter', mode = 'lines',line = list(color = '#ff7f0e'),name=paste('cp',i) )
+        
+        range_0<-range_1
+      }
+      p
     }
+    
   })
 
   output$cpvartext <- renderText ({
@@ -969,11 +1040,23 @@ shinyServer(function(input, output, session) {
     }
 
     mydf <- rbind(conganom, death, disable, hosp, lifethreat, other)
-    mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
-                       i18n()$t("Life Threatening"), i18n()$t("Other"))
-
-    mydf <- mydf[order(mydf[,2]), ]
-    return( mydf )
+    
+    
+    if("term" %in% colnames(mydf))
+    {
+      mydf[,'term'] <- c(i18n()$t("Congenital Anomaly"), i18n()$t("Death"), i18n()$t("Disability"), i18n()$t("Hospitalization"),
+                         i18n()$t("Life Threatening"), i18n()$t("Other"))
+      # mydf[,'term'] <- c("Congenital Anomaly", "Death", "Disability", "Hospitalization",
+      #                    "Life Threatening", "Other")
+      
+      mydf <- mydf[order(mydf[,2]), ]
+      return( mydf )
+    }
+    else 
+    {
+      return (NULL);
+    }
+    
   })
 
   #************************************
@@ -1178,7 +1261,7 @@ shinyServer(function(input, output, session) {
     {
       names(mydf) <- c('Serious', 'Case Counts' )
       mysum <- sum( mydf[,'Case Counts'] )
-      #    browser()
+      #browser()
       mydf <- data.frame(mydf, percent =  100*mydf[,'Case Counts']/mysum )
       names(mydf) <- c('Serious', 'Case Counts', '%' )
       mydf[,'Case Counts'] <- prettyNum( mydf[,'Case Counts'], big.mark=',' )
@@ -1188,17 +1271,73 @@ shinyServer(function(input, output, session) {
   }, height=300, align=c("rllr"), sanitize.text.function = function(x) x)
 
 
-  output$seriousplot <- renderPlot({
+  output$seriousplot <- renderPlotly({
     mydf <- getseriouscounts()
+    if (length(mydf) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     if ( is.data.frame(mydf) )
     {
-      names(mydf) <- c('Serious', 'Case Counts' )
-      dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand",col="black",type = "n")
-      # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "yellow")
-      # points(mydf[,2],1:6)
+      names(mydf) 
+      # dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness"), family="Quicksand",col="black",type = "n")
+      H <- mydf[,2]
+      M <- mydf[,1]
+      width2 = c(0.8, 0.8, 0.8, 3.5, 4, 1)
+      
+      # Give the chart file a name
+      # png(file = "barchart_months_revenue.png")
+      
+      # Plot the bar chart 
+      # p<-barplot(H,names.arg=M,xlab="Month",ylab="Revenue",col="blue",
+      #         main="Seriousness",border="red")
+      # p
+      data <- data.frame(
+        name=M ,  
+        value=H,
+        width=width2
+      )
+      # p<-ggplot(data, aes(x=name, y=value, text2=paste("Date: ", name,
+      #                                                 "<br>Revenue: $", name,
+      #                                                 "<br>Target: $", name))) +
+      #   geom_bar(stat = "identity", width=0.5) + 
+      #   geom_point(aes(text=sprintf('letter: %s\nLetter: %s', name, value)))
+      #   theme(
+      #     panel.background = element_rect(fill = "white",
+      #                                     colour = "white",
+      #                                     size = 0.5, linetype = "solid"),
+      #     panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+      #                                     colour = "white"), 
+      #     panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+      #                                     colour = "white")
+      #   )+
+      #   theme_classic(base_size = 18)+
+      #   theme(text=element_text(size=20,  family="'Helvetica Neue', Roboto, Arial, 'Droid Sans', sans-serif",colour ="#73879C"))
+      # (pp <- ggplotly(p, tooltip = "text2"))
+      # p
+      fig <- plot_ly(
+        x = data$name,
+        y = data$value,
+        name = "SF Zoo",
+        type = "bar",
+        textfont = list(color = '#667', size = 13)
+      )%>% layout(title=i18n()$t("Seriousness"),titlefont = list(color = '#667', size = 13),textfont = list(color = '#667', size = 13),xaxis = list(color='#667',tickfont=list(size=13)), 
+                  yaxis = list(color='#667',tickfont=list(size=13)))
+        
+      
+      fig
       
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-  }, height=300)
+  })
 
   output$seriouspie <- renderPlot({
     mydf <- getseriouscounts()
@@ -1929,13 +2068,12 @@ shinyServer(function(input, output, session) {
     #     comb <- comb[order(comb$prr, decreasing = TRUE),]
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
-    
     countname <- paste( i18n()$t("Counts for"), getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c( iname, colname,countname, 
+    keptcols <-  c(  colname,countname, 
                     'PRR')
     
     #    mydf <- mydf[, c(1:4, 7,8,9)]
@@ -2024,12 +2162,25 @@ shinyServer(function(input, output, session) {
       selectedLang='en'
     }
     prr<-prr()
+    if (length(prr) > 0 )
+    {
+      if(!is.null(session$nodataAlert))
+      {
+        closeAlert(session, "nodataAlert")
+      }
+    }
+    else{
+      createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      plot.new()
+      return(NULL)
+    }
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
       prr,
       options = list(
         autoWidth = TRUE,
-        columnDefs = list(list(width = '50', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
         language = list(
           url = ifelse(selectedLang=='gr', 
                        'datatablesGreek.json',

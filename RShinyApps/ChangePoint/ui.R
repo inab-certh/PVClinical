@@ -1,8 +1,14 @@
+library(plotly)
 library(shiny)
 require(shinyBS)
 library(shinyjs)
 library(shinycssloaders)
+library(DT)
 source( 'sourcedir.R')
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+
 options(encoding = 'UTF-8')
 # getdrugvarchoices <- function(){
 #   openfdavars <- c( 
@@ -30,7 +36,7 @@ rendermaxcp <- function() {
 } 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),style = "margin-top:15px;",
-           column(width=12, 
+           column(width=12, bsAlert("nodata_changepoint"),
                   
                   hidden(
                     uiOutput('page_content'),
@@ -72,39 +78,43 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
     dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
 
       tabsetPanel(
-                 tabPanel(uiOutput("ChangeinMeanAnalysis"),  
-                            uiOutput("infocpmeantext", style = "position:absolute;right:40px;z-index:10"),
-                            withSpinner(plotOutput( 'cpmeanplot' )) 
+                 tabPanel(uiOutput("ChangeinMeanAnalysis"), 
+                          wellPanel(
+                            style="background-color:white;height:60px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                           ),
-                tabPanel(uiOutput("ChangeinVarianceAnalysis"),  
-                           uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10"),
-                         withSpinner(plotOutput( 'cpvarplot' ) )
+                            withSpinner(plotlyOutput( 'cpmeanplot' )) 
+                          ),
+                tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
+                         wellPanel(
+                           style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
+                         ),
+                         withSpinner(plotlyOutput( 'cpvarplot' ) )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
                           wellPanel(
-                            style="background-color:white;height:30px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
+                            style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
                           ),
-                          withSpinner(plotOutput_p( 'cpbayesplot' ))
+                          withSpinner(plotlyOutput( 'cpbayesplot' ))
                             # verbatimTextOutput( 'cpbayestext' )
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         withSpinner(plotOutput_p('queryplot'))
+                         withSpinner(plotlyOutput('queryplot'))
                          
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         withSpinner(htmlOutput('coquery'))
+                         withSpinner(dataTableOutput('coquery'))
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
                          wellPanel(
-                           style="background-color:white;height:30px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                           style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
-                         withSpinner(htmlOutput('coqueryE'))
+                         withSpinner(dataTableOutput('coqueryE'))
                 ),
               id='maintabs', selected = uiOutput("ChangeinMeanAnalysis")
             )

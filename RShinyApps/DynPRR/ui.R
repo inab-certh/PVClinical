@@ -26,7 +26,7 @@ renderEventText <- function() {
 }    
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(),useShinyalert(),
-           column(width=12, 
+           column(width=12, bsAlert("nodata_dynprr"),
                   hidden(
                     uiOutput('page_content'),
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 

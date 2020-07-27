@@ -1,11 +1,14 @@
+
 library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
-library(DT)
 library(shinycssloaders)
 library(shinyalert)
-
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+library(plotly)
 
 options(encoding = 'UTF-8')
 
@@ -57,7 +60,7 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow( useShinyjs(),useShinyalert(),
-                            column(width=12,uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
+                            column(width=12,bsAlert("nodata_qvd"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                    # pickerInput("countries", "countries",
                                    # 
                                    #             choices = countries,
@@ -77,8 +80,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             
                   fluidRow(useShinyjs(),
                            column(width=6,
-                                  fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
-                                  fluidRow( column(width=12,offset=1,withSpinner(plotOutput_p( 'cpmeanplot') )))
+                                  # fluidRow( withSpinner(plotOutput_p("seriousplot",HTML( tt('dot1') ), tt('dot2')))),
+                                  fluidRow( column(width=10,offset=1,withSpinner(plotlyOutput("seriousplot")))),
+                                  fluidRow( column(width=10,offset=1,withSpinner(plotlyOutput( 'cpmeanplot') )))
                                   
                                   
                                   
@@ -88,8 +92,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                  # )
                            ),
                                   
-                    column(width=6,
-                           fluidRow( align="center",style="width:90%; margin-top:60px;",uiOutput('PRRTitle',style="font-weight:bold" ),
+                    column(width=5,offset=1,
+                           fluidRow( align="center",style="width:90%; margin-top:60px;",
+                                     # uiOutput('PRRTitle',style="font-weight:bold" ),
                                      withSpinner(makeDataTableOutput( 'prr2' ))),
                            #htmlOutput( 'prrtitle' ),
                            

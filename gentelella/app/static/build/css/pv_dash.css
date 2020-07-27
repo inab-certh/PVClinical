@@ -490,8 +490,6 @@ iframe {
   height: 800px;
   border: none;
   overflow: hidden;
-    position:absolute;
-
 }
 
 .custom-control {
@@ -511,44 +509,21 @@ iframe {
   color: blue!important;
 }
 
-.DrugEventParameter{
+.legend-margins{
     margin-bottom:10px;
-    margin-right:20px;
-    font-size:20px;
-    font-weight: bold;
 }
-#first {
-    position:absolute;
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-    left:50%;
-    top:200px;
-    /*transform: translate(-60px,0)*/
-    animation: spin 2s linear infinite;
-    z-index: 9999;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-#divFrame{
-    position:relative;
-}
-.drugs-div{
-    line-height: 50px;
-    height: 50px;
-    /*border: 3px solid green;*/
-    text-align: center;
-    position:relative;
-}
+
 .drug-event-radio{
+    margin: auto;
     margin-left:20px;
-    /*position:relative;*/
-    /*left:30px;*/
 }
-
-
-
+.drug-event-radio > *{
+    float:left;
+    display:inline;
+}
+.custom-control-input{
+    margin-right:5px!important;
+}
+.custom-control-label{
+    margin-top:1px!important;
+}

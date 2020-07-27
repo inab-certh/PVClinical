@@ -1,3 +1,4 @@
+
 require(shiny)
 require(shinyBS)
 require('lubridate')
@@ -5,8 +6,15 @@ require('bcp')
 require('changepoint')
 require('zoo')
 library(shiny.i18n)
-library(DT)
-library(tableHTML)
+# library(tableHTML)
+
+
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
+library(ggplot2)
+
+
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 if (!require('openfda') ) {
   devtools::install_github("ropenhealth/openfda")
@@ -16,7 +24,7 @@ if (!require('openfda') ) {
 
 
 source( 'sourcedir.R')
- 
+
 
 #**************************************************
 #CPA
@@ -323,6 +331,10 @@ getcocounts <- function(whichcount = 'D'){
     mylist <- getcoeventlist()
   )
   mydf <- mylist$mydf
+  if(is.null(mydf) || length(mydf$cumsum)==0)
+  {
+    return(NULL)
+  }
   myurl <- mylist$myurl
   sourcedf <- mydf
   #    print(names(mydf))
@@ -444,7 +456,6 @@ calccpvar<- reactive({
 calccpbayes<- reactive({
   myts <- getts()
   mydf <- getquerydata()$mydfin$result[, c(1,2)]
-  browser()
   bcp.flu<-bcp(as.double(myts),p0=0.3)
   return(list(bcp.flu=bcp.flu, data=mydf) )
 }) 
@@ -510,6 +521,18 @@ output$querycotextE <- renderText({
 
 output$coquery <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -524,7 +547,7 @@ output$coquery <- DT::renderDT({
       return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -533,6 +556,42 @@ output$coquery <- DT::renderDT({
     ))
 },  escape=FALSE)
 
+output$coqueryE <- DT::renderDT({
+  codrugs <- getcocountsE()$mydf
+  if (length(codrugs) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
+  query <- parseQueryString(session$clientData$url_search)
+  selectedLang = tail(query[['lang']], 1)
+  if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  {
+    selectedLang='en'
+  }
+  datatable(
+    if ( is.data.frame(codrugs) )
+    { 
+      return(codrugs) 
+    } else  {
+      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+      language = list(
+        url = ifelse(selectedLang=='gr', 
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
+      )
+    ))
+},  escape=FALSE)
 
 # output$coqueryE <- renderTable({  
 #   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
@@ -546,15 +605,15 @@ output$coquery <- DT::renderDT({
 # }, sanitize.text.function = function(x) x)
 
 
-output$coquery <- DT::renderDT({
-  codrugs <- getcocountsE()$mydf
-  datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
-},  escape=FALSE)
+# output$coquery <- DT::renderDT({
+#   codrugs <- getcocountsE()$mydf
+#   datatable(
+#     if ( is.data.frame(codrugs) )
+#     { 
+#       return(codrugs) 
+#     } else  {
+#       return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )})
+# },  escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -606,32 +665,98 @@ output$maxcp <- renderText({
   out <- paste( '<b>Maximum Number of Changepoints:<i>', s, '</i></b>' )
   return(out)
 })
-output$queryplot <- renderPlot({  
+output$queryplot <- renderPlotly({  
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
-  lapply(mydf$display['Date'][[1]], function(x) {
-    x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
+  Dates2<-lapply(mydf$display['Date'], function(x) {
+    # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+    x <- paste(x,'-01',sep = '')
     x
   })
+  Dates2<-unlist(Dates2, use.names=FALSE)
   if ( is.data.frame(mydf$display) )
   {
     labs <-    mydf$display[[1]]
     Date<-mydf$display[[1]]
-    Counts<-mydf$display[[2]]
+    Counts<-as.vector(mydf$display[,2])
+    
+    # p <- ggplot(mydf$display, aes(x=Date, y=Count,group = 1)) +
+    #   geom_line() + 
+    #   xlab("") +
+    #   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    # p
+    
+    
     # plot(x,y)
     
     
-    plot(Counts, axes=FALSE, xlab="",ylab=i18n()$t("Count"))
-    axis(2)
-    axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
-    box()
+    #from here vagelis
+    # plot(Counts, axes=FALSE, xlab="",ylab=i18n()$t("Count"))
+    # axis(2)
+    # axis(1, at=seq_along(Date),labels=as.character(mydf$display[[1]]), las=2)
+    # box()
+    # 
+    # # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
+    # # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
+    # # plot(Count ~ Date, mydf$display)
+    # 
+    # grid()
+    #to here vagelis
     
-    # mydf$display['Date'][1] <- as.Date(mydf$display['Date'][1], "%Y-%m-%d")
-    # # dm$Date <- as.Date(dm$Date, "%m/%d/%Y")
-    # plot(Count ~ Date, mydf$display)
+    data <- read.table("https://python-graph-gallery.com/wp-content/uploads/bike.csv", header=T, sep=",") %>% head(300)
     
-    grid()
+    # Check type of variable
+    # str(data)
+    
+    # Since my time is currently a factor, I have to convert it to a date-time format!
+    #data$datetime <- ymd_hms(data$datetime)
+    # browser()
+    # datetime <- ymd(Dates2)
+    # 
+    # # Then you can create the xts necessary to use dygraph
+    # don <- xts(x = Counts, order.by = datetime)
+    # 
+    # # Finally the plot
+    # p <- dygraph(don) %>%
+    #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+    #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+    #   dyRangeSelector() %>%
+    #   dyCrosshair(direction = "vertical") %>%
+    #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+    #   dyRoller(rollPeriod = 1)
+    # p
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
+    datetimeValues <- ymd(Dates2)
+    values2 =Counts
+    data <- data.frame(datetimeValues, values2)
+    p <- plot_ly(x = datetimeValues, y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'),showlegend=FALSE)
+    p <- p %>% layout(
+      yaxis = list(
+        title = i18n()$t("Count"),
+        titlefont = f
+      ))
+    
+    p <- p %>% layout(title = i18n()$t("Report Counts By Date"),titlefont = f)
+    
+    p
   } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
 })
 
@@ -645,30 +770,30 @@ output$query <- renderTable({
     return(mydf$display) 
   } else  {return(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0))}
   }, include.rownames = FALSE, sanitize.text.function = function(x) x)
-output$coquery <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsD()$mydf
-  if ( is.data.frame(codrugs) )
-  { 
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)  
+# output$coquery <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsD()$mydf
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)  
 
-output$coqueryE <- renderTable({  
-  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
-  codrugs <- getcocountsE()$mydf
-  browser
-  if ( is.data.frame(codrugs) )
-  { 
-    # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
-    # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
-    return(codrugs) 
-  } else  {
-    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
-  }  
-}, sanitize.text.function = function(x) x)
+# output$coqueryE <- renderTable({  
+#   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+#   codrugs <- getcocountsE()$mydf
+#   # browser
+#   if ( is.data.frame(codrugs) )
+#   { 
+#     # names(codrugs) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), stri_enc_toutf8(i18n()$t("Case Counts for")), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
+#     # names(codrugs) <- c(  stri_enc_toutf8('??????'),stri_enc_toutf8('??????'),stri_enc_toutf8('????????'))
+#     return(codrugs) 
+#   } else  {
+#     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+#   }  
+# }, sanitize.text.function = function(x) x)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -764,7 +889,7 @@ output$infocpmeantext <- renderUI ({
       out <- i18n()$t('Insufficient data')
     }
     addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
-             content=out, placement = "left",
+             content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
              trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
     # browser()
@@ -773,12 +898,24 @@ output$infocpmeantext <- renderUI ({
   
 })
 
-output$cpmeanplot <- renderPlot ({
-  
+output$cpmeanplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
-    s <- calccpmean()
+    s1 <- calccpmean()
     labs <-    index( getts() )
     pos <- seq(1, length(labs), 3)
     
@@ -800,11 +937,72 @@ output$cpmeanplot <- renderPlot ({
       }
     # mytitle <- paste( i18n()$t("Change in mean analysis for"), mydrugs, i18n()$t("and"), myevents )
     mytitle <-  i18n()$t("Change in mean analysis")
-    plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
-    axis(1, pos,  labs[pos], las=2  )
-    grid(nx=NA, ny=NULL)
-    abline(v=pos, col = "lightgray", lty = "dotted",
-           lwd = par("lwd") )
+    # plot(s1, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
+    # axis(1, pos,  labs[pos], las=2  )
+    # grid(nx=NA, ny=NULL)
+    # abline(v=pos, col = "lightgray", lty = "dotted",
+    #        lwd = par("lwd") )
+    
+    values<-as.data.frame(s1@data.set)
+    Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
+      # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+      x <- paste(x,'-01',sep = '')
+      x
+    })
+    # browser()
+    # datetime <- ymd(Dates2)
+    # don <- xts(x =as.vector(values), order.by = datetime)
+    # p <- dygraph(don,main = "Change in mean analysis") %>%
+    #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+    #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+    #   dyRangeSelector() %>%
+    #   # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+    #   dyCrosshair(direction = "vertical") %>%
+    #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+    #   dyRoller(rollPeriod = 1)
+    #   for (i in 1:length(s1@param.est$mean)){
+    #     p <- p %>% dyLimit(s1@param.est$mean[i])
+    #   }
+    # # %>%
+    # # dyLimit(s1@cpts[2], color = "red")
+    # 
+    # 
+    # p
+    
+    
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
+    datetimeValues <- ymd(Dates2)
+    values2 =values$x
+    data <- data.frame(datetimeValues, values)
+    # p <- plot_ly(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+    p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
+    p <- p %>% add_trace(x = attr(s1@data.set,'index'), y = values2,type = 'scatter', mode = 'lines',line = list(color = '#929292'))
+    p <- p %>% layout(title = i18n()$t("Change in mean analysis"),titlefont = f)
+    p <- p %>% layout(yaxis = list(
+      title = i18n()$t("Count"),
+      titlefont = f
+    ))
+    range_0<-1   
+    for (i in 1:(length(s1@param.est$mean))){
+      mean_i<-s1@param.est$mean[i]
+      range_1<-s1@cpts[i]
+      limit1<-c(rep(mean_i, (range_1-range_0+1) ))
+      x_range<-attr(s1@data.set,'index')[range_0:range_1]
+      t1<-paste(length(x_range),length(limit1))
+      p <- p %>% add_trace(x=x_range,y = limit1,  type = 'scatter', mode = 'lines',line = list(color = '#ff7f0e'))
+      
+      range_0<-range_1
+    }
+    p
+    
+    }
+    else
+    {
+      return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))
     }
 })
 
@@ -826,16 +1024,29 @@ output$infocpvartext <- renderUI ({
        out<-HTML(i18n()$t('Insufficient Data') )
     }
     addPopover(session=session, id="infocpvartext", title="", 
-               content=out, placement = "left",
+               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in variance analysis explanation')), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
-output$cpvarplot <- renderPlot ({
+output$cpvarplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
-    s <- calccpvar()
+    s1 <- calccpvar()
     labs <-    index( getts() )
     pos <- seq(1, length(labs), 3)
     if ( getterm1( session, FALSE ) == ''  )
@@ -856,11 +1067,53 @@ output$cpvarplot <- renderPlot ({
     }
     # mytitle <- paste( "Change in variance analysis for", mydrugs, 'and', myevents )
     mytitle <- i18n()$t("Change in variance analysis")
-    plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
-    axis(1, pos,  labs[pos], las=2  )
-    grid(nx=NA, ny=NULL)
-    abline(v=pos, col = "lightgray", lty = "dotted",
-           lwd = par("lwd") )
+    # plot(s, xaxt = 'n', ylab=i18n()$t("Count"), xlab='', main=mytitle)
+    # axis(1, pos,  labs[pos], las=2  )
+    # grid(nx=NA, ny=NULL)
+    # abline(v=pos, col = "lightgray", lty = "dotted",
+    #        lwd = par("lwd") )
+    
+    values<-as.data.frame(s1@data.set)
+    Dates2<-lapply(attr(s1@data.set, "index"), function(x) {
+      # x <- as.Date(paste(x,'-01',sep = ''), "%Y-%m-%d")
+      x <- paste(x,'-01',sep = '')
+      x
+    })
+    # datetime <- ymd(Dates2)
+    # don <- xts(x =as.vector(values), order.by = datetime)
+    # p <- dygraph(don,main = "Change in mean analysis") %>%
+    #   dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="grey") %>%
+    #   # dySeries("V1", drawPoints = TRUE, pointShape = "square", color = "blue")
+    #   dyRangeSelector() %>%
+    #   # dyLimit(s@param.est$mean[2],label = "Y-axis Limit",color = "red",strokePattern = "dashed")%>%
+    #   dyCrosshair(direction = "vertical") %>%
+    #   dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+    #   dyRoller(rollPeriod = 1)
+    # p
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
+    datetimeValues <- ymd(Dates2)
+    values2 =values$x
+    data <- data.frame(datetimeValues, values)
+    p <- plot_ly(x = attr(s1@data.set,'index'),showlegend=FALSE)
+    p<- p%>% add_trace( y = values2,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
+    p <-p %>% layout(
+      yaxis = list(
+        title = i18n()$t("Count"),
+        titlefont = f
+      ))
+    
+    p <-p %>% layout(title = i18n()$t("Change in variance analysis"),titlefont = f)
+    
+    range_0<-1 
+    maxy<-max(values2)
+    for (i in 1:(length(s1@cpts))){
+      p <- p%>% add_segments(x = attr(s1@data.set,'index')[s1@cpts[i]], xend = attr(s1@data.set,'index')[s1@cpts[i]], y = 0, yend = maxy,line = list(color = '#ff7f0e'))
+    }
+    p
     }
 })
 
@@ -871,7 +1124,7 @@ output$cpbayestext <- renderPrint ({
     mycp <- calccpbayes()
     data <- mycp$data
     bcp.flu <- mycp$bcp.flu
-    browser()
+    # browser()
     data$postprob <- bcp.flu$posterior.prob
     data2<-data[order(data$postprob,decreasing = TRUE),]
     data2[1:input$maxcp,]
@@ -972,15 +1225,74 @@ build_infocpbayes_table <- function(out)({
 #   
 #   
 # })
-output$cpbayesplot <- renderPlot ({
+output$cpbayesplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_changepoint", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   if (length(mydf) > 0)
     {
-    browser()
-    s <- calccpbayes()$bcp.flu
-    labs <-    index( getts() )
-    plot(s)
-    grid()
+    
+    s1 <- calccpbayes()$bcp.flu
+    # labs <-    index( getts() )
+    # plot(s1)
+    # grid()
+    
+    # datetimeValues <- ymd(Dates2)
+    # values2 =values$x
+    datamean <- s1$posterior.mean
+    datameanframe<-as.data.frame(datamean)
+    p <- plot_ly(datameanframe,showlegend=FALSE,height = 500)
+    p <- p %>% add_trace(datameanframe,y=~X1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'))
+    data <- s1$data
+    dataframe<-as.data.frame(data)
+    trace_1<-dataframe$V1
+    trace_2<-dataframe$V2
+    
+    titlefont = list()
+    f <- list(
+      family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+      color = '#667', 
+      size = 13
+    )
+    # f2 <- list(
+    #   family = "Helvetica Neue, Roboto, Arial, Droid Sans, sans-serif!important",
+    #   color = '#667', 
+    #   size = 11
+    # )
+    
+    p <- p %>% add_trace(x=~trace_1,y=~trace_2, mode = 'markers',marker = list( size = 4))%>% 
+      layout(yaxis = list(
+        title = i18n()$t("Posterior Means"),
+        titlefont = f
+      ))
+    
+    dataPosterior <- s1$posterior.var
+    dataPosteriorFrame<-as.data.frame(dataPosterior)
+    p2<-plot_ly(dataPosteriorFrame,y=~V1,type = 'scatter', mode = 'lines',name=' ',line = list(color = '#929292'),showlegend=FALSE,height = 500) %>% 
+      layout(xaxis = list(
+        title = i18n()$t("Location"),
+        titlefont = f
+      ), 
+      yaxis = list(
+        title = i18n()$t("Posterior Probability"),
+        titlefont = f
+      ))
+    
+      
+    fig <- subplot(p, p2,nrows = 2, shareX = TRUE, titleY = TRUE)%>% layout(title = i18n()$t("Posterior Means and Probabilities of Change"),titlefont = f)
+    
+    fig
     }
 })
 output$querytitle <- renderText({ 

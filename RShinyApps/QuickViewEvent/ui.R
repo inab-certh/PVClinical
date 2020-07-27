@@ -56,7 +56,7 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12,uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
+                           column(width=12,bsAlert("nodata_qve"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                   # titlePanel("RR-Drug" ) ,
                                   fluidRow(useShinyjs(),  column(width=12,style="margin-top:60px;",dateRangeInput(
                                     'daterange',

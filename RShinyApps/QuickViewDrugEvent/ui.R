@@ -1,9 +1,13 @@
+library(plotly)
 library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
 library(DT)
 library(shinycssloaders)
+library(dygraphs)
+library(xts)          # To make the convertion data-frame / xts format
+library(tidyverse)
 
 
 options(encoding = 'UTF-8')
@@ -55,11 +59,15 @@ flags <- c(
 )
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-                  
-                            
                   fluidRow(useShinyjs(),
                            column(width=12, dateRangeInput('daterange', uiOutput('DateReportWasFirstReceivedbyFDA'), start = '1989-6-30', end = Sys.Date() ),
-                                  fluidRow( withSpinner(plotOutput_p( 'cpmeanplot' )))
+                                  fluidRow( bsAlert("nodata_qvde"),
+                                            wellPanel(
+                                              style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
+                                            ),
+                                            # withSpinner(plotOutput( 'cpmeanplot' ))
+                                            withSpinner(plotlyOutput( 'cpmeanplot'))
+                                            )
                                   
                                   
                                   
@@ -70,6 +78,18 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            ),
                                   
                            hidden(
+                             # numericInput_p('limit', 'Maximum number of event terms', 50,
+                             #                1, 100, step=1, 
+                             #                HTML( tt('limit1') ), tt('limit2'),
+                             #                placement='bottom'), 
+                             # 
+                             # numericInput_p('start', 'Rank of first event', 1,
+                             #                1, 999, step=1, 
+                             #                HTML( tt('limit1') ), tt('limit2'),
+                             #                placement='bottom'),
+                             
+                             
+                             
                              uiOutput('page_content'),
                              
                              selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -126,21 +146,61 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                tt('limit2'),
                                placement = 'bottom'
                              ),
-                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1,,  step=1,
+                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, ,  step=1,
                                             HTML( tt('cplimit1') ), tt('cplimit2'),
                                             placement='left')
                              
                            )
+                           
                     
                     
-                    
-                      
-                      
-                      
-                    )
                   
+                    ),
                   
-                  
+                                  
+                                  
+                                  
+                                  tabsetPanel(
+                                    tabPanel(uiOutput("PRRRORResults"),
+                                             wellPanel(
+                                               style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
+                                             ),
+                                             DTOutput( 'prr2' )
+                                    ),
+                                    # tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
+                                    #          wellPanel(
+                                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
+                                    #          ),
+                                    #          withSpinner(plotlyOutput( 'cpvarplot' ) )
+                                    # ),
+                                    # tabPanel(uiOutput("BayesianChangepointAnalysis"),  
+                                    #          wellPanel(
+                                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
+                                    #          ),
+                                    #          withSpinner(plotlyOutput( 'cpbayesplot' ))
+                                    #          # verbatimTextOutput( 'cpbayestext' )
+                                    # ),
+                                    # tabPanel(uiOutput("ReportCountsbyDate"),  
+                                    #          wellPanel(
+                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
+                                    #          ),
+                                    #          withSpinner(plotlyOutput('queryplot'))
+                                    #          
+                                    # ),
+                                    # tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
+                                    #          wellPanel(
+                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                                    #          ),
+                                    #          withSpinner(dataTableOutput('coquery'))
+                                    # ),
+                                    # tabPanel(uiOutput("CountsForEventsInSelectedReports"),
+                                    #          wellPanel(
+                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                                    #          ),
+                                    #          withSpinner(dataTableOutput('coqueryE'))
+                                    # ),
+                                    id='PRRRORPanel', selected = uiOutput("PRRRORResults")
+                                  )
         )
       )
 
