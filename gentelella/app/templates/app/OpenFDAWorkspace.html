@@ -188,7 +188,7 @@
         var scenarioDrugs = '{{ scenario.drugs }}';
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-        var shinnyAppsUrl = 'http://83.212.101.88:3838/deployshiny/';
+        var shinnyAppsUrl = '{{ shiny_endpoint }}';
         var shinnyAppsQueryUrl = '';
         var app = 'QuickViewDrugEvent';
         var drug = '';
@@ -210,9 +210,9 @@
             "LrTest_E": ["Event"],
             "DrugEnforceView": ["Event"]
         };
-        var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest"];
+        var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest", "ReportView"];
         var OnlyEventApplications = ["QuickViewEvent", "RR_E", "LrTest_E"];
-        var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint"];
+        var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint", "ReportView"];
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
