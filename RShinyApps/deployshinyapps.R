@@ -1,5 +1,5 @@
 require(rsconnect)
-base <- 'C:/RProjects/deployshiny/'
+base <- '/srv/shiny-server/deployshiny/'
 dirlist <- list.dirs(full.names=FALSE, recursive=FALSE)
 exclude<- c(
   ".git",

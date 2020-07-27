@@ -2,6 +2,8 @@ library(shiny)
 require(shinyBS)
 library(shinycssloaders)
 library(shinyjs)
+library(plotly)
+library(DT)
 
 source('sourcedir.R')
 
@@ -54,6 +56,7 @@ renderuseexact <- function() {
   
 } 
 shinyUI(fluidPage(useShinyjs(), includeCSS("../sharedscripts/custom.css"),
+                  fluidRow(column(width=12,bsAlert("nodata_dash"))),
                    fluidRow(
                      column(width=4,
                             # a(href='https://open.fda.gov/', 
@@ -107,77 +110,16 @@ hidden(
       ),
     
 
-# fluidRow(
-#     column(width=12,
-#            HTML(paste('<h4>',uiOutput( "productsummary" ),'</h4>', sep="")))),
   fluidRow(
     column(width=4,
-           withSpinner(plotOutput_p("sourceplot", 
-                                    HTML( tt('dot1') ), tt('dot2'), 
-                                    height = "250px"))
-           # tabsetPanel(
-           #   tabPanel(uiOutput( "table" ),
-           #              htmlOutput_p("source", 
-           #                            tt( 'freqtab1'), 
-           #                            tt( 'freqtab2') )
-           #   ),
-           #   tabPanel(uiOutput( "dotchart" ),
-           #            withSpinner(plotOutput_p("sourceplot", 
-           #                           HTML( tt('dot1') ), tt('dot2'), 
-           #                           height = "250px"))
-           #   ),
-           #   tabPanel(uiOutput( "piechart" ),
-           #              plotOutput_p("sourcepie", 
-           #                           HTML( tt('pie1') ), tt('pie2'), height = "250px")
-           #   ),
-           #   id='maintabs', selected=uiOutput( "dotchart" )
-           # )
+           withSpinner(plotlyOutput("sourceplot"))
+           
            ),
     column(width=4,
-           tabPanel(uiOutput( "dotchart2" ),
-                    withSpinner(plotOutput_p("seriousplot", 
-                                             HTML( tt('dot1') ), tt('dot2'), 
-                                             height = "250px"))
-           )
-      # tabsetPanel(
-      #           tabPanel(uiOutput( "table2" ),
-      #                      htmlOutput_p("serious", 
-      #                                   tt( 'freqtab1'), 
-      #                                   tt( 'freqtab2'))
-      #             ),
-      #           tabPanel(uiOutput( "dotchart2" ),
-      #                    withSpinner(plotOutput_p("seriousplot", 
-      #                                   HTML( tt('dot1') ), tt('dot2'), 
-      #                                   height = "250px"))
-      #           ),
-      #           tabPanel(uiOutput( "piechart2" ),
-      #                      plotOutput_p("seriouspie", 
-      #                                   HTML( tt('pie1') ), tt('pie2'), height = "250px")
-      #           ),
-      #           id='maintabs', selected=uiOutput( "dotchart2" )
-      #           )
+           withSpinner(plotlyOutput("seriousplot"))
             ),
     column(width=4,
-           withSpinner(plotOutput_p("sexplot", 
-                                    HTML( tt('dot1') ), tt('dot2'),
-                                    height = "250px"))
-           # tabsetPanel(
-           #   tabPanel(uiOutput( "table3" ),
-           #              htmlOutput_p("sex", 
-           #                           tt( 'freqtab1'), 
-           #                           tt( 'freqtab2'))
-           #   ),
-           #   tabPanel(uiOutput( "dotchart3" ),
-           #              (withSpinner(plotOutput_p("sexplot", 
-           #                         HTML( tt('dot1') ), tt('dot2'),
-           #                         height = "250px")))
-           #   ),
-           #   tabPanel(uiOutput( "piechart3" ),
-           #              plotOutput_p("sexpie", 
-           #                           HTML( tt('pie1') ), tt('pie2'), height = "250px")
-           #   ),
-           #   id='maintabs', selected=uiOutput( "dotchart3" )
-           # )
+           withSpinner(plotlyOutput("sexplot"))
            )
   ),
   fluidRow(
@@ -188,30 +130,17 @@ hidden(
       tabsetPanel(
 
 
-        tabPanel(uiOutput( "Events"), htmlOutput_p('query')
+        tabPanel(uiOutput( "Events"), makeDataTableOutput('query')
                  # withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
-                 htmlOutput_p('coquery')
-                 # wordcloudtabset('cocloud', 'coquery', 
-                 # popheads=c( tt('codrug1'), tt('word1') ), poptext=c( tt('codrug2'), tt('word2') )
-                 # )
+                 makeDataTableOutput('coquery')
+                 
             ),
-        tabPanel(uiOutput("Indications"),htmlOutput_p('indquery')
-                 # wordcloudtabset('indcloud', 'indquery', 
-                 #                 popheads=c( tt('indication1'), tt('word1') ), poptext=c( tt('indication2'), tt('word2') )
-                 # )
+        tabPanel(uiOutput("Indications"),makeDataTableOutput('indquery')
+                 
         )
-        # tabPanel(uiOutput("Other Apps"),  
-        #          wellPanel( 
-        #            htmlOutput_p( 'applinks' )
-        #          )
-        # ),
-        # tabPanel(uiOutput("DataReference"), HTML( renderiframe( "https://open.fda.gov/drug/event/") ) 
-        # ),
-        # tabPanel(uiOutput("About"), 
-        #          # img(src='l_openFDA.png'),
-        #          HTML( (loadhelp('about') ) )  )
+        
         
       )
     ),

@@ -483,13 +483,19 @@ shinyServer(function(input, output, session) {
 #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
     comb <- comblist$comb
+    if(is.null(comb)){
+      return(NULL)
+    }
+    #browser()
     if (length(comb) < 1)
     {
-      tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
-                         count=0 )
-      return( list( comb=tmp, sourcedf=tmp) )
+      return(NULL)
+      # tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
+      #                    count=0 )
+      # return( list( comb=tmp, sourcedf=tmp) )
     }
-#    ror <- comblist$ror
+    # ror <- comblist$ror
+    comb$ror <- round(comb$ror, 2)
     if (getwhich() =='D'){ 
       names <- c('exactD', 'exactE','v1', 'term1','term2')
       values <- c(input$useexact , 'exact', getvar1(), gsub( '"', '', getbestterm1(), fixed=TRUE  ) )
@@ -549,8 +555,8 @@ shinyServer(function(input, output, session) {
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     # keptcols <-  c( iname, colname,countname, 
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
-    keptcols <-  c(  colname,countname, 
-                     'PRR')
+    keptcols <-  c(  colname, countname, 
+                     'PRR', 'ROR')
 
     #    mydf <- mydf[, c(1:4, 7,8,9)]
     return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
@@ -625,7 +631,15 @@ prr <- reactive({
     #browser()
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
-    tableout(mydf = getprr()$comb,  
+    #browser()
+    prr<-getprr()
+    if(is.null(prr)){
+      mydf1<-NULL
+    }
+    else{
+      mydf1<-prr$comb
+    }
+    tableout(mydf = mydf1,  
              mynames = NULL,
              error = paste('No records for', getterm1( session ))
     )
@@ -667,11 +681,25 @@ output$prr2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf<-prr()
+  print(mydf)
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    prr(),
+    mydf,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2, 3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json', 
@@ -774,13 +802,26 @@ output$specifieddrug2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf1 = getdrugcountstable()$mydf
+  if (length(mydf1) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    tableout(mydf = getdrugcountstable()$mydf,  
+    tableout(mydf = mydf1,  
              mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1( session ) ) ),
              error = paste( 'No results for', getterm1( session ) )),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -833,13 +874,27 @@ output$all2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf1<-geteventtotalstable()$mydf[,c(1,2)]
+  if (length(mydf1) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   datatable(
-    tableout(mydf = geteventtotalstable()$mydf,  
-             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports")), i18n()$t("Query") ),
+    tableout(mydf = mydf1,  
+             mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports"))),
              error = paste( 'No events for', getsearchtype(), getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -898,11 +953,24 @@ output$coqueryE2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
+  mydf<-coqueryE()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
   datatable(
-    coqueryE(),
+    mydf,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -963,11 +1031,25 @@ output$coquery2 <- DT::renderDT({
   {
     selectedLang='en'
   }
+  mydf<-coquery2()
+  if (length(mydf) > 0 )
+  {
+    if(!is.null(session$nodataAlert))
+    {
+      closeAlert(session, "nodataAlert")
+    }
+  }
+  else{
+    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    plot.new()
+    return(NULL)
+  }
   datatable(
-    coquery2(),
+    mydf,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -1009,7 +1091,7 @@ output$indquery2 <- DT::renderDT({
              error = paste( 'No results for', getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr',
                      'datatablesGreek.json',
@@ -1038,7 +1120,7 @@ output$coqueryEex2 <- DT::renderDT({
     ),
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(width = '50', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(input$selected_language=='gr',
                      'datatablesGreek.json',
@@ -1226,41 +1308,41 @@ getcururl <- reactive({
   })
   output$infoprr2<-renderUI({
     addPopover(session=session, id="infoprr2", title="Proportional Reporting Ratio", 
-               content=stri_enc_toutf8(i18n()$t("The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>")), placement = "left",
+               content=paste(i18n()$t("prr explanation"),"<br><br><br>",i18n()$t("ror explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infospecifieddrug2<-renderUI({
     addPopover(session=session, id="infospecifieddrug2", title="Frequency Table", 
-               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               content=stri_enc_toutf8(i18n()$t("rr explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infoall2<-renderUI({
     addPopover(session=session, id="infoall2", title="Frequency Table", 
-               content=stri_enc_toutf8(i18n()$t("All Counts for Drugs")), placement = "left",
+               content=stri_enc_toutf8(i18n()$t("rr explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infocoqueryE2<-renderUI({
     addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
   output$infocoquery2<-renderUI({
     addPopover(session=session, id="infocoquery2", title="Concomitant Medications", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   output$infoindquery2<-renderUI({
     addPopover(session=session, id="infoindquery2", title="Reported Indication for Drug", 
-               content=stri_enc_toutf8(i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
+               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })

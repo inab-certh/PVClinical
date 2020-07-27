@@ -69,14 +69,14 @@
 
                                         <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
-                                        <p class="DrugEventParameter">{% trans  'Φάρμακα' %}</p>
+                                        <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
                                             {% for drug in scenario.drugs %}
-                                                   <div class="float-left drug-event-radio">
+                                                   <div class="float-left drug-event-radio ml-2">
                                                     <input type="radio" id="drugRadioInline{{ drug.id }}"
                                                            class="custom-control-input" name="drugRadio"
                                                            value="{{ drug.name }}" checked/>
-                                                    <label class="custom-control-label"
-                                                           for="customRadioInline1">{{ drug.name }}</label>
+                                                    <span class="custom-control-label"
+                                                           for="customRadioInline1">{{ drug.name }}</span>
                                                    </div>
                                                 {% endfor %}
 
@@ -92,14 +92,14 @@
                                         <fieldset>
                                             <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
                                                      href="#tab-2">
-                                            <p class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</p>
+                                            <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
                                             {% for condition in scenario.conditions %}
                                                 <div class="float-left drug-event-radio">
                                                     <input type="radio" id="eventRadioInline{{ condition.id }}"
                                                            class="custom-control-input" name="eventRadio"
                                                            value="{{ condition.name }}" checked/>
-                                                    <label class="custom-control-label"
-                                                           for="customRadioInline1">{{ condition.name }}</label>
+                                                    <span class="custom-control-label"
+                                                           for="customRadioInline1">{{ condition.name }}</span>
                                                 </div>
                                             {% endfor %}
                                         </fieldset>
@@ -188,7 +188,7 @@
         var scenarioDrugs = '{{ scenario.drugs }}';
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-        var shinnyAppsUrl = 'http://83.212.101.88:3838/deployshiny/';
+        var shinnyAppsUrl = '{{ shiny_endpoint }}';
         var shinnyAppsQueryUrl = '';
         var app = 'QuickViewDrugEvent';
         var drug = '';
@@ -216,26 +216,73 @@
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        var sessionAppId = sessionStorage.getItem("shinnyAppId");
         if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
         {
             app='QuickViewDrugEvent';
+            if(sessionAppId!=null && DrugEventApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                DrugEventApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
         else if(scenarioConditionsLength>0)
         {
             app='QuickViewEvent';
+            if(sessionAppId!=null && OnlyEventApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                OnlyEventApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
         else{
             app='QuickViewDrug';
+            if(sessionAppId!=null && OnlyDrugApplications.includes(sessionAppId)){
+                app=sessionAppId;
+                OnlyDrugApplications.forEach(function(item){
+                    document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+                });
+                document.getElementById(app).className += " active";
+            }
         }
+        var sessionSelectedEvent = sessionStorage.getItem("shinnySelectedEvent");
+        var sessionSelectedDrug = sessionStorage.getItem("shinnySelectedDrug");
+
+
+        if(sessionSelectedDrug!=null){
+            drug=sessionSelectedDrug;
+            var drugRadio=$("input[value="+drug+"][Type=radio] ");
+            if(drugRadio.length>0)
+            {
+                drugRadio[0].checked=true;
+            }
+        }
+      if(sessionSelectedEvent!=null) {
+          event=sessionSelectedEvent;
+          var eventRadio=$("input[value="+event+"][Type=radio] ");
+            if(eventRadio.length>0)
+            {
+                eventRadio[0].checked=true;
+            }
+      }
+
+
+
 
 
         keepAppropriateAppsBasedOnParameters();
+
         buildUrl(app, drug, event);
         //keepButtonsBasedOnApp(app);
         // initializeDropdowns();
 
         $('#shinnyAppsTabs a').click(function (e) {
             app=e.target.parentElement.id;
+            sessionStorage.setItem("shinnyAppId", app);
             {#app = e.target.childNodes[0].textContent;#}
             getCheckedElementOfRadios();
             keepAppropriateAppsBasedOnParameters();
@@ -243,13 +290,14 @@
         })
         $('.drugSelectionCol input').click(function (e) {
             drug = e.target.value;
+            sessionStorage.setItem("shinnySelectedDrug", drug);
             buildUrl(app, drug, event);
         })
         $('.eventSelectionCol input').click(function (e) {
             event = e.target.value;
+            sessionStorage.setItem("shinnySelectedEvent", event);
             buildUrl(app, drug, event);
         })
-
         function getCheckedElementOfRadios() {
             if (app != 'QuickView2') {
                 var ele = document.getElementsByName('drugRadio');
