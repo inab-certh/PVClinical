@@ -14,6 +14,7 @@ require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
+library(shinyjs)
 library(jsonlite)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
@@ -26,6 +27,7 @@ source('sourcedir.R')
 #DYNPRR
 #*********************************************
 shinyServer(function(input, output, session) {
+  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -40,6 +42,19 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+
+    langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+  })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -47,7 +62,9 @@ shinyServer(function(input, output, session) {
     {
       selectedLang='en'
     }
+
     translator$set_translation_language(selectedLang)
+
     #browser()
     # if (!is.null(query[['lang']])) {
     #   updateSelectInput(session, "selected_language",
@@ -85,7 +102,7 @@ shinyServer(function(input, output, session) {
     #LRTest
     s[8] <- paste0( input$t1, '&v1=', input$v1 )
     return(s)
-  }  
+  }
 
 getdrugvar <- function(){
   anychanged()
@@ -564,6 +581,7 @@ output$coquery <- renderTable({
 #   }  
 # }, escape=FALSE) 
 
+
 output$coquery2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
@@ -578,6 +596,8 @@ output$coquery2 <- DT::renderDT({
   else{
     createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    hide(id = "daterange")
+    hide(id = "maintabs")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -605,6 +625,10 @@ output$coquery2 <- DT::renderDT({
 },
   escape=FALSE)
 
+output$show <- reactive({
+  return(values$show)
+})
+
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
@@ -631,18 +655,24 @@ output$coqueryE2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsE()$mydf
+  
   if (length(codrugs) > 0 )
   {
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
+      # shinyjs::show(id = "myBox")
     }
   }
   else{
     createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    hide(id = "daterange")
+    hide(id = "maintabs")
     return(NULL)
   }
+  
+  
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -668,6 +698,7 @@ output$coqueryE2 <- DT::renderDT({
       )
     )
     ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
+
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -745,6 +776,8 @@ output$query_counts2 <- DT::renderDT({
   else{
     createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    hide(id = "daterange")
+    hide(id = "maintabs")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -825,6 +858,8 @@ output$prrplot <- renderPlot ({
     createAlert(session, "nodata_dynprr", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
     plot.new()
+    hide(id = "daterange")
+    hide(id = "maintabs")
     return(NULL)
   }
   mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
@@ -849,7 +884,7 @@ output$prrplot <- renderPlot ({
     {
     if ( nrow(mydf) >0 )
       {
-      showdates <- seq( as.Date(  input$daterange[1] ), as.Date(input$daterange[2] ), 'months' )
+      showdates <- seq( as.Date( input$daterange[1] ), as.Date( input$daterange[2] ), 'months' )
       showdates <- substr(showdates, 1, 7)
       mydf <- mydf[mydf[ , i18n()$t('Date') ] %in% showdates,]
       myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$UB) ) )
@@ -934,7 +969,7 @@ geturlquery <- reactive({
   updateTextInput(session, "t1", value=q$t1)
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
-  updateTextInput(session,"eventname", value=q$t2) 
+  updateTextInput(session,"eventname", value=q$t2)
   updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
   updateRadioButtons(session, 'useexactD', selected = q$exactD)
   updateRadioButtons(session, 'useexactE', selected = q$exactE)

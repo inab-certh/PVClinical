@@ -196,12 +196,7 @@
         "def":"Plot PRR between",
         "en":"Plot PRR between",
         "gr":"Σχέδιο PRR μεταξύ"
-      }
-      
-      
-      
-      
-      ,
+      },
       {
         "def":"Analyzed Event Counts for Specified Drug",
         "en":"Analyzed Event Counts for Specified Drug",
@@ -272,8 +267,6 @@
         "en":"PRR over time",
         "gr":"PRR στον χρόνο"
       },
-      
-      
       {
         "def":"Please select a drug and event",
         "en":"Please select a drug and event",
@@ -324,9 +317,9 @@
         "en":"Date Report Was First Received by FDA.",
         "gr":"Η αναφορά ημερομηνίας λήφθηκε για πρώτη φορά από τον FDA."
       },
-      
-      
-      
+
+
+
       {
         "def":"LRT Results based on Total Events",
         "en":"LRT Results based on Total Events",
@@ -357,10 +350,10 @@
         "en":"LRT signal analysis for an event",
         "gr":"Ανάλυση σήματος LRT για ένα συμβάν"
       },
-      
-      
-      
-      
+
+
+
+
       {
         "def":"LRT results based on total Drugs",
         "en":"LRT results based on total Drugs",
@@ -551,8 +544,8 @@
         "en":"NEPHROGENIC SYSTEMIC FIBROSIS",
         "gr":"ΝΕΦΡΟΓΕΝΗΤΙΚΗ ΣΥΣΤΗΜΑΤΙΚΗ FIBROSIS"
       },
-      
-      
+
+
       {
         "def":"Congenital Anomaly",
         "en":"Congenital Anomaly",
@@ -583,9 +576,9 @@
         "en":"Other",
         "gr":"Άλλο"
       },
-      
-      
-      
+
+
+
       {
         "def":"Physician",
         "en":"Physician",
@@ -611,8 +604,8 @@
         "en":"Consumer or non-health...",
         "gr":"Καταναλωτές"
       },
-      
-      
+
+
       {
         "def":"Female",
         "en":"Female",
@@ -757,23 +750,133 @@
         "def":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
         "en":"Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.",
         "gr":"Πίνακας συχνότητας για τα φάρμακα που βρέθηκαν σε επιλεγμένες αναφορές. Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων."
+      },
+
+      {
+        "def":"Drug Adverse Event Report Browser",
+        "en":"Drug Adverse Event Report Browser",
+        "gr":"Περιηγητής αναφοράς για ανεπιθύμητα συμβάντα φαρμάκων"
+      },
+      {
+        "def":"Info",
+        "en":"Info",
+        "gr":"Πληροφορίες"
+      },
+      {
+        "def":"Viewing #",
+        "en":"Viewing #",
+        "gr":"Προβολή #"
+      },
+      {
+        "def":"of",
+        "en":"of",
+        "gr":"από"
+      },
+      {
+        "def":"selected reports",
+        "en":"selected reports",
+        "gr":"επιλεγμένες αναφορές"
+      },
+      {
+        "def":"Previous Report",
+        "en":"Previous Report",
+        "gr":"Προηγούμενη Αναφορά"
+      },
+      {
+        "def":"Next Report",
+        "en":"Next Report",
+        "gr":"Επόμενη Αναφορά"
+      },
+      {
+        "def":"Report",
+        "en":"Report",
+        "gr":"Αναφορά"
+      },
+      {
+        "def":"Filter by",
+        "en":"Filter by",
+        "gr":"Ταξινόμηση βάσει"
+      },
+      {
+        "def":"Enter Variables",
+        "en":"Enter Variables",
+        "gr":"Εισαγωγή Μεταβλητών"
+      },
+      {
+        "def":"Variable",
+        "en":"Variable",
+        "gr":"Μεταβλητή"
+      },
+      {
+        "def":"Terms",
+        "en":"Terms",
+        "gr":"Όροι"
+      },
+      {
+        "def":"Update Variables",
+        "en":"Update Variables",
+        "gr":"Ενημέρωση Μεταβλητών"
+      },
+      {
+        "def":"Close",
+        "en":"Close",
+        "gr":"Έξοδος"
+      },
+      {
+        "def":"No primary source data",
+        "en":"No primary source data",
+        "gr":"Δεν βρέθηκαν κύρια δεδομένα προέλευσης"
+      },
+      {
+        "def":"No patient variables for this report",
+        "en":"No patient variables for this report",
+        "gr":"Δεν βρέθηκαν μεταβλητές ασθενών για την παρούσα αναφορά"
+      },
+      {
+        "def":"No events for drug",
+        "en":"No events for drug",
+        "gr":"Δεν βρέθηκαν συμβάντα για το φάρμακο"
+      },
+      {
+        "def":"No receiver data",
+        "en":"No receiver data",
+        "gr":"Δεν βρέθηκαν δεδομένα αποδέκτη"
+      },
+      {
+        "def":"No duplicate report data",
+        "en":"No duplicate report data",
+        "gr":"Δεν υπάρχουν διπλά καταχωρισμένα δεδομένα αναφοράς"
+      },
+      {
+        "def":"No sender data",
+        "en":"No sender data",
+        "gr":"Δεν βρέθηκαν δεδομένα αποστολέα"
+      },
+      {
+        "def":"No OpenFDA variables for this report",
+        "en":"No OpenFDA variables for this report",
+        "gr":"Δεν βρέθηκαν μεταβλητές OpenFDA για την παρούσα αναφορά"
+      },
+      {
+        "def":"No results for query",
+        "en":"No results for query",
+        "gr":"Δεν βρέθηκαν αποτελέσματα για το προς διερεύνηση ερώτημα"
+      },
+      {
+        "def":"No matches found!",
+        "en":"No matches found!",
+        "gr":"Δεν βρέθηκαν αποτελέσματα!"
+      },
+      {
+        "def":"An error has occurred. Check your logs or contact the app author for clarification.",
+        "en":"An error has occurred. Check your logs or contact the app author for clarification.",
+        "gr":"Παρουσιάστηκε σφάλμα. Ελέγξτε τα αρχεία καταγραφής σας ή επικοινωνήστε με τον συντάκτη της εφαρμογής για διευκρινίσεις."
+      },
+      {
+        "def":"object \"input\" not found",
+        "en":"object \"input\" not found",
+        "gr":"δεν βρέθηκαν σχετικά \"δεδομένα εισόδου\""
       }
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-    ]
+
+  ]
 }

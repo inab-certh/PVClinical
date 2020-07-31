@@ -21,6 +21,7 @@ body{
    width:500px!important;
 }
 
+
 /* Tooltip on top */
  .tooltip-arrow {
    background-color: blue;
@@ -87,4 +88,6 @@ a {
   margin-right:auto;
 }
 
-
+.custom-title {
+  font-family: Arial!important;
+}
