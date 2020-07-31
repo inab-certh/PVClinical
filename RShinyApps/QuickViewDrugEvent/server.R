@@ -45,6 +45,19 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+  })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -676,8 +689,8 @@ shinyServer(function(input, output, session) {
                  '<br> <b>Query =</b>', removekey(  makelink(mydf$url) ) )
     return(out)
   })
-
-
+  
+  
   output$cpmeantext <- renderText ({
     mydf <-getquerydata()$mydfin$result
     if (length(mydf) > 0)

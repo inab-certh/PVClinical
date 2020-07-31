@@ -1,6 +1,11 @@
 library(shiny)
+library(shinyjs)
+
+library(shiny.i18n)
+library(shinyalert)
 
 source('sourcedir.R')
+
 
 getchoices <- function(){
   othervars <- c( 'Any Variable',  '_exists_')
@@ -71,16 +76,22 @@ rendert3 <- function() {
   ( htmlOutput( 't3' ) )
   
 } 
-shinyUI(fluidPage(
-                  fluidRow(
+
+
+shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
+                  fluidRow(useShinyjs(),useShinyalert(),
+                           column(width=12, bsAlert("nodata_report")), id='alertrow'),
+                  fluidRow(useShinyjs(),
                     column(width=4,
                            a(href='https://open.fda.gov/', 
                              img(src='l_openFDA.png', align='bottom')),
-                           renderDates()
+                           #renderDates()
                     ),
                     column(width=8,
-                           titlePanel("Drug Adverse Event Report Browser" ) )
-                  ),
+                           titlePanel(
+                             textOutput("paneltitle"),
+                             "")) 
+                    , id='titlerow'),
 #                   img(src='l_openFDA.png'),
 #   titlePanel("Report Browser"),
 #   fluidRow(
@@ -108,24 +119,25 @@ shinyUI(fluidPage(
 #            )
 #     )
 #   ),
-  fluidRow(
-    column(width=2, bsButton( 'prevrow', '< Previous Report', style = 'primary') ),
+  fluidRow(useShinyjs(), style="margin-bottom: 0.3rem",
+    column(width=2, bsButton( 'prevrow', '< Previous Report', block=TRUE, style = 'primary') ),
     column(width=2, htmlOutput("ptext") ),
-    column(width=6, 
+    column(width=4, 
            strong( rendercurrec() ) ),
     column(width=2, htmlOutput("ntext") ),
-    column(width=2, bsButton( 'nextrow', 'Next Report>', style = 'primary') )
-  ),
-  fluidRow(
+    column(width=2, bsButton( 'nextrow', 'Next Report>', block=TRUE, style = 'primary') )
+    , id='navrow'),
+  fluidRow(useShinyjs(),
     column(width=12, 
            wellPanel( 
              sliderInput('skip', 'Report #', value=1, min=1, step= 1, max=100, width='100%')
            )
     )
-  ),
-fluidRow(
+    , id='sliderrow'),
+fluidRow(useShinyjs(),
   column(width=3,
-         wellPanel( 
+         wellPanel(
+           style = "overflow-y:scroll; max-height: 600px",
            bsButton("tabBut", "Filter by...", style='primary'),
            br(),
            renderv1(),
@@ -137,21 +149,28 @@ fluidRow(
              textInput("t1", "Terms", '')
            )
            ,
-           bsModal( 'modalExample1', "Enter Variables", "tabBut", size = "large",
+           # uiOutput("variablesModal")
+           bsModal( 'modalUpdateVars', textOutput("variablesmodal"), "tabBut", size = "large",
                     htmlOutput('mymodal'), 
-                    selectizeInput('v1_2', 'Variable 1', getchoices() , width='100%', 
+                    selectizeInput('v1_2', tags$div(HTML(paste(textOutput("variablelbl1", inline=TRUE), tags$span('1'))), style = "display: inline;"), getchoices() , width='100%', 
                                    selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
-                    textInput("t1_2", "Terms", ''),
-                    selectizeInput('v2_2', 'Variable 2', getchoices() , width='100%', 
+                    textInput("t1_2", textOutput("termslbl1"), ''),
+                    selectizeInput('v2_2', tags$div(HTML(paste(textOutput("variablelbl2", inline=TRUE), tags$span('2'))), style = "display: inline;"), getchoices() , width='100%',
                                    selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
-                    textInput("t2_2", "Terms", ''),
-                    selectizeInput("v3_2", "Variable 3", c( getdatechoices(), getchoices() ) , width='100%', 
-                                   selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ), 
-                    textInput("t3_2", "Terms", '[20000101+TO+20170101]'),
+                    textInput("t2_2", textOutput("termslbl2"), ''),
+                    selectizeInput("v3_2", tags$div(HTML(paste(textOutput("variablelbl3", inline=TRUE), tags$span('3'))), style = "display: inline;"), c( getdatechoices(), getchoices() ) , width='100%',
+                                   selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ),
+                    textInput("t3_2", textOutput("termslbl3"), '[20000101+TO+20170101]'),
                     bsButton("update", "Update Variables", style='primary') )
-         )
-         ,
+         ),
+         tags$script(
+           "$( document ).ready(function() {
+              $('#modalUpdateVars .modal-footer .btn-default').attr('id', 
+              'modalCloseBtn');
+           })"),
+         
          wellPanel( 
+           style = "overflow-y:scroll; max-height: 600px",
            renderv2(),
            rendert2(),
            conditionalPanel(
@@ -162,6 +181,7 @@ fluidRow(
            )
          ),
          wellPanel( 
+           style = "overflow-y:scroll; max-height: 600px",
            renderv3(),
            rendert3(),
            conditionalPanel(
@@ -171,7 +191,7 @@ fluidRow(
              textInput("t3", "Terms", paste0('[19060630+TO+', format(Sys.Date(), '%Y%m%d'), ']') )
            )
          ),
-         bsAlert("alert")
+         # bsAlert("alert")
   ),
   column(width=9, 
          bsAlert("alert2"),  
@@ -180,7 +200,8 @@ fluidRow(
                          
                          wellPanel( 
                            htmlOutput( 'overviewtitle' ), 
-                           tableOutput( 'overviewtable' )
+                           tableOutput( 'overviewtable' ),
+                           style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
                 tabPanel("Meta Data",  
@@ -188,7 +209,8 @@ fluidRow(
                          wellPanel( 
                            htmlOutput( 'querytitle' ), 
                            htmlOutput( 'metatext' ), 
-                           htmlOutput( 'json' )
+                           htmlOutput( 'json' ),
+                           style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
                 tabPanel("Report Header", 
@@ -210,28 +232,32 @@ fluidRow(
                            hr(),
                            
                            htmlOutput('primarysourcetabletitle'),
-                           tableOutput("primarysource")
+                           tableOutput("primarysource"),
+                           style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
                 tabPanel("Patient",  
                          
                          wellPanel( 
                            htmlOutput('patienttabletitle'),
-                           htmlOutput( 'patient' )
+                           htmlOutput( 'patient' ),
+                           style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
                 tabPanel("Patient.Reaction",  
                          
                          wellPanel( 
                            htmlOutput('patientreactiontabletitle'),
-                           htmlOutput( 'patientreaction')
+                           htmlOutput( 'patientreaction'),
+                           style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
                 tabPanel("Patient.Drug",  
                          
                          wellPanel(  
                            htmlOutput('patientdrugtabletitle'),
-                           htmlOutput( 'drug' )
+                           htmlOutput( 'drug' ),
+                           style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
                 tabPanel("Patient.Drug.OpenFDA",  
@@ -240,7 +266,8 @@ fluidRow(
                                      htmlOutput('patientdrugopenfdatabletitle'),
                                      tableOutput( 'openfda' ),
                                      htmlOutput('patientdrugopenfda2tabletitle'),
-                                     tableOutput( 'openfda2' )
+                                     tableOutput( 'openfda2' ),
+                                     style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
                 # tabPanel("Other Apps",  
@@ -256,6 +283,7 @@ fluidRow(
               id='maintabs'
             )
         )
-    )
+  , id='mainrow'),
+  id='mainpage'
   )
 )

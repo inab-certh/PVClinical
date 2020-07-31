@@ -61,42 +61,40 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                       HTML( tt('eventname1') ), tt('eventname2'),
                                       placement='left')
                  ),
-                 dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date()),
+                 uiOutput("daterange"),
                           
-      tabsetPanel(
-        tabPanel(uiOutput('PRROverTime'),  
-                 wellPanel(
-                   style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
-                 ),
-                   withSpinner(plotOutput_p( 'prrplot'))
-                
-        ),
-      tabPanel(uiOutput('ReportCountsandPRR'), 
-               wellPanel(
-                 style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
-               ),
-                 withSpinner(makeDataTableOutput( 'query_counts2' ))
-               
-              
-              ),
-      tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
-               wellPanel(
-                 style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
-               ),
-               withSpinner(makeDataTableOutput( 'coquery2' ))
-               
-               
-      ),
-      tabPanel(uiOutput('CountsForEventsInSelectedReports'),
-               wellPanel(
-                 style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")
-               ),
-                 withSpinner(makeDataTableOutput( 'coqueryE2' ))
-      ),
-        
-              id='maintabs'
-            )
-          )
-        )
-      )
-    )
+                 tabsetPanel(
+                   tabPanel(uiOutput('PRROverTime'),  
+                            wellPanel(
+                              style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
+                            ),
+                            withSpinner(plotOutput_p( 'prrplot'))
+                            
+                   ),
+                   tabPanel(uiOutput('ReportCountsandPRR'), 
+                            wellPanel(
+                              style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
+                            ),
+                            withSpinner(makeDataTableOutput( 'query_counts2' ))
+                   ),
+                   tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
+                            wellPanel(
+                              style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
+                            ),
+                            withSpinner(makeDataTableOutput( 'coquery2' ))
+                            
+                            
+                   ),
+                   tabPanel(uiOutput('CountsForEventsInSelectedReports'),
+                            wellPanel(
+                              style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")
+                            ),
+                            withSpinner(makeDataTableOutput( 'coqueryE2' ))
+                   ),
+                   id='maintabs'
+                   
+                 )
+           )
+  )
+)
+)
