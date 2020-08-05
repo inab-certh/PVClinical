@@ -60,6 +60,11 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
+                           column(id="xlsrow", width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", "Download")))),
+                           # column(width=4,bsAlert("nodata_qvde"),uiOutput("infocpmeantext",style = "position:absolute;right:40px;z-index:10")
+                           #        )
+                           ),
+                  fluidRow(useShinyjs(),
                            column(width=12, uiOutput("daterange"),
                                   fluidRow( bsAlert("nodata_qvde"),
                                             wellPanel(

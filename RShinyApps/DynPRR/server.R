@@ -586,6 +586,7 @@ output$coquery2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsD()$mydf
+  coquery2ForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -598,6 +599,8 @@ output$coquery2 <- DT::renderDT({
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
     hide(id = "daterange")
     hide(id = "maintabs")
+    hide(id = "dlcoquery2xlsrow")
+    hide(id = "infocoquery2")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -655,7 +658,7 @@ output$coqueryE2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsE()$mydf
-  
+  coqueryE2ForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -669,6 +672,8 @@ output$coqueryE2 <- DT::renderDT({
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
     hide(id = "daterange")
     hide(id = "maintabs")
+    hide(id = "dlcoqueryE2xlsrow")
+    hide(id = "infocoqueryE2")
     return(NULL)
   }
   
@@ -766,6 +771,7 @@ output$query_counts <- renderTable({
 
 output$query_counts2 <- DT::renderDT({
   mydf <- buildmergedtable()
+  query_counts2ForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -778,6 +784,8 @@ output$query_counts2 <- DT::renderDT({
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
     hide(id = "daterange")
     hide(id = "maintabs")
+    hide(id = "dlquery_counts2xlsrow")
+    hide(id = "infoquery_counts2")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -844,9 +852,34 @@ output$drugquerytext <- renderText({
   return(out)
 } )
 
-
+output$dlprr <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(prrForExcel, file, sheetName="prr")
+  }
+)
+output$dlquery_counts2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(query_counts2ForExcel, file, sheetName="Report Counts")
+  }
+)
+output$dlcoquery2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coquery2ForExcel, file, sheetName="Counts For Drugs")
+  }
+)
+output$dlcoqueryE2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryE2ForExcel, file, sheetName="Counts For Events")
+  }
+)
 output$prrplot <- renderPlot ({
+  if(getterm1( session)!=""){
   mydf <- buildmergedtable()
+  prrForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -860,6 +893,8 @@ output$prrplot <- renderPlot ({
     plot.new()
     hide(id = "daterange")
     hide(id = "maintabs")
+    hide(id = "dlprrxlsrow")
+    hide(id = "infoprrplot")
     return(NULL)
   }
   mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
@@ -931,6 +966,12 @@ output$prrplot <- renderPlot ({
     plot( c(0,1), c(0,1),  main=mytitle )
     text(.5, .5, i18n()$t("Please select a drug and event"))
   }
+}
+else{
+  # s1 <- calccpmean()
+  geturlquery()
+  return (NULL)
+}
 })
 
 

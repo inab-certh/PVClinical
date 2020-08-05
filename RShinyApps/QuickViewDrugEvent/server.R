@@ -754,9 +754,16 @@ shinyServer(function(input, output, session) {
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
     
   })
+  output$dl <- downloadHandler(
+    filename = function() { "Data.xlsx"},
+    content = function(file) {
+      write.xlsx(cpmeanForExcel, file, sheetName="cpmeanplot")
+    }
+  )
   output$cpmeanplot <- renderPlotly ({
     if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
+      cpmeanForExcel<<-mydf
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
@@ -844,10 +851,11 @@ shinyServer(function(input, output, session) {
       }
       else
       {
-        # hide("PRRRORPanel")
-        # hide("daterange")
-        # hide("prr2")
-        # hide("infocpmeantext")
+        hide("PRRRORPanel")
+        hide("daterange")
+        hide("prr2")
+        hide("infocpmeantext")
+        hide("xlsrow")
         
         createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)

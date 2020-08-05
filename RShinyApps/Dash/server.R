@@ -10,6 +10,7 @@ if (!require('openfda') ) {
   library(openfda)
   print('loaded open FDA')
 }
+library(xlsx)
 library(ggplot2)
 
 source('sourcedir.R')
@@ -465,7 +466,9 @@ output$serious <- renderTable({
 
 
 output$seriousplot <- renderPlotly({ 
+  if(getterm1( session)!=""){
   mydf <- getseriouscounts()
+  seriousForExcel<<-mydf
   if ( is.data.frame(mydf) )
   {
     names(mydf) <- c('Serious', 'Case Counts' )
@@ -480,6 +483,12 @@ output$seriousplot <- renderPlotly({
     
     fig
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
+  }
+  else{
+    # s1 <- calccpmean()
+    geturlquery()
+    return (NULL)
+  }
 })  
 
 output$seriouspie <- renderPlot({ 
@@ -506,7 +515,9 @@ output$sex <- renderTable({
 }, height=300, align=c("rlllr"), sanitize.text.function = function(x) x)  
 
 output$sexplot <- renderPlotly({ 
+  if(getterm1( session)!=""){
   mydf <- getsexcounts()
+  sexForExcel<<-mydf
   if ( is.data.frame(mydf) )
   {
     # names(mydf) <- c('Gender', 'Case Counts', 'Code' )
@@ -521,6 +532,12 @@ output$sexplot <- renderPlotly({
     
     fig
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
+  }
+  else{
+    # s1 <- calccpmean()
+    geturlquery()
+    return (NULL)
+  }
 } ) 
 
 output$sexpie <- renderPlotly({ 
@@ -531,8 +548,23 @@ output$sexpie <- renderPlotly({
     return( pie(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }) 
+output$dl <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    indqueryForExcel<-getindcounts()$mydf
+    coqueryForExcel<<-getcocounts()$mydf
+    write.xlsx(sourceForExcel, file, sheetName="source")
+    write.xlsx(seriousForExcel, file, sheetName="serious", append=TRUE)
+    write.xlsx(sexForExcel, file, sheetName="sex", append=TRUE)
+    write.xlsx(queryForExcel, file, sheetName="query", append=TRUE)
+    write.xlsx(coqueryForExcel, file, sheetName="coquery", append=TRUE)
+    write.xlsx(indqueryForExcel, file, sheetName="indquery", append=TRUE)
+  }
+)
 output$sourceplot <- renderPlotly({
+  if(getterm1( session)!=""){
   mydf <- getsourcecounts()
+  sourceForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -556,6 +588,12 @@ output$sourceplot <- renderPlotly({
   )%>% layout(title=i18n()$t("Primary Source Qualifications"),height = 300,autosize = F)
   
   fig
+}
+else{
+  # s1 <- calccpmean()
+  geturlquery()
+  return (NULL)
+}
 })
 
 output$sourcepie <- renderPlot({
@@ -593,6 +631,7 @@ output$query <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   mydf <- getdrugcountstable()$mydf
+  queryForExcel<<-mydf
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -694,6 +733,7 @@ output$querycotext <- renderText({
 
 output$coquery <- DT::renderDT({
   codrugs <- getcocounts()$mydf
+  coqueryForExcel<<-codrugs
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
@@ -748,6 +788,7 @@ output$cocloud <- renderPlot({
 
 output$indquery <- DT::renderDT({
   codinds <- getindcounts()$mydf
+  indqueryForExcel<<-codinds
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))

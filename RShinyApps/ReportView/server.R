@@ -710,4 +710,55 @@ output$applinks <- renderText({
 })
 
 
+geturlquery <- observe({
+   q <- parseQueryString(session$clientData$url_search)
+   updateTabsetPanel(session, 'maintabs', selected=q$curtab)
+   
+   
+    t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
+    t1 <- gsub(']"', ']', t1, fixed=TRUE)
+    t1 <- gsub('""', '"', t1, fixed=TRUE)
+    updateTextInput(session, "t1", value = t1)
+    updateTextInput(session, "t1_2", value = t1)
+  
+  t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
+  t2 <- gsub(']"', ']', t2, fixed=TRUE)
+  t2 <- gsub('""', '"', t2, fixed=TRUE)
+  updateTextInput(session, "t2", value = t2)
+  updateTextInput(session, "t2_2", value = t2)
+  
+  if(!is.null(q$t3) )
+  {  
+  t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
+  t3 <- gsub(']"', ']', t3, fixed=TRUE)
+  t3 <- gsub('""', '"', t3, fixed=TRUE)
+  updateTextInput(session, "t3", value = t3)
+  updateTextInput(session, "t3_2", value = t3)
+  }
+  
+
+if(!is.null(q$v1) )
+  {
+  v1 <- gsub('"', '', q$v1, fixed=TRUE)
+  updateSelectizeInput(session, inputId = "v1", selected = v1)
+  updateSelectizeInput(session, inputId = "v1_2", selected = v1)
+} 
+if(!is.null(q$v2) )
+  {
+  v2 <- gsub('"', '', q$v2, fixed=TRUE)
+  updateSelectizeInput(session, inputId = "v2", selected = v2)
+  updateSelectizeInput(session, inputId = "v2_2", selected = v2)
+  }
+if(!is.null(q$v3) )
+  { 
+  v3 <- gsub('"', '', q$v3, fixed=TRUE)
+  updateSelectizeInput(session, inputId = "v3", selected = v3)
+  updateSelectizeInput(session, inputId = "v3_2", selected = v3)
+  }
+#   
+#   updateNumericInput(session, "skip", value = q$skip)
+#   return(q)
+})
+
+
 })

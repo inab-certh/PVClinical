@@ -1452,7 +1452,7 @@ shinyServer(function(input, output, session) {
   # })
 
   geturlquery <- reactive({
-    browser()
+    #browser()
     q <- parseQueryString(session$clientData$url_search)
     #  browser()
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
@@ -1864,7 +1864,7 @@ shinyServer(function(input, output, session) {
   
   #Indication table
   getindcounts <- reactive({
-    browser()
+    #browser()
     geturlquery()
     if ( is.null( getterm1( session ) ) ){
       
@@ -2076,9 +2076,15 @@ shinyServer(function(input, output, session) {
   output$prr <- renderTable({  
     prr()
   },  sanitize.text.function = function(x) x)
-  
+  output$dl <- downloadHandler(
+    filename = function() { "Data.xlsx"},
+    content = function(file) {
+      write.xlsx(prrForExcel, file, sheetName="prr")
+    }
+  )
   output$prr2 <- DT::renderDT({  
-    query <- parseQueryString(session$clientData$url_search)
+    if(getterm1( session)!=""){
+      query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
     if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
     {
@@ -2086,19 +2092,23 @@ shinyServer(function(input, output, session) {
     }
     translator$set_translation_language(selectedLang)
     prr<-prr()
-    
+    prrForExcel<<-prr
     if ("Error" %in% colnames(prr) )
     {
+      createAlert(session, "nodata_qve", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+      hide("prrtitleBlank")
+      hide("daterange")
+      hide("xlsrow")
+      hide("info")
+      return(NULL)
+    }
+    else{
       if(!is.null(session$nodataAlert))
       {
         closeAlert(session, "nodataAlert")
       }
-    }
-    else{
-      createAlert(session, "nodata_qve", "nodataAlert", title = i18n()$t("Info"),
-                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-      plot.new()
-      return(NULL)
+      
     }
     write.xlsx(prr, "../mydata.xlsx")
     datatable(
@@ -2113,6 +2123,12 @@ shinyServer(function(input, output, session) {
         )
       ),  escape=FALSE
     )
+    }
+    else{
+      # s1 <- calccpmean()
+      geturlquery()
+      return (NULL)
+    }
   })
   
   

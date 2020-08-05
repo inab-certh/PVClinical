@@ -162,7 +162,7 @@ shinyUI(fluidPage(
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                 ),
-                tabPanel("Counts for drugs in selected reports",
+                tabPanel("Counts For Drugs In Selected Reports",
                          wellPanel( 
                            htmlOutput( 'cotext' ),
                            htmlOutput_p( 'querycotext' ,
@@ -179,7 +179,7 @@ shinyUI(fluidPage(
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                  ),
-                tabPanel("Counts for indications in selected reports",
+                tabPanel("Counts For Indications In Selected Reports",
                          wellPanel( 
                            htmlOutput( 'indtext' ),
                            htmlOutput_p( 'queryindtext' ,
