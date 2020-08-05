@@ -652,6 +652,11 @@
         "gr":"Δεν υπάρχουν δεδομένα για τον συγκεκριμένο συνδυασμό φαρμάκων-συμβάντων"
       },
       {
+        "def":"No data for the specific Drug",
+        "en":"No data for the specific Drug",
+        "gr":"Δεν υπάρχουν δεδομένα για το συγκεκριμένο φάρμακο"
+      },
+      {
         "def":"Posterior Means and Probabilities of Change",
         "en":"Posterior Means and Probabilities of Change",
         "gr":"Εκ των υστέρων μέσες τιμές και πιθανότητες αλλαγής"
