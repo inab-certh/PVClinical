@@ -735,6 +735,7 @@ shinyServer(function(input, output, session) {
       hide('cpmeanplot')
       hide('prr2')
       hide('info')
+      hide("xlsrow")
       return(NULL)
     }
     

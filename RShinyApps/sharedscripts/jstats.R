@@ -100,6 +100,9 @@ getCritVal2 <- function(session, R, n_j, n_i, n, Pvector, prob)
   mymax <- apply(myLLRs, 2, max)
   critval <- quantile(mymax,  probs = prob)
   critval01 <- quantile(mymax,  probs = .99)       #get cut off value
-  closeAlert(session, 'simalert')
+  if(!is.null(session$simalert))
+  {
+    closeAlert(session, 'simalert')
+  }
   return( list(critval=critval, critval01=critval01, mymax=mymax) ) 
 }

@@ -345,10 +345,14 @@ removekey <- function(url) {
   return(s)
 }
 
+getmykey <- function() {
+  return( "nXfn4lgWh4MxRcv7C075NyEiD4VwcWjZFzHj1fdb" ) 
+}
+
 getkey <- function(){
   if( exists('getmykey'))
   {
-   return( getmykey() ) 
+    return( getmykey() ) 
   }
   else
   {

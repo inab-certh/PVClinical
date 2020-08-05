@@ -55,9 +55,12 @@ renderuseexact <- function() {
   ( uiOutput('useexact_in') )
   
 } 
-shinyUI(fluidPage(useShinyjs(), includeCSS("../sharedscripts/custom.css"),
-                  fluidRow(column(width=12,bsAlert("nodata_dash"))),
-                   fluidRow(
+shinyUI(fluidPage( includeCSS("../sharedscripts/custom.css"),
+                  fluidRow(useShinyjs(),column(width=12,
+                    column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", "Download"))))),
+                  ),
+                  fluidRow(useShinyjs(),column(width=12,bsAlert("nodata_dash"))),
+                   fluidRow(useShinyjs(),
                      column(width=4,
                             # a(href='https://open.fda.gov/', 
                             #   img(src='l_openFDA.png', align='bottom')),

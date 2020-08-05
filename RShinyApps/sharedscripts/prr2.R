@@ -2,6 +2,7 @@ require(shiny)
 require(shinyBS)
 library(shiny.i18n)
 library(DT)
+library(xlsx)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -486,7 +487,6 @@ shinyServer(function(input, output, session) {
     if(is.null(comb)){
       return(NULL)
     }
-    #browser()
     if (length(comb) < 1)
     {
       return(NULL)
@@ -565,6 +565,10 @@ shinyServer(function(input, output, session) {
   geteventtotalstable <- reactive({
     geturlquery()
     mydf <- geteventtotals()
+    if(is.null(mydf)){
+      
+      return(NULL)
+    }
     sourcedf <- mydf
     names <- c('v1','t1','v3', 't3' ,'v2', 't2')
     values <- c('_exists_', getvar1( ), gettimevar(), gettimerange()  , getprrvarname() )
@@ -581,7 +585,7 @@ geteventtotals <- reactive(
   mydf <- getdrugcounts()$mydf
   if ( !is.data.frame(mydf) ) 
   {
-    return(NA)
+    return(NULL)
     }
   realterms <- mydf[,1]
   foundtermslist <- mydf[,1]
@@ -628,13 +632,13 @@ output$prrtitleBlank <- renderUI({
 
 prr <- reactive({  
   if (getterm1( session )=="") {
-    #browser()
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
-    #browser()
     prr<-getprr()
+    prrForExcel<<-prr
     if(is.null(prr)){
       mydf1<-NULL
+      return (NULL)
     }
     else{
       mydf1<-prr$comb
@@ -682,8 +686,8 @@ output$prr2 <- DT::renderDT({
   }
   translator$set_translation_language(selectedLang)
   mydf<-prr()
-  print(mydf)
-  if (length(mydf) > 0 )
+  prr2ForExcel<<-mydf
+  if (!is.null(mydf) )
   {
     if(!is.null(session$nodataAlert))
     {
@@ -699,7 +703,7 @@ output$prr2 <- DT::renderDT({
     mydf,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2, 3))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json', 
@@ -803,6 +807,7 @@ output$specifieddrug2 <- DT::renderDT({
   }
   translator$set_translation_language(selectedLang)
   mydf1 = getdrugcountstable()$mydf
+  specifieddrug2ForExcel<<-mydf1
   if (length(mydf1) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -874,8 +879,9 @@ output$all2 <- DT::renderDT({
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
-  mydf1<-geteventtotalstable()$mydf[,c(1,2)]
-  if (length(mydf1) > 0 )
+  eventTotals<-geteventtotalstable()
+  
+  if (length(eventTotals) > 0 )
   {
     if(!is.null(session$nodataAlert))
     {
@@ -885,9 +891,10 @@ output$all2 <- DT::renderDT({
   else{
     createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-    plot.new()
     return(NULL)
   }
+  mydf1<-eventTotals$mydf[,c(1,2)]
+  all2ForExcel<<-mydf1
   datatable(
     tableout(mydf = mydf1,  
              mynames = c(i18n()$t("Term"), paste( i18n()$t("Counts for All Reports"))),
@@ -954,6 +961,7 @@ output$coqueryE2 <- DT::renderDT({
   }
   translator$set_translation_language(selectedLang)
   mydf<-coqueryE()
+  coqueryE2ForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -1042,7 +1050,6 @@ output$coquery2 <- DT::renderDT({
   else{
     createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-    plot.new()
     return(NULL)
   }
   datatable(
@@ -1073,6 +1080,44 @@ output$coquery2 <- DT::renderDT({
 ##Tables ================================
 
 
+
+output$dlprr2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(prr2ForExcel, file, sheetName="prr")
+  }
+)
+output$dlspecifieddrug2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(specifieddrug2ForExcel, file, sheetName="Simulation Results for Event Based LRT")
+  }
+)
+output$dlall2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(all2ForExcel, file, sheetName="All")
+  }
+)
+output$dlcoqueryE2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryE2ForExcel, file, sheetName="coquery")
+  }
+)
+output$dlcoquery2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coquery2ForExcel, file, sheetName="coqueryE")
+  }
+)
+output$dlindquery2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(indquery2ForExcel, file, sheetName="indquery")
+  }
+) 
+
 output$indquery <- renderTable({ 
   tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
            error = paste( 'No results for', getterm1( session ) ) )
@@ -1081,13 +1126,15 @@ output$indquery <- renderTable({
 output$indquery2 <- DT::renderDT({
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
+  mydf1<-getindcounts()$mydf
+  indquery2ForExcel<<-mydf1
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
   {
     selectedLang='en'
   }
   translator$set_translation_language(selectedLang)
   datatable(
-    tableout(mydf = getindcounts()$mydf, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
+    tableout(mydf = mydf1, mynames = c(i18n()$t("Indication"),  i18n()$t("Counts") ),
              error = paste( 'No results for', getterm1( session ) ) ),
     options = list(
       autoWidth = TRUE,
