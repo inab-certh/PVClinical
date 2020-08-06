@@ -29,7 +29,9 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(width=12, bsAlert("nodata_lrteste"),
+                           column(width=12, bsAlert("nodata_lrteste"))),
+                  fluidRow(id="mainrow", useShinyjs(),
+                           column(width=12),
                                   # titlePanel(uiOutput("LRTSignalAnalysisforanEvent") ),                           
                                   
                                   hidden(
@@ -160,4 +162,4 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            )
                   )
 )
-)
+

@@ -695,8 +695,20 @@ output$prr2 <- DT::renderDT({
     }
   }
   else{
-    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    if(getsearchtype() == 'Drug') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    } else if(getsearchtype() == 'Reaction') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
+    } else {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    }
+    hide("maintabs")
+    hide("daterange")
+    hide("downloadExcelColumn")
+    hide("dlprr2")
     return(NULL)
   }
   datatable(
@@ -816,8 +828,20 @@ output$specifieddrug2 <- DT::renderDT({
     }
   }
   else{
-    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    if(getsearchtype() == 'Drug') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    } else if(getsearchtype() == 'Reaction') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
+    } else {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    }
+    hide("maintabs")
+    hide("daterange")
+    hide("downloadExcelColumn")
+    hide("dlprr2")
     return(NULL)
   }
   datatable(
@@ -889,8 +913,20 @@ output$all2 <- DT::renderDT({
     }
   }
   else{
-    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    if(getsearchtype() == 'Drug') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    } else if(getsearchtype() == 'Reaction') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
+    } else {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    }
+    hide("maintabs")
+    hide("daterange")
+    hide("downloadExcelColumn")
+    hide("dlprr2")
     return(NULL)
   }
   mydf1<-eventTotals$mydf[,c(1,2)]
@@ -970,8 +1006,20 @@ output$coqueryE2 <- DT::renderDT({
     }
   }
   else{
-    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    if(getsearchtype() == 'Drug') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    } else if(getsearchtype() == 'Reaction') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
+    } else {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    }
+    hide("maintabs")
+    hide("daterange")
+    hide("downloadExcelColumn")
+    hide("dlprr2")
     return(NULL)
   }
   datatable(
@@ -1048,8 +1096,20 @@ output$coquery2 <- DT::renderDT({
     }
   }
   else{
-    createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    if(getsearchtype() == 'Drug') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    } else if(getsearchtype() == 'Reaction') {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
+    } else {
+      createAlert(session, "nodata_rrd", "nodataAlert", title = i18n()$t("Info"),
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    }
+    hide("maintabs")
+    hide("daterange")
+    hide("downloadExcelColumn")
+    hide("dlprr2")
     return(NULL)
   }
   datatable(
