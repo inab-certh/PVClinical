@@ -31,7 +31,9 @@ renderNumsims <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(), 
-           column(width=12,bsAlert("nodata_lrtest"), 
+           column(width=12,bsAlert("nodata_lrtest"))),
+  fluidRow(id="mainrow", useShinyjs(), 
+           column(width=12,
                   # titlePanel(uiOutput("LRTSignalAnalysisforaDrug") ),                           
                   
                   hidden(
@@ -98,55 +100,55 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                  start = '1989-6-30', end = Sys.Date()),
                   
                   
-                  tabsetPanel(
+                  tabsetPanel(id="maintabs",
                     tabPanel(uiOutput("LRTResultsbasedonTotalEvents"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                 column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", "Download")))),
                              ),
-                             dataTableOutput('prr')
+                             withSpinner(dataTableOutput('prr'))
                              
                     ),
                     tabPanel(uiOutput("SimulationResultsforEventBasedLRT"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlsimplot", "Download")))),
                              ),
-                             plotlyOutput( 'simplot')
+                             withSpinner(plotlyOutput( 'simplot'))
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforDrugText")   ,
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlAnalyzedEventCountsforDrug", "Download")))),
                              ),
-                             dataTableOutput('AnalyzedEventCountsforDrug')
+                             withSpinner(dataTableOutput('AnalyzedEventCountsforDrug'))
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall", "Download")))),
                              ),
-                             dataTableOutput( 'all' )
+                             withSpinner(dataTableOutput( 'all' ))
                     ),
                     tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery", "Download")))),
                              ),
-                             dataTableOutput('coquery')
+                             withSpinner(dataTableOutput('coquery'))
                     ),
                     tabPanel(uiOutput("EventCountsforDrug"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE", "Download")))),
                              ),
-                             dataTableOutput('coqueryE')
+                             withSpinner(dataTableOutput('coqueryE'))
                     ),
                     tabPanel(uiOutput("CountsForAllEvents"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryA", "Download")))),
                              ),
-                             dataTableOutput('coqueryA')
+                             withSpinner(dataTableOutput('coqueryA'))
                     ),
                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
                              wellPanel(style="background-color:white;height:30px;border:none",
                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery", "Download")))),
                              ),
-                             dataTableOutput('indquery')
+                             withSpinner(dataTableOutput('indquery'))
                     )
                     
                   )

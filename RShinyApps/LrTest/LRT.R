@@ -873,7 +873,8 @@ output$prr <- DT::renderDT({
   if ("Error" %in% colnames(PRRRes))
   {
     createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Drug"), append = FALSE)
+    hide("mainrow")
     return(NULL)
     
   }

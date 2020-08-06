@@ -657,6 +657,11 @@
         "gr":"Δεν υπάρχουν δεδομένα για το συγκεκριμένο φάρμακο"
       },
       {
+        "def":"No data for the specific Event",
+        "en":"No data for the specific Event",
+        "gr":"Δεν υπάρχουν δεδομένα για το συγκεκριμένο συμβάν"
+      },
+      {
         "def":"Posterior Means and Probabilities of Change",
         "en":"Posterior Means and Probabilities of Change",
         "gr":"Εκ των υστέρων μέσες τιμές και πιθανότητες αλλαγής"
