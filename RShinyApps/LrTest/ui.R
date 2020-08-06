@@ -100,28 +100,52 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   
                   tabsetPanel(
                     tabPanel(uiOutput("LRTResultsbasedonTotalEvents"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", "Download")))),
+                             ),
                              dataTableOutput('prr')
                              
                     ),
                     tabPanel(uiOutput("SimulationResultsforEventBasedLRT"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlsimplot", "Download")))),
+                             ),
                              plotlyOutput( 'simplot')
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforDrugText")   ,
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlAnalyzedEventCountsforDrug", "Download")))),
+                             ),
                              dataTableOutput('AnalyzedEventCountsforDrug')
                     ),
                     tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall", "Download")))),
+                             ),
                              dataTableOutput( 'all' )
                     ),
                     tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery", "Download")))),
+                             ),
                              dataTableOutput('coquery')
                     ),
                     tabPanel(uiOutput("EventCountsforDrug"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE", "Download")))),
+                             ),
                              dataTableOutput('coqueryE')
                     ),
                     tabPanel(uiOutput("CountsForAllEvents"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryA", "Download")))),
+                             ),
                              dataTableOutput('coqueryA')
                     ),
                     tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
+                             wellPanel(style="background-color:white;height:30px;border:none",
+                                       column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery", "Download")))),
+                             ),
                              dataTableOutput('indquery')
                     )
                     

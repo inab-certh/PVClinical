@@ -8,7 +8,7 @@ require('zoo')
 library(shiny.i18n)
 # library(tableHTML)
 
-
+library(xlsx)
 library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
@@ -521,6 +521,7 @@ output$querycotextE <- renderText({
 
 output$coquery <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
+  coqueryForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -558,6 +559,7 @@ output$coquery <- DT::renderDT({
 
 output$coqueryE <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
+  coqueryEForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -669,6 +671,7 @@ output$queryplot <- renderPlotly({
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
+  queryForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -897,9 +900,46 @@ output$infocpmeantext <- renderUI ({
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   
 })
-
+output$dlChangeinMeanAnalysis <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(cpmeanForExcel, file, sheetName="cpmean")
+  }
+)
+output$dlChangeinVarianceAnalysis <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(cpvarForExcel, file, sheetName="cpvar")
+  }
+)
+output$dlBayesianChangepointAnalysis <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(cpbayesForExcel, file, sheetName="cpbayes")
+  }
+)
+output$dlReportCountsbyDate <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(queryForExcel, file, sheetName="query")
+  }
+)
+output$dlCountsForDrugsInSelectedReports <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryForExcel, file, sheetName="coquery")
+  }
+)
+output$dlCountsForEventsInSelectedReports <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryEForExcel, file, sheetName="coqueryE")
+  }
+)
 output$cpmeanplot <- renderPlotly ({
+  if(getterm1( session)!=""){
   mydf <-getquerydata()$mydfin$result
+  cpmeanForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -1004,6 +1044,12 @@ output$cpmeanplot <- renderPlotly ({
     {
       return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))
     }
+  }
+  else{
+    # s1 <- calccpmean()
+    geturlquery()
+    return (NULL)
+  }
 })
 
 output$infocpvartext <- renderUI ({
@@ -1031,6 +1077,7 @@ output$infocpvartext <- renderUI ({
 
 output$cpvarplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  cpvarForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -1143,7 +1190,8 @@ output$infocpbayestext <- renderUI ({
     data2<-data[order(data$postprob,decreasing = TRUE),]
     out<-print(data2[1:input$maxcp,])
     outb<-build_infocpbayes_table(out)
-    outb<-paste(outb,"<br><br>",i18n()$t("Bayesian change point explanation")," ")
+    # outb<-paste(outb,"<br><br>",i18n()$t("Bayesian change point explanation")," ")
+    outb<-i18n()$t("Bayesian change point explanation")
     
     
     
@@ -1227,6 +1275,7 @@ build_infocpbayes_table <- function(out)({
 # })
 output$cpbayesplot <- renderPlotly ({
   mydf <-getquerydata()$mydfin$result
+  cpbayesForExcel<<-mydf
   if (length(mydf) > 0 )
   {
     if(!is.null(session$nodataAlert))

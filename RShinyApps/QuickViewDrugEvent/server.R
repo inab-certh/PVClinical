@@ -45,6 +45,19 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+  })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -676,8 +689,8 @@ shinyServer(function(input, output, session) {
                  '<br> <b>Query =</b>', removekey(  makelink(mydf$url) ) )
     return(out)
   })
-
-
+  
+  
   output$cpmeantext <- renderText ({
     mydf <-getquerydata()$mydfin$result
     if (length(mydf) > 0)
@@ -741,9 +754,16 @@ shinyServer(function(input, output, session) {
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
     
   })
+  output$dl <- downloadHandler(
+    filename = function() { "Data.xlsx"},
+    content = function(file) {
+      write.xlsx(cpmeanForExcel, file, sheetName="cpmeanplot")
+    }
+  )
   output$cpmeanplot <- renderPlotly ({
     if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
+      cpmeanForExcel<<-mydf
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
@@ -835,6 +855,7 @@ shinyServer(function(input, output, session) {
         hide("daterange")
         hide("prr2")
         hide("infocpmeantext")
+        hide("xlsrow")
         
         createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
@@ -1979,13 +2000,24 @@ shinyServer(function(input, output, session) {
     #    totals <- gettotals()
     #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
-    comb <- comblist$comb
-    if (length(comb) < 1)
+    
+    # print(comblist$comb[comblist$comb[,'term']==toupper(input$t2),])
+    # comb <- comblist$comb
+    comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
+
+    # print(length(comb))
+    # if (length(comb) < 1)
+    if (nrow(comb) < 1)
     {
-      tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
-                         count=0 )
+      # tmp <- data.frame( Error=paste('No results for', input$useexact, getterm1(session), '.'),
+      #                    count=0 )
+      tmp <- data.frame( Error=paste(i18n()$t('No results for'), getterm1(session), i18n()$t('and'), getterm2(session), '.'), count=0)
+      
       return( list( comb=tmp, sourcedf=tmp) )
     }
+    
+    row.names(comb) <- 1:nrow(comb)
+    
     comb$ror <- round(comb$ror, 2)
     #    ror <- comblist$ror
     if (getwhich() =='D'){ 
@@ -1998,7 +2030,7 @@ shinyServer(function(input, output, session) {
       #      print( names(comb) )
       sourcedf <- comb
       colname <- i18n()$t("Preferred Term")
-      iname <- 'Definition'
+      iname <- i18n()$t('Definition')
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 
       names <- c('exactD', 'exactE','v2','term2', 'v1','term1')
@@ -2049,6 +2081,9 @@ shinyServer(function(input, output, session) {
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     keptcols <-  c( iname, colname, countname, 
                     'PRR', 'ROR')
+    
+    # print(comb[,keptcols])
+    # print(comb$ror)
     
     #    mydf <- mydf[, c(1:4, 7,8,9)]
     return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
@@ -2120,7 +2155,7 @@ shinyServer(function(input, output, session) {
     } else {
       tableout(mydf = getprr()$comb,  
                mynames = NULL,
-               error = paste('No records for', getterm1( session ))
+               error = paste(i18n()$t('No records for'), getterm1( session ))
       )
     }
   } )
@@ -2131,18 +2166,19 @@ shinyServer(function(input, output, session) {
   output$prr2 <- DT::renderDT({  
     prr<-prr()
     write.xlsx(prr, "../mydata.xlsx")
-    js_callback = paste0("function( row, data, index ) {
-          if (data[2] != '", toupper(input$t2),"') {
-            $(row).hide();
-          }
-        }")
+    # js_callback = paste0("function( row, data, index ) {
+    #       if (data[2] != '", toupper(input$t2),"') {
+    #         $(row).hide();
+    #       }
+    #     }")
     datatable(
       prr,
       options = list(
         autoWidth = TRUE,
         dom = 'tr', #fltipr default (f: filter, l: length, i: info, p: pages)
-        rowCallback = JS(js_callback),
-        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+        # rowCallback = JS(js_callback),
+        # columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+        columnDefs = list(list(className = 'dt-center', targets = c(1, 2))),
         #initComplete = JS('function(setting, json) { alert("done"); }'),
         language = list(
           url = ifelse(input$selected_language=='gr', 
