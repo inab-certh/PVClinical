@@ -56,6 +56,8 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
+                           column(id="xlsrow", width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", "Download"))))),
+                  fluidRow(useShinyjs(),
                            column(width=12,bsAlert("nodata_qve"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                   # titlePanel("RR-Drug" ) ,
                                   fluidRow(useShinyjs(),  column(width=12,style="margin-top:60px;",dateRangeInput(

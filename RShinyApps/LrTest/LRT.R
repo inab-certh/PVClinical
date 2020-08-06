@@ -2,6 +2,7 @@ require(shiny)
 require(shinyBS)
 library(shiny.i18n)
 library(DT)
+library(xlsx)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 
@@ -250,7 +251,10 @@ shinyServer(function(input, output, session) {
     a <- input$t1
     b <- input$v1
     c <- input$useexact
-    closeAlert(session, 'erroralert')
+    if(!is.null(session$erroralert))
+    {
+      closeAlert(session, 'erroralert')
+    }
   })
   
   
@@ -724,8 +728,10 @@ getindcounts <- reactive({
     #    mydf <- mydf[, c(1:4, 7,8,9)]
 #      print(comb[, keptcols])
 #      print(comb2[, keptcols])
-    
-    closeAlert(session, 'simalert')
+    if(!is.null(session$simalert))
+    {
+      closeAlert(session, 'simalert')
+    }
     
     numsims <- getnumsims(session)
     mycritval <- getCritVal2(session, numsims, comb$n.j[1], comb$ni., comb$n..[1], comb$pi., .95)
@@ -859,11 +865,12 @@ prrsource <- reactive({
 
 
 output$prr <- DT::renderDT({
+  if(getterm1( session)!=""){
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   PRRRes <- prr()
-  
-  if ("Error" %in% colnames(prr))
+  prrForExcel<<-PRRRes
+  if ("Error" %in% colnames(PRRRes))
   {
     createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
                 content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
@@ -898,6 +905,12 @@ output$prr <- DT::renderDT({
                      'datatablesEnglish.json')
       )
     ),  escape=FALSE,rownames= FALSE)
+  }
+  else{
+    # s1 <- calccpmean()
+    geturlquery()
+    return (NULL)
+  }
 },
 escape=FALSE)
 
@@ -974,7 +987,8 @@ simplot <- function(){
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   } else {
     mydf <- getprr()
-    if ("Error" %in% colnames(prr) )
+    simForExcel<<-mydf
+    if ("Error" %in% colnames(mydf) )
     {
       createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
                   content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
@@ -1035,6 +1049,7 @@ output$simplot <- renderPlotly({
 AnalyzedEventCountsforDrug <- reactive(
   {
     mydf <- getdrugcountstable()$mydfE
+    AnalyzedEventCountsforDrugForExcel<<-mydf
     checkdf(mydf, getterm1(session),
             names=c(i18n()$t("Term"), paste( i18n()$t("Counts for"), getterm1(session)) ),
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
@@ -1059,6 +1074,7 @@ output$AnalyzedEventCountsforDrug <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- AnalyzedEventCountsforDrug()
+  allForExcel<<-res
   if ("Error" %in% colnames(prr)  )
   {
     createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
@@ -1195,11 +1211,65 @@ allnohyper <- function(){
 #   all()
 # }, sanitize.text.function = function(x) x)
 
-
+output$dlprr <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(prrForExcel, file, sheetName="prr")
+  }
+)
+output$dlsimplot <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(simForExcel, file, sheetName="Simulation Results for Event Based LRT")
+  }
+)
+output$dlAnalyzedEventCountsforDrug <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(AnalyzedEventCountsforDrugForExcel, file, sheetName="Analyzed Event Counts for Drug")
+  }
+)
+output$dlall <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(allForExcel, file, sheetName="All")
+  }
+)
+output$dlcoquery <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryForExcel, file, sheetName="coquery")
+  }
+)
+output$dlcoqueryE <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryEForExcel, file, sheetName="coqueryE")
+  }
+)
+output$dlcoquery2 <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coquery2ForExcel, file, sheetName="Counts For Drugs")
+  }
+)
+output$dlcoqueryA <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(coqueryAForExcel, file, sheetName="coqueryA")
+  }
+)
+output$dlindquery <- downloadHandler(
+  filename = function() { "Data.xlsx"},
+  content = function(file) {
+    write.xlsx(indqueryForExcel, file, sheetName="indquery")
+  }
+) 
 output$all <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- all()
+  allForExcel<<-res
   if (length(res) > 0 )
   {
     if(!is.null(session$nodataAlert))
@@ -1272,17 +1342,20 @@ output$coquery <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- coquery()
-  if (length(res) > 0 )
+  coqueryForExcel<<-res
+  if ("Error" %in% colnames(res) )
   {
+    
+    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
+  else{
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
     }
-  }
-  else{
-    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-    return(NULL)
+    
   }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
@@ -1349,6 +1422,7 @@ output$querycotextE <- renderText({
 coqueryE <- function(){  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
+  coqueryEForExcel<<-codrugs
   checkdf(codrugs, getterm1(session))
 }
 # output$coqueryE <- renderTable({  
@@ -1359,17 +1433,19 @@ output$coqueryE <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- coqueryE()
-  if (!is.null(res) )
+  if ("Error" %in% colnames(res) )
   {
+    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+  }
+  else{
+    
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
     }
-  }
-  else{
-    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-    return(NULL)
+    
   }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
@@ -1438,17 +1514,19 @@ output$coqueryA <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- getalleventlist( )$mydf
-  if (length(res) > 0 )
+  coqueryAForExcel<<-res
+  if ("Error" %in% colnames(res) )
   {
+    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    return(NULL)
+    
+  }
+  else{
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
     }
-  }
-  else{
-    createAlert(session, "nodata_lrtest", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
-    return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
@@ -1500,6 +1578,7 @@ output$indquery <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   indcounts<-getindcounts()
+  indqueryForExcel<<-indcounts
   if (!is.null(indcounts) )
   {
     if(!is.null(session$nodataAlert))
@@ -1513,7 +1592,6 @@ output$indquery <- DT::renderDT({
     return(NULL)
   }
   res <- indcounts$mydf
-  browser()
   
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)

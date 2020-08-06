@@ -5,12 +5,137 @@ if (!require('openfda') ) {
   library(openfda)
 }
 
+library(shiny)
+library(shiny.i18n)
+
 source('sourcedir.R')
+
+
+translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
+translator$set_translation_language('en')
 
 
 #**************************************
 shinyServer(function(input, output, session) {
- 
+  
+  i18n <- reactive({
+    selected <- input$selected_language
+    if (length(selected) > 0 && selected %in% translator$languages) {
+      translator$set_translation_language(selected)
+    }
+    translator
+  })
+  
+  geturlquery <- observe({
+    addClass("panel_title", "custom-title")
+    # removeClass("panel_title", "shiny-text-output")
+    # removeClass("panel_title", "shiny-bound-output")
+    q <- parseQueryString(session$clientData$url_search)
+    
+    selectedLang = tail(q[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    selectInput('selected_language',
+                i18n()$t("Change language"),
+                choices = c("en","gr"),
+                selected = selectedLang)
+    langs = list(gr="el", en="en")
+    
+    translator$set_translation_language(selectedLang)
+    
+    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous Report')), icon = NULL, value = NULL,
+                 style = NULL, size = NULL, block = NULL, disabled = NULL)
+    updateButton(session, 'nextrow', label = paste(i18n()$t('Next Report'), '>'), icon = NULL, value = NULL,
+                 style = NULL, size = NULL, block = NULL, disabled = NULL)
+    updateButton(session, 'tabBut', label = paste(i18n()$t('Filter by'), '...'), icon = NULL, value = NULL,
+                 style = NULL, size = NULL, block = NULL, disabled = NULL)
+    updateButton(session, 'update', label = i18n()$t('Update Variables'), icon = NULL, value = NULL,
+                 style = 'primary', size = NULL, block = NULL, disabled = NULL)
+    updateButton(session, 'modalCloseBtn', label = i18n()$t('Close'), icon = NULL, value = NULL)
+    updateSliderInput(session, 'skip', paste(i18n()$t('Report'),' #'), value=1, min=1, step= 1, max=100)
+    
+    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
+    
+    
+    t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
+    t1 <- gsub(']"', ']', t1, fixed=TRUE)
+    t1 <- gsub('""', '"', t1, fixed=TRUE)
+    updateTextInput(session, "t1", value = t1)
+    updateTextInput(session, "t1_2", value = t1)
+    
+    t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
+    t2 <- gsub(']"', ']', t2, fixed=TRUE)
+    t2 <- gsub('""', '"', t2, fixed=TRUE)
+    updateTextInput(session, "t2", value = t2)
+    updateTextInput(session, "t2_2", value = t2)
+    
+    if(!is.null(q$t3) )
+    {  
+      t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
+      t3 <- gsub(']"', ']', t3, fixed=TRUE)
+      t3 <- gsub('""', '"', t3, fixed=TRUE)
+      updateTextInput(session, "t3", value = t3)
+      updateTextInput(session, "t3_2", value = t3)
+    }
+    
+    
+    if(!is.null(q$v1) )
+    {
+      v1 <- gsub('"', '', q$v1, fixed=TRUE)
+      updateSelectizeInput(session, inputId = "v1", selected = v1)
+      updateSelectizeInput(session, inputId = "v1_2", selected = v1)
+    } 
+    if(!is.null(q$v2) )
+    {
+      v2 <- gsub('"', '', q$v2, fixed=TRUE)
+      updateSelectizeInput(session, inputId = "v2", selected = v2)
+      updateSelectizeInput(session, inputId = "v2_2", selected = v2)
+    }
+    if(!is.null(q$v3) )
+    { 
+      v3 <- gsub('"', '', q$v3, fixed=TRUE)
+      updateSelectizeInput(session, inputId = "v3", selected = v3)
+      updateSelectizeInput(session, inputId = "v3_2", selected = v3)
+    }
+    #   
+    #   updateNumericInput(session, "skip", value = q$skip)
+    #   return(q)
+    
+  })
+  
+  output$paneltitle <- renderText({
+    i18n()$t("Drug Adverse Event Report Browser")
+    })
+  
+  output$variablesmodal <- renderText({
+    i18n()$t("Enter Variables")
+  })
+  
+  output$variablelbl1 <- output$variablelbl2 <- output$variablelbl3 <- renderText({
+    i18n()$t("Variable")
+  })
+  
+  output$termslbl1 <- output$termslbl2 <- output$termslbl3 <- renderText({
+    i18n()$t("Terms")
+  })
+  
+  output$termslbl1 <- output$termslbl2 <- output$termslbl3 <- renderText({
+    i18n()$t("Terms")
+  })
+  
+  # output$closebtnlbl <- renderText({
+  #   i18n()$t("Close")
+  # })
+  
+
+  # #Translated uiOutputs
+  # output$title_panel <- renderText({
+  #   paste("<h2>", i18n()$t("Drug Adverse Event Report Browser"), "</h2>")
+  # })  
+   
 getskip <- reactive({
   return( input$skip-1 )
 })
@@ -83,7 +208,7 @@ output$mymodal <- renderText({
   if (input$update > 0)
   {
     updatevars()    
-    toggleModal(session, 'modalExample1', 'close')
+    toggleModal(session, 'modalUpdateVars', 'close')
   }
   return('')
 })
@@ -144,6 +269,13 @@ getreportid <- reactive({
   id <- tmp$safetyreportid
   if (is.null(id)){
     id = 'Missing Report ID'
+    createAlert(session, "nodata_report", "nodataAlert", title = i18n()$t("Info"),
+                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+    
+    hide('titlerow')
+    hide('navrow')
+    hide('sliderrow')
+    hide('mainrow')
   }
   return(id)
 })
@@ -173,7 +305,7 @@ output$v1 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<br><b>Variable:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Variable'),': <i>', s, '</i></b>' )
   return(out)
 })
 
@@ -182,7 +314,7 @@ output$v2 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Variable:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Variable'),': <i>', s, '</i></b>' )
   return(out)
 })
 
@@ -191,7 +323,7 @@ output$v3 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Variable:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Variable'),': <i>', s, '</i></b>' )
   return(out)
 })
 output$t1 <- renderText({
@@ -199,7 +331,7 @@ output$t1 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<br><b>Term:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Term'),': <i>', s, '</i></b>' )
   return(out)
 })
 output$t2 <- renderText({
@@ -207,7 +339,7 @@ output$t2 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<br><b>Term:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Term'),': <i>', s, '</i></b>' )
   return(out)
 })
 output$t3 <- renderText({
@@ -215,7 +347,7 @@ output$t3 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<br><b>Term:<i>', s, '</i></b>' )
+  out <- paste0( '<br><b>', i18n()$t('Term'),': <i>', s, '</i></b>' )
   return(out)
 })
 
@@ -559,7 +691,7 @@ output$currec <- renderUI({
   numrecs <- mydf$df.meta$results$total
   maxlim <- getopenfdamaxrecords( numrecs )
   updateSliderInput( session, 'skip', value=getskip()+1, min=1, step= 1, max=maxlim)
-  out <- paste( 'Viewing #', getskip()+1, 'of', numrecs, 'selected reports')
+  out <- paste( i18n()$t('Viewing #'), getskip()+1, i18n()$t('of'), numrecs, i18n()$t('selected reports'))
   return(out)
 })
 

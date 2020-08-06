@@ -1,3 +1,4 @@
+library(plotly)
 require(shiny)
 
 require(shinyBS)
@@ -730,12 +731,13 @@ shinyServer(function(input, output, session) {
     }
     else{
       createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
-                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
       plot.new()
-      hide('cpmeanplot')
-      hide('prr2')
-      hide('info')
-      hide("xlsrow")
+      hide("PRRRORPanel")
+      hide("daterange")
+      hide("prr2")
+      hide("infocpmeantext")
+      hide("info")
       return(NULL)
     }
     
@@ -1294,9 +1296,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
-                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
       plot.new()
-      hide('seriousplot')
       return(NULL)
     }
     if ( is.data.frame(mydf) )
@@ -1350,11 +1351,7 @@ shinyServer(function(input, output, session) {
       fig
       
     } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
-  }
-  else{
-    # s1 <- calccpmean()
-    return (NULL)
-  }
+    }
   })
 
   output$seriouspie <- renderPlot({
@@ -2195,10 +2192,8 @@ shinyServer(function(input, output, session) {
     }
     else{
       createAlert(session, "nodata_qvd", "nodataAlert", title = i18n()$t("Info"),
-                  content = i18n()$t("No data for the specific Drug"), append = FALSE)
+                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
       plot.new()
-      hide('prr2')
-      hide('info')
       return(NULL)
     }
     show("downloadExcelColumn")
