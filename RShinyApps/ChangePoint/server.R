@@ -55,7 +55,7 @@ shinyServer(function(input, output, session) {
     }
     
     langs = list(gr="el", en="en")
-    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
   })
   
   observe({
@@ -1407,8 +1407,12 @@ geturlquery <- reactive({
   updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
   updateNumericInput(session,'maxcp', value=q$maxcps)
   updateNumericInput(session,'maxcp2', value=q$maxcps)
-  updateRadioButtons(session, 'useexactD', selected = q$exactD)
-  updateRadioButtons(session, 'useexactE', selected = q$exactE)
+  updateRadioButtons(session, 'useexact',
+                     selected = if(length(q$exact)==0) "exact" else q$exact)
+  updateRadioButtons(session, 'useexactD',
+                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+  updateRadioButtons(session, 'useexactE',
+                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
   return(q)
 })
 output$ChangeinMeanAnalysis <- renderUI({ 

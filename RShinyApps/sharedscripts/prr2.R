@@ -40,6 +40,19 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+  })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -269,7 +282,12 @@ shinyServer(function(input, output, session) {
     }
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
-    updateRadioButtons( session, 'useexact', selected = q$useexact )
+    updateRadioButtons(session, 'useexact',
+                       selected = if(length(q$exact)==0) "exact" else q$exact)
+    updateRadioButtons(session, 'useexactD',
+                       selected = if(length(q$exactD)==0) "exact" else q$exactD)
+    updateRadioButtons(session, 'useexactE',
+                       selected = if(length(q$exactE)==0) "exact" else q$exactE)
     updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     return(q)

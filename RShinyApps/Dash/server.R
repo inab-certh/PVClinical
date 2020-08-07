@@ -860,6 +860,12 @@ geturlquery <- reactive({
   updateSelectizeInput(session, 't1', selected= q$drug) 
   updateSelectizeInput(session, 't1', selected= q$t1) 
   updateSelectizeInput(session, 'drugname', selected= q$t1) 
+  updateRadioButtons(session, 'useexact',
+                     selected = if(length(q$exact)==0) "exact" else q$exact)
+  updateRadioButtons(session, 'useexactD',
+                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+  updateRadioButtons(session, 'useexactE',
+                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
   return(q)
 })
 createinputs <- reactive({
