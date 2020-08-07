@@ -55,7 +55,7 @@ shinyServer(function(input, output, session) {
     }
     
     langs = list(gr="el", en="en")
-    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
   })
   
   observe({

@@ -60,13 +60,16 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
                            column(width=12,bsAlert("nodata_qve"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                   # titlePanel("RR-Drug" ) ,
-                                  fluidRow(useShinyjs(),  column(width=12,style="margin-top:60px;",dateRangeInput(
-                                    'daterange',
-                                    uiOutput('UseReportsBetween'),
-                                    start = '1989-6-30',
-                                    end = Sys.Date()
-                                  ),
-                                  uiOutput('prrtitleBlank'),
+                                  fluidRow(useShinyjs(),
+                                           column(width=12,style="margin-top:60px;",
+                                                  # dateRangeInput(
+                                                  #   'daterange',
+                                                  #   uiOutput('UseReportsBetween'),
+                                                  #   start = '1989-6-30',
+                                                  #   end = Sys.Date()
+                                                  # ),
+                                                  uiOutput("daterange"),
+                                                  uiOutput('prrtitleBlank'),
                                             withSpinner(makeDataTableOutput( 'prr2' )))),
                                   #htmlOutput( 'prrtitle' ),
                                   
