@@ -80,49 +80,52 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                      placement='bottom')
                       
                     ),
-                    tags$div(style='padding-left:40px',dateRangeInput('daterange', "", start = '1989-6-30', end = Sys.Date())),
+                    tags$div(style='padding-left:40px',
+                             # dateRangeInput('daterange', "", start = '1989-6-30', end = Sys.Date())
+                             uiOutput("daterange"),
+                             ),
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'prr2' )
+                               withSpinner(dataTableOutput( 'prr2' ))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlspecifieddrug2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infospecifieddrug2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'specifieddrug2' )
+                               withSpinner(dataTableOutput( 'specifieddrug2' ))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoall2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'all2' )
+                               withSpinner(dataTableOutput( 'all2' ))
                       ),
                       tabPanel(uiOutput("RankedEventCountsforDrug"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infocoqueryE2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'coqueryE2' )
+                               withSpinner(dataTableOutput( 'coqueryE2' ))
                       ),
                       tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infocoquery2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'coquery2' )
+                               withSpinner(dataTableOutput( 'coquery2' ))
                       ),
                       tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery2", "Download")))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoindquery2",style = "position:absolute;right:40px;z-index:10")
                                ),
-                               dataTableOutput( 'indquery2' )
+                               withSpinner(dataTableOutput( 'indquery2' ))
                       ),
                       id='maintabs', selected=  uiOutput("PRRRORResults") 
                     ),

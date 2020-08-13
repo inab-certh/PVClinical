@@ -115,12 +115,13 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
       
     ),
     
-    dateRangeInput(
-      'daterange','',
-      # uiOutput('UseReportsBetween'),
-      start = '1989-6-30',
-      end = Sys.Date()
-    ),
+    # dateRangeInput(
+    #   'daterange','',
+    #   # uiOutput('UseReportsBetween'),
+    #   start = '1989-6-30',
+    #   end = Sys.Date()
+    # ),
+    uiOutput("daterange"),
     tabsetPanel(
       tabPanel(
         uiOutput("PRRRORResults"),
@@ -128,7 +129,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", "Download")))),
           style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
         ),
-        dataTableOutput( 'prr2' )
+        withSpinner(dataTableOutput( 'prr2' ))
       ),
       tabPanel(
         uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,

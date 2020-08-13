@@ -35,8 +35,10 @@ rendermaxcp <- function() {
   
 } 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-  fluidRow(useShinyjs(),style = "margin-top:15px;",
-           column(width=12, bsAlert("nodata_changepoint"),
+                  fluidRow(useShinyjs(),style = "margin-top:15px;",
+                           column(width=12, bsAlert("nodata_changepoint"))),
+  fluidRow(id="mainrow", useShinyjs(),style = "margin-top:15px;",
+           column(width=12,
                   
                   hidden(
                     uiOutput('page_content'),
@@ -74,8 +76,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                placement='left')
                 
                   ),
-        
-    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
+                 uiOutput("daterange"),
+    # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 

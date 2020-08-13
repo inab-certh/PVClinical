@@ -65,12 +65,13 @@ shinyUI(fluidPage( includeCSS("../sharedscripts/custom.css"),
                             # a(href='https://open.fda.gov/', 
                             #   img(src='l_openFDA.png', align='bottom')),
                             # renderDates()
-                            dateRangeInput(
-                              'daterange','',
-                              # uiOutput('UseReportsBetween'),
-                              start = '1989-6-30',
-                              end = Sys.Date()
-                            ),
+                            # dateRangeInput(
+                            #   'daterange','',
+                            #   # uiOutput('UseReportsBetween'),
+                            #   start = '1989-6-30',
+                            #   end = Sys.Date()
+                            # ),
+                            # uiOutput("daterange"),
                      ),
                      column(width=8,
                             titlePanel("" ) )
@@ -128,10 +129,9 @@ hidden(
   fluidRow(
     column(width=12,style = "height:20px;")
     ),
-  fluidRow(
+  fluidRow(id="maintabs",
     column(width=9,
       tabsetPanel(
-
 
         tabPanel(uiOutput( "Events"), makeDataTableOutput('query')
                  # withSpinner(uiOutput("wordcloudtabset"))

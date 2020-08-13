@@ -947,8 +947,12 @@ shinyServer(function(input, output, session) {
     updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
-    updateRadioButtons(session, 'useexactD', selected = q$exactD)
-    updateRadioButtons(session, 'useexactE', selected = q$exactE)
+    updateRadioButtons(session, 'useexact',
+                       selected = if(length(q$exact)==0) "exact" else q$exact)
+    updateRadioButtons(session, 'useexactD',
+                       selected = if(length(q$exactD)==0) "exact" else q$exactD)
+    updateRadioButtons(session, 'useexactE',
+                       selected = if(length(q$exactE)==0) "exact" else q$exactE)
     return(q)
   })
 

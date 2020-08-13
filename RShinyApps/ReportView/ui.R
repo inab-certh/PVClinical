@@ -196,7 +196,7 @@ fluidRow(useShinyjs(),
   column(width=9, 
          bsAlert("alert2"),  
       tabsetPanel(
-                tabPanel("Overview",  
+                tabPanel(textOutput("overviewtxt"),  
                          
                          wellPanel( 
                            htmlOutput( 'overviewtitle' ), 
@@ -204,7 +204,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
-                tabPanel("Meta Data",  
+                tabPanel(textOutput("metadatatxt"),
                         
                          wellPanel( 
                            htmlOutput( 'querytitle' ), 
@@ -213,7 +213,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
-                tabPanel("Report Header", 
+                tabPanel(textOutput("reportheadertxt"), 
                          
                          wellPanel(  
                            htmlOutput( 'headertabletitle' ), 
@@ -236,7 +236,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
-                tabPanel("Patient",  
+                tabPanel(textOutput("patienttxt"),  
                          
                          wellPanel( 
                            htmlOutput('patienttabletitle'),
@@ -244,7 +244,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
-                tabPanel("Patient.Reaction",  
+                tabPanel(textOutput("patreactiontxt"),  
                          
                          wellPanel( 
                            htmlOutput('patientreactiontabletitle'),
@@ -252,7 +252,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
-                tabPanel("Patient.Drug",  
+                tabPanel(textOutput("patdrugtxt"),
                          
                          wellPanel(  
                            htmlOutput('patientdrugtabletitle'),
@@ -260,7 +260,7 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
-                tabPanel("Patient.Drug.OpenFDA",  
+                tabPanel(textOutput("patdrugopenfdatxt"),  
                          
                          wellPanel(  
                                      htmlOutput('patientdrugopenfdatabletitle'),
