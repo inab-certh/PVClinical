@@ -31,6 +31,19 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+  })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -900,7 +913,8 @@ output$prr <- DT::renderDT({
   if ("Error" %in% colnames(res) )
   {
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
     
   }
@@ -1019,8 +1033,9 @@ simplot <- function(){
     if ("Error" %in% colnames(mydf) )
     {
       createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                  content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                  content = i18n()$t("No data for the specific Event"), append = FALSE)
       plot.new()
+      hide("mainrow")
       return(NULL)
       
     }
@@ -1093,7 +1108,8 @@ output$AnalyzedEventCountsforDrug <- DT::renderDT({
   if ("Error" %in% colnames(res))
   {
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
     
   }
@@ -1246,7 +1262,8 @@ output$all <- DT::renderDT({
   }
   else{
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -1330,7 +1347,8 @@ output$coquery <- DT::renderDT({
   if ("Error" %in% colnames(res) )
   {
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
     
   }
@@ -1428,7 +1446,8 @@ output$coqueryE <- DT::renderDT({
   }
   else{
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -1478,7 +1497,8 @@ output$coqueryEex <- DT::renderDT({
   }
   else{
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -1550,7 +1570,8 @@ output$coqueryA <- DT::renderDT({
   }
   else{
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -1613,7 +1634,8 @@ output$indquery <- DT::renderDT({
   }
   else{
     createAlert(session, "nodata_lrteste", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Event"), append = FALSE)
+    hide("mainrow")
     return(NULL)
   }
   res <- indcounts$mydf
@@ -1673,6 +1695,12 @@ geturlquery <- reactive({
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
+  updateRadioButtons(session, 'useexact',
+                     selected = if(length(q$exact)==0) "exact" else q$exact)
+  updateRadioButtons(session, 'useexactD',
+                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+  updateRadioButtons(session, 'useexactE',
+                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
   return(q)
 })
 # Return the components of the URL in a string:

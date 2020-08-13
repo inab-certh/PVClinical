@@ -52,6 +52,18 @@ shinyServer(function(input, output, session) {
     }
 
     langs = list(gr="el", en="en")
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+  })
+  
+  output$daterange <- renderUI({
+    query <- parseQueryString(session$clientData$url_search)
+    selectedLang = tail(query[['lang']], 1)
+    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+    {
+      selectedLang='en'
+    }
+    
+    langs = list(gr="el", en="en")
     dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
   })
   
@@ -1012,8 +1024,12 @@ geturlquery <- reactive({
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2)
   updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
-  updateRadioButtons(session, 'useexactD', selected = q$exactD)
-  updateRadioButtons(session, 'useexactE', selected = q$exactE)
+  updateRadioButtons(session, 'useexact',
+                     selected = if(length(q$exact)==0) "exact" else q$exact)
+  updateRadioButtons(session, 'useexactD',
+                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+  updateRadioButtons(session, 'useexactE',
+                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
   return( q )
 })
 

@@ -49,6 +49,18 @@ shinyServer(function(input, output, session) {
                 selected = selectedLang)
     
   })
+  # output$daterange <- renderUI({
+  #   query <- parseQueryString(session$clientData$url_search)
+  #   selectedLang = tail(query[['lang']], 1)
+  #   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  #   {
+  #     selectedLang='en'
+  #   }
+  #   
+  #   langs = list(gr="el", en="en")
+  #   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]])
+  # })
+  
   observe({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -574,8 +586,15 @@ output$sourceplot <- renderPlotly({
   }
   else{
     createAlert(session, "nodata_dash", "nodataAlert", title = i18n()$t("Info"),
-                content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
+                content = i18n()$t("No data for the specific Drug"), append = FALSE)
     plot.new()
+    hide("seriousplot")
+    hide("downloadExcelColumn")
+    hide("dl")
+    hide("daterange")
+    hide("sourceplot")
+    hide("sexplot")
+    hide("maintabs")
     return(NULL)
   }
   # return(dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Primary Source Qualifications") ))
@@ -841,6 +860,12 @@ geturlquery <- reactive({
   updateSelectizeInput(session, 't1', selected= q$drug) 
   updateSelectizeInput(session, 't1', selected= q$t1) 
   updateSelectizeInput(session, 'drugname', selected= q$t1) 
+  updateRadioButtons(session, 'useexact',
+                     selected = if(length(q$exact)==0) "exact" else q$exact)
+  updateRadioButtons(session, 'useexactD',
+                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+  updateRadioButtons(session, 'useexactE',
+                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
   return(q)
 })
 createinputs <- reactive({
