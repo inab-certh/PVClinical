@@ -19,18 +19,19 @@
                 <div>
 
                     <div class="tab-content" style="margin-left: 20px;">
-                        <div class="tab-pane" role="tabpanel" id="tab-1">
+                        <div class="tab-pane active" role="tabpanel" id="tab-1">
                             <div class="row drug-events-selection-row">
                                 <div class="col drugSelectionCol">
                                     <div id="drugCheckBoxes">
                                         <fieldset>
-                                            <legend class="legend-margins">Drugs</legend>
+                                            <legend class="legend-margins">
+                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox">
+                                                Drugs
+                                            </legend>
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1"
-                                                           class="custom-control-input" checked=""
-                                                           value="{{ drug.name }}">
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="drugCheckBox" value="{{ drug.name }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ drug.name }}</label>
                                                 </div>
@@ -45,13 +46,14 @@
                                     <div id="eventCheckBoxes">
                                         <fieldset>
 
-                                            <legend class="legend-margins">Events</legend>
+                                            <legend class="legend-margins">
+                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox">
+                                                Events
+                                            </legend>
                                             {% for condition in scenario.conditions %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1"
-                                                           class="custom-control-input" checked=""
-                                                           value="{{ condition.name }}">
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="eventCheckBox" value="{{ condition.name }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ condition.name }}</label>
                                                 </div>
@@ -61,7 +63,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane active" role="tabpanel" id="tab-2">
+                        <div class="tab-pane" role="tabpanel" id="tab-2">
                             <div class="row drug-events-selection-row">
                                 <div class="col drugSelectionCol">
                                     <div id="drugRadios">
@@ -114,34 +116,34 @@
 
                     </div>
                     <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                         </li>
-                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Πίνακας' %}</a>
+                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
                         </li>
-                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-2">{% trans 'Λόγος Αναφορών' %}</a>
+                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
                         </li>
-                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Λόγος Αναφορών' %}</a>
+                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}RR_E</a>
                         </li>
                         <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-2">{% trans 'λαμπελβιου' %}</a></li>
-                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Δυναμικό PRR' %}</a>
+                                                               href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
                         </li>
                         <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                 href="#tab-2">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
+                                                                 href="#tab-1">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
                         <li class="nav-item" id="ReportView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                href="#tab-2">{% trans 'Αναφορές' %}</a></li>
+                                                                href="#tab-1">{% trans 'Αναφορές' %}</a></li>
                         <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-2">{% trans 'λαμπελβιου' %}</a></li>
-                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-2">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
+                                                               href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
                         </li>
                         <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                              href="#tab-2">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
+                                                              href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
                         <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                     href="#tab-2">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
+                                                                     href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
                     </ul>
                 </div>
             </div>
@@ -150,13 +152,8 @@
             <div class="row iframe-row">
                 <div class="col">
                     <div id="divFrame">
-
                         <div id="first"  class="loader"></div>
-                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()"
-                                src="https://openfda.shinyapps.io/dash/?t1=aspirin&amp;v1=patient.drug.openfda.generic_name"
-                                width="100%" height="360" style="  border: none;
-  overflow: hidden;
-" frameborder="0"></iframe>
+                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
@@ -168,6 +165,51 @@
     <!-- jQuery custom content scroller -->
     <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
+        function groupChckBoxVal(chckbxType) {
+            console.log("[name='"+chckbxType+"']");
+            // Get the type of boxes belonging to the group (removing sAll)
+            var boxesType = chckbxType.replace("sAll", "");
+            console.log(boxesType);
+            var allBoxesLength = $("input[name='"+boxesType+"']").length;
+            var checkedBoxesLength = $("input[name='"+boxesType+"']:checked").length;
+
+            console.log(allBoxesLength);
+            console.log(checkedBoxesLength);
+
+            // switch (allBoxesLength - checkedBoxesLength) {
+            //     case 0:
+            //         $("[name='"+chckbxType+"']").attr("checked", true);
+            //         console.log("checked");
+            //         break;
+            //     default:
+            //         $("[name='"+chckbxType+"']").attr("indeterminate", true);
+            //         console.log("indeterminate");
+            // }
+            // if (allBoxesLength === checkedBoxesLength) {
+            //     $("input[name='"+chckbxType+"']").attr("checked", true);
+            // } else {
+            //     $("input[name='"+chckbxType+"']").attr("indeterminate", true);
+            // }
+        }
+
+        groupChckBoxVal("drugsAllCheckBox");
+        groupChckBoxVal("eventsAllCheckBox");
+
+        $(".custom-checkbox input").change(function () {
+            groupChckBoxVal($(this).attr("name").replace("CheckBox", "sAllCheckBox"));
+        });
+
+        function toggleAllDrugsCheckboxes() {
+            var all_drugs_length = $("[name='drugCheckBox']").length;
+            var checked_drugs = $("[name='drugCheckBox']:checked");
+            var checked_length = checked_drugs.length;
+
+
+            $("[name='drugCheckBox']").toggle();
+            name="eventCheckBox"
+
+        }
+
         function closeProgressIndicator() {
         $("#first").hide();
     }
@@ -193,6 +235,8 @@
         var app = 'QuickViewDrugEvent';
         var drug = '';
         var event = '';
+        var drugsChecked = [];
+        var eventsChecked = [];
         getCheckedElementOfRadios();
         var AppParametersDict = {
             "QuickViewDrugEvent": ["Drug", "Event"],
@@ -216,7 +260,7 @@
         var activeParameters = []
         scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
         scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
-        var sessionAppId = sessionStorage.getItem("shinnyAppId");
+        var sessionAppId = app; //sessionStorage.getItem("shinnyAppId");
         if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
         {
             app='QuickViewDrugEvent';
@@ -249,25 +293,40 @@
                 document.getElementById(app).className += " active";
             }
         }
-        var sessionSelectedEvent = sessionStorage.getItem("shinnySelectedEvent");
-        var sessionSelectedDrug = sessionStorage.getItem("shinnySelectedDrug");
+        var sessionSelectedEvent = drugsChecked.join(",");  //sessionStorage.getItem("shinnySelectedEvent");
+        var sessionSelectedDrug = eventsChecked.join(","); //sessionStorage.getItem("shinnySelectedDrug");
 
 
         if(sessionSelectedDrug!=null){
-            drug=sessionSelectedDrug;
-            var drugRadio=$("input[value="+drug+"][Type=radio] ");
-            if(drugRadio.length>0)
-            {
-                drugRadio[0].checked=true;
+
+            var checkboxes = document.getElementsByName("drugCheckBox");
+            for (var i=0; i<checkboxes.length; i++) {
+                  checkboxes[i].checked = false;
             }
+            drugsChecked=sessionSelectedDrug.split(',');
+            for(var index in drugsChecked) {
+                var drugRadio=$("input[value='"+drugsChecked[index]+"'][Type=checkbox] ");
+                if (drugRadio.length > 0) {
+                    drugRadio[0].checked = true;
+                }
+            }
+            disableSingleCheckBoxes()
         }
       if(sessionSelectedEvent!=null) {
-          event=sessionSelectedEvent;
-          var eventRadio=$("input[value="+event+"][Type=radio] ");
+          var checkboxes = document.getElementsByName("eventCheckBox");
+            for (var i=0; i<checkboxes.length; i++) {
+                  checkboxes[i].checked = false;
+            }
+          eventsChecked=sessionSelectedEvent.split(',');
+          for(var index in eventsChecked){
+            var eventRadio=$("input[value='"+eventsChecked[index]+"'][Type=checkbox] ");
             if(eventRadio.length>0)
             {
                 eventRadio[0].checked=true;
             }
+          }
+          disableSingleCheckBoxes()
+
       }
 
 
@@ -276,40 +335,104 @@
 
         keepAppropriateAppsBasedOnParameters();
 
-        buildUrl(app, drug, event);
+        buildUrl(app);
         //keepButtonsBasedOnApp(app);
         // initializeDropdowns();
 
         $('#shinnyAppsTabs a').click(function (e) {
             app=e.target.parentElement.id;
-            sessionStorage.setItem("shinnyAppId", app);
+            // sessionStorage.setItem("shinnyAppId", app);
             {#app = e.target.childNodes[0].textContent;#}
             getCheckedElementOfRadios();
             keepAppropriateAppsBasedOnParameters();
-            buildUrl(app, drug, event);
+            buildUrl(app);
         })
         $('.drugSelectionCol input').click(function (e) {
-            drug = e.target.value;
-            sessionStorage.setItem("shinnySelectedDrug", drug);
-            buildUrl(app, drug, event);
+            var checkbox=e.target;
+            var drug = checkbox.value;
+            if(checkbox.checked)
+            {
+                drugsChecked.push(drug);
+            }
+            else {
+                drugsChecked=arrayRemove(drugsChecked,drug)
+            }
+            disableSingleCheckBoxes()
+            // sessionStorage.setItem("shinnySelectedDrug", drugsChecked);
+            buildUrl(app);
         })
         $('.eventSelectionCol input').click(function (e) {
-            event = e.target.value;
-            sessionStorage.setItem("shinnySelectedEvent", event);
-            buildUrl(app, drug, event);
+
+            var checkbox=e.target;
+            var event = checkbox.value;
+            if(checkbox.checked)
+            {
+                eventsChecked.push(event);
+            }
+            else {
+                eventsChecked=arrayRemove(eventsChecked,event)
+            }
+            disableSingleCheckBoxes()
+            // sessionStorage.setItem("shinnySelectedEvent", eventsChecked);
+            buildUrl(app);
+
         })
+        function disableSingleCheckBoxes() {
+            if(eventsChecked.length==1)
+            {
+               var checkedBox=getCheckedBoxes("eventCheckBox")[0];
+               checkedBox.disabled = true;
+            }
+            else{
+                var checkboxes = document.getElementsByName("eventCheckBox");
+                for (var i=0; i<checkboxes.length; i++) {
+                      checkboxes[i].disabled = false;
+                }
+            }
+            if(drugsChecked.length==1)
+            {
+               var checkedBox=getCheckedBoxes("drugCheckBox")[0];
+               checkedBox.disabled = true;
+            }
+            else{
+                var checkboxes = document.getElementsByName("drugCheckBox");
+                for (var i=0; i<checkboxes.length; i++) {
+                      checkboxes[i].disabled = false;
+                }
+            }
+        }
+        function getCheckedBoxes(chkboxName) {
+          var checkboxes = document.getElementsByName(chkboxName);
+          var checkboxesChecked = [];
+          // loop over them all
+          for (var i=0; i<checkboxes.length; i++) {
+             // And stick the checked ones onto an array...
+             if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i]);
+             }
+          }
+          // Return the array if it is non-empty, or null
+          return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+        }
+        function arrayRemove(arr, value) {
+            return arr.filter(function(ele){
+                return ele != value;
+            });
+        }
         function getCheckedElementOfRadios() {
             if (app != 'QuickView2') {
-                var ele = document.getElementsByName('drugRadio');
+                drugsChecked=[];
+                eventsChecked=[];
+                var ele = document.getElementsByName('drugCheckBox');
                 for (i = 0; i < ele.length; i++) {
                     if (ele[i].checked) {
-                        drug = ele[i].value;
+                        drugsChecked.push(ele[i].value);
                     }
                 }
-                var ele = document.getElementsByName('eventRadio');
+                var ele = document.getElementsByName('eventCheckBox');
                 for (i = 0; i < ele.length; i++) {
                     if (ele[i].checked) {
-                        event = ele[i].value;
+                        eventsChecked.push(ele[i].value);
                     }
                 }
             }
@@ -323,14 +446,14 @@
             document.getElementById("eventBtn").innerText = event;
         }
 
-        function buildUrl(app, drug, event) {
+        function buildUrl(app) {
             shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (activeParameters.length == 2) {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + event + '&v2=patient.reaction.reactionmeddrapt';
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' +  drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name&' + 't2=' + eventsChecked.join("+") + '&v2=patient.reaction.reactionmeddrapt';
             } else if (activeParameters.includes('Drug')) {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name';
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name';
             } else {
-                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + event + '&v1=patient.reaction.reactionmeddrapt';
+                shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + eventsChecked.join("+") + '&v1=patient.reaction.reactionmeddrapt';
             }
             document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }

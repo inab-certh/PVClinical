@@ -39,6 +39,7 @@ $(function() {
 
 
     $("[name='drugs_fld']").change(function () {
+        $("#loaderOverlay").fadeIn();
         var selected = $(this).val();
 
         if(selected===null) {
@@ -92,13 +93,14 @@ $(function() {
 
                 // Change synonyms and send trigger
                 $("#drugsSynonyms").html(options_arr).trigger("change");
-                console.log($("#drugsSynonyms"));
+                // console.log($("#drugsSynonyms"));
 
               },
               error: function (data) {
                 console.log("error "+data);
             }
         });
+        $("#loaderOverlay").fadeOut();
     });
 
     $("#drugsSynonyms").select2MultiCheckboxes({
