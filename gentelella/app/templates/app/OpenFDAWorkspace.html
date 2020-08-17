@@ -25,7 +25,7 @@
                                     <div id="drugCheckBoxes">
                                         <fieldset>
                                             <legend class="legend-margins">
-                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox">
+                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')">
                                                 Drugs
                                             </legend>
                                             {% for drug in scenario.drugs %}
@@ -47,7 +47,7 @@
                                         <fieldset>
 
                                             <legend class="legend-margins">
-                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox">
+                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')">
                                                 Events
                                             </legend>
                                             {% for condition in scenario.conditions %}
@@ -171,10 +171,8 @@
             var boxesType = chckbxType.replace("sAll", "");
             console.log(boxesType);
             var allBoxesLength = $("input[name='"+boxesType+"']").length;
-            var checkedBoxesLength = $("input[name='"+boxesType+"']:checked").length;
-
-            console.log(allBoxesLength);
-            console.log(checkedBoxesLength);
+            var checkedBoxes = $("input[name='"+boxesType+"']:checked");
+            var checkedBoxesLength = checkedBoxes.length;
 
             // switch (allBoxesLength - checkedBoxesLength) {
             //     case 0:
@@ -185,29 +183,55 @@
             //         $("[name='"+chckbxType+"']").attr("indeterminate", true);
             //         console.log("indeterminate");
             // }
-            // if (allBoxesLength === checkedBoxesLength) {
-            //     $("input[name='"+chckbxType+"']").attr("checked", true);
-            // } else {
-            //     $("input[name='"+chckbxType+"']").attr("indeterminate", true);
-            // }
+            if (allBoxesLength === checkedBoxesLength) {
+                $("input[name='"+chckbxType+"']").prop("indeterminate", false);
+                $("input[name='"+chckbxType+"']").prop("checked", true);
+            } else {
+                $("input[name='"+chckbxType+"']").prop("indeterminate", true);
+                $("input[name='"+chckbxType+"']").prop("checked", false);
+            }
         }
 
         groupChckBoxVal("drugsAllCheckBox");
+        disableSingleCheckBox("drugCheckBox");
         groupChckBoxVal("eventsAllCheckBox");
+        disableSingleCheckBox("eventCheckBox");
 
         $(".custom-checkbox input").change(function () {
             groupChckBoxVal($(this).attr("name").replace("CheckBox", "sAllCheckBox"));
+            disableSingleCheckBox($(this).attr("name"));
         });
 
-        function toggleAllDrugsCheckboxes() {
-            var all_drugs_length = $("[name='drugCheckBox']").length;
-            var checked_drugs = $("[name='drugCheckBox']:checked");
-            var checked_length = checked_drugs.length;
+        function disableSingleCheckBox(chkbxType) {
+            var checkedBoxes = $("input[name='"+chkbxType+"']:checked");
+            if(checkedBoxes.length === 1) {
+                checkedBoxes.first().prop("disabled", true);
+            } else {
+                checkedBoxes.prop("disabled", false);
+            }
+        }
+        function toggleAllDECheckboxes(chckbxType) {
+            // chckbxType refers to the group checkbox
+            var boxesType = chckbxType.replace("sAll", "");
+            var checkedBoxes = $("input[name='"+boxesType+"']:checked");
+
+            if ($("input[name='"+chckbxType+"']").prop("checked")) {
+                // $("input[name='"+chckbxType+"']").prop("indeterminate", false);
+                $("input[name='"+boxesType+"']").prop("checked", true);
+                $("input[name='"+boxesType+"']").trigger("change");
+            } else {
+                // $("input[name='"+chckbxType+"']").prop("indeterminate", true);
+                // $("input[name='"+chckbxType+"']").prop("checked", false).trigger("true");
+                checkedBoxes.prop("checked", false);
+                checkedBoxes.first().prop("checked", true);
+                checkedBoxes.first().trigger("change");
+            }
 
 
-            $("[name='drugCheckBox']").toggle();
-            name="eventCheckBox"
-
+            // if($("input[name='"+chckbxType+"']").prop("checked") == false){
+            //     first_chkd = checkedBoxes.first()
+            //     first_chkd.prop("checked", true).trigger("change");
+            // }
         }
 
         function closeProgressIndicator() {
@@ -293,8 +317,8 @@
                 document.getElementById(app).className += " active";
             }
         }
-        var sessionSelectedEvent = drugsChecked.join(",");  //sessionStorage.getItem("shinnySelectedEvent");
-        var sessionSelectedDrug = eventsChecked.join(","); //sessionStorage.getItem("shinnySelectedDrug");
+        var sessionSelectedEvent = eventsChecked.join("|||");  //sessionStorage.getItem("shinnySelectedEvent");
+        var sessionSelectedDrug = drugsChecked.join("|||"); //sessionStorage.getItem("shinnySelectedDrug");
 
 
         if(sessionSelectedDrug!=null){
@@ -303,21 +327,21 @@
             for (var i=0; i<checkboxes.length; i++) {
                   checkboxes[i].checked = false;
             }
-            drugsChecked=sessionSelectedDrug.split(',');
+            drugsChecked=sessionSelectedDrug.split('|||');
             for(var index in drugsChecked) {
                 var drugRadio=$("input[value='"+drugsChecked[index]+"'][Type=checkbox] ");
                 if (drugRadio.length > 0) {
                     drugRadio[0].checked = true;
                 }
             }
-            disableSingleCheckBoxes()
+            // disableSingleCheckBoxes()
         }
       if(sessionSelectedEvent!=null) {
           var checkboxes = document.getElementsByName("eventCheckBox");
             for (var i=0; i<checkboxes.length; i++) {
                   checkboxes[i].checked = false;
             }
-          eventsChecked=sessionSelectedEvent.split(',');
+          eventsChecked=sessionSelectedEvent.split('|||');
           for(var index in eventsChecked){
             var eventRadio=$("input[value='"+eventsChecked[index]+"'][Type=checkbox] ");
             if(eventRadio.length>0)
@@ -325,7 +349,7 @@
                 eventRadio[0].checked=true;
             }
           }
-          disableSingleCheckBoxes()
+          // disableSingleCheckBoxes()
 
       }
 
@@ -341,7 +365,9 @@
 
         $('#shinnyAppsTabs a').click(function (e) {
             app=e.target.parentElement.id;
+
             // sessionStorage.setItem("shinnyAppId", app);
+            sessionAppId = app;
             {#app = e.target.childNodes[0].textContent;#}
             getCheckedElementOfRadios();
             keepAppropriateAppsBasedOnParameters();
@@ -357,8 +383,9 @@
             else {
                 drugsChecked=arrayRemove(drugsChecked,drug)
             }
-            disableSingleCheckBoxes()
+            // disableSingleCheckBoxes()
             // sessionStorage.setItem("shinnySelectedDrug", drugsChecked);
+            sessionSelectedDrug = drugsChecked.join("|||");
             buildUrl(app);
         })
         $('.eventSelectionCol input').click(function (e) {
@@ -372,13 +399,21 @@
             else {
                 eventsChecked=arrayRemove(eventsChecked,event)
             }
-            disableSingleCheckBoxes()
+            // disableSingleCheckBoxes()
             // sessionStorage.setItem("shinnySelectedEvent", eventsChecked);
+            sessionSelectedEvent = eventsChecked.join("|||");
+
             buildUrl(app);
 
         })
         function disableSingleCheckBoxes() {
-            if(eventsChecked.length==1)
+
+            // // Fix zero boxes selected
+            // if(eventsChecked.length===0) {
+            //     document.getElementsByName("eventCheckBox")[0].checked = true;
+            // }
+
+            if(eventsChecked.length===1)
             {
                var checkedBox=getCheckedBoxes("eventCheckBox")[0];
                checkedBox.disabled = true;
@@ -389,7 +424,12 @@
                       checkboxes[i].disabled = false;
                 }
             }
-            if(drugsChecked.length==1)
+
+            // if(drugsChecked.length===0) {
+            //     document.getElementsByName("drugCheckBox")[0].checked = true;
+            // }
+
+            if(drugsChecked.length===1)
             {
                var checkedBox=getCheckedBoxes("drugCheckBox")[0];
                checkedBox.disabled = true;
