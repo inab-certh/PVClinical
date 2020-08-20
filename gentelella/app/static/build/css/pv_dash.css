@@ -7,6 +7,14 @@
     max-width: 5rem;
 }
 
+.panel-heading {
+    cursor: pointer;
+}
+
+.panel-title a {
+	display: block;
+}
+
 #loaderOverlay {
 	background: #ffffff;
 	color: #666666;
