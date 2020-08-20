@@ -1014,6 +1014,17 @@ shinyServer(function(input, output, session) {
     names <- paste0(names, collapse=' ')
     return(names)
   })
+  
+  getquoteddrugname <- reactive({ 
+    s <- getdrugname()
+    if  (is.null( s ) | s=="" ) {
+      return("")
+    }
+    names <- paste0('%22', s, '%22')
+    names <- paste0(names, collapse=' ')
+    return(names)
+  })
+  
   getbestdrugname <- function(quote=TRUE){
     exact <-   ( getdrugcounts999()$exact)
     if (exact)

@@ -115,49 +115,120 @@
 
 
                     </div>
-                    <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
-                        <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
-                        </li>
-                        <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
-                        </li>
-                        <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
-                        </li>
-                        <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
-                        </li>
-                        <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
-                        </li>
-                        <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}RR_E</a>
-                        </li>
-                        <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
-                        <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
-                        </li>
-                        <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                 href="#tab-1">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
-                        <li class="nav-item" id="ReportView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                href="#tab-1">{% trans 'Αναφορές' %}</a></li>
-                        <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                               href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
-                        <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
-                        </li>
-                        <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                              href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
-                        <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                     href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
+
+                    <ul class="nav nav-tabs">
+                        <li id="aggregatedli" class="active"><a data-toggle="tab" href="#aggregated">{% trans "Aggregated" %}</a></li>
+                        <li id="analyticli"><a data-toggle="tab" href="#analytic">{% trans "Analytic" %}</a></li>
                     </ul>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
-            <div class="row iframe-row">
-                <div class="col">
-                    <div id="divFrame">
-                        <div id="first"  class="loader"></div>
-                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+                    <div class="tab-content">
+                        <div id="aggregated" class="tab-pane fade in active">
+                            <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabs">
+                                <li class="nav-item active" id="QuickViewDrugEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                </li>
+                                <li class="nav-item active" id="QuickViewDrug"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                </li>
+                                <li class="nav-item active" id="QuickViewEvent"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                </li>
+                                <li class="nav-item" id="Dash"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
+                                </li>
+                                <li class="nav-item" id="RR_D"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
+                                </li>
+                                <li class="nav-item" id="RR_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}RR_E</a>
+                                </li>
+                                <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                       href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                                <li class="nav-item" id="DynPRR"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
+                                </li>
+                                <li class="nav-item" id="ChangePoint"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                         href="#tab-1">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
+                                <li class="nav-item" id="ReportView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                        href="#tab-1">{% trans 'Αναφορές' %}</a></li>
+                                <li class="nav-item" id="LabelView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                       href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                                <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
+                                </li>
+                                <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                      href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
+                                <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                             href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
+                            </ul>
+
+                            <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
+                                <div class="row iframe-row">
+                                    <div class="col">
+                                        <div id="divFrame">
+                                            <div id="first"  class="loader"></div>
+                                            <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="analytic" class="tab-pane fade in">
+                             <div class="panel-group" id="accordion">
+                             {% for d,c in scenario.all_combs %}
+                                <div id="{{ d }} {% if d and c %}-{% endif %} {{ c }}" class="panel panel-default">
+                                    <div class="panel-heading">
+                                      <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
+                                        {{ d }} {% if d and c %}-{% endif %} {{ c }}</a>
+                                      </h4>
+                                    </div>
+                                    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
+                                      <div class="panel-body">
+                                        <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabsComb{{ forloop.counter }}">
+                                            <li class="nav-item active" id="QuickViewDrugEvent{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            </li>
+                                            <li class="nav-item active" id="QuickViewDrug{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            </li>
+                                            <li class="nav-item active" id="QuickViewEvent{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            </li>
+                                            <li class="nav-item" id="Dash{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
+                                            </li>
+                                            <li class="nav-item" id="RR_D{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
+                                            </li>
+                                            <li class="nav-item" id="RR_E{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}RR_E</a>
+                                            </li>
+                                            <li class="nav-item" id="LabelView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                   href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                                            <li class="nav-item" id="DynPRR{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
+                                            </li>
+                                            <li class="nav-item" id="ChangePoint{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                     href="#tab-1">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
+                                            <li class="nav-item" id="ReportView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                    href="#tab-1">{% trans 'Αναφορές' %}</a></li>
+                                            <li class="nav-item" id="LabelView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                   href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
+                                            <li class="nav-item" id="LrTest{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
+                                            </li>
+                                            <li class="nav-item" id="LrTest_E{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                  href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
+                                            <li class="nav-item" id="DrugEnforceView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                         href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
+                                        </ul>
+
+                                        <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
+                                            <div class="row iframe-row">
+                                                <div class="col">
+                                                    <div id="divFrame">
+                                                        <div id="first"  class="loader"></div>
+                                                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 {% endblock content %}
 {% block javascripts %}
@@ -166,10 +237,8 @@
     <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
         function groupChckBoxVal(chckbxType) {
-            console.log("[name='"+chckbxType+"']");
             // Get the type of boxes belonging to the group (removing sAll)
             var boxesType = chckbxType.replace("sAll", "");
-            console.log(boxesType);
             var allBoxesLength = $("input[name='"+boxesType+"']").length;
             var checkedBoxes = $("input[name='"+boxesType+"']:checked");
             var checkedBoxesLength = checkedBoxes.length;
@@ -197,9 +266,66 @@
         groupChckBoxVal("eventsAllCheckBox");
         disableSingleCheckBox("eventCheckBox");
 
+        function allCombinations(array1, array2) {
+            var combos = [] //or combos = new Array(2);
+
+            for(var i = 0; i < array1.length; i++)
+            {
+                 for(var j = 0; j < array2.length; j++)
+                 {
+                    combos.push(array1.eq(i).val() +" - "+ array2.eq(j).val())
+                 }
+            }
+            return combos
+        }
+
+        function showProperAnalyticDEDivs() {
+            var drugCheckedBoxes = $("input[name='drugCheckBox']:checked");
+            var drugUncheckedBoxes = $("input[name='drugCheckBox']:not(:checked)");
+
+            var eventCheckedBoxes = $("input[name='eventCheckBox']:checked");
+            var eventUncheckedBoxes = $("input[name='eventCheckBox']:not(:checked)");
+
+            for (i=0; i<drugCheckedBoxes.length; i++) {
+                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
+            }
+
+            for (i=0; i<eventCheckedBoxes.length; i++) {
+                $("#analytic div[id$='"+eventCheckedBoxes.eq(i).val()+"']").show();
+            }
+
+            for (i=0; i<drugUncheckedBoxes.length; i++) {
+                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
+            }
+
+            for (i=0; i<eventUncheckedBoxes.length; i++) {
+                $("#analytic div[id$='"+eventUncheckedBoxes.eq(i).val()+"']").hide();
+            }
+
+            $("#analytic .panel-collapse").addClass('collapse').removeClass("in");
+            $("#analytic .panel-default:visible").first().find(".panel-collapse").removeClass('collapse').addClass("in");
+        }
+
         $(".custom-checkbox input").change(function () {
             groupChckBoxVal($(this).attr("name").replace("CheckBox", "sAllCheckBox"));
             disableSingleCheckBox($(this).attr("name"));
+            showProperAnalyticDEDivs();
+
+            // var checkedCombs = allCombinations(drugCheckedBoxes, eventCheckedBoxes);
+            // var unCheckedCombs = allCombinations(drugUncheckedBoxes, eventUncheckedBoxes);
+            // unCheckedCombs.push(allCombinations(drugUncheckedBoxes, eventCheckedBoxes));
+            // unCheckedCombs.push(allCombinations(drugCheckedBoxes, eventUncheckedBoxes));
+            // console.log(checkedCombs);
+            // console.log(unCheckedCombs);
+            // for(i=0; i<checkedCombs.length; i++) {
+            //     $("#"+checkedCombs[i]).show();
+            // }
+            // for(i=0; i<unCheckedCombs.length; i++) {
+            //     console.log("dddddddddddddddddddd");
+            //     console.log(unCheckedCombs[i]);
+            //     $("#"+unCheckedCombs[i]).hide();
+            // }
+
         });
 
         function disableSingleCheckBox(chkbxType) {
@@ -235,11 +361,11 @@
         }
 
         function closeProgressIndicator() {
-        $("#first").hide();
-    }
-    function openProgressIndicator() {
-        $("#first").show();
-    }
+            $("#first").hide();
+        }
+        function openProgressIndicator() {
+            $("#first").show();
+        }
         var language = $('#curLang').attr('data-lang');
         var lang='gr'
         if(language=='Greek')
@@ -373,6 +499,29 @@
             keepAppropriateAppsBasedOnParameters();
             buildUrl(app);
         })
+
+        $("#aggregatedli").click(function (){
+            keepAppropriateAppsBasedOnParameters();
+        });
+
+        $("#analyticli").click(function (){
+            keepAppropriateAccordionAppsBasedOnParameters();
+        });
+
+        $("[id^='shinnyAppsTabsComb'] a").click(function (e) {
+            console.log("whatever");
+            app=e.target.parentElement.id;
+
+            // sessionStorage.setItem("shinnyAppId", app);
+            sessionAppId = app;
+            {#app = e.target.childNodes[0].textContent;#}
+            console.log("whatever");
+            // getCheckedElementOfRadios();
+            // keepAppropriateAppsBasedOnParameters();
+            // buildUrl(app);
+        });
+
+
         $('.drugSelectionCol input').click(function (e) {
             var checkbox=e.target;
             var drug = checkbox.value;
@@ -498,6 +647,18 @@
             document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }
 
+        function buildUrlComb(app, drug, condition) {
+            var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+            if (drug && condition) {
+                tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt';
+            } else if (drug) {
+                tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name';
+            } else {
+                tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt';
+            }
+            document.getElementById("shinnyAppsIFrame").src = tmpQueryUrl;
+        }
+
 
         function keepAppropriateAppsBasedOnParameters() {
             var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
@@ -530,6 +691,44 @@
                 document.getElementById("drugRadios").style.display = "none";
                 for (var i = 0; i < OnlyEventApplications.length; i++) {
                     document.getElementById(OnlyEventApplications[i]).style.display = "block";
+                }
+            }
+        }
+
+        function keepAppropriateAccordionAppsBasedOnParameters() {
+            var shinnyAccordionAppsTabs = $("[id^='shinnyAppsTabsComb'] li");
+            for (var i = 0; i < shinnyAccordionAppsTabs.length; i++) {
+                var shinnyAccordionAppsTab = shinnyAccordionAppsTabs[i];
+                shinnyAccordionAppsTab.style.display = "none";
+            }
+
+            if (activeParameters.length == 2) {
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+                document.getElementById("eventRadios").style.display = "block";
+                document.getElementById("drugRadios").style.display = "block";
+                for (var i = 0; i < DrugEventApplications.length; i++) {
+                    // document.getElementById(DrugEventApplications[i]).style.display = "block";
+                    $("[id^="+DrugEventApplications[i]+"").css("display", "block");
+                }
+            } else if (activeParameters.includes('Drug')) {
+                document.getElementById("eventCheckBoxes").style.display = "none";
+                document.getElementById("drugCheckBoxes").style.display = "block";
+                document.getElementById("eventRadios").style.display = "none";
+                document.getElementById("drugRadios").style.display = "block";
+                for (var i = 0; i < OnlyDrugApplications.length; i++) {
+                    // document.getElementById(OnlyDrugApplications[i]).style.display = "block";
+                    $("[id^="+OnlyDrugApplications[i]+"").css("display", "block");
+
+                }
+            } else if (activeParameters.includes('Event')) {
+                document.getElementById("eventCheckBoxes").style.display = "block";
+                document.getElementById("drugCheckBoxes").style.display = "none";
+                document.getElementById("eventRadios").style.display = "block";
+                document.getElementById("drugRadios").style.display = "none";
+                for (var i = 0; i < OnlyEventApplications.length; i++) {
+                    // document.getElementById(OnlyEventApplications[i]).style.display = "block";
+                    $("[id^="+OnlyEventApplications[i]+"").css("display", "block");
                 }
             }
         }
