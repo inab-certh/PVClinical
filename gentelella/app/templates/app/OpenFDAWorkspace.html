@@ -171,8 +171,7 @@
                                 <div id="{{ d }} {% if d and c %}-{% endif %} {{ c }}" class="panel panel-default">
                                     <div class="panel-heading">
                                       <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
-                                        {{ d }} {% if d and c %}-{% endif %} {{ c }}</a>
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">{{ d }} {% if d and c %}-{% endif %} {{ c }}</a>
                                       </h4>
                                     </div>
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
@@ -211,9 +210,9 @@
                                         <div class="container-fluid d-flex flex-column mt-6" style="margin-top: 10px;">
                                             <div class="row iframe-row">
                                                 <div class="col">
-                                                    <div id="divFrame">
-                                                        <div id="first"  class="loader"></div>
-                                                        <iframe id="shinnyAppsIFrame" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+                                                    <div id="divFrameComb{{ forloop.counter }}">
+                                                        <div id="firstComb{{ forloop.counter }}"  class="loader"></div>
+                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
                                                     </div>
                                                 </div>
                                             </div>
@@ -301,10 +300,51 @@
             for (i=0; i<eventUncheckedBoxes.length; i++) {
                 $("#analytic div[id$='"+eventUncheckedBoxes.eq(i).val()+"']").hide();
             }
-
-            $("#analytic .panel-collapse").addClass('collapse').removeClass("in");
-            $("#analytic .panel-default:visible").first().find(".panel-collapse").removeClass('collapse').addClass("in");
+            // var previouslyOpenPanelId = $("#analytic .panel-collapse").hasClass(
+            //     "in").attr("id").replace("collapse", "");
+            // $("#analytic .panel-collapse").addClass('collapse').removeClass("in");
+            $("#analytic .panel-collapse").collapse("hide");
+            var firstVisibleCollapse = $("#analytic .panel-default:visible").first().find(
+                ".panel-collapse");
+            console.log($("#analytic .panel-default:visible").first());
+            // console.log(firstVisibleCollapse);
+            // firstVisibleCollapseLink.trigger("click");
+            // console.log(firstVisibleCollapseLink);
+            // var firstVisibleCollapseId = firstVisibleCollapse.attr("id").replace("collapse", "");
+            // if (previouslyOpenPanelId != firstVisibleCollapseId) {
+            //     $("[id='shinnyAppsTabsComb"+firstVisibleCollapseId+"'] a").first().trigger("click");
+            // }
+            // firstVisibleCollapse.removeClass('collapse').addClass("in");
+            firstVisibleCollapse.collapse("show");
         }
+
+        // $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //     var target = $(e.target).attr("href") // activated tab
+        //     // alert(target);
+        //     if(target==="#analytic") {
+        //         console.log("shoooooooooooooooowwwwn");
+        //         showProperAnalyticDEDivs();
+        //         keepAppropriateAccordionAppsBasedOnParameters();
+        //     } else if(target==="#aggregated") {
+        //         keepAppropriateAppsBasedOnParameters();
+        //     }
+        //
+        // });
+
+        $("#aggregatedli").click(function (){
+            keepAppropriateAppsBasedOnParameters();
+        });
+
+        $("#analyticli").click(function (){
+            showProperAnalyticDEDivs();
+            keepAppropriateAccordionAppsBasedOnParameters();
+        });
+        
+        $("#analytic").on("show.bs.collapse", function (e) {
+            console.log(e.target.id.replace("collapse", ""));
+            $("[id='shinnyAppsTabsComb"+e.target.id.replace("collapse", "")+"'] a"
+            ).first().trigger("click");
+        });
 
         $(".custom-checkbox input").change(function () {
             groupChckBoxVal($(this).attr("name").replace("CheckBox", "sAllCheckBox"));
@@ -489,6 +529,7 @@
         //keepButtonsBasedOnApp(app);
         // initializeDropdowns();
 
+
         $('#shinnyAppsTabs a').click(function (e) {
             app=e.target.parentElement.id;
 
@@ -500,25 +541,18 @@
             buildUrl(app);
         })
 
-        $("#aggregatedli").click(function (){
-            keepAppropriateAppsBasedOnParameters();
-        });
-
-        $("#analyticli").click(function (){
-            keepAppropriateAccordionAppsBasedOnParameters();
-        });
-
         $("[id^='shinnyAppsTabsComb'] a").click(function (e) {
-            console.log("whatever");
             app=e.target.parentElement.id;
 
+            var indx = e.target.parentElement.parentElement.id.replace(
+                "shinnyAppsTabsComb", "");
+            app = app.replace(indx, "");
             // sessionStorage.setItem("shinnyAppId", app);
-            sessionAppId = app;
-            {#app = e.target.childNodes[0].textContent;#}
-            console.log("whatever");
+            ////////////sessionAppId = app;
+            /////// {#app = e.target.childNodes[0].textContent;#}
             // getCheckedElementOfRadios();
             // keepAppropriateAppsBasedOnParameters();
-            // buildUrl(app);
+            buildUrlComb(app,indx);
         });
 
 
@@ -626,7 +660,6 @@
                 }
             }
 
-
         }
 
         function initializeDropdowns() {
@@ -647,7 +680,10 @@
             document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }
 
-        function buildUrlComb(app, drug, condition) {
+        function buildUrlComb(app, indx) {
+            var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
+            var drug = drug_condition[0].replace(/^\s+|\s+$/g, '');
+            var condition = drug_condition[1].replace(/^\s+|\s+$/g, '');
             var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (drug && condition) {
                 tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt';
@@ -656,9 +692,8 @@
             } else {
                 tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt';
             }
-            document.getElementById("shinnyAppsIFrame").src = tmpQueryUrl;
+            document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
         }
-
 
         function keepAppropriateAppsBasedOnParameters() {
             var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
