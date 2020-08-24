@@ -339,6 +339,7 @@
 .panel .collapsed:after {
     font-family:Fontawesome;
     content:'\f078';
+	float: right;
 }
 
 #atcTree {
@@ -515,6 +516,15 @@ iframe {
 }
 .nav.nav-tabs.nav-items-custom li.active a {
   color: blue!important;
+}
+
+.nav-tabs li.active a {
+  color: blue!important;
+}
+
+#combsAccordion .panel .panel-heading .panel-title>a {
+	color: #73879C;
+	font-weight: 600;
 }
 
 .legend-margins{

@@ -166,12 +166,12 @@
                         </div>
 
                         <div id="analytic" class="tab-pane fade in">
-                             <div class="panel-group" id="accordion">
+                             <div class="panel-group" id="combsAccordion">
                              {% for d,c in scenario.all_combs %}
                                 <div id="{{ d }} {% if d and c %}-{% endif %} {{ c }}" class="panel panel-default">
                                     <div class="panel-heading">
                                       <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">{{ d }} {% if d and c %}-{% endif %} {{ c }}</a>
+                                        <a data-toggle="collapse" data-parent="#combsAccordion" href="#collapse{{ forloop.counter }}">{{ d }} {% if d and c %}-{% endif %} {{ c }}</a>
                                       </h4>
                                     </div>
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
@@ -304,9 +304,9 @@
             //     "in").attr("id").replace("collapse", "");
             // $("#analytic .panel-collapse").addClass('collapse').removeClass("in");
             $("#analytic .panel-collapse").collapse("hide");
-            var firstVisibleCollapse = $("#analytic .panel-default:visible").first().find(
-                ".panel-collapse");
-            console.log($("#analytic .panel-default:visible").first());
+            // var firstVisibleCollapse = $("#analytic .panel-default:visible").first().find(
+            //     ".panel-collapse");
+            // console.log($("#analytic .panel-default:visible").first());
             // console.log(firstVisibleCollapse);
             // firstVisibleCollapseLink.trigger("click");
             // console.log(firstVisibleCollapseLink);
@@ -315,7 +315,7 @@
             //     $("[id='shinnyAppsTabsComb"+firstVisibleCollapseId+"'] a").first().trigger("click");
             // }
             // firstVisibleCollapse.removeClass('collapse').addClass("in");
-            firstVisibleCollapse.collapse("show");
+            // firstVisibleCollapse.collapse("show");
         }
 
         // $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
