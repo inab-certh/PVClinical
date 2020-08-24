@@ -852,8 +852,12 @@ shinyServer(function(input, output, session) {
     updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
-    updateRadioButtons(session, 'useexactD', selected = q$exactD)
-    updateRadioButtons(session, 'useexactE', selected = q$exactE)
+    updateRadioButtons(session, 'useexact',
+                       selected = if(length(q$useexact)==0) "exact" else q$useexact)
+    updateRadioButtons(session, 'useexactD',
+                       selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
+    updateRadioButtons(session, 'useexactE',
+                       selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     return(q)
   })
 
@@ -1631,7 +1635,12 @@ shinyServer(function(input, output, session) {
     }
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
-    updateRadioButtons( session, 'useexact', selected = q$useexact )
+    updateRadioButtons(session, 'useexact',
+                       selected = if(length(q$useexact)==0) "exact" else q$useexact)
+    updateRadioButtons(session, 'useexactD',
+                       selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
+    updateRadioButtons(session, 'useexactE',
+                       selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     return(q)

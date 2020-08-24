@@ -1408,11 +1408,11 @@ geturlquery <- reactive({
   updateNumericInput(session,'maxcp', value=q$maxcps)
   updateNumericInput(session,'maxcp2', value=q$maxcps)
   updateRadioButtons(session, 'useexact',
-                     selected = if(length(q$exact)==0) "exact" else q$exact)
+                     selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
-                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                     selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
-                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                     selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   return(q)
 })
 output$ChangeinMeanAnalysis <- renderUI({ 

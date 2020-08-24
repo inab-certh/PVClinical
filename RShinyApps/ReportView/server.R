@@ -56,7 +56,12 @@ shinyServer(function(input, output, session) {
                  style = 'primary', size = NULL, block = NULL, disabled = NULL)
     updateButton(session, 'modalCloseBtn', label = i18n()$t('Close'), icon = NULL, value = NULL)
     updateSliderInput(session, 'skip', paste(i18n()$t('Report'),' #'), value=1, min=1, step= 1, max=100)
-    
+    # updateRadioButtons(session, 'useexact',
+    #                    selected = if(length(q$useexact)==0) "exact" else q$useexact)
+    # updateRadioButtons(session, 'useexactD',
+    #                    selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
+    # updateRadioButtons(session, 'useexactE',
+    #                    selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     
     
