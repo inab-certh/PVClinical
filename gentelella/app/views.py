@@ -43,8 +43,11 @@ def OpenFDAWorkspace(request, scenario_id=None):
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
-    all_combs = list(product(map(lambda d: d.name, drugs),
-                             map(lambda c: c.name, conditions)))
+    print(len(drugs))
+    print(len(conditions))
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
+    print(all_combs)
     scenario = {"drugs": drugs,
                 "conditions": conditions,
                 "all_combs": all_combs,
