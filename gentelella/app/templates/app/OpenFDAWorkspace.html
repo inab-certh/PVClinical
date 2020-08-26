@@ -25,7 +25,7 @@
                                         <fieldset>
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>
-                                                Drugs
+                                                <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
                                             </legend>
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
@@ -47,7 +47,7 @@
 
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>
-                                                Events
+                                                <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
                                             </legend>
                                             {% for condition in scenario.conditions %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
@@ -147,7 +147,7 @@
 <!--                                <li class="nav-item" id="LrTest"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>-->
 <!--                                </li>-->
 <!--                                <li class="nav-item" id="LrTest_E"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"-->
-<!--                                                                      href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>-->
+<!--                                                                      href="#tab-1">{% trans 'Έλεγχος λόγου πιθανοφανειών' %}</a></li>-->
 <!--                                <li class="nav-item" id="DrugEnforceView"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"-->
 <!--                                                                             href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>-->
 <!--                            </ul>-->
@@ -177,33 +177,33 @@
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
                                       <div class="panel-body">
                                         <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabsComb{{ forloop.counter }}">
-                                            <li class="nav-item active" id="QuickViewDrugEvent{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            <li class="nav-item active" id="QuickViewDrugEventComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                                             </li>
-                                            <li class="nav-item active" id="QuickViewDrug{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            <li class="nav-item active" id="QuickViewDrugComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                                             </li>
-                                            <li class="nav-item active" id="QuickViewEvent{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
+                                            <li class="nav-item active" id="QuickViewEventComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                                             </li>
-                                            <li class="nav-item" id="Dash{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
+                                            <li class="nav-item" id="DashComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Πίνακας' %}</a>
                                             </li>
-                                            <li class="nav-item" id="RR_D{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
+                                            <li class="nav-item" id="RR_DComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link " role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
                                             </li>
-                                            <li class="nav-item" id="RR_E{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
+                                            <li class="nav-item" id="RR_EComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Λόγος αναφορών' %}</a>
                                             </li>
-                                            <li class="nav-item" id="LabelView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                            <li class="nav-item" id="LabelViewComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                                    href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
-                                            <li class="nav-item" id="DynPRR{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
+                                            <li class="nav-item" id="DynPRRComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Δυναμικό PRR' %}</a>
                                             </li>
-                                            <li class="nav-item" id="ChangePoint{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                            <li class="nav-item" id="ChangePointComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                                      href="#tab-1">{% trans 'Ανάλυση Αλλαγής Σημείου' %}</a></li>
-                                            <li class="nav-item" id="ReportView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                            <li class="nav-item" id="ReportViewComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                                     href="#tab-1">{% trans 'Αναφορές' %}</a></li>
-                                            <li class="nav-item" id="LabelView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                            <li class="nav-item" id="LabelViewComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                                    href="#tab-1">{% trans 'λαμπελβιου' %}</a></li>
-                                            <li class="nav-item" id="LrTest{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a>
+                                            <li class="nav-item" id="LrTestComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1">{% trans 'Έλεγχος λόγου πιθανοφανειών' %}</a>
                                             </li>
-                                            <li class="nav-item" id="LrTest_E{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
-                                                                                  href="#tab-1">{% trans 'Έλεγχος Πιθανοτήτων' %}</a></li>
-                                            <li class="nav-item" id="DrugEnforceView{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                            <li class="nav-item" id="LrTest_EComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
+                                                                                  href="#tab-1">{% trans 'Έλεγχος λόγου πιθανοφανειών' %}</a></li>
+                                            <li class="nav-item" id="DrugEnforceViewComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab"
                                                                                          href="#tab-1">{% trans 'ντραγκενφορσβιοθ' %}</a></li>
                                         </ul>
 
@@ -551,6 +551,7 @@
 
             var indx = e.target.parentElement.parentElement.id.replace(
                 "shinnyAppsTabsComb", "");
+            app = app.replace("Comb", "");
             app = app.replace(indx, "");
             // sessionStorage.setItem("shinnyAppId", app);
             ////////////sessionAppId = app;
@@ -697,6 +698,7 @@
             } else {
                 tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt';
             }
+            console.log(tmpQueryUrl);
             document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
         }
 
@@ -750,7 +752,7 @@
                 document.getElementById("drugRadios").style.display = "block";
                 for (var i = 0; i < DrugEventApplications.length; i++) {
                     // document.getElementById(DrugEventApplications[i]).style.display = "block";
-                    $("[id^="+DrugEventApplications[i]).css("display", "block");
+                    $("[id^="+DrugEventApplications[i]+"Comb").css("display", "block");
                 }
             } else if (activeParameters.includes('Drug')) {
                 document.getElementById("eventCheckBoxes").style.display = "none";
@@ -759,7 +761,7 @@
                 document.getElementById("drugRadios").style.display = "block";
                 for (var i = 0; i < OnlyDrugApplications.length; i++) {
                     // document.getElementById(OnlyDrugApplications[i]).style.display = "block";
-                    $("[id^="+OnlyDrugApplications[i]).css("display", "block");
+                    $("[id^="+OnlyDrugApplications[i]+"Comb").css("display", "block");
 
                 }
             } else if (activeParameters.includes('Event')) {
@@ -769,7 +771,7 @@
                 document.getElementById("drugRadios").style.display = "none";
                 for (var i = 0; i < OnlyEventApplications.length; i++) {
                     // document.getElementById(OnlyEventApplications[i]).style.display = "block";
-                    $("[id^="+OnlyEventApplications[i]).css("display", "block");
+                    $("[id^="+OnlyEventApplications[i]+"Comb").css("display", "block");
                 }
             }
         }

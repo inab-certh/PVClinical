@@ -1415,6 +1415,15 @@ geturlquery <- reactive({
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   return(q)
 })
+
+output$downloadDataLbl <- renderText({
+  return(i18n()$t("Download Data in Excel format"))
+})
+
+output$downloadBtnLbl <- renderText({
+  return(i18n()$t("Download"))
+})
+
 output$ChangeinMeanAnalysis <- renderUI({ 
   HTML(stri_enc_toutf8(i18n()$t("Change in mean analysis")))
   

@@ -451,6 +451,13 @@ getindcounts <- reactive({
                 totalurl=(totalurl), totaldrugurl=(totaldrugurl) )
   }) 
   
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
   
   output$mymodal <- renderText({
     if (input$update > 0)

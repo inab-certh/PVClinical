@@ -1373,6 +1373,14 @@ shinyServer(function(input, output, session) {
     return (NULL)
   }
   })
+  
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
 
   output$seriouspie <- renderPlot({
     mydf <- getseriouscounts()

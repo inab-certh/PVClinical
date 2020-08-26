@@ -46,9 +46,9 @@ shinyServer(function(input, output, session) {
     
     translator$set_translation_language(selectedLang)
     
-    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous Report')), icon = NULL, value = NULL,
+    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous')), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'nextrow', label = paste(i18n()$t('Next Report'), '>'), icon = NULL, value = NULL,
+    updateButton(session, 'nextrow', label = paste(i18n()$t('Next'), '>'), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
     updateButton(session, 'tabBut', label = paste(i18n()$t('Filter by'), '...'), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)

@@ -539,6 +539,14 @@ anychanged <- reactive({
   f <- input$useexactE
 })
 
+output$downloadDataLbl <- renderText({
+  return(i18n()$t("Download Data in Excel format"))
+})
+
+output$downloadBtnLbl <- renderText({
+  return(i18n()$t("Download"))
+})
+
 #SETTERS
 output$mymodal <- renderText({
   if (input$update > 0)

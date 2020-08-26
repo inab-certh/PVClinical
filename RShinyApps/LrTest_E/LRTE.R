@@ -277,6 +277,13 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
   
   #SETTERS
   output$mymodal <- renderText({
