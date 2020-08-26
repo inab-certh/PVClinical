@@ -539,6 +539,14 @@ anychanged <- reactive({
   f <- input$useexactE
 })
 
+output$downloadDataLbl <- renderText({
+  return(i18n()$t("Download Data in Excel format"))
+})
+
+output$downloadBtnLbl <- renderText({
+  return(i18n()$t("Download"))
+})
+
 #SETTERS
 output$mymodal <- renderText({
   if (input$update > 0)
@@ -1025,11 +1033,11 @@ geturlquery <- reactive({
   updateTextInput(session,"eventname", value=q$t2)
   updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
   updateRadioButtons(session, 'useexact',
-                     selected = if(length(q$exact)==0) "exact" else q$exact)
+                     selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
-                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                     selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
-                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                     selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   return( q )
 })
 

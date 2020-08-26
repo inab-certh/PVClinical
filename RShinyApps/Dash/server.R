@@ -127,7 +127,7 @@ shinyServer(function(input, output, session) {
     if  (is.null( s ) | s=="" ) {
       return("")
     }
-    names <- paste0('%22', s, '%22')
+    names <- paste0('"', s, '"')
     names <- paste0(names, collapse=' ')
     return(names)
   })
@@ -250,6 +250,7 @@ shinyServer(function(input, output, session) {
                       count='seriousnessother' )
     other <- fda_fetch_p( session, myurl)$result
     
+    
     if (length(other)==0)
     {
       other <- c(1,0)
@@ -340,15 +341,25 @@ getsourcecounts <- reactive({
     geturlquery()
     mydf <- getdrugcounts()
     myurl <- mydf$myurl
+    
     mydf <- mydf$mydf
     sourcedf <- mydf
+    
     # mydf <- data.frame( rep('M', nrow(mydf) ), mydf )
     # mydf[,1] <- makemedlinelink(mydf[,2], mydf[,1])
     names <- c('v1','t1' ,'v2', 't2')
     values <- c(getbestdrugvarname(), getbestdrugname(), geteventvarname() )
-    mydf[,3] <- numcoltohyper(mydf[ , 3], sourcedf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
-    mydf[,2] <- coltohyper(mydf[,2], 'E', mybaseurl = getcururl(),
-                           append= paste0( "&v1=", input$v1) )
+    
+    if(is.data.frame(mydf) && nrow(mydf)!=0) {
+      mydf[,3] <- numcoltohyper(mydf[ , 3], sourcedf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
+      mydf[,2] <- coltohyper(mydf[,2], 'E', mybaseurl = getcururl(),
+                             append= paste0( "&v1=", input$v1) ) 
+      
+    }
+    
+    # else  {
+    #   return(list(mydf=))
+    # }
     return( list(mydf=mydf, myurl=(myurl),  sourcedf=sourcedf  ) )
   })  
   
@@ -440,6 +451,13 @@ getindcounts <- reactive({
                 totalurl=(totalurl), totaldrugurl=(totaldrugurl) )
   }) 
   
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
   
   output$mymodal <- renderText({
     if (input$update > 0)
@@ -636,15 +654,15 @@ output$source <- renderTable({
 }, height=300, align=c("rlllr"), sanitize.text.function = function(x) x)  
 
 
-# output$query <- renderTable({  
+# output$query <- renderTable({
 #   mydf <- getdrugcountstable()$mydf
 #   if ( is.data.frame(mydf) )
 #   {
 #     names(mydf) <- c(  stri_enc_toutf8(i18n()$t("Preferred Term")), paste( stri_enc_toutf8(i18n()$t("Case Counts for")), getdrugname()), paste('%', stri_enc_toutf8(i18n()$t("Count") )))
-#     return(mydf) 
+#     return(mydf)
 #   } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 # },  sanitize.text.function = function(x) x)
-
+# 
 
 output$query <- DT::renderDT({
   grlang<-'datatablesGreek.json'
@@ -658,22 +676,41 @@ output$query <- DT::renderDT({
     selectedLang='en'
   }
   if ( is.data.frame(mydf) )
-  { 
-    mydfIndatatable<-mydf
-  } else  {
-    mydfIndatatable<- data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  {
+    mydfIndatatable <- mydf
+  } 
+#   else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
+# })
+  else {
+    mydfIndatatable<- data.frame(Term=paste( 'No results for', getdrugname() ), Count=0)
+    }
   datatable(
-    mydf,
+    mydfIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1,2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
       language = list(
         url = ifelse(selectedLang=='gr', 
-                     grlang,
-                     enlang)
+                     'datatablesGreek.json',
+                     'datatablesEnglish.json')
       )
-    )
-    ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
+    ),  escape=FALSE,rownames= FALSE)
+},
+escape=FALSE)
+  # else  {
+  #   mydfIndatatable<- data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  # datatable(
+  #   mydfIndatatable,
+  #   options = list(
+  #     autoWidth = TRUE,
+  #     columnDefs = list(list(className = 'dt-right', targets = c(1,2))),
+  #     language = list(
+  #       url = ifelse(selectedLang=='gr',
+  #                    grlang,
+  #                    enlang)
+  #     )
+  #   )
+  #   ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
 
 output$eventcloud <- renderPlot({  
   mydf <- getdrugcountstable()$sourcedf
@@ -861,11 +898,11 @@ geturlquery <- reactive({
   updateSelectizeInput(session, 't1', selected= q$t1) 
   updateSelectizeInput(session, 'drugname', selected= q$t1) 
   updateRadioButtons(session, 'useexact',
-                     selected = if(length(q$exact)==0) "exact" else q$exact)
+                     selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
-                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                     selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
-                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                     selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   return(q)
 })
 createinputs <- reactive({

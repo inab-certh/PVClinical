@@ -793,9 +793,19 @@
         "gr":"Προηγούμενη Αναφορά"
       },
       {
+        "def":"Previous",
+        "en":"Previous",
+        "gr":"Προηγούμενη"
+      },
+      {
         "def":"Next Report",
         "en":"Next Report",
         "gr":"Επόμενη Αναφορά"
+      },
+      {
+        "def":"Next",
+        "en":"Next",
+        "gr":"Επόμενη"
       },
       {
         "def":"Report",
@@ -921,6 +931,16 @@
         "def":"Patient.Drug.OpenFDA",
         "en":"Patient.Drug.OpenFDA",
         "gr":"Ασθενής.Φάρμακο.OpenFDA"
+      },
+      {
+        "def":"Download Data in Excel format",
+        "en":"Download Data in Excel format",
+        "gr":"Λήψη δεδομένων σε μορφή Excel"
+      },
+      {
+        "def":"Download",
+        "en":"Download",
+        "gr":"Λήψη"
       }
   ]
 }

@@ -16,6 +16,7 @@ require(RColorBrewer)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
+library(stringr)
 library("rjson")
 library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
@@ -933,6 +934,8 @@ shinyServer(function(input, output, session) {
 
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
+    print("userexact")
+    print(q$useexact)
 
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
@@ -948,11 +951,11 @@ shinyServer(function(input, output, session) {
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
     updateRadioButtons(session, 'useexact',
-                       selected = if(length(q$exact)==0) "exact" else q$exact)
+                       selected = if(length(q$useexact)==0) "exact" else q$useexact)
     updateRadioButtons(session, 'useexactD',
-                       selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                       selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
     updateRadioButtons(session, 'useexactE',
-                       selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                       selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     return(q)
   })
 
@@ -966,6 +969,16 @@ shinyServer(function(input, output, session) {
     names <- paste0(names, collapse=' ')
     return(names)
   })
+  getquoteddrugname <- reactive({ 
+    s <- getdrugname()
+    if  (is.null( s ) | s=="" ) {
+      return("")
+    }
+    names <- paste0('%22', s, '%22')
+    names <- paste0(names, collapse=' ')
+    return(names)
+  })
+  
   getbestdrugname <- function(quote=TRUE){
     exact <-   ( getdrugcounts999()$exact)
     if (exact)
@@ -1360,6 +1373,14 @@ shinyServer(function(input, output, session) {
     return (NULL)
   }
   })
+  
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
 
   output$seriouspie <- renderPlot({
     mydf <- getseriouscounts()
@@ -1558,16 +1579,16 @@ shinyServer(function(input, output, session) {
   #   p( input$usepopcb )
   # })
 
-  geturlquery <- reactive({
-    q <- parseQueryString(session$clientData$url_search)
-    #  browser()
-    updateSelectizeInput(session, inputId = "v1", selected = q$v1)
-    updateNumericInput(session, "limit", value = q$limit)
-    updateSelectizeInput(session, 't1', selected= q$drug)
-    updateSelectizeInput(session, 't1', selected= q$t1)
-    updateSelectizeInput(session, 'drugname', selected= q$t1)
-    return(q)
-  })
+  # geturlquery <- reactive({
+  #   q <- parseQueryString(session$clientData$url_search)
+  #   #  browser()
+  #   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
+  #   updateNumericInput(session, "limit", value = q$limit)
+  #   updateSelectizeInput(session, 't1', selected= q$drug)
+  #   updateSelectizeInput(session, 't1', selected= q$t1)
+  #   updateSelectizeInput(session, 'drugname', selected= q$t1)
+  #   return(q)
+  # })
   createinputs <- reactive({
     q <- parseQueryString(session$clientData$url_search)
     #  browser()
@@ -1798,28 +1819,28 @@ shinyServer(function(input, output, session) {
     return('')
   })
   
-  geturlquery <- reactive({
-    q <- parseQueryString(session$clientData$url_search)
-    updateNumericInput(session, "limit", value = q$limit)
-    updateNumericInput(session, "limit2", value = q$limit)
-    if( getwhich()== 'D'){
-      updateSelectizeInput(session, 't1', selected= q$drug)
-      updateSelectizeInput(session, 't1', selected= q$t1)
-      updateSelectizeInput(session, 'drugname', selected= q$drug)
-      updateSelectizeInput(session, 'drugname', selected= q$t1)   
-    } else {
-      updateSelectizeInput(session, 't1', selected= q$event)
-      updateSelectizeInput(session, 't1', selected= q$t1)
-      updateSelectizeInput(session, 'drugname', selected= q$event)
-      updateSelectizeInput(session, 'drugname', selected= q$t1)    
-    }
-    updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
-    updateSelectizeInput(session, inputId = "v1", selected = q$v1)
-    updateRadioButtons( session, 'useexact', selected = q$useexact )
-    updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
-    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
-    return(q)
-  })
+  # geturlquery <- reactive({
+  #   q <- parseQueryString(session$clientData$url_search)
+  #   updateNumericInput(session, "limit", value = q$limit)
+  #   updateNumericInput(session, "limit2", value = q$limit)
+  #   if( getwhich()== 'D'){
+  #     updateSelectizeInput(session, 't1', selected= q$drug)
+  #     updateSelectizeInput(session, 't1', selected= q$t1)
+  #     updateSelectizeInput(session, 'drugname', selected= q$drug)
+  #     updateSelectizeInput(session, 'drugname', selected= q$t1)   
+  #   } else {
+  #     updateSelectizeInput(session, 't1', selected= q$event)
+  #     updateSelectizeInput(session, 't1', selected= q$t1)
+  #     updateSelectizeInput(session, 'drugname', selected= q$event)
+  #     updateSelectizeInput(session, 'drugname', selected= q$t1)    
+  #   }
+  #   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
+  #   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
+  #   updateRadioButtons( session, 'useexact', selected = q$useexact )
+  #   updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
+  #   updateTabsetPanel(session, 'maintabs', selected=q$curtab)
+  #   return(q)
+  # })
   
   
   output$drugname <- renderText({ 

@@ -277,6 +277,13 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
   
   #SETTERS
   output$mymodal <- renderText({
@@ -1696,11 +1703,11 @@ geturlquery <- reactive({
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
   updateRadioButtons(session, 'useexact',
-                     selected = if(length(q$exact)==0) "exact" else q$exact)
+                     selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
-                     selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                     selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
-                     selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                     selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   return(q)
 })
 # Return the components of the URL in a string:

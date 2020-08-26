@@ -87,7 +87,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
                                wellPanel(
-                                 column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", "Download")))),
+                                 column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", textOutput("downloadBtnLbl"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
                                ),
                                withSpinner(dataTableOutput( 'prr2' ))
