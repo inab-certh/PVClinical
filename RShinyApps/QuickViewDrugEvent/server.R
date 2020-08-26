@@ -30,7 +30,6 @@ source('sourcedir.R')
 
 
 shinyServer(function(input, output, session) {
-  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -754,6 +753,15 @@ shinyServer(function(input, output, session) {
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
     
   })
+  
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
+  
   output$dl <- downloadHandler(
     filename = function() { "Data.xlsx"},
     content = function(file) {

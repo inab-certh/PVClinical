@@ -1704,6 +1704,13 @@ getcururl <- reactive({
   return(s)
 })
 
+output$downloadDataLbl <- renderText({
+  return(i18n()$t("Download Data in Excel format"))
+})
+
+output$downloadBtnLbl <- renderText({
+  return(i18n()$t("Download"))
+})
 
   output$urlquery <- renderText({ 
     return( getcururl()  )
