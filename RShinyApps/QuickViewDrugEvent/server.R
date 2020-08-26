@@ -30,7 +30,6 @@ source('sourcedir.R')
 
 
 shinyServer(function(input, output, session) {
-  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -754,6 +753,15 @@ shinyServer(function(input, output, session) {
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
     
   })
+  
+  output$downloadDataLbl <- renderText({
+    return(i18n()$t("Download Data in Excel format"))
+  })
+  
+  output$downloadBtnLbl <- renderText({
+    return(i18n()$t("Download"))
+  })
+  
   output$dl <- downloadHandler(
     filename = function() { "Data.xlsx"},
     content = function(file) {
@@ -996,11 +1004,11 @@ shinyServer(function(input, output, session) {
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
     updateRadioButtons(session, 'useexact',
-                       selected = if(length(q$exact)==0) "exact" else q$exact)
+                       selected = if(length(q$useexact)==0) "exact" else q$useexact)
     updateRadioButtons(session, 'useexactD',
-                       selected = if(length(q$exactD)==0) "exact" else q$exactD)
+                       selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
     updateRadioButtons(session, 'useexactE',
-                       selected = if(length(q$exactE)==0) "exact" else q$exactE)
+                       selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     return(q)
   })
 
@@ -1014,6 +1022,17 @@ shinyServer(function(input, output, session) {
     names <- paste0(names, collapse=' ')
     return(names)
   })
+  
+  getquoteddrugname <- reactive({ 
+    s <- getdrugname()
+    if  (is.null( s ) | s=="" ) {
+      return("")
+    }
+    names <- paste0('%22', s, '%22')
+    names <- paste0(names, collapse=' ')
+    return(names)
+  })
+  
   getbestdrugname <- function(quote=TRUE){
     exact <-   ( getdrugcounts999()$exact)
     if (exact)

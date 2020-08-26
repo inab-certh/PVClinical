@@ -100,7 +100,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                     tabPanel(
                                       uiOutput("LRTResultsbasedonTotalDrugs"),
                                       wellPanel(
-                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", "Download")))),
+                                        column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr",  textOutput("downloadBtnLbl"))))),
                                         style="background-color:white;height:60px;border:none",uiOutput("prrtitle", style = "position:absolute;right:40px;z-index:10")
                                       ),
                                         withSpinner(dataTableOutput("prr")

@@ -46,9 +46,9 @@ shinyServer(function(input, output, session) {
     
     translator$set_translation_language(selectedLang)
     
-    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous Report')), icon = NULL, value = NULL,
+    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous')), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'nextrow', label = paste(i18n()$t('Next Report'), '>'), icon = NULL, value = NULL,
+    updateButton(session, 'nextrow', label = paste(i18n()$t('Next'), '>'), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
     updateButton(session, 'tabBut', label = paste(i18n()$t('Filter by'), '...'), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
@@ -56,7 +56,12 @@ shinyServer(function(input, output, session) {
                  style = 'primary', size = NULL, block = NULL, disabled = NULL)
     updateButton(session, 'modalCloseBtn', label = i18n()$t('Close'), icon = NULL, value = NULL)
     updateSliderInput(session, 'skip', paste(i18n()$t('Report'),' #'), value=1, min=1, step= 1, max=100)
-    
+    # updateRadioButtons(session, 'useexact',
+    #                    selected = if(length(q$useexact)==0) "exact" else q$useexact)
+    # updateRadioButtons(session, 'useexactD',
+    #                    selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
+    # updateRadioButtons(session, 'useexactE',
+    #                    selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     
     

@@ -57,7 +57,7 @@ renderuseexact <- function() {
 } 
 shinyUI(fluidPage( includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),column(width=12,
-                    column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", "Download"))))),
+                    column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", textOutput("downloadBtnLbl")))))),
                   ),
                   fluidRow(useShinyjs(),column(width=12,bsAlert("nodata_dash"))),
                    fluidRow(useShinyjs(),

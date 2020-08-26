@@ -82,7 +82,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 
                           wellPanel(
-                            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinMeanAnalysis", "Download")))),
+                            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinMeanAnalysis", textOutput("downloadBtnLbl"))))),
                             
                             style="background-color:white;height:60px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                           ),

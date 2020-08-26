@@ -3,6 +3,7 @@ import re
 import os
 
 from itertools import chain
+from itertools import product
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -42,8 +43,11 @@ def OpenFDAWorkspace(request, scenario_id=None):
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
     scenario = {"drugs": drugs,
                 "conditions": conditions,
+                "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
                 "timestamp": sc.timestamp
