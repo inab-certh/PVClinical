@@ -60,6 +60,18 @@ shinyServer(function(input, output, session) {
     #                     selected = selectedLang
     #   )
     # }
+    langs = list(gr="el", en="en")
+    
+    removeUI(
+      selector = "#daterange",
+      multiple = FALSE
+    )
+    
+    insertUI(
+      selector = ".tabbable",
+      where = "beforeBegin",
+      ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+    )
     
   })
 # Getters ======  
