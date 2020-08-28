@@ -34,13 +34,16 @@ rendermaxcp <- function() {
   ( htmlOutput('maxcp') )
   
 } 
+
+
+
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),style = "margin-top:15px;",
                            column(width=12, bsAlert("nodata_changepoint"))),
   fluidRow(id="mainrow", useShinyjs(),style = "margin-top:15px;",
            column(width=12,
-                  
                   hidden(
+                    # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
                     uiOutput('page_content'),
                     
                     selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
@@ -76,8 +79,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                placement='left')
                 
                   ),
-                 uiOutput("daterange"),
-    # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date() ),
+                 dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                 # uiOutput("daterangeout"),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 

@@ -143,7 +143,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                       numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
                                      HTML( tt('cplimit1') ), tt('cplimit2'),
                                      placement='left'),
-                      dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date())
+                      dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" )
                     ),
                     
                     
