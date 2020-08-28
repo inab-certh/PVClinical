@@ -121,7 +121,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
     #   start = '1989-6-30',
     #   end = Sys.Date()
     # ),
-    uiOutput("daterange"),
+    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+    # uiOutput("daterange"),
     tabsetPanel(
       tabPanel(
         uiOutput("PRRRORResults"),

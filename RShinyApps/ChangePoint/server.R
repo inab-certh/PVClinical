@@ -43,20 +43,27 @@ shinyServer(function(input, output, session) {
                 i18n()$t("Change language"),
                 choices = c("en","gr"),
                 selected = selectedLang)
-    
   })
   
-  output$daterange <- renderUI({
-    query <- parseQueryString(session$clientData$url_search)
-    selectedLang = tail(query[['lang']], 1)
-    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
-    {
-      selectedLang='en'
-    }
-    
-    langs = list(gr="el", en="en")
-    dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
-  })
+  
+  # output$daterangeout <- renderUI({
+  #   query <- parseQueryString(session$clientData$url_search)
+  #   selectedLang = tail(query[['lang']], 1)
+  #   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  #   {
+  #     selectedLang='en'
+  #   }
+  # 
+  #   langs = list(gr="el", en="en")
+  #   # print(langs[[selectedLang]])
+  #   # print(i18n()$t("to"))
+  #   # langs[[selectedLang]]
+  # 
+  #   # updateDateRangeInput(session,'daterange', language=langs[[selectedLang]], separator=i18n()$t("to"))
+  #   #dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+  # 
+  #   return (dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to")))
+  # })
   
   observe({
     query <- parseQueryString(session$clientData$url_search)
@@ -74,8 +81,41 @@ shinyServer(function(input, output, session) {
     #                     selected = selectedLang
     #   )
     # }
+    langs = list(gr="el", en="en")
+    
+    removeUI(
+      selector = "#daterange",
+      multiple = FALSE
+    )
+    
+    insertUI(
+      selector = ".tabbable",
+      where = "beforeBegin",
+      ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+    )
     
   })
+  
+  
+  # observeEvent(input$daterange, {
+  #   query <- parseQueryString(session$clientData$url_search)
+  #   selectedLang = tail(query[['lang']], 1)
+  #   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  #   {
+  #     selectedLang='en'
+  #   }
+  #   
+  #   langs = list(gr="el", en="en")
+  #   # print(langs[[selectedLang]])
+  #   # print(i18n()$t("to"))
+  #   # langs[[selectedLang]]
+  #   runjs('$("#daterange input").attr("data-date-language", "gr");')
+  #   # runjs('$(".datepicker").datepicker("destroy").datepicker($.datepicker.regional["el"]);')
+  #   print(paste0("$('#daterange span span').text('", i18n()$t("to"), "');"))
+  #   runjs(paste0("$('#daterange span span').text('", i18n()$t("to"), "');"))
+  #   # runjs(paste0('$("#daterange input").attr("data-date-language", "', langs[[selectedLang]],'")'))
+  # })
+  
 #Getters
   getwaittime <- reactive({ 
     if(session$clientData$url_hostname == '10.12.207.87')
@@ -284,7 +324,7 @@ getqueryde <- reactive({
 
 getquerydata <- reactive({
   mydf <- getqueryde()
-  tmp <- mydf$out$result    
+  tmp <-mydf$out$result
   createAlert(session, 'alert', 'calcalert',
               title='Calculating...', 
               content = 'Calculating Time Series...', 
@@ -1404,7 +1444,7 @@ geturlquery <- reactive({
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2) 
-  updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange', start = q$start, end = q$end)
   updateNumericInput(session,'maxcp', value=q$maxcps)
   updateNumericInput(session,'maxcp2', value=q$maxcps)
   updateRadioButtons(session, 'useexact',

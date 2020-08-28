@@ -93,8 +93,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                                  inline = TRUE),
                                     downloadButton('downloadReport', 'Download LRT Report')
                                   ),
-                                  # dateRangeInput('daterange', uiOutput('UseReportsBetween'), start = '1989-6-30', end = Sys.Date()),
-                                  uiOutput("daterange"),
+                           dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                                  #uiOutput("daterange"),
                                   
                                   tabsetPanel(
                                     tabPanel(
