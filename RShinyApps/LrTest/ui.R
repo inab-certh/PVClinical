@@ -100,6 +100,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   #                start = '1989-6-30', end = Sys.Date()),
                   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
                   #uiOutput("daterange"),
+                  uiOutput("dtlocator"),
                   
                   tabsetPanel(id="maintabs",
                     tabPanel(uiOutput("LRTResultsbasedonTotalEvents"),

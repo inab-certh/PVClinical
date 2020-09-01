@@ -158,7 +158,7 @@ def get_conditions_nodes_ids(request):
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
     scenarios = []
-    for sc in Scenario.objects.all():
+    for sc in Scenario.objects.order_by('-timestamp').all():
         scenarios.append({
             "id": sc.id,
             "title": sc.title,
