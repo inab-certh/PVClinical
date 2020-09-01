@@ -8,7 +8,7 @@
 {% block stylesheets %}
     {{ block.super }}
     {{ form.media.css }}
-    <link href='{% static "vendors/bootstrap-treeview/dist/bootstrap-treeview.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css" %}' rel="stylesheet">
     <link rel="stylesheet" href='{% static "vendors/vakata-jstree-3.3.9-0/dist/themes/default/style.min.css" %}'/>
     <link href='{% static "vendors/select2-to-tree/src/select2totree.css" %}'  rel="stylesheet">
 {% endblock stylesheets %}
@@ -20,7 +20,7 @@
 	<!-- Select 2 css -->
 	{{ form.media.js }}
     <script src='{% static "build/js/scenario.js" %}'></script>
-    <script src='{% static "vendors/bootstrap-treeview/dist/bootstrap-treeview.min.js" %}'></script>
+    <script src='{% static "vendors/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js" %}'></script>
     <script src='{% static "vendors/vakata-jstree-3.3.9-0/dist/jstree.min.js" %}'></script>
     <script src='{% static "vendors/select2-to-tree/src/select2totree.js" %}'></script>
 {% endblock %}
