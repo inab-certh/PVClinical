@@ -56,6 +56,9 @@ flags <- c(
 )
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
+                  fluidRow( useShinyjs(),useShinyalert(), 
+                            column(width=12, dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                                   uiOutput("dtlocator"))),
                   fluidRow( useShinyjs(),useShinyalert(),
                             column(width=12,uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                    # pickerInput("countries", "countries",
@@ -135,8 +138,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                                                                                                                            placement='left'),              
                       numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
                                      HTML( tt('cplimit1') ), tt('cplimit2'),
-                                     placement='left'),
-                      dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" )
+                                     placement='left')
                     ),
                     
                     
