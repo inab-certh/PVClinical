@@ -102,10 +102,14 @@ def get_atc_children(parent, level, codes):
     children = list(set(filter(lambda el: el.startswith(parent), atc_by_level(level+1, codes))))
     # print(children)
 
+    # Show checkboxes only for level 4 and 5 of ATCs
     if level==4:
-        return sorted(list(map(lambda el: {"text": el}, children)), key = lambda v: v["text"])
+        return sorted(list(map(lambda el: {"text": el, "hideCheckbox": False, "selectable": True},
+                               children)), key = lambda v: v["text"])
 
     return sorted([{"text": ch,
+                    "selectable": level==3,
+                    "hideCheckbox": level!=3,
                     "nodes": get_atc_children(ch, level+1, codes)} for ch in children],
                   key = lambda v: v["text"])
 
@@ -121,7 +125,8 @@ def atc_hierarchy_tree(codes):
 
     # Append to/create the ATC tree for the specific codes (of drugs) we have
     for root in levels[0]:
-        atc_tree.append({"text": root, "nodes": get_atc_children(root, 1, codes)})
+        atc_tree.append({"text": root, "selectable": False, "hideCheckbox": True,
+                         "nodes": get_atc_children(root, 1, codes)})
 
     return atc_tree
 

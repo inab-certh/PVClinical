@@ -93,8 +93,6 @@ $(function() {
 
                 // Change synonyms and send trigger
                 $("#drugsSynonyms").html(options_arr).trigger("change");
-                // console.log($("#drugsSynonyms"));
-
               },
               error: function (data) {
                 console.log("error "+data);
@@ -133,7 +131,6 @@ $(function() {
 
         return ancestors;
     }
-
 
     $("#atcTree").treeview({
         data: atc_tree,
@@ -223,9 +220,8 @@ $(function() {
             });
 
             var selected_atcs = selected_atcs_ids.map(function (nodeId) {
-                return $("#atcTree").treeview('getNode', nodeId).text
+                return $("#atcTree").treeview('getNode', nodeId).text;
             });
-            // console.log(selected_atcs);
 
             var selected_drugs_by_atc = all_drugs.filter(function (drug) {
                 return selected_atcs.indexOf(drug.split(' - ').pop()) != -1;
@@ -284,7 +280,6 @@ $(function() {
 
     var medDRA_tree = get_medDRA_tree();
     var refresh = true;
-    // console.log(medDRA_tree);
     $("#loaderOverlay").fadeIn();
     $("#medDRATree").jstree({
         "core": {
@@ -322,8 +317,6 @@ $(function() {
         var new_sel_conditions = cur_sel_conditions.filter(
             x => prev_sel_conditions.indexOf(x) === -1);
 
-        // console.log("desel_conditions: "+ desel_conditions)
-
         // $("#medDRATree").jstree("deselect_node", desel_conditions);
         uncheck_close_leaves(desel_conditions);
         check_open_leaves(new_sel_conditions);
@@ -332,19 +325,16 @@ $(function() {
     $('#medDRATree')
       // listen for event
     .on('changed.jstree', function (e, data) {
-        // console.log(refresh);
-        // console.log(data.selected);
+
         $("#loaderOverlay").fadeIn();
         var i, j, r = [];
-        // console.log(e);
-        // console.log(data.selected.length);
-        // console.log($("[name='conditions_fld']").val().length);
+
         if (refresh) {
             for(i = 0, j = data.selected.length; i < j; i++) {
                 var node_txt = data.instance.get_node(data.selected[i]).text;
                 if(r.indexOf(node_txt) === -1){
                     r.push(node_txt);
-                    // console.log(data.instance.get_node(data.selected[i]).text);
+
                     if($("option:contains('"+node_txt+"')").length===0) {
                         $("[name='conditions_fld']").append(
                             "<option id=\""+node_txt+"\">"+node_txt+"</option>");
@@ -352,8 +342,6 @@ $(function() {
 
                 }
             }
-
-            // console.log(data.selected);
 
             $("[name='conditions_fld']").val(r).trigger("change");
 
@@ -422,7 +410,6 @@ $(function() {
             async: false
         }).done(function(data) {
             conds_nodes_ids = data.conds_nodes_ids;
-            // console.log(conds_nodes_ids);
         }).fail(function () {
             conds_nodes_ids = [];
         });

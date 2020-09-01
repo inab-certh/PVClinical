@@ -68,7 +68,7 @@ shinyServer(function(input, output, session) {
     )
     
     insertUI(
-      selector = ".tabbable",
+      selector = "#dtlocator",
       where = "beforeBegin",
       ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
     )

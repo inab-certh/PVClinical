@@ -63,6 +63,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             column(width=12,bsAlert("nodata_qvd"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                   fluidRow( useShinyjs(),useShinyalert(),
                             column(id="xlsrow", width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", textOutput("downloadBtnLbl")))))),
+                  fluidRow( useShinyjs(),useShinyalert(),
+                            column(width=12, dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                                   uiOutput("dtlocator"))),
                             # column(width=4,bsAlert("nodata_qvd"),uiOutput("info",style = "position:absolute;right:40px;z-index:10"))),
                                    # pickerInput("countries", "countries",
                                    # 
@@ -142,13 +145,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                                                                                                                            placement='left'),              
                       numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, , step=1,
                                      HTML( tt('cplimit1') ), tt('cplimit2'),
-                                     placement='left'),
-                      dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" )
+                                     placement='left')
                     ),
-                    
-                    
-                    
-                      
                       
                       
                     )

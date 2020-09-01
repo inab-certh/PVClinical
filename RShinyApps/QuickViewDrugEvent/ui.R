@@ -67,6 +67,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
                            column(width=12, 
                                   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                                  uiOutput("dtlocator"),
                                   fluidRow( bsAlert("nodata_qvde"),
                                             wellPanel(
                                               style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
