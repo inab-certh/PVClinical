@@ -289,11 +289,13 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  output$downloadDataLbl <- renderText({
+  output$downloadDataLbl1 <- output$downloadDataLbl2 <- output$downloadDataLbl3 <- output$downloadDataLbl4 <- 
+    output$downloadDataLbl5 <- output$downloadDataLbl6 <- output$downloadDataLbl7 <- output$downloadDataLbl8 <- renderText({
     return(i18n()$t("Download Data in Excel format"))
   })
   
-  output$downloadBtnLbl <- renderText({
+  output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- output$downloadBtnLbl4 <- 
+    output$downloadBtnLbl5 <- output$downloadBtnLbl6 <- output$downloadBtnLbl7 <- output$downloadBtnLbl8 <- renderText({
     return(i18n()$t("Download"))
   })
   

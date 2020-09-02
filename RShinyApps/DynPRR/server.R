@@ -551,11 +551,13 @@ anychanged <- reactive({
   f <- input$useexactE
 })
 
-output$downloadDataLbl <- renderText({
+output$downloadDataLbl1 <- output$downloadDataLbl2 <- 
+  output$downloadDataLbl3 <- output$downloadDataLbl4 <- renderText({
   return(i18n()$t("Download Data in Excel format"))
 })
 
-output$downloadBtnLbl <- renderText({
+output$downloadBtnLbl1 <- output$downloadBtnLbl2 <-
+  output$downloadBtnLbl3 <- output$downloadBtnLbl4 <- renderText({
   return(i18n()$t("Download"))
 })
 
