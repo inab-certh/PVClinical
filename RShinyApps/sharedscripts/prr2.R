@@ -788,11 +788,15 @@ textplot <- reactive({
   #cloudout(mydf, paste('PRR for Events in Reports That Contain', getterm1( session ) ) )  
 })
 
-output$downloadDataLbl <- renderText({
+output$downloadDataLbl1 <- output$downloadDataLbl2 <- output$downloadDataLbl3 <-
+  output$downloadDataLbl4 <- output$downloadDataLbl5 <- output$downloadDataLbl6 <-
+  renderText({
   return(i18n()$t("Download Data in Excel format"))
 })
 
-output$downloadBtnLbl <- renderText({
+output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <-
+  output$downloadBtnLbl4 <- output$downloadBtnLbl5 <- output$downloadBtnLbl6 <-
+  renderText({
   return(i18n()$t("Download"))
 })
 
