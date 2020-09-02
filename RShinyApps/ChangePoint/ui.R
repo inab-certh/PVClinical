@@ -94,14 +94,14 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                           ),
                 tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
                          wellPanel(
-                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn2","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinVarianceAnalysis", "Download")))),
+                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn2",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinVarianceAnalysis", textOutput("downloadBtnLbl"))))),
                            style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(plotlyOutput( 'cpvarplot' ) )
                          ),
                  tabPanel(uiOutput("BayesianChangepointAnalysis"),  
                           wellPanel(
-                            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn3","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlBayesianChangepointAnalysis", "Download")))),
+                            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn3",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlBayesianChangepointAnalysis", textOutput("downloadBtnLbl"))))),
                             style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
                           ),
                           withSpinner(plotlyOutput( 'cpbayesplot' ))
@@ -109,7 +109,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                           ),
                 tabPanel(uiOutput("ReportCountsbyDate"),  
                          wellPanel(
-                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn4","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlReportCountsbyDate", "Download")))),
+                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn4",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlReportCountsbyDate", textOutput("downloadBtnLbl"))))),
                            style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(plotlyOutput('queryplot'))
@@ -117,14 +117,14 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                 ),
                 tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                          wellPanel(
-                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn5","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlCountsForDrugsInSelectedReports", "Download")))),
+                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn5",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlCountsForDrugsInSelectedReports", textOutput("downloadBtnLbl"))))),
                            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(dataTableOutput('coquery'))
                 ),
                 tabPanel(uiOutput("CountsForEventsInSelectedReports"),
                          wellPanel(
-                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn6","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlCountsForEventsInSelectedReports", "Download")))),
+                           column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn6",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlCountsForEventsInSelectedReports", textOutput("downloadBtnLbl"))))),
                            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
                          ),
                          withSpinner(dataTableOutput('coqueryE'))

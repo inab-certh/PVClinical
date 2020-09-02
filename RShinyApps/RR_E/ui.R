@@ -136,7 +136,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
       tabPanel(
         uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
         wellPanel(
-          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlspecifieddrug2", "Download")))),
+          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlspecifieddrug2", textOutput("downloadBtnLbl"))))),
           style="background-color:white;height:60px;border:none",uiOutput("infospecifieddrug2",style = "position:absolute;right:40px;z-index:10")
         ),
         withSpinner(dataTableOutput( 'specifieddrug2' ))
@@ -145,7 +145,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
       tabPanel(
         uiOutput("AnalyzedDrugCountsforAllEvents"),
         wellPanel(
-          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall2", "Download")))),
+          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall2", textOutput("downloadBtnLbl"))))),
           style="background-color:white;height:60px;border:none",uiOutput("infoall2",style = "position:absolute;right:40px;z-index:10")
         ),
         withSpinner(makeDataTableOutput( 'all2' ))
@@ -153,7 +153,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
       tabPanel(
         uiOutput("RankedDrugCountsforEvent"),
         wellPanel(
-          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", "Download")))),
+          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl"))))),
           style="background-color:white;height:60px;border:none",uiOutput("infocoqueryE2",style = "position:absolute;right:40px;z-index:10")
         ),  
         withSpinner(makeDataTableOutput( 'coqueryE2' ))
@@ -162,7 +162,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
         tabPanel(
           uiOutput("CountsForEventsInSelectedReports"),
           wellPanel(
-            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", "Download")))),
+            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl"))))),
             style="background-color:white;height:60px;border:none",uiOutput("infocoquery2",style = "position:absolute;right:40px;z-index:10")
           ),
           withSpinner(makeDataTableOutput( 'coquery2' )) 
@@ -170,7 +170,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
         tabPanel(
           uiOutput("CountsForIndicationsInSelectedReports"),
           wellPanel(
-            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn","Download Data in Excel format")),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery2", "Download")))),
+            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery2", textOutput("downloadBtnLbl"))))),
             style="background-color:white;height:60px;border:none",uiOutput("infoindquery2",style = "position:absolute;right:40px;z-index:10")
           ),
           withSpinner(makeDataTableOutput( 'indquery2' )) 
