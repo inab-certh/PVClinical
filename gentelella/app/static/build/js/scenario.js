@@ -58,17 +58,15 @@ $(function() {
         var checked_atcs = $("#atcTree").treeview('getChecked');
         var atcs_to_uncheck = checked_atcs.filter(function (ch_atc) {
             return ch_atc.text.length==7 && selected_atcs.indexOf(ch_atc.text) == -1;
-        })
+        });
 
-        $("#atcTree").treeview('uncheckNode', [atcs_to_uncheck]);
+        if(atcs_to_uncheck.length!==0) {
+            $("#atcTree").treeview('uncheckNode', [atcs_to_uncheck]);
+        }
 
-
-        var nodes_to_check = $("li.node-atcTree").map(function () {
-            var root = $("#atcTree").treeview('getNode', $(this).data("nodeid"));
-            return _getChildren(root).filter(function (node) {
+        var nodes_to_check = $("#atcTree").treeview("getNodes").filter(function (node) {
                 return (selected_atcs.indexOf(node.text) != -1);
-            });
-        }).toArray();
+        });
 
         $("#atcTree").treeview('checkNode', [nodes_to_check, {silent: true}]);
 
@@ -122,13 +120,17 @@ $(function() {
         // If there is no parent, return empty array
         if (node.parentId === undefined) return [];
         var ancestors = [];
-
         while (node.parentId!=undefined) {
-            var parent = $("#atcTree").treeview('getNode', [node.parentId, {silent: true}]);
-            ancestors.push(parent);
+            var parent = $("#atcTree").treeview("getNodes").filter(function (cnode) {
+                return node.parentId ===  cnode.nodeId;
+            })[0];
+            // var parent = $("#atcTree").treeview("findNodes", ["^"+node.parentId+"$", "nodeId"])[0];
+            if(parent.selectable) {
+                ancestors.push(parent);
+            }
             node = parent;
-        };
 
+        }
         return ancestors;
     }
 
@@ -186,23 +188,27 @@ $(function() {
             check_nodes = check_nodes.concat(children_nodes);
 
             var siblings = $("#atcTree").treeview('getSiblings', [node, {silent: true}]);
-            var checked_siblings = siblings.length!=0?siblings.filter(function (s) {
+            var checked_siblings = siblings.length!==0?siblings.filter(function (s) {
                 return s.state.checked;
             }):[];
 
             if(siblings.length === checked_siblings.length) {
                 if(node.parentId!=undefined){
-                    var par = $("#atcTree").treeview('getNode', node.parentId);
-                    check_nodes.push(par);
+                    var par = $("#atcTree").treeview("findNodes", ["^"+node.parentId+"$", "nodeId"])[0];
+                    if(par.selectable === true){
+                        check_nodes.push(par);
+                    }
+
                 }
             }
 
             // Some are already checked, so just check the ones not already checked
-            var to_be_checked = check_nodes.length!=0?check_nodes.filter(function (n) {
+            var to_be_checked = check_nodes.length!==0?check_nodes.filter(function (n) {
                 return !n.state.checked;
             }):[];
-
-            $("#atcTree").treeview('checkNode', [to_be_checked]);
+            if(to_be_checked.length!==0) {
+                $("#atcTree").treeview('checkNode', [to_be_checked, {silent: true}]);
+            }
 
             /* Get only whole atc codes checked, find equivalent drugs and transfer
             those drugs to drugs' select2 box as selected drugs
@@ -211,16 +217,27 @@ $(function() {
             //         return $(this).val()}).toArray();
 
             // Add parent node in children_nodes_list
-            var candidate_nodes = children_nodes;
+            var candidate_nodes = children_nodes.map(function (node){
+                return node.nodeId;
+            });
             candidate_nodes.push(node.nodeId);
 
             // Selected node(s) at the last level atc code hierarchy, 7 digits value
             var selected_atcs_ids = candidate_nodes.filter(function (nodeId) {
-                return $("#atcTree").treeview('getNode', nodeId).text.length == 7;
+                var all_nodes = $("#atcTree").treeview("getNodes");
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$","nodeId"])[0].text.length == 7;
+                return all_nodes.filter(function (node){
+                    return node.nodeId === nodeId && node.text.length === 7;
+                });
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$","nodeId"])[0].text.length == 7;
             });
 
             var selected_atcs = selected_atcs_ids.map(function (nodeId) {
-                return $("#atcTree").treeview('getNode', nodeId).text;
+                var all_nodes = $("#atcTree").treeview("getNodes");
+                return all_nodes.filter(function (node){
+                    return node.nodeId === nodeId;
+                })[0].text;
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$", "nodeId"])[0].text;
             });
 
             var selected_drugs_by_atc = all_drugs.filter(function (drug) {
@@ -251,23 +268,26 @@ $(function() {
             $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
         },
         onNodeUnchecked: function (event, node) {
-
-            var children_nodes = _.map(_getChildren(node), 'nodeId');
-            $("#atcTree").treeview('uncheckNode', [children_nodes, {silent: true}]);
-
+            // $("#atcTree").treeview('uncheckNode', [children_nodes, {silent: true}]);
+            var uncheck_nodes = _getChildren(node);
             var ancestors = _getAncestors(node);
 
             // Some ancestors might already be unchecked
-            var to_be_unchecked = ancestors.length!=0?ancestors.filter(function (a) {
+            uncheck_nodes = uncheck_nodes.concat(ancestors.length!==0?ancestors.filter(function (a) {
                 return a.state.checked;
+            }):[]);
+
+            // Some to_be_unchecked nodes might already be unchecked
+            uncheck_nodes = uncheck_nodes.length!==0?uncheck_nodes.filter(function (n) {
+                return n.state.checked;
             }):[];
 
-            $("#atcTree").treeview('uncheckNode', [to_be_unchecked, {silent:true}]);
+            $("#atcTree").treeview('uncheckNode', [uncheck_nodes, {silent: true}]);
 
             // Append selected drugs to drugs_fld box
             var selected_fld_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
             selected_fld_drugs = selected_fld_drugs.filter(function (drug) {
-                return drug.indexOf(node.text) == -1;
+                return drug.indexOf(node.text) === -1;
             });
 
             $("[name='drugs_fld']").val(selected_fld_drugs).trigger("change");
@@ -476,4 +496,3 @@ function move_to_selected_drugs() {
     // var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
     $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 }
-
