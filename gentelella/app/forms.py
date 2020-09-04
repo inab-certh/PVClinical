@@ -55,7 +55,8 @@ class ScenarioForm(forms.Form):
                                                label=_("Πάθηση/Παθήσεις:"),
                                                widget=CustomSelect2TagWidget)
 
-    status = forms.ChoiceField(choices=Status.status_choices, required=False, label=_("Κατάσταση σεναρίου:"))
+    status = forms.ChoiceField(choices=Status.status_choices, required=False,
+                               label=_("Κατάσταση σεναρίου:"), widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop("instance")
@@ -90,6 +91,12 @@ class ScenarioForm(forms.Form):
 
     def clean(self):
         super(ScenarioForm, self).clean()
+
+        ################################## Delete when status decided #######
+        self.cleaned_data["status"] = "CREATING"
+        if 'status' in self._errors:
+            del self._errors['status']
+        #############################################################
 
         selected_drugs = dict(self.data).get("drugs_fld")
         drugs_names = list(map(lambda el: el.name, self.all_drugs))
