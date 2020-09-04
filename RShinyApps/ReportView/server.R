@@ -135,17 +135,17 @@ shinyServer(function(input, output, session) {
     i18n()$t("Overview")
   })
   
-  output$metadatatxt <- renderText({
-    i18n()$t("Meta Data")
-  })
-  
-  output$reportheadertxt <- renderText({
-    i18n()$t("Report Header")
-  })
-  
-  output$patienttxt <- renderText({
-    i18n()$t("Patient")
-  })
+  # output$metadatatxt <- renderText({
+  #   i18n()$t("Meta Data")
+  # })
+  # 
+  # output$reportheadertxt <- renderText({
+  #   i18n()$t("Report Header")
+  # })
+  # 
+  # output$patienttxt <- renderText({
+  #   i18n()$t("Patient")
+  # })
   
   output$patreactiontxt <- renderText({
     i18n()$t("Patient.Reaction")

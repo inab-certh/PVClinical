@@ -204,46 +204,46 @@ fluidRow(useShinyjs(),
                            style = "overflow-y:scroll; max-height: 600px",
                          )
                 ),
-                tabPanel(textOutput("metadatatxt"),
-                        
-                         wellPanel( 
-                           htmlOutput( 'querytitle' ), 
-                           htmlOutput( 'metatext' ), 
-                           htmlOutput( 'json' ),
-                           style = "overflow-y:scroll; max-height: 600px",
-                         )
-                ),
-                tabPanel(textOutput("reportheadertxt"), 
-                         
-                         wellPanel(  
-                           htmlOutput( 'headertabletitle' ), 
-                           tableOutput("headertable"),
-                           hr(),
-                           htmlOutput('receivertabletitle'),
-                           tableOutput("receiver"),
-                           hr(),
-                           
-                           htmlOutput('reportduplicatetabletitle'),
-                           tableOutput("reportduplicate"),
-                           hr(),
-                           
-                           htmlOutput('sendertabletitle'),
-                           tableOutput("sender"),
-                           hr(),
-                           
-                           htmlOutput('primarysourcetabletitle'),
-                           tableOutput("primarysource"),
-                           style = "overflow-y:scroll; max-height: 600px"
-                         )
-                ),
-                tabPanel(textOutput("patienttxt"),  
-                         
-                         wellPanel( 
-                           htmlOutput('patienttabletitle'),
-                           htmlOutput( 'patient' ),
-                           style = "overflow-y:scroll; max-height: 600px",
-                         )
-                ),
+                # tabPanel(textOutput("metadatatxt"),
+                #         
+                #          wellPanel( 
+                #            htmlOutput( 'querytitle' ), 
+                #            htmlOutput( 'metatext' ), 
+                #            htmlOutput( 'json' ),
+                #            style = "overflow-y:scroll; max-height: 600px",
+                #          )
+                # ),
+                # tabPanel(textOutput("reportheadertxt"), 
+                #          
+                #          wellPanel(  
+                #            htmlOutput( 'headertabletitle' ), 
+                #            tableOutput("headertable"),
+                #            hr(),
+                #            htmlOutput('receivertabletitle'),
+                #            tableOutput("receiver"),
+                #            hr(),
+                #            
+                #            htmlOutput('reportduplicatetabletitle'),
+                #            tableOutput("reportduplicate"),
+                #            hr(),
+                #            
+                #            htmlOutput('sendertabletitle'),
+                #            tableOutput("sender"),
+                #            hr(),
+                #            
+                #            htmlOutput('primarysourcetabletitle'),
+                #            tableOutput("primarysource"),
+                #            style = "overflow-y:scroll; max-height: 600px"
+                #          )
+                # ),
+                # tabPanel(textOutput("patienttxt"),  
+                #          
+                #          wellPanel( 
+                #            htmlOutput('patienttabletitle'),
+                #            htmlOutput( 'patient' ),
+                #            style = "overflow-y:scroll; max-height: 600px",
+                #          )
+                # ),
                 tabPanel(textOutput("patreactiontxt"),  
                          
                          wellPanel( 
