@@ -574,6 +574,7 @@ output$querycotextE <- renderText({
 
 output$coquery <- DT::renderDT({
   codrugs <- getcocountsD()$mydf
+  codrugs <- codrugs[1:length(codrugs)-1]
   coqueryForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
@@ -613,6 +614,7 @@ output$coquery <- DT::renderDT({
 
 output$coqueryE <- DT::renderDT({
   codrugs <- getcocountsE()$mydf
+  codrugs <- codrugs[1:length(codrugs)-1]
   coqueryEForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
@@ -1483,11 +1485,13 @@ output$ReportCountsbyDate <- renderUI({
   
 })
 output$CountsForDrugsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+  # HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Drugs in scenario reports")))
   
 })
 output$CountsForEventsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+  # HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Events in scenario reports")))
   
 })
 output$OtherApps <- renderUI({ 
