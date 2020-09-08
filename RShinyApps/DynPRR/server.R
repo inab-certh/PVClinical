@@ -620,6 +620,7 @@ output$coquery2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsD()$mydf
+  codrugs <- codrugs[1:length(codrugs)-1]
   coquery2ForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
@@ -652,7 +653,7 @@ output$coquery2 <- DT::renderDT({
     codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -692,6 +693,7 @@ output$coqueryE2 <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   codrugs <- getcocountsE()$mydf
+  codrugs <- codrugs[1:length(codrugs)-1]
   coqueryE2ForExcel<<-codrugs
   if (length(codrugs) > 0 )
   {
@@ -727,7 +729,7 @@ output$coqueryE2 <- DT::renderDT({
     codedrugsIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      grlang,
@@ -1062,11 +1064,13 @@ output$urlquery <- renderText({
   })
 
 output$CountsForEventsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+  # HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Events in scenario reports")))
   
 })
 output$CountsForDrugsInSelectedReports <- renderUI({ 
-  HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+  # HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+  HTML(stri_enc_toutf8(i18n()$t("Drugs in scenario reports")))
   
 })
 output$ReportCountsandPRR <- renderUI({ 
