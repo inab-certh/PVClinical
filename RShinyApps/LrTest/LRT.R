@@ -1789,7 +1789,8 @@ output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- ou
    
  })
  output$CountsForDrugsInSelectedReports <- renderUI({ 
-   HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+   # HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+   HTML(stri_enc_toutf8(i18n()$t("Drugs in scenario reports")))
    
  })
  output$EventCountsforDrug <- renderUI({ 
@@ -1801,7 +1802,8 @@ output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- ou
    
  })
  output$CountsForIndicationsInSelectedReports <- renderUI({ 
-   HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+   # HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+   HTML(stri_enc_toutf8(i18n()$t("Indications in scenario reports")))
    
  })
  output$OtherApps <- renderUI({ 

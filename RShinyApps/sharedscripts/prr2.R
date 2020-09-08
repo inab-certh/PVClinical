@@ -1422,15 +1422,18 @@ getcururl <- reactive({
     
   })
   output$CountsForDrugsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+    # HTML(stri_enc_toutf8(i18n()$t("Counts for drugs in selected reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Drugs in scenario reports")))
     
   })
   output$CountsForEventsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+    # HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Events in scenario reports")))
     
   })
   output$CountsForIndicationsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+    # HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Indications in scenario reports")))
     
   })
   output$OtherApps <- renderUI({ 
