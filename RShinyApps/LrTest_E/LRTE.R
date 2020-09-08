@@ -1808,7 +1808,8 @@ getcururl <- reactive({
     
   })
   output$CountsForEventsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+    # HTML(stri_enc_toutf8(i18n()$t("Counts for events in selected reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Events in scenario reports")))
     
   })
   output$DrugCountsforEvent <- renderUI({ 
@@ -1820,7 +1821,8 @@ getcururl <- reactive({
     
   })
   output$CountsForIndicationsInSelectedReports <- renderUI({ 
-    HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+    # HTML(stri_enc_toutf8(i18n()$t("Counts for indications in selected reports")))
+    HTML(stri_enc_toutf8(i18n()$t("Indications in scenario reports")))
     
   })
   output$LRTSignalAnalysisforaDrug <- renderUI({ 

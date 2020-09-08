@@ -223,19 +223,19 @@
         "gr":"Πλήθος φαρμάκων ανά συμβάν"
       },
       {
-        "def":"Counts for drugs in selected reports",
-        "en":"Counts for drugs in selected reports",
-        "gr":"Πλήθος φαρμάκων σε επιλεγμένες αναφορές"
+        "def":"Drugs in scenario reports",
+        "en":"Drugs in scenario reports",
+        "gr":"Φάρμακα στις αναφορές σεναρίου"
       },
       {
-        "def":"Counts for events in selected reports",
-        "en":"Counts for events in selected reports",
-        "gr":"Πλήθος συμβάντων σε επιλεγμένες αναφορές"
+        "def":"Events in scenario reports",
+        "en":"Events in scenario reports",
+        "gr":"Ενδείξεις στις αναφορές σεναρίου"
       },
       {
-        "def":"Counts for indications in selected reports",
-        "en":"Counts for indications in selected reports",
-        "gr":"Πλήθος ενδείξεων σε επιλεγμένες αναφορές"
+        "def":"Indications in scenario reports",
+        "en":"Indications in scenario reports",
+        "gr":"Ενδείξεις στις αναφορές σεναρίου"
       },
       {
         "def":"Counts for Entire Database",
