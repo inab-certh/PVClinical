@@ -49,10 +49,10 @@ def concept_set_exists(cs_name):
     return response.status_code, resp_json == 1
 
 
-def get_concept_set(cs_name):
+def get_concept_set_id(cs_name):
     """ Get a specific concept set if it exists
     :param cs_name: the name of  the concept set
-    :return: the concept set if it exists or None
+    :return: the concept set id if it exists or None
     """
     matching_set = None
     st, ex = concept_set_exists(cs_name)
@@ -67,9 +67,9 @@ def get_concept_set(cs_name):
         params = {"name": cs_name}
         response = requests.get(cs_url, params=urlencode(params), headers=headers)
         match = list(filter(lambda el: el.get("name") == cs_name, response.json()))
-        matching_set = match.pop() if match else None
+        matching_set = match[0].get("id") if match else None
 
-        return matching_set
+    return matching_set
 
 
 def cohort_exists(cohort_name):
@@ -116,11 +116,13 @@ def create_concept_set(cterms, cdomain):
     search_statuses = []
     search_concepts = []
 
+    vocabularies = {"Drug": "ATC", "Condition": "MedDRA"}
     # For all search terms find relevant concepts (if any)
     for cterm in cterms:
         search_status, cterm_concepts = search_concept(cterm, [cdomain])
         search_statuses.append(search_status)
-        search_concepts += cterm_concepts
+        search_concepts += filter(lambda c: c.get("VOCABULARY_ID") == vocabularies.get(cdomain),
+                                  cterm_concepts)
 
     # search_concepts = list(chain(search_concepts))
     # print(search_concepts)
@@ -181,7 +183,7 @@ def create_cohort(domains_csets_dict):
     )
 
     status_code, exists_json = cohort_exists(cohort_name)
-    print(status_code, exists_json)
+    # print(status_code, exists_json)
 
     if status_code != 200:
         return status_code, {}
@@ -191,22 +193,43 @@ def create_cohort(domains_csets_dict):
 
     all_concept_sets = []
     criteria_list = []
-    for indx, (domain, csets_names) in enumerate(domains_csets_dict.items()):
-        if domain == "Drug":
-            criterion = {"DrugExposure":
-                             {"CodesetId": indx,
-                              "DrugTypeExclude": None,
-                              "DrugSourceConcept": None, "First": None
-                              }}
-        elif domain == "Condition":
-            criterion = {"ConditionOccurrence":
-                             {"CodesetId": indx,
-                              "ConditionTypeExclude": None,
-                              "ConditionSourceConcept": None, "First": None
-                              }}
-        criteria_list.append(criterion)
-        domain_concept_sets = list(map(lambda el: get_concept_set(el), csets_names))
-        all_concept_sets.append(domain_concept_sets)
+    indx = 0
+    for domain, csets_names in domains_csets_dict.items():
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            # "api-key": "{}".format(settings.OHDSI_APIKEY),
+        }
+
+        for cs_name in csets_names:
+            if domain == "Drug":
+                criterion = {"DrugExposure":
+                                 {"CodesetId": indx,
+                                  "DrugTypeExclude": None,
+                                  "DrugSourceConcept": None, "First": None
+                                  }}
+            elif domain == "Condition":
+                criterion = {"ConditionOccurrence":
+                                 {"CodesetId": indx,
+                                  "ConditionTypeExclude": None,
+                                  "ConditionSourceConcept": None, "First": None
+                                  }}
+
+            criteria_list.append(criterion)
+
+            cs_id = get_concept_set_id(cs_name)
+            if cs_id:
+                cs_url = "{}/conceptset/{}/expression".format(settings.OHDSI_ENDPOINT, cs_id)
+                response = requests.get(cs_url, headers=headers)
+
+                if response.status_code == 200:
+                    all_concept_sets.append({"id": indx,
+                                             "name": cs_name,
+                                             "expression": response.json()})
+
+                    indx += 1
+        # domain_concept_sets = list(map(lambda el: get_concept_set(el), csets_names))
+        # all_concept_sets.append(domain_concept_sets)
 
     cohort_def_url = "{}/cohortdefinition/".format(settings.OHDSI_ENDPOINT)
 
@@ -219,19 +242,17 @@ def create_cohort(domains_csets_dict):
                     }, "QualifiedLimit": {"Type": "First"},
                               "ExpressionLimit": {"Type": "First"},
                               "InclusionRules": [], "CensoringCriteria": [],
-                              "CollapseSettings": {"CollapseType": "ERA", "EraPad":0},
+                              "CollapseSettings": {"CollapseType": "ERA", "EraPad": 0},
                               "CensorWindow":{"StartDate": None, "EndDate": None},
                               "cdmVersionRange": None}}
 
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        # "api-key": "{}".format(settings.OHDSI_APIKEY),
-    }
-
-    response = requests.post(cohort_def_url, json=json.dumps(payload), headers=headers)
-
-    resp_json= response.json()
+    # payload = {"name":"Sprue-like Enteropathy condition IIIII","description":None,"expressionType":"SIMPLE_EXPRESSION","expression":{"ConceptSets":[{"id":0,"name":"Sprue-like enteropathy","expression":{"items":[{"concept":{"CONCEPT_CLASS_ID":"Clinical Finding","CONCEPT_CODE":"81704009","CONCEPT_ID":4218097,"CONCEPT_NAME":"Sprue","DOMAIN_ID":"Condition","INVALID_REASON":"V","INVALID_REASON_CAPTION":"Valid","STANDARD_CONCEPT":"S","STANDARD_CONCEPT_CAPTION":"Standard","VOCABULARY_ID":"SNOMED"},"isExcluded":False,"includeDescendants":True,"includeMapped":False},{"concept":{"CONCEPT_CLASS_ID":"Clinical Finding","CONCEPT_CODE":"359653006","CONCEPT_ID":4230257,"CONCEPT_NAME":"Unclassified sprue","DOMAIN_ID":"Condition","INVALID_REASON":"V","INVALID_REASON_CAPTION":"Valid","STANDARD_CONCEPT":"S","STANDARD_CONCEPT_CAPTION":"Standard","VOCABULARY_ID":"SNOMED"},"isExcluded":False,"includeDescendants":True,"includeMapped":False}]}}],"PrimaryCriteria":{"CriteriaList":[{"ConditionOccurrence":{"CodesetId":0,"ConditionTypeExclude":None,"ConditionSourceConcept":None,"First":None}}],"ObservationWindow":{"PriorDays":0,"PostDays":0},"PrimaryCriteriaLimit":{"Type":"First"}},"QualifiedLimit":{"Type":"First"},"ExpressionLimit":{"Type":"First"},"InclusionRules":[],"CensoringCriteria":[],"CollapseSettings":{"CollapseType":"ERA","EraPad":0},"CensorWindow":{"StartDate":None,"EndDate":None},"cdmVersionRange":None}}
 
 
-    return add_items_resp.status_code, resp_json
+
+
+    response = requests.post(cohort_def_url, data=json.dumps(payload), headers=headers)
+    resp_json = response.json()
+    # print(resp_json)
+
+    return response.status_code, resp_json
