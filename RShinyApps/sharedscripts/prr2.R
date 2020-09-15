@@ -1405,6 +1405,11 @@ getcururl <- reactive({
     HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for Specified Drug")))
     
   })
+  
+  output$AnalyzedDrugCountsforSpecifiedEvent <- renderUI({ 
+    HTML(stri_enc_toutf8(i18n()$t("Analyzed Drug Counts for Specified Event")))
+    
+  })
   output$AnalyzedEventCountsforAllDrugs <- renderUI({ 
     HTML(stri_enc_toutf8(i18n()$t("Analyzed Event Counts for All Drugs")))
     
@@ -1460,15 +1465,30 @@ getcururl <- reactive({
     
   })
   output$infoprr2<-renderUI({
-    addPopover(session=session, id="infoprr2", title="Proportional Reporting Ratio", 
+    addPopover(session=session, id="infoprr2", title=paste(i18n()$t("Metrics"), "PRR - ROR"), 
                content=paste(i18n()$t("prr explanation"),"<br><br><br>",i18n()$t("ror explanation")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
+  
   output$infospecifieddrug2<-renderUI({
     addPopover(session=session, id="infospecifieddrug2", title="Frequency Table", 
-               content=stri_enc_toutf8(i18n()$t("rr explanation")), placement = "left",
+               content=stri_enc_toutf8(i18n()$t("rr_explanation")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infospecdrug<-renderUI({
+    addPopover(session=session, id="infospecdrug", title=i18n()$t("Counts Table"),
+               content=stri_enc_toutf8(i18n()$t("infospecdrug")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infospecevent<-renderUI({
+    addPopover(session=session, id="infospecevent", title=i18n()$t("Counts Table"),
+               content=stri_enc_toutf8(i18n()$t("infospecevent")), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
@@ -1480,9 +1500,37 @@ getcururl <- reactive({
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
+  output$infoeventcountsalldrugs<-renderUI({
+    addPopover(session=session, id="infoeventcountsalldrugs", title=i18n()$t("Counts Table"),
+               content=stri_enc_toutf8(i18n()$t("infoeventcountsalldrugs")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infodrugcountsallevents<-renderUI({
+    addPopover(session=session, id="infodrugcountsallevents", title=i18n()$t("Counts Table"),
+               content=stri_enc_toutf8(i18n()$t("infodrugcountsallevents")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
   output$infocoqueryE2<-renderUI({
     addPopover(session=session, id="infocoqueryE2", title="Concomitant Medications", 
                content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations. \"L\" is linked to SPL labels for Drug in openFDA. \"D\" is linked to a dashboard display for a drug.")), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infoRankedDrugCounts<-renderUI({
+    addPopover(session=session, id="infoRankedDrugCounts", title=i18n()$t("Counts Table"), 
+               content=i18n()$t("infoRankedDrugCounts"), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+  output$infoRankedEventCounts<-renderUI({
+    addPopover(session=session, id="infoRankedEventCounts", title=i18n()$t("Counts Table"), 
+               content=i18n()$t("infoRankedEventCounts"), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
@@ -1493,12 +1541,27 @@ getcururl <- reactive({
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
-  output$infoindquery2<-renderUI({
-    addPopover(session=session, id="infoindquery2", title="Reported Indication for Drug", 
-               content=paste(i18n()$t("rr explanation"),"<br><br>",i18n()$t("Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term")), placement = "left",
+  
+  output$infoCountsForDrugsInSelectedReports<-renderUI({
+    addPopover(session=session, id="infoCountsForDrugsInSelectedReports", title=i18n()$t("Counts Table"), 
+               content=i18n()$t("infoCountsForDrugsInSelectedReports"), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
   
+  output$infoCountsForEventsInSelectedReports<-renderUI({
+    addPopover(session=session, id="infoCountsForEventsInSelectedReports", title=i18n()$t("Counts Table"), 
+               content=i18n()$t("infoCountsForEventsInSelectedReports"), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
   
+  output$infoindquery2<-renderUI({
+    addPopover(session=session, id="infoindquery2", title=i18n()$t("Counts Table"),
+               content=i18n()$t("infoindquery2"), placement = "left",
+               trigger = "hover", options = list(html = "true"))
+    return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  })
+  
+   
 })
