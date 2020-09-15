@@ -950,7 +950,7 @@ output$infocpmeantext <- renderUI ({
       out <- i18n()$t('Insufficient data')
     }
     addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
-             content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
+             content=paste(out,i18n()$t('Change in mean analysis explanation')), placement = "left",
              trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
     # browser()

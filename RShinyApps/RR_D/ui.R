@@ -96,28 +96,28 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlspecifieddrug2", textOutput("downloadBtnLbl2"))))),
-                                 style="background-color:white;height:60px;border:none",uiOutput("infospecifieddrug2",style = "position:absolute;right:40px;z-index:10")
+                                 style="background-color:white;height:60px;border:none",uiOutput("infospecdrug",style = "position:absolute;right:40px;z-index:10")
                                ),
                                withSpinner(dataTableOutput( 'specifieddrug2' ))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall2", textOutput("downloadBtnLbl3"))))),
-                                 style="background-color:white;height:60px;border:none",uiOutput("infoall2",style = "position:absolute;right:40px;z-index:10")
+                                 style="background-color:white;height:60px;border:none",uiOutput("infoeventcountsalldrugs",style = "position:absolute;right:40px;z-index:10")
                                ),
                                withSpinner(dataTableOutput( 'all2' ))
                       ),
                       tabPanel(uiOutput("RankedEventCountsforDrug"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4"))))),
-                                 style="background-color:white;height:60px;border:none",uiOutput("infocoqueryE2",style = "position:absolute;right:40px;z-index:10")
+                                 style="background-color:white;height:60px;border:none",uiOutput("infoRankedEventCounts",style = "position:absolute;right:40px;z-index:10")
                                ),
                                withSpinner(dataTableOutput( 'coqueryE2' ))
                       ),
                       tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl5"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl5"))))),
-                                 style="background-color:white;height:60px;border:none",uiOutput("infocoquery2",style = "position:absolute;right:40px;z-index:10")
+                                 style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports",style = "position:absolute;right:40px;z-index:10")
                                ),
                                withSpinner(dataTableOutput( 'coquery2' ))
                       ),

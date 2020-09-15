@@ -1169,6 +1169,49 @@ output$titleAnalyzedEventCountsforDrug <- renderText({
   titleAnalyzedEventCountsforDrug()
 })
 
+output$infospecdrug<-renderUI({
+  addPopover(session=session, id="infospecdrug", title=i18n()$t("Counts Table"),
+             content=stri_enc_toutf8(i18n()$t("infospecdrug")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoeventcountsalldrugs<-renderUI({
+  addPopover(session=session, id="infoeventcountsalldrugs", title=i18n()$t("Counts Table"),
+             content=stri_enc_toutf8(i18n()$t("infoeventcountsalldrugs")), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoCountsForDrugsInSelectedReports<-renderUI({
+  addPopover(session=session, id="infoCountsForDrugsInSelectedReports", title=i18n()$t("Counts Table"), 
+             content=i18n()$t("infoCountsForDrugsInSelectedReports"), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+
+output$infoRankedEventCounts<-renderUI({
+  addPopover(session=session, id="infoRankedEventCounts", title=i18n()$t("Counts Table"), 
+             content=i18n()$t("infoRankedEventCounts"), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoCountsForAllEvents<-renderUI({
+  addPopover(session=session, id="infoCountsForAllEvents", title=i18n()$t("Counts Table"), 
+             content=i18n()$t("infoCountsForAllEvents"), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
+output$infoindquery2<-renderUI({
+  addPopover(session=session, id="infoindquery2", title=i18n()$t("Counts Table"),
+             content=i18n()$t("infoindquery2"), placement = "left",
+             trigger = "hover", options = list(html = "true"))
+  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+})
+
 alldrugtextAnalyzedEventCountsforDrug  <- reactive({ 
   l <- gettotals()
   return( 
@@ -1368,6 +1411,7 @@ output$coquery <- DT::renderDT({
   grlang<-'datatablesGreek.json'
   enlang<-'datatablesEnglish.json'
   res <- coquery()
+  res <- res[,1:(length(res)-1)]
   coqueryForExcel<<-res
   if ("Error" %in% colnames(res) )
   {
@@ -1483,12 +1527,13 @@ output$coqueryE <- DT::renderDT({
   { 
     resIndatatable=res
   } else  {
-    PRRResIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+    resIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  resIndatatable <- resIndatatable[,1:(length(resIndatatable)-1)]
   datatable(
     resIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -1564,12 +1609,13 @@ output$coqueryA <- DT::renderDT({
   { 
     resIndatatable=res
   } else  {
-    PRRResIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+    resIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  resIndatatable <- resIndatatable[,1:(length(resIndatatable)-1)]
   datatable(
     resIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -1629,12 +1675,13 @@ output$indquery <- DT::renderDT({
   { 
     resIndatatable=res
   } else  {
-    PRRResIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+    resIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
+  resIndatatable <- resIndatatable[,1:(length(resIndatatable)-1)]
   datatable(
     resIndatatable,
     options = list(
       autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+      columnDefs = list(list(className = 'dt-right', targets = c(1))),
       language = list(
         url = ifelse(selectedLang=='gr', 
                      'datatablesGreek.json',
@@ -1771,6 +1818,13 @@ output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- ou
     },
     contentType="text/csv"
   )
+ 
+ output$inforrandllr<-renderUI({
+   addPopover(session=session, id="inforrandllr", title=paste(i18n()$t("Metrics"), "RR - LLR"), 
+              content=i18n()$t("rr explanation"), placement = "left",
+              trigger = "hover", options = list(html = "true"))
+   return(HTML('<button type="button" class="btn btn-info">i</button>'))
+ })
  
  output$LRTResultsbasedonTotalEvents <- renderUI({ 
    HTML(stri_enc_toutf8(i18n()$t("LRT Results based on Total Events")))
