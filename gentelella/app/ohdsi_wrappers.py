@@ -2,10 +2,29 @@ import itertools
 import json
 import requests
 
-from itertools import chain
-
+# from datetime import datetime
+# from datetime import timedelta
 from urllib.parse import urlencode
 from django.conf import settings
+
+
+def url_exists(exists_url):
+    """ Checks whether a specific url exists or not
+    :param exists_url: the url to be checked whether it exists or not
+    :return: the status_code and True or False showing whether the url exists or not
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+    response = requests.get(exists_url, headers=headers)
+
+    resp_json = response.json()
+    # resp_status = resp_json.get("status")
+    # resp_results = resp_json.get("results") or []
+    return response.status_code, resp_json == 1
 
 
 def exists(name, ent_type):
@@ -271,11 +290,10 @@ def create_cohort(domains_csets_dict):
                               "ExpressionLimit": {"Type": "First"},
                               "InclusionRules": [], "CensoringCriteria": [],
                               "CollapseSettings": {"CollapseType": "ERA", "EraPad": 0},
-                              "CensorWindow":{"StartDate": None, "EndDate": None},
+                              "CensorWindow": {"StartDate": None, "EndDate": None},
                               "cdmVersionRange": None}}
 
     # payload = {"name":"Sprue-like Enteropathy condition IIIII","description":None,"expressionType":"SIMPLE_EXPRESSION","expression":{"ConceptSets":[{"id":0,"name":"Sprue-like enteropathy","expression":{"items":[{"concept":{"CONCEPT_CLASS_ID":"Clinical Finding","CONCEPT_CODE":"81704009","CONCEPT_ID":4218097,"CONCEPT_NAME":"Sprue","DOMAIN_ID":"Condition","INVALID_REASON":"V","INVALID_REASON_CAPTION":"Valid","STANDARD_CONCEPT":"S","STANDARD_CONCEPT_CAPTION":"Standard","VOCABULARY_ID":"SNOMED"},"isExcluded":False,"includeDescendants":True,"includeMapped":False},{"concept":{"CONCEPT_CLASS_ID":"Clinical Finding","CONCEPT_CODE":"359653006","CONCEPT_ID":4230257,"CONCEPT_NAME":"Unclassified sprue","DOMAIN_ID":"Condition","INVALID_REASON":"V","INVALID_REASON_CAPTION":"Valid","STANDARD_CONCEPT":"S","STANDARD_CONCEPT_CAPTION":"Standard","VOCABULARY_ID":"SNOMED"},"isExcluded":False,"includeDescendants":True,"includeMapped":False}]}}],"PrimaryCriteria":{"CriteriaList":[{"ConditionOccurrence":{"CodesetId":0,"ConditionTypeExclude":None,"ConditionSourceConcept":None,"First":None}}],"ObservationWindow":{"PriorDays":0,"PostDays":0},"PrimaryCriteriaLimit":{"Type":"First"}},"QualifiedLimit":{"Type":"First"},"ExpressionLimit":{"Type":"First"},"InclusionRules":[],"CensoringCriteria":[],"CollapseSettings":{"CollapseType":"ERA","EraPad":0},"CensorWindow":{"StartDate":None,"EndDate":None},"cdmVersionRange":None}}
-
 
     response = requests.post(cohort_def_url, data=json.dumps(payload), headers=headers)
     resp_json = response.json()
@@ -288,6 +306,7 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     """ Create ir wrapper
     :param target_cohorts: a list of the target cohorts (id, name, etc.)
     :param outcome_cohorts: a list of the outcome cohorts (id, name, etc.)
+    :param **options: the various options concerning option of the ir study (i.e. age, gender, study period etc.)
     :return: the status_code and the json data of the response
     """
 
@@ -297,9 +316,8 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
         # "api-key": "{}".format(settings.OHDSI_APIKEY),
     }
 
-
     # The name of the ir to be created
-    ir_name = "_".join(list(map(lambda c: c.get("name"), target_cohorts+outcome_cohorts)))
+    ir_name = "_".join(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)))
 
     status_code, exists_json = exists(ir_name, "ir")
     # print(status_code, exists_json)
@@ -312,9 +330,139 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
 
     ir_url = "{}/ir/".format(settings.OHDSI_ENDPOINT)
 
-    age = options.get("age", 0)
+    options["target_cohorts"] = target_cohorts
+    options["outcome_cohorts"] = outcome_cohorts
+    options["ir_name"] = ir_name
+
+    return add_change_ir(None, **options)
+
+    # age = options.get("age")
+    # ext_age = options.get("ext", None)
+    # age_crit = options.get("age_crit", "")  # Age criterion (i.e. less than [lt] or greater than [gt])
+    # age_dict = {"Age": {"Value": age, "Extent": ext_age, "Op": age_crit}} #if age > 0 else {}
+    #
+    # genders_lst = options.get("genders")
+    #
+    # gender_concepts = list(itertools.chain(
+    #     *[search_concept(gender, ["Gender"])[-1] for gender in genders_lst]))
+    # gender_concepts = [el for el in gender_concepts if el.get("CONCEPT_NAME").lower()
+    #                    in [g.lower() for g in genders_lst]]
+    # # Keep unique concept dicts
+    # gender_concepts = list(map(dict, set(tuple(dic.items()) for dic in gender_concepts)))
+    #
+    # gender_list = [{"CONCEPT_CODE": gc.get("CONCEPT_CODE"), "CONCEPT_ID": gc.get("CONCEPT_ID"),
+    #                 "CONCEPT_NAME": gc.get("CONCEPT_NAME"), "DOMAIN_ID": gc.get("DOMAIN_ID"),
+    #                 "VOCABULARY_ID": gc.get("VOCABULARY_ID")} for gc in gender_concepts]
+    # gender_dict = {"Gender": gender_list} #if gender_list else {}
+    # # demographic_criteria = ([age_dict] if age_dict else []) + ([gender_dict] if gender_dict else [])
+    # demographic_criteria = [age_dict] + [gender_dict]
+    #
+    # # now = datetime.now()
+    # study_start_date = options.get("study_start_date")  # or now.strftime("%Y-%m-%d")
+    # study_end_date = options.get("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
+    # study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
+    #                      } if study_start_date and study_end_date else {}
+    #
+    # expression_dict = {"ConceptSets": [], "targetIds": list(map(lambda tc: tc.get("id"), target_cohorts)),
+    #                    "outcomeIds": list(map(lambda oc: oc.get("id"), outcome_cohorts)),
+    #                    "timeAtRisk": {"start": {"DateField": "StartDate", "Offset": 0},
+    #                                   "end": {"DateField": "StartDate", "Offset": 0}},
+    #                    "strata": [{"name": "Stratification criteria", "description": None,
+    #                                "expression": {"Type": "ALL", "CriteriaList":
+    #                                    [{"Criteria": {"DrugExposure":
+    #                                                       {"DrugTypeExclude": None, "DrugSourceConcept": None,
+    #                                                        "First": None}}, "StartWindow":
+    #                                          {"Start": {"Days": None,
+    #                                                     "Coeff": -1},
+    #                                           "End": {"Days": None,
+    #                                                   "Coeff": 1},
+    #                                           "UseIndexEnd": False,
+    #                                           "UseEventEnd": False},
+    #                                      "RestrictVisit": False,
+    #                                      "IgnoreObservationPeriod": False,
+    #                                      "Occurrence": {"IsDistinct": False,
+    #                                                     "Type": 2, "Count": 1}
+    #                                      }
+    #                                     ],
+    #                                               "DemographicCriteriaList": demographic_criteria,
+    #                                               "Groups": []}}]}
+    #
+    # if study_start_date or study_end_date:
+    #     expression_dict.update(study_window_dict)
+    #
+    # payload = {"id": None, "name": ir_name, "description": None,
+    #            "expression": json.dumps(expression_dict)
+    #            }
+    #
+    # response = requests.post(ir_url, data=json.dumps(payload), headers=headers)
+    # resp_json = response.json()
+    # # print(resp_json)
+    # #
+    # return response.status_code, resp_json
+
+def change_ir(ir_id, **options):
+    """ Create ir wrapper
+    :param ir_id: the id of the ir to be changed
+    :param **options: the various options concerning option of the ir study (i.e. age, gender, study period etc.)
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
+    print(ir_id)
+    print(ir_url)
+
+    status_code, exists_json = url_exists(ir_url)
+
+    if status_code != 200:
+        return status_code, {}
+
+    if exists_json:
+        return 500, {}
+
+    return add_change_ir(ir_id, **options)
+
+
+def add_change_ir(ir_id, **options):
+    """ Helper function for both create_ir and change_ir
+    :param ir_id: the id of the ir to be changed
+    :param options: the various options concerning option of the ir study depending on the function that calls helper
+    function
+    """
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id or "")
+
+    expression = {}
+
+    target_cohorts = options.get("target_cohorts")
+    outcome_cohorts = options.get("outcome_cohorts")
+    ir_name = options.get("ir_name")
+
+    if ir_id:
+        response = requests.get("{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id), headers=headers)
+        response_json = response.json()
+        ir_name = response_json.get("name")
+        expression = json.loads(response_json.get("expression"))
+
+    target_cohorts_ids = list(map(lambda tc: tc.get("id"), target_cohorts)
+                              ) if target_cohorts else expression.get("targetIds")
+    outcome_cohorts_ids = list(map(lambda oc: oc.get("id"), outcome_cohorts)
+                               ) if outcome_cohorts else expression.get("outcomeIds")
+
+    age = options.get("age")
+    ext_age = options.get("ext_age", None)
     age_crit = options.get("age_crit", "")  # Age criterion (i.e. less than [lt] or greater than [gt])
-    age_dict = {"Age": {"Value": age, "Extent":None, "Op": age_crit}} if age > 0 else {}
+    age_dict = {"Age": {"Value": age, "Extent": ext_age, "Op": age_crit}}  # if age > 0 else {}
 
     genders_lst = options.get("genders")
 
@@ -328,56 +476,52 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     gender_list = [{"CONCEPT_CODE": gc.get("CONCEPT_CODE"), "CONCEPT_ID": gc.get("CONCEPT_ID"),
                     "CONCEPT_NAME": gc.get("CONCEPT_NAME"), "DOMAIN_ID": gc.get("DOMAIN_ID"),
                     "VOCABULARY_ID": gc.get("VOCABULARY_ID")} for gc in gender_concepts]
-    gender_dict = {"Gender": gender_list} if gender_list else {}
-    demographic_criteria = ([age_dict] if age_dict else []) + ([gender_dict] if gender_dict else [])
+    gender_dict = {"Gender": gender_list}  # if gender_list else {}
+    # demographic_criteria = ([age_dict] if age_dict else []) + ([gender_dict] if gender_dict else [])
+    demographic_criteria = [age_dict] + [gender_dict]
 
-    enddays_offset = options.get("enddays_offset") or 90
+    # now = datetime.now()
+    study_start_date = options.get("study_start_date")  # or now.strftime("%Y-%m-%d")
+    study_end_date = options.get("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
+    study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
+                         } if study_start_date and study_end_date else {}
 
-    payload = {"id": None, "name":ir_name, "description": None,
-               "expression":
-                   {"ConceptSets":[],"targetIds": list(map(lambda tc: tc.get("id"), target_cohorts)),
-                    "outcomeIds":list(map(lambda oc: oc.get("id"), outcome_cohorts)),
-                    "timeAtRisk": {"start": {"DateField": "StartDate","Offset": 0},
-                                  "end": {"DateField": "StartDate","Offset": enddays_offset}},
-                    "strata": [{"name": "Stratification criteria", "description": None,
-                   "expression": {"Type": "ALL", "CriteriaList":
-                       [{"Criteria": {"DrugExposure":
-                                          {"DrugTypeExclude": None, "DrugSourceConcept": None,
-                                           "First": None}},"StartWindow":
-                           {"Start": {"Days": None,
-                                      "Coeff": -1},
-                            "End":{"Days": None,
-                                   "Coeff": 1},
-                            "UseIndexEnd": False,
-                            "UseEventEnd": False},
-                         "RestrictVisit": False,
-                         "IgnoreObservationPeriod": False,
-                         "Occurrence": {"IsDistinct": False,
-                                        "Type":2, "Count": 1}
-                         }
-                        ],
-                                  "DemographicCriteriaList": demographic_criteria,
-                                  "Groups": []}}]}}
-               #  "{{\"ConceptSets\":[],\"targetIds\":{},\"outcomeIds\":{},"
-               #     "\"timeAtRisk\":{{\"start\":{{\"DateField\":\"StartDate\",\"Offset\":0}},"
-               #     "\"end\":{{\"DateField\":\"StartDate\",\"Offset\":{}}}}},"
-               #     "\"strata\":[{{\"name\":\"Stratification criteria\",\"description\":null,"
-               #     "\"expression\":{{\"Type\":\"ALL\",\"CriteriaList\":"
-               #     "[{{\"Criteria\":{{\"DrugExposure\":{{\"DrugTypeExclude\":null,"
-               #     "\"DrugSourceConcept\":null,\"First\":null}}}},\"StartWindow\":"
-               #     "{{\"Start\":{{\"Days\":null,\"Coeff\":-1}},\"End\":{{\"Days\":null,\"Coeff\":1}},"
-               #     "\"UseIndexEnd\":false,\"UseEventEnd\":false}},\"RestrictVisit\":false,"
-               #     "\"IgnoreObservationPeriod\":false,\"Occurrence\":{{\"IsDistinct\":false,"
-               #     "\"Type\":2,\"Count\":1}}}}],\"DemographicCriteriaList\":"
-               #     "{}}}],\"Groups\":[]}}]}}".format(list(map(lambda tc: tc.get("id"), target_cohorts)),
-               #                                        list(map(lambda oc: oc.get("id"), outcome_cohorts)),
-               #                                        enddays_offset, json.dumps(demographic_criteria))}
+    expression_dict = {"ConceptSets": [], "targetIds": target_cohorts_ids,
+                       "outcomeIds": outcome_cohorts_ids,
+                       "timeAtRisk": {"start": {"DateField": "StartDate", "Offset": 0},
+                                      "end": {"DateField": "StartDate", "Offset": 0}},
+                       "strata": [{"name": "Stratification criteria", "description": None,
+                                   "expression": {"Type": "ALL", "CriteriaList":
+                                       [{"Criteria": {"DrugExposure":
+                                                          {"DrugTypeExclude": None, "DrugSourceConcept": None,
+                                                           "First": None}}, "StartWindow":
+                                             {"Start": {"Days": None,
+                                                        "Coeff": -1},
+                                              "End": {"Days": None,
+                                                      "Coeff": 1},
+                                              "UseIndexEnd": False,
+                                              "UseEventEnd": False},
+                                         "RestrictVisit": False,
+                                         "IgnoreObservationPeriod": False,
+                                         "Occurrence": {"IsDistinct": False,
+                                                        "Type": 2, "Count": 1}
+                                         }
+                                        ],
+                                                  "DemographicCriteriaList": demographic_criteria,
+                                                  "Groups": []}}]}
 
-    print(json.dumps(payload))
-    print(ir_url)
-    response = requests.post(ir_url, data=json.dumps(payload), headers=headers)
-    print(response)
+    if study_start_date or study_end_date:
+        expression_dict.update(study_window_dict)
+
+    payload = {"id": ir_id, "name": ir_name, "description": None,
+               "expression": json.dumps(expression_dict)
+               }
+
+    if ir_id:
+        response = requests.put(ir_url, data=json.dumps(payload), headers=headers)
+    else:
+        response = requests.post(ir_url, data=json.dumps(payload), headers=headers)
     resp_json = response.json()
     # print(resp_json)
-
+    #
     return response.status_code, resp_json

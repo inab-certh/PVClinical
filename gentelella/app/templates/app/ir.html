@@ -1,0 +1,24 @@
+{% extends 'app/form_base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load custom_tags %}
+
+
+{% block javascripts %}
+    {{ block.super }}
+
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+    <script src='{% static "build/js/ir.js" %}'></script>
+{% endblock %}
+
+{% block title %} {{title}} {% endblock %}
+
+
+{% block formcontent %}
+    {{ form|as_crispy_errors }}
+
+{% endblock %}
+
