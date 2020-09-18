@@ -26,14 +26,15 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 
 from app.helper_modules import atc_hierarchy_tree
-
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
 
 from app.models import Scenario
-
+from app.models import OHDSIWorkspace
+from app.ohdsi_wrappers import change_ir
+from app.ohdsi_wrappers import create_ir
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
 
@@ -240,6 +241,69 @@ def add_edit_scenario(request, scenario_id=None):
         "delete_switch": delete_switch,
         "scenario_id": scenario.id,
         "form": scform,
+    }
+
+    return render(request, 'app/add_edit_scenario.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def ohdsi_workspace(request, scenario_id=None):
+    context = {
+        "title": _("Περιβάλλον εργασίας OHDSI"),
+    }
+    return render(request, 'app/ohdsi_workspace.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def incidence_rates(request, ir_id=None):
+    """ Add or edit incidence rates (ir) view. Retrieve the specific ir that id refers to
+    :param request: request
+    :param ir_id: the specific ir record's id
+    :return: the form view
+    """
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    if scenario_id:
+        ohdsi_workspace = get_object_or_404(OHDSIWorkspace, ir_id=ir_id)
+
+    delete_switch = "enabled" if ohdsi_workspace.id else "disabled"
+
+
+    if request.method == 'POST':
+        irform = IRForm(request.POST, label_suffix='')
+
+        if irform.is_valid():
+            if ohdsi_workspace.ir_id:
+                print(ir_id)
+                #change_ir()
+            messages.success(
+                request,
+                _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+
+            return HttpResponseRedirect(reverse('edit_ir', args=(ir_id,)))
+
+        else:
+            messages.error(
+                request,
+                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+
+
+    elif request.method == 'DELETE':
+        return delete_db_rec(ohdsi_workspace)
+
+    # GET request method
+    else:
+        scform = IRForm(label_suffix='',  instance=scenario)
+
+
+
+    context = {
+        "delete_switch": delete_switch,
+        "ir_id": ir_id,
+        "form": irform,
     }
 
     return render(request, 'app/add_edit_scenario.html', context)
