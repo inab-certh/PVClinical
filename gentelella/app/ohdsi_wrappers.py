@@ -1,3 +1,4 @@
+import hashlib
 import itertools
 import json
 import requests
@@ -102,7 +103,7 @@ def get_concept_set_id(cs_name):
     :return: the concept set id if it exists or None
     """
     matching_set = None
-    st, ex = concept_set_exists(cs_name)
+    st, ex = exists(cs_name, "conceptset")
     if ex:
         cs_url = "{}/conceptset/".format(settings.OHDSI_ENDPOINT)
         headers = {
@@ -144,12 +145,13 @@ def get_concept_set_id(cs_name):
 def create_concept_set(cterms, cdomain):
     """ Create concept set wrapper
     :param cterms: the concept terms to search for and add relevant concepts
+    :param cterms: the domain of the cterms/concepts
     :return: the status_code and the json data of the response (containing the following info:
     [createdBy, modifiedBy, createdDate, modifiedDate, id, name])
     """
 
     # The name of the concept set to be created
-    cs_name = "_".join(cterms)
+    cs_name = name_entities_group(cterms)
 
     status_code, exists_json = exists(cs_name, "conceptset")
     # print(status_code, exists_json)
@@ -207,7 +209,7 @@ def create_concept_set(cterms, cdomain):
 
 
 def create_cohort(domains_csets_dict):
-    """ Create cohort wrapper
+    """ Create cohort wrapper. Allows drugs_cohorts, conditions_cohort and even combination cohorts creation
     :param domains_csets_dict: a dictionary consisting of domain - concept_sets_names pairs
     :return: the status_code and the json data of the response
     """
@@ -224,8 +226,8 @@ def create_cohort(domains_csets_dict):
     # resp_json = create_resp.json()
     # if resp_json:
 
-    # The name of the concept set to be created
-    cohort_name = "_".join(
+    # The name of the cohort to be created
+    cohort_name = name_entities_group(
         domains_csets_dict.get("Drug", []) + domains_csets_dict.get("Condition", [])
     )
 
@@ -302,6 +304,24 @@ def create_cohort(domains_csets_dict):
     return response.status_code, resp_json
 
 
+# def generate_cohort(cohort_id):
+#     """ Generate a specific cohort
+#     :param cohort_id: the cohort's id
+#     :return: the status_code and the json data of the response
+#     """
+#     gen_cohort_url = "{}/cohortdefinition/{}/generate/OHDSI-CDMV5-synpuf".format(settings.OHDSI_ENDPOINT,
+#                                                                                  cohort_id)
+#     headers = {
+#         "Content-Type": "application/json",
+#         "Accept": "application/json",
+#         # "api-key": "{}".format(settings.OHDSI_APIKEY),
+#     }
+#
+#     response = requests.get(gen_cohort_url, headers=headers)
+#     resp_json = response.json()
+#     return response.status_code, resp_json
+
+
 def create_ir(target_cohorts, outcome_cohorts, **options):
     """ Create ir wrapper
     :param target_cohorts: a list of the target cohorts (id, name, etc.)
@@ -317,7 +337,7 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     }
 
     # The name of the ir to be created
-    ir_name = "_".join(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)))
+    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)))
 
     status_code, exists_json = exists(ir_name, "ir")
     # print(status_code, exists_json)
@@ -433,6 +453,7 @@ def add_change_ir(ir_id, **options):
     :param ir_id: the id of the ir to be changed
     :param options: the various options concerning option of the ir study depending on the function that calls helper
     function
+    :return: the status_code and the json data of the response
     """
     headers = {
         "Content-Type": "application/json",
@@ -525,3 +546,13 @@ def add_change_ir(ir_id, **options):
     # print(resp_json)
     #
     return response.status_code, resp_json
+
+
+def name_entities_group(entities_names):
+    """ Give a name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
+    :param entities_names: a list of the entities names
+    :return: the name of the group
+    """
+
+    return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
+

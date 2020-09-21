@@ -21,6 +21,8 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+from app import ohdsi_wrappers
+
 from app.errors_redirects import forbidden_redirect
 
 from app.forms import ScenarioForm
@@ -249,9 +251,99 @@ def add_edit_scenario(request, scenario_id=None):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
 def ohdsi_workspace(request, scenario_id=None):
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    sc = get_object_or_404(Scenario, id=scenario_id)
+
+    # Get drugs concept set id
+    sc_drugs = sc.drugs.all()
+    if sc_drugs:
+        drugs_names = [d.name for d in sc_drugs]
+        ds_name = ohdsi_wrappers.name_entities_group(drugs_names)
+
+        # Check if concept set already exists
+        # ds_id = ohdsi_wrappers.get_concept_set_id(ds_name)
+        # Create concept set if it does not already exist
+        if ohdsi_wrappers.exists(ds_name, "conceptset") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_concept_set(drugs_names, "Drug")
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας concept set φαρμάκων")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας concept set φαρμάκων"),
+                    status=500)
+
+                return error_response
+
+        drugs_cohort_name = ohdsi_wrappers.name_entities_group([ds_name])
+
+        if ohdsi_wrappers.exists(drugs_cohort_name, "cohortdefinition") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_cohort({"Drug": [ds_name]})
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                    status=500)
+
+                return error_response
+
+    # Get conditions concept set id
+    sc_conditions = sc.conditions.all()
+    if sc_conditions:
+        conditions_names = [c.name for c in sc_conditions]
+        cs_name = ohdsi_wrappers.name_entities_group(conditions_names)
+
+        # Check if concept set already exists
+        # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
+        # Create concept set if it does not already exist
+        if ohdsi_wrappers.exists(cs_name, "conceptset") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_concept_set(conditions_names, "Condition")
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"),
+                    status=500)
+
+                return error_response
+
+
+        conditions_cohort_name = ohdsi_wrappers.name_entities_group([cs_name])
+
+        if ohdsi_wrappers.exists(conditions_cohort_name, "cohortdefinition") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_cohort({"Condition": [cs_name]})
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason":
+                #         _("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"
+                #           )
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"),
+                    status=500)
+
+                return error_response
+
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
     }
+
     return render(request, 'app/ohdsi_workspace.html', context)
 
 
@@ -266,7 +358,7 @@ def incidence_rates(request, ir_id=None):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    if scenario_id:
+    if ir_id:
         ohdsi_workspace = get_object_or_404(OHDSIWorkspace, ir_id=ir_id)
 
     delete_switch = "enabled" if ohdsi_workspace.id else "disabled"
