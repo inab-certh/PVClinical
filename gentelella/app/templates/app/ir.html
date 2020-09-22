@@ -12,13 +12,26 @@
 	<!-- Select 2 css -->
 	{{ form.media.js }}
     <script src='{% static "build/js/ir.js" %}'></script>
+    <script>
+        console.log($('#irframe').contents());
+    </script>
 {% endblock %}
 
 {% block title %} {{title}} {% endblock %}
 
-
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
+<div class="iframe-cnt">
+    <iframe id="irframe" src="{{ ir_url}}"></iframe>
+</div>
+
+
+
+
 {% endblock %}
+
+
+
+
 
