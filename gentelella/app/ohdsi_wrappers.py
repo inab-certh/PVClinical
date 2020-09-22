@@ -198,7 +198,7 @@ def create_concept_set(cterms, cdomain):
     add_items_url = "{}/conceptset/{}/items".format(settings.OHDSI_ENDPOINT, resp_json.get("id"))
 
     # Including both descendants and mapped(synonym) terms
-    payload = [{"conceptId": sc.get("CONCEPT_ID"), "isExcluded": 0, "includeDescendants": 0, "includeMapped": 0
+    payload = [{"conceptId": sc.get("CONCEPT_ID"), "isExcluded": 0, "includeDescendants": 1, "includeMapped": 0
                 } for sc in search_concepts]
     add_items_resp = requests.put(add_items_url, data=json.dumps(payload), headers=headers)
     resp_json = add_items_resp.json()

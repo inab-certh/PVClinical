@@ -1,5 +1,6 @@
 import json
 import re
+import requests
 import os
 
 from itertools import chain
@@ -26,6 +27,7 @@ from app import ohdsi_wrappers
 from app.errors_redirects import forbidden_redirect
 
 from app.forms import ScenarioForm
+from app.forms import IRForm
 
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
@@ -355,8 +357,8 @@ def incidence_rates(request, ir_id=None):
     :param ir_id: the specific ir record's id
     :return: the form view
     """
-    if not request.META.get('HTTP_REFERER'):
-        return forbidden_redirect(request)
+    # if not request.META.get('HTTP_REFERER'):
+    #     return forbidden_redirect(request)
 
     if ir_id:
         ohdsi_workspace = get_object_or_404(OHDSIWorkspace, ir_id=ir_id)
@@ -388,17 +390,24 @@ def incidence_rates(request, ir_id=None):
 
     # GET request method
     else:
-        scform = IRForm(label_suffix='',  instance=scenario)
+        irform = IRForm(label_suffix='')
+
+    ir_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+    print(ir_url)
+    # ir_resp = requests.get(ir_url)
+    # print(ir_resp.status_code)
+    # print(ir_resp.text)
 
 
 
     context = {
         "delete_switch": delete_switch,
         "ir_id": ir_id,
+        "ir_url": ir_url,
         "form": irform,
     }
 
-    return render(request, 'app/add_edit_scenario.html', context)
+    return render(request, 'app/ir.html', context)
 
 
 @login_required()
