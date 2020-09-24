@@ -258,6 +258,8 @@ def ohdsi_workspace(request, scenario_id=None):
 
     sc = get_object_or_404(Scenario, id=scenario_id)
 
+    # ohdsi_workspace = OHDSIWorkspace.objects.get_or_create(sc_id=scenario_id)
+
     # Get drugs concept set id
     sc_drugs = sc.drugs.all()
     if sc_drugs:
@@ -341,6 +343,17 @@ def ohdsi_workspace(request, scenario_id=None):
                     status=500)
 
                 return error_response
+
+    drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name)
+    conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name)
+
+    ir_name = name_entities_group(list(map(lambda c: c.get("name"), drugs_cohort + conditions_cohort)))
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+
+    if ir_ent:
+        ohdsi_wrappers.change_ir(ir_ent.get("id"))
+    else:
+        ohdsi_wrappers.create_ir(target_cohorts=[drugs_cohort], outcome_cohorts=[conditions_cohort])
 
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
