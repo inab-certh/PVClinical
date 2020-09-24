@@ -171,11 +171,13 @@ class IRForm(forms.Form):
     #                                       label=_("Διάστημα ανάλυσης:"),
     #                                       widget=CustomSelect2TagWidget)
 
-    add_study_window = forms.BooleanField()
+    add_study_window = forms.BooleanField(initial=False)
     study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης"),
+                                       initial=None,
                                        required=False,
                                        widget=forms.DateInput())
     study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης"),
+                                     initial=None,
                                      required=False,
                                      widget=forms.DateInput())
 
@@ -185,14 +187,16 @@ class IRForm(forms.Form):
                                                   ("!bt", _("Όχι ανάμεσα σε"))
                                                   ),
                                          required=False,
+                                         initial=None,
                                          label=_("με ηλικία:"),
                                          widget=CustomSelect2TagWidget)
 
 
-    age_limit = forms.IntegerField(required=False)
-    age_ext_limit = forms.IntegerField(label=_("και"), required=False)
+    age_limit = forms.IntegerField(required=False, initial=0)
+    age_ext_limit = forms.IntegerField(label=_("και"), required=False, initial=0)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                        initial=None,
                                         required=False,
                                         choices=sorted((("Μ", _("Άρρεν")), ("F", _("Θήλυ"))), key = lambda x: x[1]))
 
