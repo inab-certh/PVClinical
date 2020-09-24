@@ -513,7 +513,7 @@ def add_change_ir(ir_id, **options):
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id or "")
 
-    expression = {}
+    # expression = {}
 
     target_cohorts = options.get("target_cohorts")
     outcome_cohorts = options.get("outcome_cohorts")
