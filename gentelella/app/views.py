@@ -350,9 +350,10 @@ def ohdsi_workspace(request, scenario_id=None):
     ir_name = name_entities_group(list(map(lambda c: c.get("name"), drugs_cohort + conditions_cohort)))
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
-    if ir_ent:
-        ohdsi_wrappers.change_ir(ir_ent.get("id"))
-    else:
+    # if ir_ent:
+    #     ohdsi_wrappers.change_ir(ir_ent.get("id"))
+    # else:
+    if not ir_ent:
         ohdsi_wrappers.create_ir(target_cohorts=[drugs_cohort], outcome_cohorts=[conditions_cohort])
 
     context = {
