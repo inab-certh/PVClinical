@@ -21,13 +21,21 @@
 
 {% block formcontent %}
     {{ form|as_crispy_errors }}
+    <div id="ageCrit" name="ageCrit" >{{ form.age_crit|as_crispy_field }}</div>
+    <div id="ageLimit" name="ageLimit">{{ form.age|as_crispy_field }}</div>
+    <div id="extAgeLimit" name="extAgeLimit">{{ form.ext_age|as_crispy_field }}</div>
 
-<div class="iframe-cnt">
-    <iframe id="irframe" src="{{ ir_url}}"></iframe>
-</div>
+    <div id="genders" name="genders">{{ form.genders|as_crispy_field }}</div>
+    <div id="addStudyWindow" name="addStudyWindow">{{ form.add_study_window|as_crispy_field }}</div>
+    <div class="row">
+        <div id="studyStartDate" name="studyStartDate">{{ form.study_start_date|as_crispy_field }}</div>
+        <div id="studyEndDate" name="studyEndDate">{{ form.study_end_date|as_crispy_field }}</div>
+    </div>
 
 
-
+    <div class="iframe-cnt">
+        <iframe id="irframe" src="{{ results_url}}"></iframe>
+    </div>
 
 {% endblock %}
 
