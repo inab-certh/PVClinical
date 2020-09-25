@@ -14,8 +14,12 @@
 {% endblock %}
 
 {% block content %}
-	<div>
-
+	<div class="col-xs-offset-2">
+        <a class="btn btn-primary col-xs-8 col-xs-offset-1 col-md-offset-2 mt-3" type="button" href="{% url 'edit_ir' ir_id %}">
+            <span>
+                <i class="fa fa-bolt"></i> {% trans "Ποσοστά επίπτωσης" %}
+            </span>
+        </a>
 	</div>
 
 {% endblock %}

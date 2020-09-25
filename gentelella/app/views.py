@@ -37,7 +37,7 @@ from app.helper_modules import delete_db_rec
 
 from app.models import Scenario
 from app.models import OHDSIWorkspace
-from app.ohdsi_wrappers import change_ir
+from app.ohdsi_wrappers import update_ir
 from app.ohdsi_wrappers import create_ir
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
@@ -344,20 +344,36 @@ def ohdsi_workspace(request, scenario_id=None):
 
                 return error_response
 
+    coh_gen_errors = [_("Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                      _("Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες")]
     drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name)
     conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name)
 
-    ir_name = name_entities_group(list(map(lambda c: c.get("name"), drugs_cohort + conditions_cohort)))
+    # Generate cohorts
+    for indx, coh in enumerate([drugs_cohort, conditions_cohort]):
+        coh_id = coh.get("id")
+        if coh_id:
+            status = ohdsi_wrappers.generate_cohort(coh_id)
+            if status == "FAiLED":
+                error_response = HttpResponse(
+                    content= coh_gen_errors[indx], status=500)
+                return error_response
+
+
+    ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
+                                                          [drugs_cohort] + [conditions_cohort])))
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
-    # if ir_ent:
-    #     ohdsi_wrappers.change_ir(ir_ent.get("id"))
-    # else:
-    if not ir_ent:
-        ohdsi_wrappers.create_ir(target_cohorts=[drugs_cohort], outcome_cohorts=[conditions_cohort])
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
+    else:
+        res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+        ir_id = res_json.get("id")
 
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
+        "ir_id": ir_id,
     }
 
     return render(request, 'app/ohdsi_workspace.html', context)
@@ -365,28 +381,45 @@ def ohdsi_workspace(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def incidence_rates(request, ir_id=None):
-    """ Add or edit incidence rates (ir) view. Retrieve the specific ir that id refers to
+def incidence_rates(request, ir_id):
+    """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
     :return: the form view
     """
-    # if not request.META.get('HTTP_REFERER'):
-    #     return forbidden_redirect(request)
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
-    if ir_id:
-        ohdsi_workspace = get_object_or_404(OHDSIWorkspace, ir_id=ir_id)
+    ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
+    ir_exists = ohdsi_wrappers.url_exists(ir_url)
+    if ir_exists:
+        ir_options = ohdsi_wrappers.get_ir_options(ir_id)
+    else:
+        messages.error(
+            request,
+            _("Δεν βρέθηκε ανάλυση ποσοστών επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
 
-    delete_switch = "enabled" if ohdsi_workspace.id else "disabled"
+    delete_switch = "enabled" if ir_exists else "disabled"
 
 
     if request.method == 'POST':
-        irform = IRForm(request.POST, label_suffix='')
+        irform = IRForm(request.POST, label_suffix='', ir_options=ir_options)
 
         if irform.is_valid():
-            if ohdsi_workspace.ir_id:
-                print(ir_id)
-                #change_ir()
+            if ir_exists:
+                ir_options = {}
+                # ir_options["targetIds"] =
+                # ir_options["outcomeIds"] =
+
+                ir_options["age"] = irform.cleaned_data.get("age")
+                ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
+                ir_options["age_crit"] = irform.cleaned_data.get("age_crit")
+
+                ir_options["genders"] = irform.cleaned_data.get("genders")
+                ir_options["study_start_date"] = irform.cleaned_data.get("study_start_date")
+                ir_options["study_end_date"] = irform.cleaned_data.get("study_end_date")
+
+                update_ir(ir_id, **ir_options)
             messages.success(
                 request,
                 _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
@@ -404,10 +437,10 @@ def incidence_rates(request, ir_id=None):
 
     # GET request method
     else:
-        irform = IRForm(label_suffix='')
+        irform = IRForm(label_suffix='', ir_options=ir_options)
+        update_ir(ir_id)
 
-    ir_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
-    print(ir_url)
+    results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
     # ir_resp = requests.get(ir_url)
     # print(ir_resp.status_code)
     # print(ir_resp.text)
@@ -417,7 +450,7 @@ def incidence_rates(request, ir_id=None):
     context = {
         "delete_switch": delete_switch,
         "ir_id": ir_id,
-        "ir_url": ir_url,
+        "results_url": results_url,
         "form": irform,
     }
 

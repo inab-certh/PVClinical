@@ -2,6 +2,7 @@ import hashlib
 import itertools
 import json
 import requests
+import time
 
 # from datetime import datetime
 # from datetime import timedelta
@@ -118,6 +119,25 @@ def get_concept_set_id(cs_name):
         matching_set = match[0].get("id") if match else None
 
     return matching_set
+
+
+def get_entity_by_id(entity_type, entity_id):
+    """ Get a specific entity (i.e. cohortdefinition, iranalysis etc.) if it exists
+    :param entity_id: the id of  the entity
+    :return: the entity if it exists or None
+    """
+
+    entity_url = "{}/{}/{}".format(settings.OHDSI_ENDPOINT, entity_type, entity_id)
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = requests.get(entity_url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    return {}
 
 
 def get_entity_by_name(entity_type, entity_name):
@@ -328,22 +348,42 @@ def create_cohort(domains_csets_dict):
     return response.status_code, resp_json
 
 
-# def generate_cohort(cohort_id):
-#     """ Generate a specific cohort
-#     :param cohort_id: the cohort's id
-#     :return: the status_code and the json data of the response
-#     """
-#     gen_cohort_url = "{}/cohortdefinition/{}/generate/OHDSI-CDMV5-synpuf".format(settings.OHDSI_ENDPOINT,
-#                                                                                  cohort_id)
-#     headers = {
-#         "Content-Type": "application/json",
-#         "Accept": "application/json",
-#         # "api-key": "{}".format(settings.OHDSI_APIKEY),
-#     }
-#
-#     response = requests.get(gen_cohort_url, headers=headers)
-#     resp_json = response.json()
-#     return response.status_code, resp_json
+def generate_cohort(cohort_id):
+    """ Generate a specific cohort
+    :param cohort_id: the cohort's id
+    :return: the status (COMPLETE or FAILED)
+    """
+
+    status = "FAILED"
+    gen_cohort_url = "{}/cohortdefinition/{}/generate/OHDSI-CDMV5-synpuf".format(settings.OHDSI_ENDPOINT,
+                                                                                 cohort_id)
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = requests.get(gen_cohort_url, headers=headers)
+    resp_json = response.json()
+
+    if response.status_code == 200:
+        completed = False
+        status_url = "{}/cohortdefinition/{}/info".format(settings.OHDSI_ENDPOINT, cohort_id)
+        start_time = time.time()
+        while not completed:
+            if time.time() - start_time > 300:
+                break
+            time.sleep(2)
+            response = requests.get(status_url, headers = headers)
+            if response.status_code == 200:
+                resp_json = response.json()
+                completed = (resp_json[0].get("status") == "COMPLETE")
+            else:
+                status = "FAILED"
+        if completed:
+            status = "COMPLETE"
+
+    return status
 
 
 def create_ir(target_cohorts, outcome_cohorts, **options):
@@ -378,7 +418,7 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     options["outcome_cohorts"] = outcome_cohorts
     options["ir_name"] = ir_name
 
-    return add_change_ir(None, **options)
+    return add_update_ir(None, **options)
 
     # age = options.get("age")
     # ext_age = options.get("ext", None)
@@ -445,35 +485,35 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     # return response.status_code, resp_json
 
 
-def get_ir_option(ir_id, option_name):
-    """ Get the selected option of an existing ir
+def get_ir_options(ir_id):
+    """ Get the options of an existing ir
     :param ir_id: the id of the existing ir
-    :param option_name: the specific option to be retrieved
-    :return: the option that was asked to be retrieved
+    :return: the options of the specific ir
     """
     options = {}
-    ir_ent = get_entity_by_name("ir", ir_id)
-    ir_expr = json.loads(ir_ent.get("expression", {}))
-    options["targetIds"] = ir_expr.get("targetIds")
-    options["outcomeIds"] = ir_expr.get("outcomeIds")
+
+    ir_ent = get_entity_by_id("ir", ir_id)
+    ir_expr = json.loads(ir_ent.get("expression", "{}"))
+    options["targetIds"] = ir_expr.get("targetIds", [])
+    options["outcomeIds"] = ir_expr.get("outcomeIds", [])
     ir_demographic_criteria = ir_expr.get("DemographicCriteriaList", {})
     age_crit = ir_demographic_criteria.get("Age", {})
     options["age"] = age_crit.get("Value")
     options["ext_age"] = age_crit.get("Extend")
     options["age_crit"] = age_crit.get("Op")
 
-    options["genders"] = ir_demographic_criteria.get("Gender")
+    options["genders"] = ir_demographic_criteria.get("Gender", [])
 
-    ir_study_window = ir_expr.get("studyWindow")
+    ir_study_window = ir_expr.get("studyWindow", {})
 
-    options["study_start_date"] = ir_study_window.get("study_start_date")
-    options["study_end_date"] = ir_study_window.get("study_end_date")
+    options["study_start_date"] = ir_study_window.get("study_start_date") if ir_study_window else None
+    options["study_end_date"] = ir_study_window.get("study_end_date") if ir_study_window else None
 
-    return options.get(option_name)
+    return options
 
 
-def change_ir(ir_id, **options):
-    """ Create ir wrapper
+def update_ir(ir_id, **options):
+    """ Change/update ir wrapper
     :param ir_id: the id of the ir to be changed
     :param **options: the various options concerning option of the ir study (i.e. age, gender, study period etc.)
     :return: the status_code and the json data of the response
@@ -495,11 +535,11 @@ def change_ir(ir_id, **options):
     # if exists_json:
     #     return 500, {}
 
-    return add_change_ir(ir_id, **options)
+    return add_update_ir(ir_id, **options)
 
 
-def add_change_ir(ir_id, **options):
-    """ Helper function for both create_ir and change_ir
+def add_update_ir(ir_id, **options):
+    """ Helper function for both create_ir and update_ir
     :param ir_id: the id of the ir to be changed
     :param options: the various options concerning option of the ir study depending on the function that calls helper
     function
@@ -525,17 +565,19 @@ def add_change_ir(ir_id, **options):
         ir_name = response_json.get("name")
         # expression = json.loads(response_json.get("expression"))
 
-    target_cohorts_ids = list(map(lambda tc: tc.get("id"), target_cohorts)
-                              ) if target_cohorts else get_ir_option("targetIds")  # expression.get("targetIds")
-    outcome_cohorts_ids = list(map(lambda oc: oc.get("id"), outcome_cohorts)
-                               ) if outcome_cohorts else get_ir_option("outcomeIds")  # expression.get("outcomeIds")
+    origin_options = get_ir_options(ir_id)
 
-    age = options.get("age") or get_ir_option("age")
-    ext_age = options.get("ext_age", None) or get_ir_option("ext_age")
-    age_crit = options.get("age_crit", "") or get_ir_option("age_crit")  # Age criterion (i.e. less than [lt] or greater than [gt])
+    target_cohorts_ids = list(map(lambda tc: tc.get("id"), target_cohorts)
+                              ) if target_cohorts else origin_options.get("targetIds")  # expression.get("targetIds")
+    outcome_cohorts_ids = list(map(lambda oc: oc.get("id"), outcome_cohorts)
+                               ) if outcome_cohorts else origin_options.get("outcomeIds")  # expression.get("outcomeIds")
+
+    age = options.get("age") or origin_options.get("age")
+    ext_age = options.get("ext_age", None) or origin_options.get("ext_age")
+    age_crit = options.get("age_crit", "") or origin_options.get("age_crit")  # Age criterion (i.e. less than [lt] or greater than [gt])
     age_dict = {"Age": {"Value": age, "Extent": ext_age, "Op": age_crit}}  # if age > 0 else {}
 
-    genders_lst = options.get("genders") or get_ir_option("genders")
+    genders_lst = options.get("genders") or origin_options.get("genders")
 
     gender_concepts = list(itertools.chain(
         *[search_concept(gender, ["Gender"])[-1] for gender in genders_lst]))
@@ -552,8 +594,8 @@ def add_change_ir(ir_id, **options):
     demographic_criteria = [age_dict] + [gender_dict]
 
     # now = datetime.now()
-    study_start_date = options.get("study_start_date") or get_ir_option("study_start_date")  # or now.strftime("%Y-%m-%d")
-    study_end_date = options.get("study_end_date") or get_ir_option("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
+    study_start_date = options.get("study_start_date") or origin_options.get("study_start_date")  # or now.strftime("%Y-%m-%d")
+    study_end_date = options.get("study_end_date") or origin_options.get("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
     study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
                          } if study_start_date and study_end_date else {}
 

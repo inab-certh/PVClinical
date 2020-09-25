@@ -181,28 +181,34 @@ class IRForm(forms.Form):
                                      required=False,
                                      widget=forms.DateInput())
 
-    age_crit = forms.MultipleChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
-                                                  ("eq", _("Ίση")), ("gt", _("Μεγαλύτερη από")),
-                                                  ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
-                                                  ("!bt", _("Όχι ανάμεσα σε"))
-                                                  ),
-                                         required=False,
-                                         initial=None,
-                                         label=_("με ηλικία:"),
-                                         widget=CustomSelect2TagWidget)
+    age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
+                                          ("eq", _("Ίση")), ("gt", _("Μεγαλύτερη από")),
+                                          ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
+                                          ("!bt", _("Όχι ανάμεσα σε"))),
+                                 required=False,
+                                 initial=None,
+                                 label=_("Με ηλικία:"),
+                                 widget=forms.Select())
 
 
-    age_limit = forms.IntegerField(required=False, initial=0)
-    age_ext_limit = forms.IntegerField(label=_("και"), required=False, initial=0)
+    age = forms.IntegerField(required=False, initial=0)
+    ext_age = forms.IntegerField(label=_("και"), required=False, initial=0)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                         initial=None,
                                         required=False,
                                         choices=sorted((("Μ", _("Άρρεν")), ("F", _("Θήλυ"))), key = lambda x: x[1]))
 
-    # def __init__(self, *args, **kwargs):
-    #     self.instance = kwargs.pop("instance")
-    #     super(ScenarioForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self.options = kwargs.pop("ir_options")
+        super(IRForm, self).__init__(*args, **kwargs)
+        self.fields['study_start_date'].widget.attrs['placeholder'] = _("YYYY-MM-DD")
+        self.fields['study_end_date'].widget.attrs['placeholder'] = _("YYYY-MM-DD")
+
+        for k in self.fields.keys():
+            if k != "add_study_window":
+                print(k)
+                self.fields[k] = self.options.get(k)
     #
     #     # If instance exists in database
     #     if Scenario.objects.filter(title=self.instance.title, owner=self.instance.owner).exists():
