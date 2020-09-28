@@ -1,5 +1,7 @@
 import re
 
+from datetime import date
+
 from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
@@ -171,15 +173,15 @@ class IRForm(forms.Form):
     #                                       label=_("Διάστημα ανάλυσης:"),
     #                                       widget=CustomSelect2TagWidget)
 
-    add_study_window = forms.BooleanField(initial=False)
-    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης"),
+    add_study_window = forms.BooleanField(initial=False, required=False)
+    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης:"),
                                        initial=None,
                                        required=False,
-                                       widget=forms.DateInput())
-    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης"),
+                                       widget=forms.DateInput)
+    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης:"),
                                      initial=None,
                                      required=False,
-                                     widget=forms.DateInput())
+                                     widget=forms.DateInput)
 
     age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
                                           ("eq", _("Ίση")), ("gt", _("Μεγαλύτερη από")),
@@ -188,27 +190,40 @@ class IRForm(forms.Form):
                                  required=False,
                                  initial=None,
                                  label=_("Με ηλικία:"),
-                                 widget=forms.Select())
+                                 widget=forms.Select)
 
 
-    age = forms.IntegerField(required=False, initial=0)
-    ext_age = forms.IntegerField(label=_("και"), required=False, initial=0)
+    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label=_("και"), required=False, initial=None, min_value=0, max_value=200)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-                                        initial=None,
+                                        initial=[],
                                         required=False,
                                         choices=sorted((("Μ", _("Άρρεν")), ("F", _("Θήλυ"))), key = lambda x: x[1]))
 
     def __init__(self, *args, **kwargs):
         self.options = kwargs.pop("ir_options")
         super(IRForm, self).__init__(*args, **kwargs)
-        self.fields['study_start_date'].widget.attrs['placeholder'] = _("YYYY-MM-DD")
-        self.fields['study_end_date'].widget.attrs['placeholder'] = _("YYYY-MM-DD")
+
+        self.fields["study_start_date"].widget = forms.DateInput(attrs={
+            'min': date(1917,11,7),
+            'max': date.today(),
+            'placeholder': _("YYYY-MM-DD"),
+            'class': 'datepicker',
+        }, )
+
+        self.fields["study_end_date"].widget = forms.DateInput(attrs={
+            'min': date(1917,11,7),
+            'max': date.today(),
+            'placeholder': _("YYYY-MM-DD"),
+            'class': 'datepicker',
+        }, )
 
         for k in self.fields.keys():
             if k != "add_study_window":
-                print(k)
-                self.fields[k] = self.options.get(k)
+                # print(k)
+                # print(self.options.get(k))
+                self.fields[k].initial = self.options.get(k)
     #
     #     # If instance exists in database
     #     if Scenario.objects.filter(title=self.instance.title, owner=self.instance.owner).exists():

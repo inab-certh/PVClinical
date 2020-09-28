@@ -489,9 +489,26 @@ a.disabled {
 	color: #bf2b27;
 }
 
-#scTitleDiv .invalid-feedback {
+/*#scTitleDiv .invalid-feedback {*/
+/*    font-size: 13px;*/
+/*    color: #bf2b27;*/
+/*}*/
+
+.invalid-feedback {
     font-size: 13px;
     color: #bf2b27;
+}
+
+.numberinput {
+	text-align: right;
+}
+
+#ageLimit input {
+	width: 80px;
+}
+
+#extAgeLimit input {
+	width: 80px;
 }
 
 iframe {
