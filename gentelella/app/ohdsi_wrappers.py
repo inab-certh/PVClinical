@@ -13,7 +13,7 @@ from django.conf import settings
 def url_exists(exists_url):
     """ Checks whether a specific url exists or not
     :param exists_url: the url to be checked whether it exists or not
-    :return: the status_code and True or False showing whether the url exists or not
+    :return: True or False (if status_code==200 the url exists, if status_code==404 the url does not exist)
     """
 
     headers = {
@@ -23,10 +23,10 @@ def url_exists(exists_url):
     }
     response = requests.get(exists_url, headers=headers)
 
-    resp_json = response.json()
+    # resp_json = response.json()
     # resp_status = resp_json.get("status")
     # resp_results = resp_json.get("results") or []
-    return response.status_code, resp_json == 1
+    return response.status_code == 200
 
 
 def exists(name, ent_type):
@@ -527,10 +527,10 @@ def update_ir(ir_id, **options):
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
 
-    status_code, exists_json = url_exists(ir_url)
+    exists = url_exists(ir_url)
 
-    if status_code != 200:
-        return status_code, {}
+    if not exists:
+        return 404, {}
 
     # if exists_json:
     #     return 500, {}

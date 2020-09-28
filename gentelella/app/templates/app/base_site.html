@@ -40,9 +40,11 @@
         <!-- JQVMap -->
         <link href='{% static "vendors/jqvmap/dist/jqvmap.min.css" %}' rel="stylesheet"/>
 
+        <link href='{% static "vendors/flag-icon-css/css/flag-icon.min.css" %}' rel="stylesheet" type="text/css">
+        <link href='{% static "vendors/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.standalone.min.css" %}' rel="stylesheet">
+
         <!-- Custom Theme Style -->
         <link href='{% static "build/css/custom.css" %}' rel="stylesheet">
-        <link href='{% static "vendors/flag-icon-css/css/flag-icon.min.css" %}' rel="stylesheet" type="text/css">
         <link href='{% static "build/css/pv_dash.css" %}' rel="stylesheet">
 
       {% endblock stylesheets %}
@@ -198,8 +200,13 @@
         <script src='{% static "vendors/jszip/dist/jszip.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/pdfmake.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/vfs_fonts.js" %}'></script>
+        <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.min.js" %}'></script>
+        <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.el.min.js" %}'></script>
 
         <script src='{% static "build/js/pv_dash.js" %}'></script>
+
+        <!-- Convert fields with 'datepicker' class to bootstrap's  datepicker input type -->
+        <script type="text/javascript" src='{% static "build/js/datepickerconv.js" %}'></script>
 
         <script type="text/javascript">
             $(document).ready(function() {

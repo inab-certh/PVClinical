@@ -354,7 +354,7 @@ def ohdsi_workspace(request, scenario_id=None):
         coh_id = coh.get("id")
         if coh_id:
             status = ohdsi_wrappers.generate_cohort(coh_id)
-            if status == "FAiLED":
+            if status == "FAILED":
                 error_response = HttpResponse(
                     content= coh_gen_errors[indx], status=500)
                 return error_response
@@ -391,7 +391,9 @@ def incidence_rates(request, ir_id):
         return forbidden_redirect(request)
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
+
     ir_exists = ohdsi_wrappers.url_exists(ir_url)
+    ir_options = {}
     if ir_exists:
         ir_options = ohdsi_wrappers.get_ir_options(ir_id)
     else:
@@ -416,10 +418,12 @@ def incidence_rates(request, ir_id):
                 ir_options["age_crit"] = irform.cleaned_data.get("age_crit")
 
                 ir_options["genders"] = irform.cleaned_data.get("genders")
-                ir_options["study_start_date"] = irform.cleaned_data.get("study_start_date")
-                ir_options["study_end_date"] = irform.cleaned_data.get("study_end_date")
+                ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
+                ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
 
-                update_ir(ir_id, **ir_options)
+                rstatus, rjson = update_ir(ir_id, **ir_options)
+                print(rstatus)
+                print(rjson)
             messages.success(
                 request,
                 _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
