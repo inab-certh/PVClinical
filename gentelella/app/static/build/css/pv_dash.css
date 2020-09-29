@@ -474,6 +474,10 @@ a.disabled {
     width: 100%!important;
 }
 
+.x_panel form h1{
+	font-weight: bold;
+}
+
 #message_container.success,  #message_container.error{
 	font-weight: bold;
 	font-size: large;
@@ -498,17 +502,22 @@ a.disabled {
     font-size: 13px;
     color: #bf2b27;
 }
+.numberinput::-webkit-inner-spin-button {
+    opacity: 1
+}
 
 .numberinput {
-	text-align: right;
+	text-align: center;
 }
 
-#ageLimit input {
-	width: 80px;
+div#ageLimit input, div#extAgeLimit input {
+	width: 8rem;
+	margin: 0 auto;
 }
 
-#extAgeLimit input {
-	width: 80px;
+div#andDiv {
+	text-align: center;
+	font-weight: bold;
 }
 
 iframe {

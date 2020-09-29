@@ -24,11 +24,12 @@ $(function() {
     }
 
     function show_hide_ext_age(age_op) {
-        console.log(age_op.find("option:selected").val().indexOf("bt"));
         if(age_op.find("option:selected").val().indexOf("bt")>=0 ) {
             $("#extAgeLimit").show();
+            $("#ageConj").show();
         } else {
             $("#extAgeLimit").hide();
+            $("#ageConj").hide();
         }
     }
 });

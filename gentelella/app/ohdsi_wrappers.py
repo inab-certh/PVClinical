@@ -4,7 +4,7 @@ import json
 import requests
 import time
 
-# from datetime import datetime
+from datetime import datetime
 # from datetime import timedelta
 from urllib.parse import urlencode
 from django.conf import settings
@@ -496,18 +496,32 @@ def get_ir_options(ir_id):
     ir_expr = json.loads(ir_ent.get("expression", "{}"))
     options["targetIds"] = ir_expr.get("targetIds", [])
     options["outcomeIds"] = ir_expr.get("outcomeIds", [])
-    ir_demographic_criteria = ir_expr.get("DemographicCriteriaList", {})
-    age_crit = ir_demographic_criteria.get("Age", {})
+    ir_strata_lst = list(filter(lambda el: el.get("name") == "Stratification criteria",
+                                ir_expr.get("strata", [])))
+    ir_strata = ir_strata_lst[0] if ir_strata_lst else {}
+    ir_strata_expr = ir_strata.get("expression", {})
+
+    ir_demographic_criteria = ir_strata_expr.get("DemographicCriteriaList", [])
+
+    # Keep only not null demographic criteria
+    valid_demographic_criteria = dict(list(filter(lambda elm: elm[1] != None,
+                                                  itertools.chain(
+                                                      *map(lambda el: tuple(el.items()),
+                                                           ir_demographic_criteria)))))
+
+    age_crit = valid_demographic_criteria.get("Age", {})
     options["age"] = age_crit.get("Value")
-    options["ext_age"] = age_crit.get("Extend")
+    options["ext_age"] = age_crit.get("Extent")
     options["age_crit"] = age_crit.get("Op")
 
-    options["genders"] = ir_demographic_criteria.get("Gender", [])
+    options["genders"] = list(map(lambda g: g.get("CONCEPT_NAME"),
+                                  valid_demographic_criteria.get("Gender", [])))
 
-    ir_study_window = ir_expr.get("studyWindow", {})
-
-    options["study_start_date"] = ir_study_window.get("study_start_date") if ir_study_window else None
-    options["study_end_date"] = ir_study_window.get("study_end_date") if ir_study_window else None
+    ir_study_window = ir_expr.get("studyWindow") or {}
+    check_value = ir_study_window.get("startDate")
+    options["study_start_date"] = check_value if ir_study_window and check_value != "None" else None
+    check_value = ir_study_window.get("endDate")
+    options["study_end_date"] = check_value if ir_study_window and check_value != "None" else None
 
     return options
 
@@ -590,14 +604,18 @@ def add_update_ir(ir_id, **options):
                     "CONCEPT_NAME": gc.get("CONCEPT_NAME"), "DOMAIN_ID": gc.get("DOMAIN_ID"),
                     "VOCABULARY_ID": gc.get("VOCABULARY_ID")} for gc in gender_concepts]
     gender_dict = {"Gender": gender_list}  # if gender_list else {}
+
     # demographic_criteria = ([age_dict] if age_dict else []) + ([gender_dict] if gender_dict else [])
     demographic_criteria = [age_dict] + [gender_dict]
 
     # now = datetime.now()
     study_start_date = options.get("study_start_date") or origin_options.get("study_start_date")  # or now.strftime("%Y-%m-%d")
+    study_start_date = study_start_date if study_start_date != "None" else None
     study_end_date = options.get("study_end_date") or origin_options.get("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
-    study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
-                         } if study_start_date and study_end_date else {}
+    study_end_date = study_end_date if study_end_date != "None" else None
+
+    # study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
+    #                      } if study_start_date and study_end_date else {"studyWindow": None}
 
     expression_dict = {"ConceptSets": [], "targetIds": target_cohorts_ids,
                        "outcomeIds": outcome_cohorts_ids,
@@ -621,10 +639,13 @@ def add_update_ir(ir_id, **options):
                                          }
                                         ],
                                                   "DemographicCriteriaList": demographic_criteria,
-                                                  "Groups": []}}]}
+                                                  "Groups": []}}],
+                       "studyWindow": {"startDate": study_start_date,
+                                       "endDate": study_end_date} if study_start_date and study_end_date else None
+                       }
 
-    if study_start_date or study_end_date:
-        expression_dict.update(study_window_dict)
+    # if study_window_dict:
+    # expression_dict.update(study_window_dict)
 
     payload = {"id": ir_id, "name": ir_name, "description": None,
                "expression": json.dumps(expression_dict)
