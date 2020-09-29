@@ -403,32 +403,37 @@ def incidence_rates(request, ir_id):
 
     delete_switch = "enabled" if ir_exists else "disabled"
 
-
     if request.method == 'POST':
         irform = IRForm(request.POST, label_suffix='', ir_options=ir_options)
 
         if irform.is_valid():
+            # ir_options = {}
+            # ir_options["targetIds"] =
+            # ir_options["outcomeIds"] =
+
+            ir_options["age"] = irform.cleaned_data.get("age")
+            ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
+            ir_options["age_crit"] = irform.cleaned_data.get("age_crit")
+
+            ir_options["genders"] = irform.cleaned_data.get("genders")
+            ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
+            ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
+
             if ir_exists:
-                ir_options = {}
-                # ir_options["targetIds"] =
-                # ir_options["outcomeIds"] =
+                rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
+            else:
+                rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
 
-                ir_options["age"] = irform.cleaned_data.get("age")
-                ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
-                ir_options["age_crit"] = irform.cleaned_data.get("age_crit")
+            if rstatus == 200:
+                messages.success(
+                    request,
+                    _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
 
-                ir_options["genders"] = irform.cleaned_data.get("genders")
-                ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
-                ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
-
-                rstatus, rjson = update_ir(ir_id, **ir_options)
-                print(rstatus)
-                print(rjson)
-            messages.success(
-                request,
-                _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
-
-            return HttpResponseRedirect(reverse('edit_ir', args=(ir_id,)))
+                return HttpResponseRedirect(reverse('edit_ir', args=(ir_id,)))
+            else:
+                messages.success(
+                    request,
+                    _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
 
         else:
             messages.error(
@@ -442,14 +447,10 @@ def incidence_rates(request, ir_id):
     # GET request method
     else:
         irform = IRForm(label_suffix='', ir_options=ir_options)
-        update_ir(ir_id)
+        # update_ir(ir_id)
 
     results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
     # ir_resp = requests.get(ir_url)
-    # print(ir_resp.status_code)
-    # print(ir_resp.text)
-
-
 
     context = {
         "delete_switch": delete_switch,

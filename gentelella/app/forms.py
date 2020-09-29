@@ -184,7 +184,7 @@ class IRForm(forms.Form):
                                      widget=forms.DateInput)
 
     age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
-                                          ("eq", _("Ίση")), ("gt", _("Μεγαλύτερη από")),
+                                          ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
                                           ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
                                           ("!bt", _("Όχι ανάμεσα σε"))),
                                  required=False,
@@ -194,12 +194,13 @@ class IRForm(forms.Form):
 
 
     age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
-    ext_age = forms.IntegerField(label=_("και"), required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
 
-    genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+    genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "col-xs-12 col-sm-6"}),
                                         initial=[],
+                                        label=_("Φύλο:"),
                                         required=False,
-                                        choices=sorted((("Μ", _("Άρρεν")), ("F", _("Θήλυ"))), key = lambda x: x[1]))
+                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
 
     def __init__(self, *args, **kwargs):
         self.options = kwargs.pop("ir_options")
@@ -220,21 +221,17 @@ class IRForm(forms.Form):
         }, )
 
         for k in self.fields.keys():
-            if k != "add_study_window":
-                # print(k)
-                # print(self.options.get(k))
-                self.fields[k].initial = self.options.get(k)
-    #
-    #     # If instance exists in database
-    #     if Scenario.objects.filter(title=self.instance.title, owner=self.instance.owner).exists():
-    #         self.fields["title"].initial = self.instance.title
-    #         self.fields["status"].initial = self.instance.status
-    #         init_drugs = ["{}{}".format(
-    #             d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
-    #         self.fields["drugs_fld"].choices = list(zip(*[init_drugs]*2))
-    #         self.fields["drugs_fld"].initial = init_drugs
-    #
-    #         init_conditions = ["{}{}".format(
-    #             c.name, " - {}".format(c.code) if c.code else "") for c in self.instance.conditions.all()]
-    #         self.fields["conditions_fld"].choices = list(zip(*[init_conditions] * 2))
-    #         self.fields["conditions_fld"].initial = init_conditions
+            if k == "add_study_window":
+                self.initial[k] = self.options.get("study_start_date") and \
+                                  self.options.get("study_end_date")
+            else:
+                self.initial[k] = self.options.get(k)
+
+    def clean(self):
+        super(IRForm, self).clean()
+
+        if(not self.cleaned_data.get("add_study_window")):
+            self.cleaned_data["study_start_date"] = None
+            self.cleaned_data["study_start_date"] = None
+
+        return self.cleaned_data
