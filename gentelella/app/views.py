@@ -457,6 +457,7 @@ def incidence_rates(request, ir_id):
         "ir_id": ir_id,
         "results_url": results_url,
         "form": irform,
+        "title": _("Ποσοστά Επίπτωσης Πληθυσμού")
     }
 
     return render(request, 'app/ir.html', context)

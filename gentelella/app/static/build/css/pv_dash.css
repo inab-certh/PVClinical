@@ -476,6 +476,11 @@ a.disabled {
 
 .x_panel form h1{
 	font-weight: bold;
+	text-align: center;
+}
+
+.viewExplanation {
+	font-size: 14px;
 }
 
 #message_container.success,  #message_container.error{
