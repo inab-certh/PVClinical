@@ -16,7 +16,7 @@
 {% block content %}
     <div id="ohdsiMenu" class="col-xs-8 col-lg-9 col-xs-offset-3 col-lg-offset-2 mt-3">
         <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id %}">
+            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id=ir_id sc_id=sc_id%}">
                 <i class="fa fa-bolt fa-10x"></i>
             </a>
             <div class="portfolio-caption">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id %}">
+            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id=ir_id sc_id=sc_id %}">
                 <i class="fa fa-line-chart fa-10x"></i>
             </a>
             <div class="portfolio-caption">
@@ -47,7 +47,7 @@
         </div>
 
         <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id %}">
+            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id=ir_id sc_id=sc_id %}">
                 <i class="fa fa-sitemap fa-10x"></i>
             </a>
             <div class="portfolio-caption">
@@ -56,23 +56,6 @@
             </div>
 
         </div>
-
-<!--        <div class="col-md-6 col-sm-6 portfolio-item" align="center">-->
-<!--            <a class="portfolio-link btn no-outline" href="{% url 'edit_ir' ir_id %}">-->
-<!--                <i class="fa fa-bolt fa-10x"></i>-->
-<!--            </a>-->
-<!--            <div class="portfolio-caption">-->
-<!--                <h4>{% trans "Ποσοστά επίπτωσης" %}</h4>-->
-<!--&lt;!&ndash;                <p class="text-muted">Detailed description</p>&ndash;&gt;-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
-<!--	<div class="col-xs-offset-2">-->
-<!--        <a class="btn btn-primary col-xs-8 col-xs-offset-1 col-md-offset-2 mt-3" type="button" href="{% url 'edit_ir' ir_id %}">-->
-<!--            <span>-->
-<!--                <i class="fa fa-bolt"></i> {% trans "Ποσοστά επίπτωσης" %}-->
-<!--            </span>-->
-<!--        </a>-->
-<!--	</div>-->
 
 {% endblock %}

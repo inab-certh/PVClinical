@@ -173,16 +173,7 @@ class IRForm(forms.Form):
     #                                       label=_("Διάστημα ανάλυσης:"),
     #                                       widget=CustomSelect2TagWidget)
 
-    add_study_window = forms.BooleanField(initial=False, required=False)
-    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης:"),
-                                       initial=None,
-                                       required=False,
-                                       widget=forms.DateInput)
-    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης:"),
-                                     initial=None,
-                                     required=False,
-                                     widget=forms.DateInput)
-
+    # sc_id = forms.IntegerField(widget=forms.HiddenInput())
     age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
                                           ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
                                           ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
@@ -196,11 +187,20 @@ class IRForm(forms.Form):
     age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
     ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
 
-    genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "col-xs-12 col-sm-6"}),
+    genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
                                         initial=[],
                                         label=_("Φύλο:"),
                                         required=False,
                                         choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
+    add_study_window = forms.BooleanField(initial=False, required=False)
+    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης:"),
+                                       initial=None,
+                                       required=False,
+                                       widget=forms.DateInput)
+    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης:"),
+                                     initial=None,
+                                     required=False,
+                                     widget=forms.DateInput)
 
     def __init__(self, *args, **kwargs):
         self.options = kwargs.pop("ir_options")
@@ -230,7 +230,7 @@ class IRForm(forms.Form):
     def clean(self):
         super(IRForm, self).clean()
 
-        if(not self.cleaned_data.get("add_study_window")):
+        if not self.cleaned_data.get("add_study_window"):
             self.cleaned_data["study_start_date"] = None
             self.cleaned_data["study_start_date"] = None
 

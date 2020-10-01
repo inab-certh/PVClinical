@@ -374,6 +374,7 @@ def ohdsi_workspace(request, scenario_id=None):
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
         "ir_id": ir_id,
+        "sc_id": scenario_id
     }
 
     return render(request, 'app/ohdsi_workspace.html', context)
@@ -381,13 +382,16 @@ def ohdsi_workspace(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def incidence_rates(request, ir_id):
+def incidence_rates(request, sc_id, ir_id):
     """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
+    :param sc_id: the specific scenario's id (optional)
     :return: the form view
     """
-    if not request.META.get('HTTP_REFERER'):
+    http_referer = request.META.get('HTTP_REFERER')
+
+    if not http_referer:
         return forbidden_redirect(request)
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
@@ -401,9 +405,11 @@ def incidence_rates(request, ir_id):
             request,
             _("Δεν βρέθηκε ανάλυση ποσοστών επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
 
-    delete_switch = "enabled" if ir_exists else "disabled"
+    # delete_switch = "enabled" if ir_exists else "disabled"
+
 
     if request.method == 'POST':
+        # sc_id = sc_id or request.POST.get("sc_id")
         irform = IRForm(request.POST, label_suffix='', ir_options=ir_options)
 
         if irform.is_valid():
@@ -428,10 +434,9 @@ def incidence_rates(request, ir_id):
                 messages.success(
                     request,
                     _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
-
-                return HttpResponseRedirect(reverse('edit_ir', args=(ir_id,)))
+                return HttpResponseRedirect(reverse('edit_ir', args=(sc_id, ir_id, )))
             else:
-                messages.success(
+                messages.error(
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
 
@@ -441,23 +446,27 @@ def incidence_rates(request, ir_id):
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
 
 
-    elif request.method == 'DELETE':
-        return delete_db_rec(ohdsi_workspace)
+    # elif request.method == 'DELETE':
+    #     return delete_db_rec(ohdsi_workspace)
 
     # GET request method
     else:
+        # if "ohdsi-workspace" in http_referer:
+        #     sc_id = http_referer.rsplit('/', 1)[-1]
         irform = IRForm(label_suffix='', ir_options=ir_options)
+        # irform["sc_id"].initial = sc_id
         # update_ir(ir_id)
 
     results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
     # ir_resp = requests.get(ir_url)
 
     context = {
-        "delete_switch": delete_switch,
+        # "delete_switch": delete_switch,
+        "sc_id": sc_id,
         "ir_id": ir_id,
         "results_url": results_url,
         "form": irform,
-        "title": _("Ποσοστά Επίπτωσης Πληθυσμού")
+        "title": _("Ανάλυση Ποσοστών Επίπτωσης")
     }
 
     return render(request, 'app/ir.html', context)
