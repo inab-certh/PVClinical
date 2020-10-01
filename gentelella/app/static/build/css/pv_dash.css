@@ -525,6 +525,14 @@ div#andDiv {
 	font-weight: bold;
 }
 
+#genderChoices {
+	list-style-type:none
+}
+
+#genderChoices li {
+	display: inline;
+}
+
 iframe {
   width: 100%;
   height: 800px;
@@ -575,4 +583,14 @@ iframe {
 }
 .custom-control-label{
     margin-top:1px!important;
+}
+
+.calendar-icon-div {
+	margin-top: 0.5rem;
+	/*margin-left: -0.5rem;*/
+}
+
+.middle-align {
+  display: flex;
+  align-items: center;
 }
