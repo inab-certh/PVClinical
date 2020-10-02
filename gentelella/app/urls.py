@@ -18,6 +18,7 @@ urlpatterns = [
     path('ir', views.incidence_rates, name='add_ir'),
     # path('ir/<int:ir_id>', views.incidence_rates, name='edit_ir'),
     path('ir/<int:sc_id>/<int:ir_id>', views.incidence_rates, name='edit_ir'),
+    path('ir/<int:sc_id>/<int:ir_id>/<int:read_only>', views.incidence_rates, name='edit_ir'),
     path('ajax/synonyms', views.get_synonyms, name='drugs_synonyms'),
     path('ajax/filter-whole-set', views.filter_whole_set, name='filter_whole_set'),
     path('ajax/all-drugs', views.get_all_drugs, name='get_all_drugs'),

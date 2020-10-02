@@ -590,7 +590,15 @@ iframe {
 	/*margin-left: -0.5rem;*/
 }
 
-.middle-align {
+.middle-align, .modal-header {
   display: flex;
   align-items: center;
+}
+
+button.close {
+	text-align: right;
+}
+
+#saveBtn {
+	visibility: hidden;
 }

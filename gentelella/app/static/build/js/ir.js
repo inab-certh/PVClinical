@@ -13,8 +13,14 @@ $(function() {
         show_hide_ext_age($(this));
     });
 
-    $('#confirmBtn').click(function() {
+    $("#irSaveBtn").click(function(event) {
+        // event.preventDefault();
         console.log("confirmed");
+    });
+
+    $("#irCancelBtn").click(function(event) {
+        event.preventDefault();
+        $("#editIRModal").css("display:none");//.modal("hide");
     });
 
 
