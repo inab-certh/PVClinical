@@ -382,11 +382,12 @@ def ohdsi_workspace(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def incidence_rates(request, sc_id, ir_id):
+def incidence_rates(request, sc_id, ir_id, read_only=1):
     """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
     :param sc_id: the specific scenario's id (optional)
+    :param read_only: 0 if False 1 if True
     :return: the form view
     """
     http_referer = request.META.get('HTTP_REFERER')
@@ -410,7 +411,7 @@ def incidence_rates(request, sc_id, ir_id):
 
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
-        irform = IRForm(request.POST, label_suffix='', ir_options=ir_options)
+        irform = IRForm(request.POST, label_suffix='', ir_options=ir_options, read_only=read_only)
 
         if irform.is_valid():
             # ir_options = {}
@@ -453,7 +454,7 @@ def incidence_rates(request, sc_id, ir_id):
     else:
         # if "ohdsi-workspace" in http_referer:
         #     sc_id = http_referer.rsplit('/', 1)[-1]
-        irform = IRForm(label_suffix='', ir_options=ir_options)
+        irform = IRForm(label_suffix='', ir_options=ir_options, read_only=read_only)
         # irform["sc_id"].initial = sc_id
         # update_ir(ir_id)
 
@@ -465,6 +466,7 @@ def incidence_rates(request, sc_id, ir_id):
         "sc_id": sc_id,
         "ir_id": ir_id,
         "results_url": results_url,
+        "read_only": read_only,
         "form": irform,
         "title": _("Ανάλυση Ποσοστών Επίπτωσης")
     }

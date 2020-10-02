@@ -204,6 +204,7 @@ class IRForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.options = kwargs.pop("ir_options")
+        self.read_only = kwargs.pop("read_only")
         super(IRForm, self).__init__(*args, **kwargs)
 
         self.fields["study_start_date"].widget = forms.DateInput(attrs={
@@ -226,6 +227,7 @@ class IRForm(forms.Form):
                                   self.options.get("study_end_date")
             else:
                 self.initial[k] = self.options.get(k)
+            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
 
     def clean(self):
         super(IRForm, self).clean()
