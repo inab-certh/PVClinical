@@ -426,10 +426,10 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
             ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
 
-            if ir_exists:
-                rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
-            else:
-                rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
+            # if ir_exists:
+            rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
+            # else:
+            #     rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
 
             if rstatus == 200:
                 messages.success(
@@ -440,11 +440,37 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 messages.error(
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+                results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+                # ir_resp = requests.get(ir_url)
+
+                context = {
+                    # "delete_switch": delete_switch,
+                    "sc_id": sc_id,
+                    "ir_id": ir_id,
+                    "results_url": results_url,
+                    "read_only": read_only,
+                    "form": irform,
+                    "title": _("Ανάλυση Ποσοστών Επίπτωσης")
+                }
+                return render(request, 'app/ir.html', context, status=500)
 
         else:
             messages.error(
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+            results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+            # ir_resp = requests.get(ir_url)
+
+            context = {
+                # "delete_switch": delete_switch,
+                "sc_id": sc_id,
+                "ir_id": ir_id,
+                "results_url": results_url,
+                "read_only": read_only,
+                "form": irform,
+                "title": _("Ανάλυση Ποσοστών Επίπτωσης")
+            }
+            return render(request, 'app/ir.html', context,status=400)
 
 
     # elif request.method == 'DELETE':

@@ -13,15 +13,64 @@ $(function() {
         show_hide_ext_age($(this));
     });
 
-    $("#irSaveBtn").click(function(event) {
-        // event.preventDefault();
-        console.log("confirmed");
-    });
+    // $("#irSaveBtn").click(function(event) {
+    //     console.log($("#message_container").hasClass("success"));
+    //     event.preventDefault();
+    //     $.ajax({
+    //         url: window.parent.location.href,
+    //         type: 'post',
+    //         // dataType: 'json',
+    //         data: $('.x_panel form'),
+    //         success: function(data) {
+    //             console.log($('.x_panel form').serialize());
+    //             console.log("submitted");
+    //             },
+    //         error: function(err) {
+    //             console.log(window.parent.location.href);
+    //             console.log($('.x_panel form').serialize());
+    //             console.log("error", err);
+    //         }
+    //
+    //     });
+
+    // });
+    //
+    // $(".x_panel form").submit(function(event) { // catch the form's submit event
+    //         console.log("Message container: ");
+    //         console.log($("#message_container").hasClass("success"));
+    //         $(".x_panel form").submit();
+            // $.ajax({ // create an AJAX call...
+            //     data: $(this).serialize(), // get the form data
+            //     type: $(this).attr('method'), // GET or POST
+            //     url: $(this).attr('action'), // the file to call
+            //     success: function(response) { // on success..
+            //         console.log("response");
+            //         // console.log(response);
+            //     },
+            //     error: function (response) {
+            //         console.log(response.error());
+            //     }
+            // });
+            // return false;
+        // });
+
+
+     $('#editIRModal').on('hidden.bs.modal', function(e)
+    {
+        window.parent.location.href = "http://localhost:8000/ir/25/29";
+    }) ;
+
 
     $("#irCancelBtn").click(function(event) {
         event.preventDefault();
-        $("#editIRModal").css("display:none");//.modal("hide");
+        // $("#editIRModal").css("display:none");//.modal("hide");
+        window.parent.closeIRModal();
     });
+
+    // $("#editFormBtn").on("reloadForm", function (){
+    //     console.log("reload form");
+    //     window.location.reload();
+    // });
 
 
     function show_hide_study_fields(std_chkbx) {
@@ -45,6 +94,12 @@ $(function() {
             $("#ageConj").hide();
         }
     }
+
+    window.closeIRModal = function(){
+        $('#editIRModal').modal('hide');
+    };
+
+
 });
 
 // function() {
@@ -85,3 +140,4 @@ $(function() {
 //         //     });
 //     });
 // }
+
