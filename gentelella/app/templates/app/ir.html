@@ -94,16 +94,16 @@
 
 
 
-    <div class="iframe-cnt">
-        <iframe id="irframe" src="{{ results_url}}"></iframe>
-    </div>
+<!--    <div class="iframe-cnt">-->
+<!--        <iframe id="irframe" src="{{ results_url}}"></iframe>-->
+<!--    </div>-->
 
 {% endblock %}
 
 {% block toolbarbuttons %}
     <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
         {% if read_only == 1 %}
-            <button class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editIRModal" type="button">
+            <button id="editFormBtn" class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editIRModal" type="button">
                 <i class="fa fa-edit"></i>
                 <span class="visible-lg">
                     {% trans "Επεξεργασία" %}
