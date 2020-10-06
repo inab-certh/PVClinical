@@ -72,7 +72,7 @@
 <!--            {{ form.genders|as_crispy_field }}-->
         </div>
         <div id="addStudyWindow" class="mt-3" name="addStudyWindow">{{ form.add_study_window|as_crispy_field }}</div>
-        <div class="mb-3">
+        <div class="mb-3 date-fields">
             <div class="row middle-align">
                 <div id="studyStartDate" name="studyStartDate" class="col-xs-11">
                     {{ form.study_start_date|as_crispy_field }}
@@ -110,7 +110,7 @@
                 </span>
             </button>
 
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisConfirmModal" type="button">
+            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
                     <i class="fa fa-bar-chart"></i>
                     <span class="visible-lg">
                         {% trans "Ανάλυση" %}
@@ -133,8 +133,8 @@
                 </span>
             </button>
 
-            <button id="irCancelBtn" class="btn btn-danger col-xs-4" type="button" data-dismiss="modal">
-                    <i class="fa fa-hand-paper-o"></i>
+            <button id="irCancelBtn" class="btn btn-danger col-xs-4" type="button" data-dismiss="modal" data-target="#editIRModal">
+                    <i class="fa fa-close"></i>
                     <span class="visible-sm">
                         {% trans "Ακύρωση" %}
                      </span>
@@ -151,10 +151,16 @@
 
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as editIR_mod_title %}
-{% trans "Αποθήκευση" as save_lbl %}
 {% with editIR_mod_body="<iframe allowfullscreen src='"|add:request.get_full_path|add:"/0'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editIRModal" modal_title=editIR_mod_title modal_body=editIR_mod_body|safe main_btn=save_lbl dismiss_btn=dismiss_lbl data_target="#analysisViewModal" %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editIRModal" modal_title=editIR_mod_title modal_body=editIR_mod_body|safe %}
 {% endwith %}
+
+
+{% trans "Ανάλυση Ποσοστών Επίπτωσης" as analysisIR_mod_title %}
+{% with analysisIR_mod_body="<iframe allowfullscreen src='"|add:results_url|add:"'></iframe>" %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe %}
+{% endwith %}
+
 
 {% endblock %}
 

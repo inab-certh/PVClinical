@@ -13,7 +13,23 @@ $(function() {
         show_hide_ext_age($(this));
     });
 
-    // $("#irSaveBtn").click(function(event) {
+    $("#irSaveBtn").click(function(event) {
+        event.preventDefault();
+        $.ajax({ // create an AJAX call...
+                data: $('.x_panel form').serialize(), // get the form data
+                type: 'post', // GET or POST
+                url: window.location.href, // the file to call
+                success: function(response) { // on success..
+                    window.parent.closeIRModal();
+                    window.parent.location.href = window.parent.location.href;
+                    // console.log(response);
+                },
+                error: function (response) {
+                    $(".x_panel form").submit();
+                }
+            });
+            return false;
+
     //     console.log($("#message_container").hasClass("success"));
     //     event.preventDefault();
     //     $.ajax({
@@ -52,18 +68,16 @@ $(function() {
             //     }
             // });
             // return false;
-        // });
+        });
 
 
-     $('#editIRModal').on('hidden.bs.modal', function(e)
-    {
-        window.parent.location.href = "http://localhost:8000/ir/25/29";
-    }) ;
-
+    //  $('#editIRModal').on('hidden.bs.modal', function(e)
+    // {
+    //     window.parent.location.href = window.parent.location.href;
+    // }) ;
 
     $("#irCancelBtn").click(function(event) {
         event.preventDefault();
-        // $("#editIRModal").css("display:none");//.modal("hide");
         window.parent.closeIRModal();
     });
 
@@ -75,13 +89,15 @@ $(function() {
 
     function show_hide_study_fields(std_chkbx) {
         if(std_chkbx.checked === false) {
-            $("#studyStartDate").hide();
-            $("#studyEndDate").hide();
-            $(".calendar-icon-div").hide();
+            $(".date-fields").css("display", "none");
+            // $("#studyStartDate").css("display", "none");
+            // $("#studyEndDate").css("display", "none");
+            // $(".calendar-icon-div").css("display", "none");
         } else {
-            $("#studyStartDate").show();
-            $("#studyEndDate").show();
-            $(".calendar-icon-div").show();
+            $(".date-fields").css("display", "block");
+            // $("#studyStartDate").css("display", "block");
+            // $("#studyEndDate").css("display", "block");
+            // $(".calendar-icon-div").css("display", "block");
         }
     }
 
