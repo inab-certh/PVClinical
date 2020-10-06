@@ -602,3 +602,7 @@ button.close {
 #saveBtn {
 	visibility: hidden;
 }
+
+.date-fields {
+	display: none;
+}
