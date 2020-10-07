@@ -103,11 +103,13 @@ $(function() {
 
     function show_hide_ext_age(age_op) {
         if(age_op.find("option:selected").val().indexOf("bt")>=0 ) {
-            $("#extAgeLimit").show();
             $("#ageConj").show();
+            $("#ageUpperLimitBlock").show();
+            $("#dummyAgeBox").hide();
         } else {
-            $("#extAgeLimit").hide();
             $("#ageConj").hide();
+            $("#ageUpperLimitBlock").hide();
+            $("#dummyAgeBox").show();
         }
     }
 
