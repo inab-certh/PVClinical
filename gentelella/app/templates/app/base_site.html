@@ -13,6 +13,9 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
       {% endblock meta %}
 
       <title>PVClinical | {% block title %}{% endblock %}</title>
@@ -40,10 +43,13 @@
         <!-- JQVMap -->
         <link href='{% static "vendors/jqvmap/dist/jqvmap.min.css" %}' rel="stylesheet"/>
 
+        <link href='{% static "vendors/flag-icon-css/css/flag-icon.min.css" %}' rel="stylesheet" type="text/css">
+        <link href='{% static "vendors/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.standalone.min.css" %}' rel="stylesheet">
+
         <!-- Custom Theme Style -->
         <link href='{% static "build/css/custom.css" %}' rel="stylesheet">
-        <link href='{% static "vendors/flag-icon-css/css/flag-icon.min.css" %}' rel="stylesheet" type="text/css">
         <link href='{% static "build/css/pv_dash.css" %}' rel="stylesheet">
+        <link href='{% static "build/css/portfolio.css" %}' rel="stylesheet">
 
       {% endblock stylesheets %}
     {% endblock head %}
@@ -133,8 +139,9 @@
 	    {% trans "Επιβεβαίωση" as main_lbl%}
 	    {% trans "Ακύρωση" as dismiss_lbl %}
 	    {% trans "Εντάξει" as ok_lbl%}
-	    {% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#infoModal" %}
-	    {% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn=ok_lbl %}
+	    {% include 'app/modals/parametric_modal.html' with modal_type="\"confirmModal\"" modal_id="\"scDeleteConfirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
+	    {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="\"scDeleteInfoModal\"" dismiss_btn=ok_lbl %}
+
     {% endblock body %}
 
         {% block javascripts %}
@@ -198,8 +205,13 @@
         <script src='{% static "vendors/jszip/dist/jszip.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/pdfmake.min.js" %}'></script>
         <script src='{% static "vendors/pdfmake/build/vfs_fonts.js" %}'></script>
+        <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.min.js" %}'></script>
+        <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.el.min.js" %}'></script>
 
         <script src='{% static "build/js/pv_dash.js" %}'></script>
+
+        <!-- Convert fields with 'datepicker' class to bootstrap's  datepicker input type -->
+        <script type="text/javascript" src='{% static "build/js/datepickerconv.js" %}'></script>
 
         <script type="text/javascript">
             $(document).ready(function() {
@@ -210,7 +222,7 @@
 
         <script type="text/javascript">
         $(function() {
-            $('#confirmBtn').click(function() {
+            $('#scDeleteConfirmModal #confirmBtn').click(function() {
                 $.ajax({
                     url: "{{ request.path }}",
                     method: 'DELETE',
@@ -220,27 +232,27 @@
                     }
 
                 }) 	.always(function(){
-                        $('#confirmModal').modal('hide');
+                        $('#scDeleteConfirmModal').modal('hide');
                     })
                     .done(function(data) {
                         $('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
                         $('[class="modal-body"]').text(data);
 
                         /* Info modal is already open */
-                        $('#infoModal').on('hidden.bs.modal', function (e) {
+                        $('#scDeleteInfoModal').on('hidden.bs.modal', function (e) {
                             window.location.replace("{% url 'index' %}");
                             //location.reload();
                         });
 
                         $("#dismissBtn").on("click", function () {
-                            $('#infoModal').modal('hide');
+                            $('#scDeleteInfoModal').modal('hide');
                         });
 
                     })
                     .fail(function(resp){
                         $('[class="modal-title"]').text("{% trans 'Αποτυχία διαγραφής!'%}");
                         $('[class="modal-body"]').text(resp.responseText);
-                        $('#infoModal').on('hidden.bs.modal', function (e) {
+                        $('#scDeleteInfoModal').on('hidden.bs.modal', function (e) {
                             location.reload();
                         });
                     });

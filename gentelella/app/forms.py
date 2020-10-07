@@ -1,5 +1,7 @@
 import re
 
+from datetime import date
+
 from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
@@ -11,8 +13,10 @@ from app.models import Status
 
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
+
 class CustomSelect2TagWidget(Select2TagWidget):
     """ Class allowing data-tokens with spaces"""
+
     def build_attrs(self, *args, **kwargs):
         self.attrs.setdefault('data-token-separators', [","])
         # self.attrs.setdefault('data-width', '50%')
@@ -68,7 +72,7 @@ class ScenarioForm(forms.Form):
             self.fields["status"].initial = self.instance.status
             init_drugs = ["{}{}".format(
                 d.name, " - {}".format(d.code) if d.code else "") for d in self.instance.drugs.all()]
-            self.fields["drugs_fld"].choices = list(zip(*[init_drugs]*2))
+            self.fields["drugs_fld"].choices = list(zip(*[init_drugs] * 2))
             self.fields["drugs_fld"].initial = init_drugs
 
             init_conditions = ["{}{}".format(
@@ -87,7 +91,6 @@ class ScenarioForm(forms.Form):
                                    του σεναρίου, πρέπει να συμπληρωθεί"))
 
         return not self._errors
-
 
     def clean(self):
         super(ScenarioForm, self).clean()
@@ -125,9 +128,9 @@ class ScenarioForm(forms.Form):
                                                 )))) for sd in selected_conditions]
 
             valid_conditions = list(filter(lambda c: c is not None,
-                                      (map(lambda indx: self.all_conditions[indx]\
-                                          if (indx>-1 and indx<len(self.all_conditions)) else None,
-                                           conditions_indexes))))
+                                           (map(lambda indx: self.all_conditions[indx] \
+                                               if (indx > -1 and indx < len(self.all_conditions)) else None,
+                                                conditions_indexes))))
 
             valid_conditions = list(map(lambda c: "{} - {}".format(c.name, c.code), valid_conditions))
 
@@ -136,7 +139,6 @@ class ScenarioForm(forms.Form):
 
             self.cleaned_data["conditions_fld"] = valid_conditions
         return self.cleaned_data
-
 
     def save(self, commit=True):
         """ Overriding-extending save module
@@ -160,3 +162,78 @@ class ScenarioForm(forms.Form):
 
         self.instance.save()
         return self.instance
+
+
+class IRForm(forms.Form):
+    # time_at_risk = forms.CharField(label=_("Διάστημα ανάλυσης:"), required=True)
+    #
+    # study_window = forms.MultipleChoiceField(choices=[0, 1, 7, 14, 21, 30, 60, 90,
+    #                                                   120, 180, 365, 548, 730, 1095],
+    #                                       required=False,
+    #                                       label=_("Διάστημα ανάλυσης:"),
+    #                                       widget=CustomSelect2TagWidget)
+
+    # sc_id = forms.IntegerField(widget=forms.HiddenInput())
+    age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
+                                          ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
+                                          ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
+                                          ("!bt", _("Όχι ανάμεσα σε"))),
+                                 required=False,
+                                 initial=None,
+                                 label=_("Με ηλικία:"),
+                                 widget=forms.Select)
+
+
+    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+
+    genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
+                                        initial=[],
+                                        label=_("Φύλο:"),
+                                        required=False,
+                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
+    add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παράθυρου μελέτης"), initial=False, required=False)
+    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"),
+                                       initial=None,
+                                       required=False,
+                                       widget=forms.DateInput)
+    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το χρονικό παράθυρο της μελέτης:"),
+                                     initial=None,
+                                     required=False,
+                                     widget=forms.DateInput)
+
+    def __init__(self, *args, **kwargs):
+        self.options = kwargs.pop("ir_options")
+        self.read_only = kwargs.pop("read_only")
+        super(IRForm, self).__init__(*args, **kwargs)
+
+        self.fields["study_start_date"].widget = forms.DateInput(attrs={
+            'min': date(1917,11,7),
+            'max': date.today(),
+            'placeholder': _("ΕΕΕΕ-ΜΜ-ΗΗ"),
+            'class': 'datepicker',
+        }, )
+
+        self.fields["study_end_date"].widget = forms.DateInput(attrs={
+            'min': date(1917,11,7),
+            'max': date.today(),
+            'placeholder': _("ΕΕΕΕ-ΜΜ-ΗΗ"),
+            'class': 'datepicker',
+        }, )
+
+        for k in self.fields.keys():
+            if k == "add_study_window":
+                self.initial[k] = self.options.get("study_start_date") and \
+                                  self.options.get("study_end_date")
+            else:
+                self.initial[k] = self.options.get(k)
+            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+
+    def clean(self):
+        super(IRForm, self).clean()
+
+        if not self.cleaned_data.get("add_study_window"):
+            self.cleaned_data["study_start_date"] = None
+            self.cleaned_data["study_start_date"] = None
+
+        return self.cleaned_data

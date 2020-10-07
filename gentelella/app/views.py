@@ -1,5 +1,6 @@
 import json
 import re
+import requests
 import os
 
 from itertools import chain
@@ -21,19 +22,23 @@ from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+from app import ohdsi_wrappers
+
 from app.errors_redirects import forbidden_redirect
 
 from app.forms import ScenarioForm
+from app.forms import IRForm
 
 from app.helper_modules import atc_hierarchy_tree
-
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
 
 from app.models import Scenario
-
+from app.models import OHDSIWorkspace
+from app.ohdsi_wrappers import update_ir
+from app.ohdsi_wrappers import create_ir
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
 
@@ -243,6 +248,256 @@ def add_edit_scenario(request, scenario_id=None):
     }
 
     return render(request, 'app/add_edit_scenario.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def ohdsi_workspace(request, scenario_id=None):
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    sc = get_object_or_404(Scenario, id=scenario_id)
+
+    # ohdsi_workspace = OHDSIWorkspace.objects.get_or_create(sc_id=scenario_id)
+
+    # Get drugs concept set id
+    sc_drugs = sc.drugs.all()
+    if sc_drugs:
+        drugs_names = [d.name for d in sc_drugs]
+        ds_name = ohdsi_wrappers.name_entities_group(drugs_names)
+
+        # Check if concept set already exists
+        # ds_id = ohdsi_wrappers.get_concept_set_id(ds_name)
+        # Create concept set if it does not already exist
+        if ohdsi_wrappers.exists(ds_name, "conceptset") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_concept_set(drugs_names, "Drug")
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας concept set φαρμάκων")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας concept set φαρμάκων"),
+                    status=500)
+
+                return error_response
+
+        drugs_cohort_name = ohdsi_wrappers.name_entities_group([ds_name])
+
+        if ohdsi_wrappers.exists(drugs_cohort_name, "cohortdefinition") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_cohort({"Drug": [ds_name]})
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                    status=500)
+
+                return error_response
+
+    # Get conditions concept set id
+    sc_conditions = sc.conditions.all()
+    if sc_conditions:
+        conditions_names = [c.name for c in sc_conditions]
+        cs_name = ohdsi_wrappers.name_entities_group(conditions_names)
+
+        # Check if concept set already exists
+        # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
+        # Create concept set if it does not already exist
+        if ohdsi_wrappers.exists(cs_name, "conceptset") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_concept_set(conditions_names, "Condition")
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason": _("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών")
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"),
+                    status=500)
+
+                return error_response
+
+
+        conditions_cohort_name = ohdsi_wrappers.name_entities_group([cs_name])
+
+        if ohdsi_wrappers.exists(conditions_cohort_name, "cohortdefinition") != (200, True):
+            st_code, resp_json = ohdsi_wrappers.create_cohort({"Condition": [cs_name]})
+            if not (st_code == 200 and resp_json):
+                # context = {
+                #     "reason":
+                #         _("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"
+                #           )
+                # }
+                # error_response = render(request, "page_500.html", context)
+                # error_response.status_code = 500
+
+                error_response = HttpResponse(
+                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"),
+                    status=500)
+
+                return error_response
+
+    coh_gen_errors = [_("Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                      _("Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες")]
+    drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name)
+    conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name)
+
+    # Generate cohorts
+    for indx, coh in enumerate([drugs_cohort, conditions_cohort]):
+        coh_id = coh.get("id")
+        if coh_id:
+            status = ohdsi_wrappers.generate_cohort(coh_id)
+            if status == "FAILED":
+                error_response = HttpResponse(
+                    content= coh_gen_errors[indx], status=500)
+                return error_response
+
+
+    ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
+                                                          [drugs_cohort] + [conditions_cohort])))
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
+    else:
+        res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+        ir_id = res_json.get("id")
+
+    context = {
+        "title": _("Περιβάλλον εργασίας OHDSI"),
+        "ir_id": ir_id,
+        "sc_id": scenario_id
+    }
+
+    return render(request, 'app/ohdsi_workspace.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def incidence_rates(request, sc_id, ir_id, read_only=1):
+    """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
+    :param request: request
+    :param ir_id: the specific ir record's id
+    :param sc_id: the specific scenario's id (optional)
+    :param read_only: 0 if False 1 if True
+    :return: the form view
+    """
+    http_referer = request.META.get('HTTP_REFERER')
+
+    if not http_referer:
+        return forbidden_redirect(request)
+
+    ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
+
+    ir_exists = ohdsi_wrappers.url_exists(ir_url)
+    ir_options = {}
+    if ir_exists:
+        ir_options = ohdsi_wrappers.get_ir_options(ir_id)
+    else:
+        messages.error(
+            request,
+            _("Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
+
+    # delete_switch = "enabled" if ir_exists else "disabled"
+
+
+    if request.method == 'POST':
+        # sc_id = sc_id or request.POST.get("sc_id")
+        irform = IRForm(request.POST, label_suffix='', ir_options=ir_options, read_only=read_only)
+
+        if irform.is_valid():
+            # ir_options = {}
+            # ir_options["targetIds"] =
+            # ir_options["outcomeIds"] =
+
+            ir_options["age"] = irform.cleaned_data.get("age")
+            ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
+            ir_options["age_crit"] = irform.cleaned_data.get("age_crit")
+
+            ir_options["genders"] = irform.cleaned_data.get("genders")
+            ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
+            ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
+
+            # if ir_exists:
+            rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
+            # else:
+            #     rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
+
+            if rstatus == 200:
+                messages.success(
+                    request,
+                    _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+                return HttpResponseRedirect(reverse('edit_ir', args=(sc_id, ir_id, )))
+            else:
+                messages.error(
+                    request,
+                    _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+                results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+                # ir_resp = requests.get(ir_url)
+
+                context = {
+                    # "delete_switch": delete_switch,
+                    "sc_id": sc_id,
+                    "ir_id": ir_id,
+                    "results_url": results_url,
+                    "read_only": read_only,
+                    "form": irform,
+                    "title": _("Ανάλυση Ρυθμού Επίπτωσης")
+                }
+                return render(request, 'app/ir.html', context, status=500)
+
+        else:
+            messages.error(
+                request,
+                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+            results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+            # ir_resp = requests.get(ir_url)
+
+            context = {
+                # "delete_switch": delete_switch,
+                "sc_id": sc_id,
+                "ir_id": ir_id,
+                "results_url": results_url,
+                "read_only": read_only,
+                "form": irform,
+                "title": _("Ανάλυση Ρυθμού Επίπτωσης")
+            }
+            return render(request, 'app/ir.html', context,status=400)
+
+
+    # elif request.method == 'DELETE':
+    #     return delete_db_rec(ohdsi_workspace)
+
+    # GET request method
+    else:
+        # if "ohdsi-workspace" in http_referer:
+        #     sc_id = http_referer.rsplit('/', 1)[-1]
+        irform = IRForm(label_suffix='', ir_options=ir_options, read_only=read_only)
+        # irform["sc_id"].initial = sc_id
+        # update_ir(ir_id)
+
+    results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+    # ir_resp = requests.get(ir_url)
+
+    context = {
+        # "delete_switch": delete_switch,
+        "sc_id": sc_id,
+        "ir_id": ir_id,
+        "results_url": results_url,
+        "read_only": read_only,
+        "form": irform,
+        "title": _("Ανάλυση Ρυθμού Επίπτωσης")
+    }
+
+    return render(request, 'app/ir.html', context)
 
 
 @login_required()

@@ -474,6 +474,15 @@ a.disabled {
     width: 100%!important;
 }
 
+.x_panel form h1{
+	font-weight: bold;
+	text-align: center;
+}
+
+.viewExplanation {
+	font-size: 14px;
+}
+
 #message_container.success,  #message_container.error{
 	font-weight: bold;
 	font-size: large;
@@ -489,12 +498,46 @@ a.disabled {
 	color: #bf2b27;
 }
 
-#scTitleDiv .invalid-feedback {
+/*#scTitleDiv .invalid-feedback {*/
+/*    font-size: 13px;*/
+/*    color: #bf2b27;*/
+/*}*/
+
+.invalid-feedback {
     font-size: 13px;
     color: #bf2b27;
 }
+.numberinput::-webkit-inner-spin-button {
+    opacity: 1
+}
 
-iframe {
+.numberinput {
+	text-align: center;
+}
+
+div#ageLimit input, div#extAgeLimit input {
+	width: 8rem;
+	margin: 0 auto;
+}
+
+div#andDiv, div#ageConj, div#youngerAgeIco, div#olderAgeIco {
+	text-align: center;
+	font-weight: bold;
+}
+
+.gender-fld .fa-mars, .gender-fld .fa-venus, .gender-fld .fa-transgender {
+	font-weight: bold;
+}
+
+#genderChoices {
+	list-style-type:none
+}
+
+#genderChoices li {
+	display: inline;
+}
+
+iframe.modalIframe {
   width: 100%;
   height: 800px;
   border: none;
@@ -544,4 +587,26 @@ iframe {
 }
 .custom-control-label{
     margin-top:1px!important;
+}
+
+.calendar-icon-div {
+	margin-top: 0.5rem;
+	/*margin-left: -0.5rem;*/
+}
+
+.middle-align, .modal-header {
+  display: flex;
+  align-items: center;
+}
+
+button.close {
+	text-align: right;
+}
+
+#saveBtn {
+	visibility: hidden;
+}
+
+.date-fields {
+	display: none;
 }
