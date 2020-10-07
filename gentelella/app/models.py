@@ -167,3 +167,12 @@ class Scenario(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["title", "owner"], name="unique_scenario")
         ]
+
+class OHDSIWorkspace(models.Model):
+    """ OHDSI workspace correlating with scenario
+    """
+
+    sc_id = models.ForeignKey(Status, null=True, default=None, on_delete=models.PROTECT)  # Scenario id
+    ir_id = models.IntegerField(blank=True, null=True, default=-1)  # incidence rates record id
+    ch_id = models.IntegerField(blank=True, null=True, default=-1)  # characterizations record id
+    cp_id = models.IntegerField(blank=True, null=True, default=-1)  # cohort pathways record id
