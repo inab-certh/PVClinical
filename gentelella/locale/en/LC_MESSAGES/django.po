@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: app/forms.py:187 app/forms.py:188
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-26 11:47+0300\n"
+"POT-Creation-Date: 2020-10-07 12:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,23 +24,23 @@ msgstr ""
 msgid "Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα"
 msgstr "Direct Access to this Location is not allowed"
 
-#: app/forms.py:46
+#: app/forms.py:50
 msgid "Τίτλος σεναρίου:"
 msgstr "Scenario title:"
 
-#: app/forms.py:50
+#: app/forms.py:54
 msgid "Φάρμακο/Φάρμακα:"
 msgstr "Drug/Drugs:"
 
-#: app/forms.py:55
+#: app/forms.py:59
 msgid "Πάθηση/Παθήσεις:"
 msgstr "Disease/Diseases:"
 
-#: app/forms.py:58
+#: app/forms.py:63
 msgid "Κατάσταση σεναρίου:"
 msgstr "Scenario Status:"
 
-#: app/forms.py:85
+#: app/forms.py:90
 msgid ""
 "Τουλάχιστον ένα από τα πεδία που αφορούν τα φάρμακα και τις "
 "παθήσεις                                   του σεναρίου, πρέπει να "
@@ -47,6 +48,66 @@ msgid ""
 msgstr ""
 "At least one of the fields concerning scenario's drugs and conditions should "
 "be filled in"
+
+#: app/forms.py:177
+msgid "Μικρότερη από"
+msgstr "Less Than"
+
+#: app/forms.py:177
+msgid "Μικρότερη ή ίση με"
+msgstr "Less or Equal To"
+
+#: app/forms.py:178
+msgid "Ίση με"
+msgstr "Equal To"
+
+#: app/forms.py:178
+msgid "Μεγαλύτερη από"
+msgstr "Greater Than"
+
+#: app/forms.py:179
+msgid "Μεγαλύτερη ή ίση με"
+msgstr "Greater or Equal To"
+
+#: app/forms.py:179
+msgid "Ανάμεσα σε"
+msgstr "Between"
+
+#: app/forms.py:180
+msgid "Όχι ανάμεσα σε"
+msgstr "Not Between"
+
+#: app/forms.py:183
+msgid "Με ηλικία:"
+msgstr "With age"
+
+#: app/forms.py:192
+msgid "Φύλο:"
+msgstr "Gender"
+
+#: app/forms.py:194
+msgid "Άρρεν"
+msgstr "Male"
+
+#: app/forms.py:194
+msgid "Θήλυ"
+msgstr "Female"
+
+#: app/forms.py:195
+msgid "Προσθήκη χρονικού παράθυρου μελέτης"
+msgstr "Add study window"
+
+#: app/forms.py:196
+msgid "Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"
+msgstr "Study window start date:"
+
+#: app/forms.py:200
+msgid "Ημερομηνία λήξης για το χρονικό παράθυρο της μελέτης:"
+msgstr "Study window end date:"
+
+#: app/forms.py:213 app/forms.py:220
+msgid "ΕΕΕΕ-ΜΜ-ΗΗ"
+msgstr "YYYY-MM-DD"
 
 #: app/helper_modules.py:68
 msgid ""
@@ -117,21 +178,23 @@ msgstr ""
 "Your password must contain at least 1 number, 1 capital letter and 1 non-"
 "alphanumeric character (symbol)"
 
+#: app/templates/app/OpenFDAWorkspace.html:28
 #: app/templates/app/OpenFDAWorkspace.html:73
 msgid "Φάρμακα"
 msgstr "Drugs"
 
+#: app/templates/app/OpenFDAWorkspace.html:50
 #: app/templates/app/OpenFDAWorkspace.html:96
 msgid "Ανεπιθύμητες ενέργειες"
 msgstr "Adverse Events"
 
 #: app/templates/app/OpenFDAWorkspace.html:119
 msgid "Aggregated"
-msgstr ""
+msgstr "Συγκεντρωτικά"
 
 #: app/templates/app/OpenFDAWorkspace.html:120
 msgid "Analytic"
-msgstr ""
+msgstr "Αναλυτικά"
 
 #: app/templates/app/OpenFDAWorkspace.html:125
 #: app/templates/app/OpenFDAWorkspace.html:127
@@ -176,8 +239,14 @@ msgstr "Change Point Analysis"
 msgid "Αναφορές"
 msgstr "Report view"
 
+#: app/templates/app/OpenFDAWorkspace.html:147
+#, fuzzy
+#| msgid "Έλεγχος λόγου πιθανοφανειών"
+msgid "Έλεγχος Πιθανοτήτων"
+msgstr "Likelihood Rate Test"
 
 #: app/templates/app/OpenFDAWorkspace.html:150
+#: app/templates/app/OpenFDAWorkspace.html:202
 #: app/templates/app/OpenFDAWorkspace.html:205
 msgid "Έλεγχος λόγου πιθανοφανειών"
 msgstr "Likelihood Rate Test"
@@ -241,35 +310,36 @@ msgstr "Enter conditions"
 
 #: app/templates/app/add_edit_scenario.html:156
 msgid "Ιεραρχική απεικόνιση κατά MedDRA:"
-msgstr ""
+msgstr "MedDRA hierarchy view"
 
-#: app/templates/app/base_site.html:131
+#: app/templates/app/base_site.html:137
 msgid "Επιβεβαίωση διαγραφής"
 msgstr "Deletion confirmation"
 
-#: app/templates/app/base_site.html:132
+#: app/templates/app/base_site.html:138
 msgid ""
 "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το "
 "σύστημα;"
 msgstr "Are you sure you want to delete this record from the system?"
 
-#: app/templates/app/base_site.html:133
+#: app/templates/app/base_site.html:139
 msgid "Επιβεβαίωση"
 msgstr "Confirm"
 
-#: app/templates/app/base_site.html:134
+#: app/templates/app/base_site.html:140 app/templates/app/ir.html:141
+#: app/templates/app/ir.html:149
 msgid "Ακύρωση"
 msgstr "Cancel"
 
-#: app/templates/app/base_site.html:135
+#: app/templates/app/base_site.html:141
 msgid "Εντάξει"
 msgstr "OK"
 
-#: app/templates/app/base_site.html:226
+#: app/templates/app/base_site.html:238
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:241
+#: app/templates/app/base_site.html:253
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -293,15 +363,15 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
-#: app/templates/app/form_base.html:46
+#: app/templates/app/form_base.html:47 app/templates/app/ir.html:134
 msgid "Αποθήκευση"
 msgstr "Save"
 
-#: app/templates/app/form_base.html:55 app/templates/app/index.html:54
+#: app/templates/app/form_base.html:56 app/templates/app/index.html:54
 msgid "Διαγραφή"
 msgstr "Delete"
 
-#: app/templates/app/form_base.html:64
+#: app/templates/app/form_base.html:65
 msgid "Σενάρια"
 msgstr "Scenarios"
 
@@ -319,7 +389,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:241
+#: app/templates/app/index.html:48 app/views.py:243
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -335,7 +405,7 @@ msgstr "Status"
 msgid "Ημ/νία καταχώρισης"
 msgstr "Creation Date"
 
-#: app/templates/app/index.html:53
+#: app/templates/app/index.html:53 app/templates/app/ir.html:109
 msgid "Επεξεργασία"
 msgstr "Edit"
 
@@ -351,9 +421,85 @@ msgstr "Disease/Diseases"
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
+#: app/templates/app/ir.html:35 app/templates/app/ohdsi_workspace.html:24
+msgid ""
+"Ο <b>Ρυθμός Επίπτωσης</b> είναι ένα μέτρο της συχνότητας εμφάνισης μιας "
+"ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
+"περιόδου."
+msgstr ""
+"The <b>Incidence Rate</b> is a measure of the frequency with which some "
+"event, such as a disease or other incidence, occurs over a specified time "
+"period."
+
+#: app/templates/app/ir.html:116
+msgid "Ανάλυση"
+msgstr "Analysis"
+
+#: app/templates/app/ir.html:125
+msgid "Επιστροφή"
+msgstr "Return"
+
+#: app/templates/app/ir.html:147
+#, fuzzy
+#| msgid "Επιβεβαίωση διαγραφής"
+msgid "Επιβεβαίωση ανάλυσης"
+msgstr "Deletion confirmation"
+
+#: app/templates/app/ir.html:148
+msgid "Συνέχεια"
+msgstr "Continue"
+
+#: app/templates/app/ir.html:150
+msgid ""
+"Βεβαιωθείτε ότι αποθηκεύσατε τις αλλαγές για να δείτε τη νέα ανάλυση, "
+"διαφορετικά θα επαναλάβετε την ανάλυση με τις προηγούμενες τιμές παραμέτρων"
+msgstr ""
+"Make sure you have saved your changes, otherwise analysis will be made "
+"withthe previous parameters' values"
+
+#: app/templates/app/ir.html:154
+msgid "Επεξεργασία παραμέτρων ανάλυσης"
+msgstr "Edit analysis parameters"
+
+#: app/templates/app/ir.html:160 app/views.py:453 app/views.py:471
+#: app/views.py:497
+msgid "Ανάλυση Ρυθμού Επίπτωσης"
+msgstr "Incidence Rate Analysis"
+
+#: app/templates/app/ohdsi_workspace.html:23
+msgid "Ρυθμός Επίπτωσης"
+msgstr "Incidence Rate"
+
+#: app/templates/app/ohdsi_workspace.html:34
+msgid "Χαρακτηρισμός Πληθυσμού "
+msgstr "Cohort characterization"
+
+#: app/templates/app/ohdsi_workspace.html:35
+msgid ""
+"Ο <b>Χαρακτηρισμός Πληθυσμού</b> ορίζεται ως η διαδικασία δημιουργίας "
+"περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από "
+"δεδομένα συμμεταβλητότητας σε επίπεδο ατόμου."
+msgstr ""
+"<b>Cohort characterization</b> is defined as the process of generating "
+"cohort level descriptive summary statistics from person level covariate data."
+
+#: app/templates/app/ohdsi_workspace.html:54
+msgid "Πληθυσμιακό Μονοπάτι"
+msgstr "Cohort Pathways"
+
+#: app/templates/app/ohdsi_workspace.html:55
+msgid ""
+"Το <b>Πληθυσμιακό Μονοπάτι (Cohort Pathway)</b>, ορίζεται ως η διαδικασία "
+"δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις "
+"των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής."
+msgstr ""
+"<b>Cohort Pathway</b> is defined as the process of generating an aggregated "
+"sequence of transitions between the Event Cohorts among those people in the "
+"Target Cohorts."
+
 #: app/templates/app/sidebar.html:27
 msgid "Καλωσήλθατε"
-msgstr ""
+msgstr "Welcome"
 
 #: app/templates/app/sidebar.html:38
 msgid "ΕΠΙΛΟΓΕΣ"
@@ -488,15 +634,65 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:221
+#: app/views.py:223 app/views.py:437
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:228
+#: app/views.py:230 app/views.py:460
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
 msgstr "System update failed due to insertion errors. Please try again!"
+
+#: app/views.py:282
+msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
+msgstr "Error occured while creating the drugs concept set"
+
+#: app/views.py:299
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
+msgstr ""
+"Error occured while creating the cohort concerning the patients that are "
+"getting the specific drugs"
+
+#: app/views.py:322
+msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
+msgstr "Error occured while creating the conditions concept set"
+
+#: app/views.py:342
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
+"ανεπιθύμητες ενέργειες"
+msgstr ""
+"Error occured while creating the cohort of patients with the specific "
+"conditions"
+
+#: app/views.py:347
+msgid ""
+"Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
+msgstr ""
+"Error occured while generating the cohort concerning the patients that are "
+"getting the specific drugs"
+
+#: app/views.py:348
+msgid ""
+"Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
+"ανεπιθύμητες ενέργειες"
+msgstr ""
+"Error occured while generating the cohort of patients with the specific "
+"conditions"
+
+#: app/views.py:375
+msgid "Περιβάλλον εργασίας OHDSI"
+msgstr "OHDSI Workspace"
+
+#: app/views.py:407
+msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
+msgstr "No incidence rate analysis with the specific id found!"
+
+#: app/views.py:442
+msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
+msgstr "Error occured. Please try again!"
 
 #: gentelella/settings.py:152
 msgid "Ελληνικά"
