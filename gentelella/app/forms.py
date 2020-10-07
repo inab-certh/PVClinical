@@ -192,12 +192,12 @@ class IRForm(forms.Form):
                                         label=_("Φύλο:"),
                                         required=False,
                                         choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
-    add_study_window = forms.BooleanField(initial=False, required=False)
-    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το παράθυρο της μελέτης:"),
+    add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παράθυρου μελέτης"), initial=False, required=False)
+    study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"),
                                        initial=None,
                                        required=False,
                                        widget=forms.DateInput)
-    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το παράθυρο της μελέτης:"),
+    study_end_date = forms.DateField(label=_("Ημερομηνία λήξης για το χρονικό παράθυρο της μελέτης:"),
                                      initial=None,
                                      required=False,
                                      widget=forms.DateInput)
@@ -210,14 +210,14 @@ class IRForm(forms.Form):
         self.fields["study_start_date"].widget = forms.DateInput(attrs={
             'min': date(1917,11,7),
             'max': date.today(),
-            'placeholder': _("YYYY-MM-DD"),
+            'placeholder': _("ΕΕΕΕ-ΜΜ-ΗΗ"),
             'class': 'datepicker',
         }, )
 
         self.fields["study_end_date"].widget = forms.DateInput(attrs={
             'min': date(1917,11,7),
             'max': date.today(),
-            'placeholder': _("YYYY-MM-DD"),
+            'placeholder': _("ΕΕΕΕ-ΜΜ-ΗΗ"),
             'class': 'datepicker',
         }, )
 

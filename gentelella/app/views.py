@@ -404,7 +404,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     else:
         messages.error(
             request,
-            _("Δεν βρέθηκε ανάλυση ποσοστών επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
+            _("Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
 
     # delete_switch = "enabled" if ir_exists else "disabled"
 
@@ -450,7 +450,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                     "results_url": results_url,
                     "read_only": read_only,
                     "form": irform,
-                    "title": _("Ανάλυση Ποσοστών Επίπτωσης")
+                    "title": _("Ανάλυση Ρυθμού Επίπτωσης")
                 }
                 return render(request, 'app/ir.html', context, status=500)
 
@@ -468,7 +468,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 "results_url": results_url,
                 "read_only": read_only,
                 "form": irform,
-                "title": _("Ανάλυση Ποσοστών Επίπτωσης")
+                "title": _("Ανάλυση Ρυθμού Επίπτωσης")
             }
             return render(request, 'app/ir.html', context,status=400)
 
@@ -494,7 +494,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         "results_url": results_url,
         "read_only": read_only,
         "form": irform,
-        "title": _("Ανάλυση Ποσοστών Επίπτωσης")
+        "title": _("Ανάλυση Ρυθμού Επίπτωσης")
     }
 
     return render(request, 'app/ir.html', context)

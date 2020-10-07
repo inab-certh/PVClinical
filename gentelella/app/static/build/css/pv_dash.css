@@ -533,7 +533,7 @@ div#andDiv {
 	display: inline;
 }
 
-iframe {
+iframe.modalIframe {
   width: 100%;
   height: 800px;
   border: none;
