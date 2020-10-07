@@ -520,8 +520,12 @@ div#ageLimit input, div#extAgeLimit input {
 	margin: 0 auto;
 }
 
-div#andDiv {
+div#andDiv, div#ageConj, div#youngerAgeIco, div#olderAgeIco {
 	text-align: center;
+	font-weight: bold;
+}
+
+.gender-fld .fa-mars, .gender-fld .fa-venus, .gender-fld .fa-transgender {
 	font-weight: bold;
 }
 
