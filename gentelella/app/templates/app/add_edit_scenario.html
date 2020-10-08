@@ -23,6 +23,7 @@
     <script src='{% static "vendors/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js" %}'></script>
     <script src='{% static "vendors/vakata-jstree-3.3.9-0/dist/jstree.min.js" %}'></script>
     <script src='{% static "vendors/select2-to-tree/src/select2totree.js" %}'></script>
+    <script src='{% static "build/js/pv_literature.js" %}'></script>
 {% endblock %}
 
 {% block title %} {{title}} {% endblock %}
@@ -37,15 +38,6 @@
             <ul class="dropdown-menu dropdown-menu-right">
                 <!-- Dropdown menu links -->
                 <li>
-                    <a href="{% url 'OpenFDAWorkspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                    <span class="text-center">
-                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                        <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
-                    </span>
-                </a>
-                </li>
-                <li role="separator" class="divider"></li>
-                <li>
                     <a href="{% url 'ohdsi_workspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
                     <span class="text-center">
                         <!--OpenFDA <i class="fa fa-angle-right"></i>-->
@@ -59,6 +51,15 @@
                     <span class="text-center">
                         <!--OpenFDA <i class="fa fa-angle-right"></i>-->
                         <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                    </span>
+                </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="#" class="dropdown-item">
+                    <span class="text-center">
+                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                        <img class="img-icon dropdown-item" name="pubmed_image_{{ scenario_id }}" src="{% static 'images/PubMed.png' %}">
                     </span>
                 </a>
                 </li>
