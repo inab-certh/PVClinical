@@ -118,13 +118,13 @@
                         </a>
 
 
-                        <!--<a href="{% url 'OpenFDAWorkspace' scenario.id %}">-->
-                          <!--&lt;!&ndash;<i class="fa fa-eye"></i>&ndash;&gt;-->
-                          <!--&lt;!&ndash;<span class="badge">&ndash;&gt;-->
-                            <!--<img class="img-icon" src="{% static 'images/openFDA.png' %}">-->
-                          <!--&lt;!&ndash;</span>&ndash;&gt;-->
+                        <a href="{% url 'ohdsi_workspace' scenario.id %}">
+                          <!--<i class="fa fa-eye"></i>-->
+                          <!--<span class="badge">-->
+                            <img class="img-icon" src="{% static 'images/ohdsi.png' %}">
+                          <!--</span>-->
 
-                        <!--</a>-->
+                        </a>
 
                         <!--<a href="{% url 'OpenFDAWorkspace' scenario.id %}">-->
                           <!--&lt;!&ndash;<i class="fa fa-eye"></i>&ndash;&gt;-->
@@ -143,7 +143,7 @@
                       </td>
 
                       <td>
-                        <button class="btn btn-outline delete-sc-btn" data-toggle="modal" data-target="#confirmModal" data-scid="{{ scenario.id }}" type="button">
+                        <button class="btn btn-outline delete-sc-btn" data-toggle="modal" data-target="#scDeleteConfirmModal" data-scid="{{ scenario.id }}" type="button">
                           <i class="fa fa-trash"></i>
                         </button>
                       </td>
@@ -156,7 +156,6 @@
           </div>
         <a href="{% url 'add_scenario' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
         </div>
-
       <!--<div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">-->
         <!--<span class="count_top"><i class="fa fa-user"></i> Total Users</span>-->
         <!--<div class="count">2500</div>-->
