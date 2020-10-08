@@ -42,7 +42,7 @@
               <p class="text-muted font-13 m-b-30">
                 {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τα σενάρια που έχετε ήδη δημιουργήσει. Επίσης, μπορείτε να προσθέσετε ένα νέο σενάριο επιλέγοντας το κουμπί προσθήκης σεναρίων, που βρίσκεται κάτω από τον πίνακα σεναρίων." %}
               </p>
-              <table id="scenariosTbl" class="table table-striped table-bordered dt-responsive dt-multilingual nowrap" cellspacing="0" width="100%">
+              <table id="scenariosTbl" class="table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th>#{% trans "Σενάριο" %}</th>
@@ -110,6 +110,11 @@
                           <!--<i class="fa fa-eye"></i>-->
 
                             <img class="img-icon" src="{% static 'images/openFDA.png' %}">
+                        </a>
+                         <a href="#">
+                          <!--<i class="fa fa-eye"></i>-->
+
+                            <img class="img-icon" name="pubmed_image_{{ scenario.id }}" src="{% static 'images/PubMed.png' %}">
                         </a>
 
 
@@ -832,8 +837,10 @@
           <!--&lt;!&ndash; end of weather widget &ndash;&gt;-->
         <!--</div>-->
       <!--</div>-->
+
     </div>
   </div>
+
 {% endblock content %}
 
 
@@ -850,6 +857,8 @@
   });
   </script>
 
+
+<script src="/static/build/js/pv_literature.js"></script>
 
   <!--&lt;!&ndash; Chart.js &ndash;&gt;-->
   <!--<script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>-->

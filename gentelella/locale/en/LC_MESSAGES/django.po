@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-07 15:55+0300\n"
+"POT-Creation-Date: 2020-08-26 11:47+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -334,6 +334,24 @@ msgstr "Cancel"
 #: app/templates/app/base_site.html:141
 msgid "Εντάξει"
 msgstr "OK"
+
+#: .\app\templates\app\base_site.html:141
+msgid "<img src=\"../static/images/mendeleyicon.png\">"
+msgstr "<img src=\"../static/images/mendeleyicon.png\">"
+
+#: .\app\templates\app\base_site.html:142
+msgid ""
+"Συνδεθείτε στο Mendeley <a target=\"_blank\" href=\"https://www.mendeley.com/"
+"reference-manager/library/all-references\"><strong>εδώ</strong> και "
+"ανανεώστε την σελίδα.</a>"
+msgstr ""
+"Login to Mendeley <a target=\"_blank\" href=\"https://www.mendeley.com/"
+"reference-manager/library/all-references\"><strong>here</strong> and "
+"refresh the page.</a>"
+
+#: .\app\templates\app\base_site.html:143
+msgid "Οκ"
+msgstr "Ok"
 
 #: app/templates/app/base_site.html:238
 msgid "Επιτυχής διαγραφή!"

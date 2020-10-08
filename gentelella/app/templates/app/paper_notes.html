@@ -1,0 +1,72 @@
+{% extends "app/base_site.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %} Paper {% endblock title %}
+
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+{% block stylesheets %}
+    {{ block.super }}
+    <!-- jQuery custom content scroller -->
+      <link href="/static/build/css/pv_literature.css" rel="stylesheet">
+{% endblock stylesheets %}
+{% block javascripts %}
+{{ block.super }}
+
+
+        <script src='{% static "build/js/importer-api.js" %}'></script>
+        <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/corehtml/pmc/ctxp/jquery.citationexporter.min.js"></script>
+        <script type="text/javascript">window.name="mainwindow";</script>
+
+
+
+
+
+
+
+        <script>
+                MendeleyImporterApi.registerHostId();
+                MendeleyImporterApi.registerDataCallback();
+                MendeleyImporterApi.registerUserIdentityCallback();
+        </script>
+{% endblock javascripts %}
+
+{% block meta %}
+{{ block.super }}
+ <meta name="citation_title" content="{{ metainfo.title }}">
+        <meta name="citation_authors" content="{{ metainfo.authors }}">
+        <meta name="citation_doi" content="{{ metainfo.doi }}">
+        <meta name="citation_pmid" content="{{ metainfo.pmid }}">
+        <meta name="citation_abstract" content="{{ metainfo.abstract }}">
+        <meta name="citation_pdf_url" content="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{{ metainfo.pmcid }}/pdf/i.pdf">
+        <meta name="citationexporter" content="backend:'https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pmc/'" />
+
+{% endblock meta %}
+
+{% block content %}
+<div class="right_col" role="main">
+<!--     <table id="articles" class="table table-striped table-bordered dt-responsive dt-multilingual nowrap" cellspacing="0" width="100%">-->
+<!--         <td style="align-content: center">-->
+    <div align="center">
+             {% if metainfo.pmcid %}
+                <iframe name="pdf-frame" id="pdf-frame"
+                        frameborder="0" scrolling="auto"
+                        src="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{{ metainfo.pmcid }}/pdf/">
+                 </iframe>
+            {% endif %}
+    </div>
+    <br/>
+    <div>
+<!--         </td>-->
+<!--        <td>-->
+            <button id="mendeley-btn" type="button" class="btn btn-lg view-pdf-widget" onclick="MendeleyImporterApi.open()"
+                 name="mendeley"><img src='{% static "images/logoTransparent.png" %}'></button>
+    </div>
+
+<!--        </td>-->
+<!--     </table>-->
+</div>
+
+{% endblock content %}
+
+
+
