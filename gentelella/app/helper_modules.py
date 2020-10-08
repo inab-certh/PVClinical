@@ -2,6 +2,18 @@ import json
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import HttpResponse
 
+import requests
+
+from bs4 import BeautifulSoup
+import browser_cookie3
+
+from django.shortcuts import redirect
+
+from django.http import HttpResponseRedirect
+
+import os
+
+from oauthlib.oauth2 import TokenExpiredError
 
 def is_in_group(user, group):
     """ Check whether a user belongs to a specific group or not
@@ -223,5 +235,107 @@ def medDRA_hierarchy_tree(conditions):
                             "children": get_medDRA_children(soc_c, 2, conditions)})
 
     return medDRA_tree
+
+#Returns the PMCID code from MubMed papers
+
+def getPMCID(handle):
+    """ With a second query search PMC library for the PMCID of the papers.
+    :param handle: the response from PMC library
+    :return: PMCID if exists
+    """
+    html_response = handle.read()
+    encoding = handle.headers.get_content_charset('utf-8')
+    decoded_html = html_response.decode(encoding)
+    soup = BeautifulSoup(decoded_html)
+    for script in soup(["script", "style"]):
+        script.extract()
+    text = soup.get_text()
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    listtxt = text.split('\n')
+    if 'pubmed_pmc' in listtxt:
+        pmcid = listtxt[-1]
+    else:
+        pmcid = " "
+    return pmcid
+
+#Extract token from Mendeley cookies
+
+def mendeley_cookies():
+    """ Search for Mendeley cookies in users browser.
+    :return: access toke if exists
+    """
+
+    cj = browser_cookie3.load()
+
+    mend_cookie = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
+
+    cookie_list = list(mend_cookie)
+    if cookie_list == []:
+        print('if')
+        mend_cookies = filter(lambda el: el.domain == ".mendeley.com" and el.name == "_at", cj)
+        cookie_list = list(mend_cookies)
+
+    access_token = cookie_list[0].value
+    response_doc = requests.get(
+        'https://api.mendeley.com/documents',
+        headers={'Authorization': 'Bearer {}'.format(access_token),
+                 'Accept': 'application/vnd.mendeley-document.1+json'},
+    )
+    if response_doc.status_code != 200:
+        cookie_list = []
+
+    return cookie_list
+
+    # access_token = list(mend_cookies)[0].value
+    # print(access_token)
+
+    # if cj == {}:
+    #     chromecookies = os.path.join(os.path.expandvars("%userprofile%"),
+    #                                  "AppData\\Local\\Google\\Chrome\\User Data\\Profile 1\\Cookies")
+    #     cookiejar = browser_cookie3.chrome(cookie_file=chromecookies)
+    #     cj = browser_cookie3.load()
+    #     mend_cookies = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
+
+
+
+
+
+
+def mendeley_pdf(access_token, title):
+    """ Search for the pdf of the results papers in user's Mendeley library.
+    :param access_token: user's access token
+    :param title: title of the search paper
+    :return: pdf link to mendeley library
+    """
+    access_token = access_token
+    response_doc = requests.get(
+        'https://api.mendeley.com/documents',
+        params={'title': title},
+        headers={'Authorization': 'Bearer {}'.format(access_token),
+                 'Accept': 'application/vnd.mendeley-document.1+json'},
+    )
+
+    document_id = []
+    doc = response_doc.json()
+    for item in doc:
+        document_id = item['id']
+        response_file = requests.get(
+            'https://api.mendeley.com/files',
+            params={'document_id': document_id},
+            headers={'Authorization': 'Bearer {}'.format(access_token),
+                     'Accept': 'application/vnd.mendeley-file.1+json'},
+        )
+        file = response_file.json()
+        for item in file:
+            file_id = item['id']
+
+        mendeley_pdf = 'https://www.mendeley.com/reference-manager/reader/' + document_id + '/' + file_id
+
+        return mendeley_pdf
+
 
 

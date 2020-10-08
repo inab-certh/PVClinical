@@ -13,6 +13,9 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
       {% endblock meta %}
 
       <title>PVClinical | {% block title %}{% endblock %}</title>
@@ -135,6 +138,11 @@
 	    {% trans "Εντάξει" as ok_lbl%}
 	    {% include 'app/modals/parametric_modal.html' with modal_id="\"confirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#infoModal" %}
 	    {% include 'app/modals/parametric_modal.html' with modal_id="\"infoModal\"" dismiss_btn=ok_lbl %}
+        {% trans '<img src="../static/images/mendeleyicon.png">' as mend_title %}
+        {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
+        {% trans 'Οκ' as mend_lbl %}
+        {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title modal_body=mend_body dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
+
     {% endblock body %}
 
         {% block javascripts %}

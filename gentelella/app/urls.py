@@ -22,6 +22,13 @@ urlpatterns = [
     path('ajax/conds-nodes-ids', views.get_conditions_nodes_ids, name='conds_nodes_ids'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
+    path('LiteratureWorkspace/<int:scenario_id>', views.pubMed_view, name='LiteratureWorkspace'),
+    path('LiteratureWorkspace/<int:scenario_id>/<int:page_id>', views.pubMed_view, name='LiteratureWorkspace'),
+    path("ajax/save_pubmed_input/", views.save_pubmed_input, name='save_pubmed_input'),
+    path("ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
+    path("edit-scenario/ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
+    path("paper_notes_view", views.paper_notes_view, name='paper_notes'),
+
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

@@ -167,3 +167,19 @@ class Scenario(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["title", "owner"], name="unique_scenario")
         ]
+
+class PubMed(models.Model):
+    """
+        PubMed articles and user notes
+    """
+    CHOICES = [(True,'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    pid = models.CharField(max_length=70, blank=False, default='', primary_key=True)
+    title = models.CharField(max_length=500, blank=False, default='')
+    pubdate = models.CharField(max_length=400, blank=False, default='')
+    abstract = models.TextField(null=True, blank=True)
+    authors = models.CharField(max_length=400, blank=False, default='')
+    url = models.CharField(max_length=100, blank=False, default='')
+    relevance = models.CharField(max_length=20, choices=CHOICES)
+    notes = models.TextField(null=True, blank=True)
+    # created = models.DateTimeField(auto_now_add=True)
