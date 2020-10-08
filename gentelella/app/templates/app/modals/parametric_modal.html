@@ -1,26 +1,28 @@
-<div class="modal fade" id={{ modal_id }} tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade {{ modal_type }}" id={{ modal_id }} tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog {% if modal_type == "\"viewModal\"" %}modal-lg{% endif %}">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">{{ modal_title }}</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title col-xs-11" id="myModalLabel">{{ modal_title }}</h4>
+                <button type="button" class="close col-xs-1" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 {{ modal_body }}
             </div>
-            <div class="modal-footer">
-                <button id="dismissBtn" type="button" data-record=""
-	                {% if modal_id == "\"confirmModal\"" %} class="btn btn-default"
-	                {% else %} class="btn btn-primary" {% endif %}
-	                data-dismiss="modal">{{ dismiss_btn }}
-                </button>
-                {% if modal_id == "\"confirmModal\"" %}
-                	<button type="button" class="btn btn-primary" 
-                		id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
-                		{{ main_btn }}
-                	</button>
-                {% endif %}
-            </div>
+            {% if modal_type != "\"viewModal\"" %}
+                <div class="modal-footer">
+                        <button id="dismissBtn" type="button" data-record=""
+                            {% if modal_type == "\"confirmModal\"" %} class="btn btn-default"
+                            {% elif modal_type == "\"infoModal\"" %} class="btn btn-primary" {% endif %}
+                            data-dismiss="modal">{{ dismiss_btn }}
+                        </button>
+                        {% if modal_type == "\"confirmModal\"" %}
+                            <button type="button" class="btn btn-primary"
+                                id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
+                                {{ main_btn }}
+                            </button>
+                        {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

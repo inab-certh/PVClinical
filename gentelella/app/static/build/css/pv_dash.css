@@ -7,6 +7,14 @@
     max-width: 5rem;
 }
 
+.panel-heading {
+    cursor: pointer;
+}
+
+.panel-title a {
+	display: block;
+}
+
 #loaderOverlay {
 	background: #ffffff;
 	color: #666666;
@@ -331,6 +339,7 @@
 .panel .collapsed:after {
     font-family:Fontawesome;
     content:'\f078';
+	float: right;
 }
 
 #atcTree {
@@ -465,6 +474,15 @@ a.disabled {
     width: 100%!important;
 }
 
+.x_panel form h1{
+	font-weight: bold;
+	text-align: center;
+}
+
+.viewExplanation {
+	font-size: 14px;
+}
+
 #message_container.success,  #message_container.error{
 	font-weight: bold;
 	font-size: large;
@@ -480,18 +498,50 @@ a.disabled {
 	color: #bf2b27;
 }
 
-#scTitleDiv .invalid-feedback {
+/*#scTitleDiv .invalid-feedback {*/
+/*    font-size: 13px;*/
+/*    color: #bf2b27;*/
+/*}*/
+
+.invalid-feedback {
     font-size: 13px;
     color: #bf2b27;
 }
+.numberinput::-webkit-inner-spin-button {
+    opacity: 1
+}
 
-iframe {
+.numberinput {
+	text-align: center;
+}
+
+div#ageLimit input, div#extAgeLimit input {
+	width: 8rem;
+	margin: 0 auto;
+}
+
+div#andDiv, div#ageConj, div#youngerAgeIco, div#olderAgeIco {
+	text-align: center;
+	font-weight: bold;
+}
+
+.gender-fld .fa-mars, .gender-fld .fa-venus, .gender-fld .fa-transgender {
+	font-weight: bold;
+}
+
+#genderChoices {
+	list-style-type:none
+}
+
+#genderChoices li {
+	display: inline;
+}
+
+iframe.modalIframe {
   width: 100%;
   height: 800px;
   border: none;
   overflow: hidden;
-    position:absolute;
-
 }
 
 .custom-control {
@@ -511,44 +561,52 @@ iframe {
   color: blue!important;
 }
 
-.DrugEventParameter{
+.nav-tabs li.active a {
+  color: blue!important;
+}
+
+#combsAccordion .panel .panel-heading .panel-title>a {
+	color: #73879C;
+	font-weight: 600;
+}
+
+.legend-margins{
     margin-bottom:10px;
-    margin-right:20px;
-    font-size:20px;
-    font-weight: bold;
 }
-#first {
-    position:absolute;
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-    left:50%;
-    top:200px;
-    /*transform: translate(-60px,0)*/
-    animation: spin 2s linear infinite;
-    z-index: 9999;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-#divFrame{
-    position:relative;
-}
-.drugs-div{
-    line-height: 50px;
-    height: 50px;
-    /*border: 3px solid green;*/
-    text-align: center;
-    position:relative;
-}
+
 .drug-event-radio{
+    margin: auto;
     margin-left:20px;
-    /*position:relative;*/
-    /*left:30px;*/
+}
+.drug-event-radio > *{
+    float:left;
+    display:inline;
+}
+.custom-control-input{
+    margin-right:5px!important;
+}
+.custom-control-label{
+    margin-top:1px!important;
 }
 
+.calendar-icon-div {
+	margin-top: 0.5rem;
+	/*margin-left: -0.5rem;*/
+}
 
+.middle-align, .modal-header {
+  display: flex;
+  align-items: center;
+}
 
+button.close {
+	text-align: right;
+}
+
+#saveBtn {
+	visibility: hidden;
+}
+
+.date-fields {
+	display: none;
+}
