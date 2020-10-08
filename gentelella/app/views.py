@@ -1,6 +1,9 @@
 import json
 import re
 import os
+import requests
+
+from math import ceil
 
 from itertools import chain
 from itertools import product
@@ -31,10 +34,40 @@ from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
+from app.helper_modules import getPMCID
+from app.helper_modules import mendeley_cookies
+from app.helper_modules import mendeley_pdf
 
+
+from app.models import PubMed
 from app.models import Scenario
 
 from app.retrieve_meddata import KnowledgeGraphWrapper
+
+
+from app.pubmed import PubmedAnalyzer
+
+from mendeley import Mendeley
+from app.mendeley_expand import AutoRefreshMendeleySession
+from oauthlib.oauth2 import TokenExpiredError
+import requests
+from urllib.parse import urlparse
+
+from django.shortcuts import render, redirect
+
+from Bio import Entrez
+
+import entrezpy.conduit
+import entrezpy.base.result
+import entrezpy.base.analyzer
+import time
+import sys
+
+from importlib import reload
+
+from django.core.paginator import Paginator
+
+
 
 
 def OpenFDAWorkspace(request, scenario_id=None):
@@ -157,6 +190,8 @@ def get_conditions_nodes_ids(request):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
+    # print(request.META.get('HTTP_REFERER'))
+
     scenarios = []
     for sc in Scenario.objects.order_by('-timestamp').all():
         scenarios.append({
@@ -262,3 +297,285 @@ def gentella_html(request):
 
 def unauthorized(request):
     return HttpResponseForbidden()
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def pubMed_view(request, scenario_id=None, page_id=None):
+    """ Load papers that are relevant to scenario that user creates and check user's Mendeley library for papers that
+    get from the results.
+    :param request: request
+    :param scenario_id: the specific scenario, None for new scenario
+    :param page_id: the specific result page that user searching for, None for first page
+    :return: the Literature Workspase view view
+    """
+    data = {}
+
+
+    sc = Scenario.objects.get(id=scenario_id)
+    drugs = [d for d in sc.drugs.all()]
+
+    conditions = [c for c in sc.conditions.all()]
+
+    # ac_token = requests.get('access_token')
+
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
+
+    scenario = {"id": scenario_id,
+                "drugs": drugs,
+                "conditions": conditions,
+                "all_combs": all_combs,
+                "owner": sc.owner.username,
+                "status": sc.status.status,
+                "timestamp": sc.timestamp
+                }
+
+    records={}
+    total_results = 0
+
+    mend_cookies = mendeley_cookies()
+
+
+    if mend_cookies != []:
+
+        try:
+
+            access_token = mend_cookies[0].value
+            # print(access_token)
+
+            if page_id == None:
+                page_id = 1
+
+                for j in all_combs:
+                    if j[1]:
+                        query = j[0] +' AND '+ j[1]
+
+                        results = pubmed_search(query, 0, 10, access_token)
+                        if results != {}:
+                            records.update(results[0])
+                            total_results = total_results + results[1]
+                    else:
+                        query = j[0]
+                        results = pubmed_search(query, 0, 10, access_token)
+                        if results != {}:
+                            records.update(results[0])
+                            total_results = total_results + results[1]
+            else:
+
+                start = 10*page_id - 10
+
+                for j in all_combs:
+                    if j[1]:
+                        query = j[0] +' AND '+ j[1]
+                        results = pubmed_search(query, start, 10, access_token)
+                        records.update(results[0])
+                        total_results = results[1]
+                    else:
+                        query = j[0]
+                        results = pubmed_search(query, start, 10, access_token)
+                        records.update(results[0])
+                        total_results = results[1]
+
+            pages_no = ceil(total_results/10)
+            pages = list(range(1, pages_no))
+
+            if records == {}:
+                return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
+
+            return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id})
+
+        except Exception as e:
+            print(e)
+            # previous_url = request.META.get('HTTP_REFERER')
+
+            url = "http://127.0.0.1:8000/"
+
+
+            return redirect(url)
+
+
+    else:
+
+        client_id = 8886
+        redirect_uri = "http://127.0.0.1:8000/"
+        client_secret = "75nLSO6SJtSD8um3"
+        mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
+
+        auth = mendeley.start_implicit_grant_flow()
+
+        login_url = auth.get_login_url()
+
+        url = "http://127.0.0.1:8000/"
+
+        return redirect(url)
+
+
+def is_logged_in(request):
+    """ Checks if the user is logged in Mendeley platform.
+    :param request: request
+    :return: Json response
+    """
+    data = {
+        'logged_in': (mendeley_cookies() != [])
+    }
+
+    return JsonResponse(data)
+
+def pubmed_search(query, begin, max, access_token):
+    """ Search for papers relevant to the scerario that user creates in PubMed library.
+    :param query: query for Pubmed library search that created from combo of drug and
+    reaction with the logic operator AND
+    :param begin: the number of the first paper that will retrieve from PubMed library,
+    depends on page_id
+    :param max: the max number of the retrieved papers from Pubmed library
+    :return: a list with a dictionary which contains records of the retrieved papers and
+    the  total number of the retrieved papers for a certain query. If there are no results
+    for the query, returns an empty dictionary
+    """
+
+    print(begin)
+    w = entrezpy.conduit.Conduit(email='pvclinical.project@gmail.com', apikey='40987f0b48b279c32047b1386f249d8cb308')
+    fetch_pubmed = w.new_pipeline()
+    q = query
+
+    sid = fetch_pubmed.add_search(
+        {'db': 'pubmed', 'term': q, 'sort': 'Date Released',
+         'datetype': 'pdat'})
+
+    s = w.run(fetch_pubmed)
+    qres = s.get_result()
+    total_results = qres.size()
+    sid = fetch_pubmed.add_search(
+        {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max,
+         'datetype': 'pdat'})
+    fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
+                           analyzer=PubmedAnalyzer())
+
+
+    a = w.run(fetch_pubmed)
+
+    res = a.get_result()
+
+    try:
+
+        for i in res.pubmed_records.keys():
+
+            res.pubmed_records[i].documents = mendeley_pdf(access_token, res.pubmed_records[i].title)
+
+            qr = q.split(' AND ')
+            if len(qr) > 1:
+                res.pubmed_records[i].drug = qr[0]
+                res.pubmed_records[i].condition = qr[1]
+
+            else:
+                res.pubmed_records[i].drug = qr[0]
+            authors = res.pubmed_records[i].authors
+            res.pubmed_records[i].authors = ';'.join(str(x['lname'] + "," + x['fname'].replace(' ', '')) if x['fname'] else str(x['lname']) for x in res.pubmed_records[i].authors )
+
+
+            Entrez.email = 'sdimitsaki@gmail.com'
+            handle = Entrez.elink(dbfrom="pubmed", db="pmc", linkname="pubmed_pmc", id=res.pubmed_records[i].pmid,
+                                  retmode="text")
+            pmcid = getPMCID(handle)
+
+            if pmcid != " ":
+                res.pubmed_records[i].pmcid = pmcid
+                url = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC" + pmcid + "/pdf/"
+                if check_url(url) != 404:
+                    res.pubmed_records[i].url = url
+
+            elif res.pubmed_records[i].idlist:
+                res.pubmed_records[i].url = "https://doi.org/" + res.pubmed_records[i].idlist
+
+            else:
+                res.pubmed_records[i].url = "http://www.ncbi.nlm.nih.gov/pubmed/" + res.pubmed_records[i].pmid
+
+            pmid = "PM" + res.pubmed_records[i].pmid
+            handle.close()
+            try:
+                if PubMed.objects.get(pid=res.pubmed_records[i].pmid):
+                    pubmed = PubMed.objects.get(pid=res.pubmed_records[i].pmid)
+                    res.pubmed_records[i].notes = pubmed.notes
+                    res.pubmed_records[i].user = pubmed.user
+                    res.pubmed_records[i].relevance = pubmed.relevance
+            except PubMed.DoesNotExist:
+                res.pubmed_records[i] = res.pubmed_records[i]
+
+        return [res.pubmed_records, total_results]
+
+    except AttributeError:
+        return {}
+
+
+def check_url(url):
+    """ Checks if the pdf url exists for a PubMed paper.
+    :param url: url that created with PMCID
+    :return: the status code of the response
+    """
+    MAX_RETRIES = 20
+
+    session = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(max_retries=MAX_RETRIES)
+    session.mount('https://', adapter)
+    session.mount('http://', adapter)
+
+    r = session.get(url)
+
+    print(r.status_code)
+    return r.status_code
+
+
+
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def save_pubmed_input(request):
+    """ Save the notes and the relevance of a paper that user chose.
+    :param request: request
+    :return: Json response
+    """
+
+    relevance = request.GET.get('relevance', None)
+    notes = request.GET.get('notes', None)
+    pid = request.GET.get("pmid", None)
+    title = request.GET.get("title", None)
+    abstract = request.GET.get("abstract", None)
+    pubdate = request.GET.get("pubmeddate", None)
+    authors = request.GET.get("authors", None)
+    url = request.GET.get("url", None)
+    user = request.user
+
+
+    pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
+                url=url, relevance=relevance, notes=notes)
+    pm.save()
+
+    data = {
+        'message': 'Ok'
+
+    }
+    return JsonResponse(data)
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def paper_notes_view(request):
+    """ Save the notes and the relevance of a paper that user chose.
+    :param request: request
+    :return: redirect to paper_notes view where user can review the paper
+    and add it to his Mendeley library.
+    """
+    metainfo = {}
+    if request.method == 'POST':
+
+        metainfo['title'] = request.POST.get("title")
+        metainfo['abstract'] = request.POST.get("abstract")
+        metainfo['pmcid'] = request.POST.get("pmcid")
+        metainfo['authors'] = request.POST.get("authors")
+        metainfo['doi'] = request.POST.get("doi")
+        metainfo['pmid'] = request.POST.get("pmid")
+        metainfo['user'] = request.user
+
+
+    return render(request, 'app/paper_notes.html', {'metainfo': metainfo})
