@@ -10,6 +10,43 @@ from urllib.parse import urlencode
 from django.conf import settings
 
 
+def cohort_generated_recently(cohort, recent=False, days_before=30):
+    """ Checks whether a cohort has already been generated or not and if recent flag is true, check whether
+    it has been recently generated (cohort generation -creation or modification- has been carried out in less
+    than 'days_before' days, is assumed recent) or not. If recent flag is False, then it is always assumed that
+    the generation has been carried out recently.
+    :param cohort: the cohort we want to check
+    :param recent: if recent flag is False, days before is not used (i.e. we don't care whether cohort generation
+    (creation or modification) has been carried out recently or not
+    :param days_before: the number of days before that is assumed recent
+    """
+    if recent:
+        comp_date = cohort.get("modifiedDate") or cohort.get('createdDate')
+        if(datetime.now().date() - datetime.strptime(comp_date, "%Y-%m-%d %H:%M").date()).days > days_before:
+            coh_id = cohort.get(id)
+            if coh_id:
+                gen_url = "{}/cohortdefinition/{}/report/{}".format(settings.OHDSI_ENDPOINT, coh_id, OHDSI_CDM_NAME)
+                headers = {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    # "api-key": "{}".format(settings.OHDSI_APIKEY),
+                }
+
+                response = requests.get(gen_url, headers=headers)
+                if response.status_code == 200:
+                    resp_json = response.json()
+                    resp_summary = resp_json.get("summary") or {}
+                    base_count = bool(resp_summary.get("baseCount"))
+                    final_count = bool(resp_summary.get("finalCount"))
+                    lost_count = bool(resp_summary.get("lostCount"))
+                    percent_matched = bool(resp_summary.get("percentMatched"))
+                    inclusion_rule_stats = bool(resp_json.get("inclusionRuleStats"))
+                    treemapData = (resp_json.get("treemapData") !="{\"name\" : \"Everyone\", \"children\" : []}")
+                    return (base_count or final_count or lost_count or percent_matched or
+                                inclusion_rule_stats or treemapData)
+    return False
+
+
 def url_exists(exists_url):
     """ Checks whether a specific url exists or not
     :param exists_url: the url to be checked whether it exists or not
