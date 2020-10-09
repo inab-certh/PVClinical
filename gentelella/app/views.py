@@ -386,6 +386,9 @@ def ohdsi_workspace(request, scenario_id=None):
 
     # Generate cohorts
     for indx, coh in enumerate([drugs_cohort, conditions_cohort]):
+        recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=False, days_before=30)
+        print("Gen exists")
+        print(recent_gen_exists)
         coh_id = coh.get("id")
         if coh_id:
             status = ohdsi_wrappers.generate_cohort(coh_id)
