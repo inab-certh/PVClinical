@@ -291,6 +291,11 @@
     left: 100%!important;
 }
 
+.dropdown-menu a {
+    cursor: pointer;
+    text-align: center;
+}
+
 .form-h1 {
     font-size: 3rem!important;
 }
@@ -396,6 +401,14 @@ a.disabled {
   /* And disable the pointer events */
   pointer-events: none;
 }
+
+.light-disabled * {
+  /* Make the disabled links grayish*/
+  color: rgba(199, 199, 199, 0.87);
+  /* And disable the pointer events */
+  pointer-events: none;
+}
+
 
 .mt-1 {
     margin-top: 1rem;
