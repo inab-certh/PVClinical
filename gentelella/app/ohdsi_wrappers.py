@@ -20,30 +20,28 @@ def cohort_generated_recently(cohort, recent=False, days_before=30):
     (creation or modification) has been carried out recently or not
     :param days_before: the number of days before that is assumed recent
     """
-    if recent:
-        comp_date = cohort.get("modifiedDate") or cohort.get('createdDate')
-        if(datetime.now().date() - datetime.strptime(comp_date, "%Y-%m-%d %H:%M").date()).days > days_before:
-            coh_id = cohort.get(id)
-            if coh_id:
-                gen_url = "{}/cohortdefinition/{}/report/{}".format(settings.OHDSI_ENDPOINT, coh_id, OHDSI_CDM_NAME)
-                headers = {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    # "api-key": "{}".format(settings.OHDSI_APIKEY),
-                }
+    if cohort:
+        # comp_date = cohort.get("modifiedDate") or cohort.get('createdDate')
+        # if (datetime.now().date() - datetime.strptime(comp_date, "%Y-%m-%d %H:%M").date()).days > days_before:
+        coh_id = cohort.get("id")
+        if coh_id:
+            gen_url = "{}/cohortdefinition/{}/info".format(settings.OHDSI_ENDPOINT, coh_id)
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                # "api-key": "{}".format(settings.OHDSI_APIKEY),
+            }
 
-                response = requests.get(gen_url, headers=headers)
-                if response.status_code == 200:
-                    resp_json = response.json()
-                    resp_summary = resp_json.get("summary") or {}
-                    base_count = bool(resp_summary.get("baseCount"))
-                    final_count = bool(resp_summary.get("finalCount"))
-                    lost_count = bool(resp_summary.get("lostCount"))
-                    percent_matched = bool(resp_summary.get("percentMatched"))
-                    inclusion_rule_stats = bool(resp_json.get("inclusionRuleStats"))
-                    treemapData = (resp_json.get("treemapData") !="{\"name\" : \"Everyone\", \"children\" : []}")
-                    return (base_count or final_count or lost_count or percent_matched or
-                                inclusion_rule_stats or treemapData)
+            response = requests.get(gen_url, headers=headers)
+            if response.status_code == 200:
+                resp_json = response.json()
+                if resp_json:
+                    if resp_json[0].get("status") == "COMPLETE":
+                        if recent:
+                            date_generated = datetime.fromtimestamp(resp_json[0].get("startTime") / 1000)
+                            return (datetime.now().date() - date_generated.date()).days < days_before
+                        else:
+                            return True
     return False
 
 
@@ -183,6 +181,8 @@ def get_entity_by_name(entity_type, entity_name):
     :return: the entity if it exists or None
     """
     matching_entity = None
+    if not entity_name:
+        return None
     st, ex = exists(entity_name, entity_type)
     if ex:
         entity_url = "{}/{}/".format(settings.OHDSI_ENDPOINT, entity_type)
@@ -591,7 +591,7 @@ def update_ir(ir_id, **options):
 
 def add_update_ir(ir_id, **options):
     """ Helper function for both create_ir and update_ir
-    :param ir_id: the id of the ir to be changed
+    :param ir_id: the id of the ir to be changed, otherwise (to be created) None
     :param options: the various options concerning option of the ir study depending on the function that calls helper
     function
     :return: the status_code and the json data of the response
@@ -696,6 +696,88 @@ def add_update_ir(ir_id, **options):
     # print(resp_json)
     #
     return response.status_code, resp_json
+
+
+# def add_update_char(char_id, **options):
+#     """ Helper function for both create_char and update_char
+#     :param char_id: the id of the characterization to be changed otherwise (to be created) None
+#     :param options: the various options concerning option of the characterization depending on the function that calls
+#      helper function
+#     :return: the status_code and the json data of the response
+#     """
+#     headers = {
+#         "Content-Type": "application/json",
+#         "Accept": "application/json",
+#         # "api-key": "{}".format(settings.OHDSI_APIKEY),
+#     }
+#
+#     char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id or "")
+#
+#     # expression = {}
+#
+#     opt_cohorts = options.get("cohorts")
+#     char_name = options.get("char_name")
+#
+#     if char_id:
+#         response = requests.get("{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id),
+#                                 headers=headers)
+#         response_json = response.json()
+#         char_name = response_json.get("name")
+#         # expression = json.loads(response_json.get("expression"))
+#
+#     # Retrieve options from atlas for existing characterization
+#     origin_options = get_char_options(char_id)
+#
+#     cohorts = list(map(lambda optc: {"id": optc.get("id"), "name": optc.get("name")}, opt_cohorts)
+#                    ) if opt_cohorts else origin_options.get("cohorts")  # expression.get("targetIds")
+#
+#     ################################################http: // 83.212.101.101: 8080 / WebAPI / feature - analysis?size = 100000
+#
+#
+#     expression_dict = {"ConceptSets": [], "targetIds": target_cohorts_ids,
+#                        "outcomeIds": outcome_cohorts_ids,
+#                        "timeAtRisk": {"start": {"DateField": "StartDate", "Offset": 0},
+#                                       "end": {"DateField": "StartDate", "Offset": 0}},
+#                        "strata": [{"name": "Stratification criteria", "description": None,
+#                                    "expression": {"Type": "ALL", "CriteriaList":
+#                                        [{"Criteria": {"DrugExposure":
+#                                                           {"DrugTypeExclude": None, "DrugSourceConcept": None,
+#                                                            "First": None}}, "StartWindow":
+#                                              {"Start": {"Days": None,
+#                                                         "Coeff": -1},
+#                                               "End": {"Days": None,
+#                                                       "Coeff": 1},
+#                                               "UseIndexEnd": False,
+#                                               "UseEventEnd": False},
+#                                          "RestrictVisit": False,
+#                                          "IgnoreObservationPeriod": False,
+#                                          "Occurrence": {"IsDistinct": False,
+#                                                         "Type": 2, "Count": 1}
+#                                          }
+#                                         ],
+#                                                   "DemographicCriteriaList": demographic_criteria,
+#                                                   "Groups": []}}],
+#                        "studyWindow": {"startDate": study_start_date,
+#                                        "endDate": study_end_date} if study_start_date and study_end_date else None
+#                        }
+#
+#     # if study_window_dict:
+#     # expression_dict.update(study_window_dict)
+#
+#     payload = {"id": ir_id, "name": ir_name, "description": None,
+#                "expression": json.dumps(expression_dict)
+#                }
+#
+#     if ir_id:
+#         response = requests.put(ir_url, data=json.dumps(payload), headers=headers)
+#     else:
+#         response = requests.post(ir_url, data=json.dumps(payload), headers=headers)
+#     resp_json = response.json()
+#     # print(resp_json)
+#     #
+#     return response.status_code, resp_json
+
+
 
 
 def name_entities_group(entities_names):

@@ -294,6 +294,8 @@ def ohdsi_workspace(request, scenario_id=None):
     sc = get_object_or_404(Scenario, id=scenario_id)
 
     # ohdsi_workspace = OHDSIWorkspace.objects.get_or_create(sc_id=scenario_id)
+    drugs_cohort_name = None
+    conditions_cohort_name = None
 
     # Get drugs concept set id
     sc_drugs = sc.drugs.all()
@@ -380,34 +382,35 @@ def ohdsi_workspace(request, scenario_id=None):
                 return error_response
 
     coh_gen_errors = [_("Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
-                      _("Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες")]
+                      _("Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες")
+                      ]
     drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name)
     conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name)
 
     # Generate cohorts
-    for indx, coh in enumerate([drugs_cohort, conditions_cohort]):
-        recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=False, days_before=30)
-        print("Gen exists")
-        print(recent_gen_exists)
+    for indx, coh in enumerate(list(filter(None, [drugs_cohort, conditions_cohort]))):
+        recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=True, days_before=10)
         coh_id = coh.get("id")
-        if coh_id:
+        if coh_id and not recent_gen_exists:
             status = ohdsi_wrappers.generate_cohort(coh_id)
             if status == "FAILED":
                 error_response = HttpResponse(
                     content= coh_gen_errors[indx], status=500)
                 return error_response
 
+    ir_id = None
 
-    ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                          [drugs_cohort] + [conditions_cohort])))
-    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+    if drugs_cohort and conditions_cohort:
+        ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
+                                                              [drugs_cohort] + [conditions_cohort])))
+        ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
-    if ir_ent:
-        ir_id = ir_ent.get("id")
-    #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
-    else:
-        res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
-        ir_id = res_json.get("id")
+        if ir_ent:
+            ir_id = ir_ent.get("id")
+        #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
+        else:
+            res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+            ir_id = res_json.get("id")
 
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
