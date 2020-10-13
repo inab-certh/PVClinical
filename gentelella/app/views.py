@@ -384,8 +384,8 @@ def ohdsi_workspace(request, scenario_id=None):
     coh_gen_errors = [_("Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
                       _("Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες")
                       ]
-    drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name)
-    conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name)
+    drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name) or {}
+    conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name) or {}
 
     # Generate cohorts
     for indx, coh in enumerate(list(filter(None, [drugs_cohort, conditions_cohort]))):
@@ -399,6 +399,7 @@ def ohdsi_workspace(request, scenario_id=None):
                 return error_response
 
     ir_id = None
+    char_id = None
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
@@ -411,6 +412,18 @@ def ohdsi_workspace(request, scenario_id=None):
         else:
             res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
             ir_id = res_json.get("id")
+
+    if drugs_cohort or conditions_cohort:
+        char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
+                                                              [drugs_cohort] + [conditions_cohort])))
+        char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
+
+        if char_ent:
+            char_id = char_ent.get("id")
+        #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
+        else:
+            res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
+            char_id = res_json.get("id")
 
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
@@ -427,13 +440,12 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
-    :param sc_id: the specific scenario's id (optional)
+    :param sc_id: the specific scenario's id
     :param read_only: 0 if False 1 if True
     :return: the form view
     """
-    http_referer = request.META.get('HTTP_REFERER')
 
-    if not http_referer:
+    if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
@@ -511,7 +523,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 "form": irform,
                 "title": _("Ανάλυση Ρυθμού Επίπτωσης")
             }
-            return render(request, 'app/ir.html', context,status=400)
+            return render(request, 'app/ir.html', context, status=400)
 
 
     # elif request.method == 'DELETE':
@@ -539,6 +551,115 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     }
 
     return render(request, 'app/ir.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def characterizations(request, sc_id, char_id, read_only=1):
+    """ Add or edit characterizations view. Retrieve the specific characterization analysis
+     that ir_id refers to
+    :param request: request
+    :param char_id: the specific characterization record's id
+    :param sc_id: the specific scenario's id
+    :param read_only: 0 if False 1 if True
+    :return: the form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id)
+
+    char_exists = ohdsi_wrappers.url_exists(char_url)
+    char_options = {}
+    if char_exists:
+        char_options = ohdsi_wrappers.get_char_options(char_id)
+    else:
+        messages.error(
+            request,
+            _("Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"))
+
+    # delete_switch = "enabled" if ir_exists else "disabled"
+
+
+    if request.method == 'POST':
+        # sc_id = sc_id or request.POST.get("sc_id")
+        char_form = CharForm(request.POST, label_suffix='', char_options=char_options, read_only=read_only)
+
+        if char_form.is_valid():
+            char_options["features"] = char_form.cleaned_data.get("features")
+
+            rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
+
+            if rstatus == 200:
+                messages.success(
+                    request,
+                    _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+                return HttpResponseRedirect(reverse('edit_char', args=(sc_id, char_id, )))
+            else:
+                messages.error(
+                    request,
+                    _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+                status_code = 500
+                # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
+                #
+                # context = {
+                #     # "delete_switch": delete_switch,
+                #     "sc_id": sc_id,
+                #     "char_id": char_id,
+                #     "results_url": results_url,
+                #     "read_only": read_only,
+                #     "form": char_form,
+                #     "title": _("Χαρακτηρισμός Πληθυσμού")
+                # }
+                # return render(request, 'app/characterizations.html', context, status=500)
+
+        else:
+            messages.error(
+                request,
+                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+            status_code = 400
+            # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
+            # # ir_resp = requests.get(ir_url)
+            #
+            # context = {
+            #     # "delete_switch": delete_switch,
+            #     "sc_id": sc_id,
+            #     "char_id": char_id,
+            #     "results_url": results_url,
+            #     "read_only": read_only,
+            #     "form": char_form,
+            #     "title": _("Χαρακτηρισμός Πληθυσμού")
+            # }
+            # return render(request, 'app/characterizations.html', context, status=400)
+
+
+    # elif request.method == 'DELETE':
+    #     return delete_db_rec(ohdsi_workspace)
+
+    # GET request method
+    else:
+        # if "ohdsi-workspace" in http_referer:
+        #     sc_id = http_referer.rsplit('/', 1)[-1]
+        char_form = CharForm(label_suffix='', char_options=char_options, read_only=read_only)
+        status_code = 200
+        # irform["sc_id"].initial = sc_id
+        # update_ir(ir_id)
+
+    results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
+    # ir_resp = requests.get(ir_url)
+
+    context = {
+        # "delete_switch": delete_switch,
+        "sc_id": sc_id,
+        "char_id": char_id,
+        "results_url": results_url,
+        "read_only": read_only,
+        "form": char_form,
+        "title": _("Χαρακτηρισμός Πληθυσμού")
+    }
+
+    return render(request, 'app/characterizations.html', context, status=status_code)
 
 
 @login_required()
