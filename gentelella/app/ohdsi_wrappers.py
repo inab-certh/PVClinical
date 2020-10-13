@@ -563,6 +563,17 @@ def get_ir_options(ir_id):
     return options
 
 
+def get_char_options(char_id):
+    options = {}
+    resp = requests.get("{}/cohort-characterization/{}/design".format(settings.OHDSI_ENDPOINT, char_id),
+                        headers=headers)
+    resp_json = resp.json()
+    options["cohorts"] = resp_json.get("cohorts")
+    options["features"] = list(map(lambda el: el.get("id"), resp_json.get("featureAnalyses")))
+
+    return options
+
+
 def update_ir(ir_id, **options):
     """ Change/update ir wrapper
     :param ir_id: the id of the ir to be changed
@@ -698,86 +709,157 @@ def add_update_ir(ir_id, **options):
     return response.status_code, resp_json
 
 
-# def add_update_char(char_id, **options):
-#     """ Helper function for both create_char and update_char
-#     :param char_id: the id of the characterization to be changed otherwise (to be created) None
-#     :param options: the various options concerning option of the characterization depending on the function that calls
-#      helper function
-#     :return: the status_code and the json data of the response
+def create_char(cohorts, **options):
+    """ Create char wrapper
+    :param cohorts: a list of the cohorts (id, name, etc.) for the characterization
+    :param **options: the various options concerning option of the analysis (i.e. analysis features)
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    # The name of the char to be created
+    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)))
+
+    status_code, exists_json = exists(char_name, "cohort-characterization")
+    # print(status_code, exists_json)
+
+    if status_code != 200:
+        return status_code, {}
+
+    if exists_json:
+        return 500, {}
+
+    options["cohorts"] = cohorts
+    options["char_name"] = char_name
+
+    return add_update_char(None, **options)
+
+
+# def get_ir_options(ir_id):
+#     """ Get the options of an existing ir
+#     :param ir_id: the id of the existing ir
+#     :return: the options of the specific ir
 #     """
-#     headers = {
-#         "Content-Type": "application/json",
-#         "Accept": "application/json",
-#         # "api-key": "{}".format(settings.OHDSI_APIKEY),
-#     }
+#     options = {}
 #
-#     char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id or "")
+#     ir_ent = get_entity_by_id("ir", ir_id)
+#     ir_expr = json.loads(ir_ent.get("expression", "{}"))
+#     options["targetIds"] = ir_expr.get("targetIds", [])
+#     options["outcomeIds"] = ir_expr.get("outcomeIds", [])
+#     ir_strata_lst = list(filter(lambda el: el.get("name") == "Stratification criteria",
+#                                 ir_expr.get("strata", [])))
+#     ir_strata = ir_strata_lst[0] if ir_strata_lst else {}
+#     ir_strata_expr = ir_strata.get("expression", {})
 #
-#     # expression = {}
+#     ir_demographic_criteria = ir_strata_expr.get("DemographicCriteriaList", [])
 #
-#     opt_cohorts = options.get("cohorts")
-#     char_name = options.get("char_name")
+#     # Keep only not null demographic criteria
+#     valid_demographic_criteria = dict(list(filter(lambda elm: elm[1] != None,
+#                                                   itertools.chain(
+#                                                       *map(lambda el: tuple(el.items()),
+#                                                            ir_demographic_criteria)))))
 #
-#     if char_id:
-#         response = requests.get("{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id),
-#                                 headers=headers)
-#         response_json = response.json()
-#         char_name = response_json.get("name")
-#         # expression = json.loads(response_json.get("expression"))
+#     age_crit = valid_demographic_criteria.get("Age", {})
+#     options["age"] = age_crit.get("Value")
+#     options["ext_age"] = age_crit.get("Extent")
+#     options["age_crit"] = age_crit.get("Op")
 #
-#     # Retrieve options from atlas for existing characterization
-#     origin_options = get_char_options(char_id)
+#     options["genders"] = list(map(lambda g: g.get("CONCEPT_NAME"),
+#                                   valid_demographic_criteria.get("Gender", [])))
 #
-#     cohorts = list(map(lambda optc: {"id": optc.get("id"), "name": optc.get("name")}, opt_cohorts)
-#                    ) if opt_cohorts else origin_options.get("cohorts")  # expression.get("targetIds")
+#     ir_study_window = ir_expr.get("studyWindow") or {}
+#     check_value = ir_study_window.get("startDate")
+#     options["study_start_date"] = check_value if ir_study_window and check_value != "None" else None
+#     check_value = ir_study_window.get("endDate")
+#     options["study_end_date"] = check_value if ir_study_window and check_value != "None" else None
 #
-#     ################################################http: // 83.212.101.101: 8080 / WebAPI / feature - analysis?size = 100000
-#
-#
-#     expression_dict = {"ConceptSets": [], "targetIds": target_cohorts_ids,
-#                        "outcomeIds": outcome_cohorts_ids,
-#                        "timeAtRisk": {"start": {"DateField": "StartDate", "Offset": 0},
-#                                       "end": {"DateField": "StartDate", "Offset": 0}},
-#                        "strata": [{"name": "Stratification criteria", "description": None,
-#                                    "expression": {"Type": "ALL", "CriteriaList":
-#                                        [{"Criteria": {"DrugExposure":
-#                                                           {"DrugTypeExclude": None, "DrugSourceConcept": None,
-#                                                            "First": None}}, "StartWindow":
-#                                              {"Start": {"Days": None,
-#                                                         "Coeff": -1},
-#                                               "End": {"Days": None,
-#                                                       "Coeff": 1},
-#                                               "UseIndexEnd": False,
-#                                               "UseEventEnd": False},
-#                                          "RestrictVisit": False,
-#                                          "IgnoreObservationPeriod": False,
-#                                          "Occurrence": {"IsDistinct": False,
-#                                                         "Type": 2, "Count": 1}
-#                                          }
-#                                         ],
-#                                                   "DemographicCriteriaList": demographic_criteria,
-#                                                   "Groups": []}}],
-#                        "studyWindow": {"startDate": study_start_date,
-#                                        "endDate": study_end_date} if study_start_date and study_end_date else None
-#                        }
-#
-#     # if study_window_dict:
-#     # expression_dict.update(study_window_dict)
-#
-#     payload = {"id": ir_id, "name": ir_name, "description": None,
-#                "expression": json.dumps(expression_dict)
-#                }
-#
-#     if ir_id:
-#         response = requests.put(ir_url, data=json.dumps(payload), headers=headers)
-#     else:
-#         response = requests.post(ir_url, data=json.dumps(payload), headers=headers)
-#     resp_json = response.json()
-#     # print(resp_json)
-#     #
-#     return response.status_code, resp_json
+#     return options
 
 
+def update_char(char_id, **options):
+    """ Change/update char wrapper
+    :param char_id: the id of the characterization to be changed
+    :param **options: the various options concerning option of the char analysis (i.e. analysis features)
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id)
+    exists = url_exists(char_url)
+
+    if not exists:
+        return 404, {}
+
+    # if exists_json:
+    #     return 500, {}
+
+    return add_update_char(char_id, **options)
+
+
+def add_update_char(char_id, **options):
+    """ Helper function for both create_char and update_char
+    :param char_id: the id of the characterization to be changed otherwise (to be created) None
+    :param options: the various options concerning option of the characterization depending on the function that calls
+     helper function
+    :return: the status_code and the json data of the response
+    """
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id or "")
+
+    # expression = {}
+
+    opt_cohorts = options.get("cohorts")
+    char_name = options.get("char_name")
+
+    origin_options = {}
+
+    if char_id:
+        response = requests.get("{}/design".format(char_url), headers=headers)
+        # Retrieve options from atlas for existing characterization
+        origin_options = response.json()
+
+    cohorts = list(map(lambda optc: {"id": optc.get("id"), "name": optc.get("name")}, opt_cohorts)
+                   ) if opt_cohorts else origin_options.get("cohorts")  # expression.get("targetIds")
+
+    features_url = "{}/feature-analysis?size=100000".format(settings.OHDSI_ENDPOINT)
+    feat_resp = requests.get(features_url, headers=headers)
+    fresp_json = feat_resp.json()
+
+    features = origin_options.get("features") or options.get("features")
+
+    features_lst = list(filter(lambda el: el.get("id") in features, fresp_json.get("content")))
+
+    if char_id:
+        origin_options.update({"cohorts": cohorts, "featureAnalyses": features_lst,
+                               "updatedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+        response = requests.put(char_url, data=json.dumps(origin_options), headers=headers)
+    else:
+        features_lst = [{"name": f.get("name"), "id": f.get("id"), "description": f.get("description")
+                         } for f in features_lst]
+        payload = {"name": char_name, "cohorts": cohorts,
+                   "featureAnalyses": features_lst,
+                   "parameters": [], "strataConceptSets": [], "stratas": []}
+        response = requests.post(char_url, data=json.dumps(payload), headers=headers)
+
+    resp_json = response.json()
+    # print(resp_json)
+    #
+    return response.status_code, resp_json
 
 
 def name_entities_group(entities_names):
@@ -787,4 +869,3 @@ def name_entities_group(entities_names):
     """
 
     return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
-

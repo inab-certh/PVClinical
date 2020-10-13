@@ -26,8 +26,8 @@
 
         </div>
 
-        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="">
+        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
+            <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' char_id=char_id sc_id=sc_id %}"{% endif %}>
                 <i class="fa fa-line-chart fa-10x"></i>
                 <h4>{% trans "Χαρακτηρισμός Πληθυσμού " %}</h4>
             </a>
