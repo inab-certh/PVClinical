@@ -7,9 +7,13 @@ import requests
 from bs4 import BeautifulSoup
 import browser_cookie3
 
+from mendeley import Mendeley
+
+
 from django.shortcuts import redirect
 
 from django.http import HttpResponseRedirect
+
 
 import os
 
@@ -269,24 +273,43 @@ def mendeley_cookies():
     :return: access toke if exists
     """
 
-    cj = browser_cookie3.load()
+    # cj = browser_cookie3.load()
+    #
+    # mend_cookie = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
+    #
+    # cookie_list = list(mend_cookie)
 
-    mend_cookie = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
+    client_id = 8886
+    redirect_uri = "http://127.0.0.1:8000/"
+    client_secret = "4en8hOV7M8nz5Eca"
 
-    cookie_list = list(mend_cookie)
-    if cookie_list == []:
-        print('if')
-        mend_cookies = filter(lambda el: el.domain == ".mendeley.com" and el.name == "_at", cj)
-        cookie_list = list(mend_cookies)
+    mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
+    auth = mendeley.start_implicit_grant_flow()
 
-    access_token = cookie_list[0].value
-    response_doc = requests.get(
-        'https://api.mendeley.com/documents',
-        headers={'Authorization': 'Bearer {}'.format(access_token),
-                 'Accept': 'application/vnd.mendeley-document.1+json'},
-    )
-    if response_doc.status_code != 200:
-        cookie_list = []
+    login_url = auth.get_login_url()
+
+    res = requests.post(login_url, allow_redirects=False, data={
+        'username': 'pvclinical.project@gmail.com',
+        'password': 'L$x3k@!7'
+    })
+
+    auth_response = res.headers['Location']
+    session = auth.authenticate(auth_response)
+    token = session.token
+    cookie_list = [token['access_token']]
+    # if cookie_list == []:
+    #     print('if')
+    #     mend_cookies = filter(lambda el: el.domain == ".mendeley.com" and el.name == "_at", cj)
+    #     cookie_list = list(mend_cookies)
+    #
+    # access_token = cookie_list[0].value
+    # response_doc = requests.get(
+    #     'https://api.mendeley.com/documents',
+    #     headers={'Authorization': 'Bearer {}'.format(access_token),
+    #              'Accept': 'application/vnd.mendeley-document.1+json'},
+    # )
+    # if response_doc.status_code != 200:
+    #     cookie_list = []
 
     return cookie_list
 
