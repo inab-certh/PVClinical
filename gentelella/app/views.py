@@ -31,6 +31,7 @@ from app.errors_redirects import forbidden_redirect
 
 from app.forms import ScenarioForm
 from app.forms import IRForm
+from app.forms import CharForm
 
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
@@ -414,8 +415,8 @@ def ohdsi_workspace(request, scenario_id=None):
             ir_id = res_json.get("id")
 
     if drugs_cohort or conditions_cohort:
-        char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + [conditions_cohort])))
+        char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
+                                                                filter(None,[drugs_cohort, conditions_cohort]))))
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
         if char_ent:
@@ -424,10 +425,10 @@ def ohdsi_workspace(request, scenario_id=None):
         else:
             res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
-
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
         "ir_id": ir_id,
+        "char_id": char_id,
         "sc_id": scenario_id
     }
 
@@ -454,7 +455,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     ir_options = {}
     if ir_exists:
         ir_options = ohdsi_wrappers.get_ir_options(ir_id)
-    else:
+    elif ir_id:
         messages.error(
             request,
             _("Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"))
@@ -574,7 +575,7 @@ def characterizations(request, sc_id, char_id, read_only=1):
     char_options = {}
     if char_exists:
         char_options = ohdsi_wrappers.get_char_options(char_id)
-    else:
+    elif char_id:
         messages.error(
             request,
             _("Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"))

@@ -1,11 +1,12 @@
 import re
-import requests
 
 from datetime import date
 
 from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
+
+from app import ohdsi_wrappers
 
 from app.models import Drug
 from app.models import Condition
@@ -183,7 +184,7 @@ class IRForm(forms.Form):
                                         initial=[],
                                         label=_("Φύλο:"),
                                         required=False,
-                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
+                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key=lambda x: x[1]))
     add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παράθυρου μελέτης"), initial=False, required=False)
     study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"),
                                        initial=None,
@@ -244,17 +245,15 @@ class CharForm(forms.Form):
         self.read_only = kwargs.pop("read_only")
         super(CharForm, self).__init__(*args, **kwargs)
 
-        features_url = "{}/feature-analysis?size=100000".format(settings.OHDSI_ENDPOINT)
-        feat_resp = requests.get(features_url, headers=headers)
-        fresp_json = feat_resp.json()
+        analysis_features = ohdsi_wrappers.get_char_analysis_features()
 
-        avail_features = sorted(["Drug Group Era Long Term", "Charlson Index",
-                                 "Demographics Age Group", "Demographics Gender"])
+        avail_features = ["Drug Group Era Long Term", "Charlson Index",
+                                 "Demographics Age Group", "Demographics Gender"]
 
-        self.fields["features"].choices = [(f.get("id"), f.get("name")) for f in fresp_json
-                                           if f.get("name") in avail_features]
+        self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
+                                                  if f.get("name") in avail_features], key=lambda x: x[1])
 
         for k in self.fields.keys():
-            self.initial[k] = self.options.get(k)
+            self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
 

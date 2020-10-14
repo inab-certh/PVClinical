@@ -494,6 +494,7 @@ a.disabled {
 
 .viewExplanation {
 	font-size: 14px;
+	text-align: justify;
 }
 
 #message_container.success,  #message_container.error{
