@@ -162,7 +162,8 @@ def get_entity_by_id(entity_type, entity_id):
     :return: the entity if it exists or None
     """
 
-    entity_url = "{}/{}/{}".format(settings.OHDSI_ENDPOINT, entity_type, entity_id)
+    entity_url = "{}/{}/{}/{}".format(settings.OHDSI_ENDPOINT, entity_type, entity_id,
+                                      "design" if entity_type == "cohort-characterization" else "")
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -193,11 +194,12 @@ def get_entity_by_name(entity_type, entity_name):
         }
 
         response = requests.get(entity_url, headers=headers)
-        match = list(filter(lambda el: el.get("name") == entity_name, response.json()))
+        entities = response.json()
+        entities = entities.get("content") if isinstance(entities, dict) else entities
+        match = list(filter(lambda el: el.get("name") == entity_name, entities))
         matching_id = match[0].get("id") if match else None
         matching_entity = requests.get("{}{}".format(entity_url, matching_id),
                                        headers=headers).json() if matching_id else None
-
     return matching_entity
 
 
@@ -565,11 +567,12 @@ def get_ir_options(ir_id):
 
 def get_char_options(char_id):
     options = {}
-    resp = requests.get("{}/cohort-characterization/{}/design".format(settings.OHDSI_ENDPOINT, char_id),
-                        headers=headers)
-    resp_json = resp.json()
-    options["cohorts"] = resp_json.get("cohorts")
-    options["features"] = list(map(lambda el: el.get("id"), resp_json.get("featureAnalyses")))
+    # resp = requests.get("{}/cohort-characterization/{}/design".format(settings.OHDSI_ENDPOINT, char_id),
+    #                     headers=headers)
+    # resp_json = resp.json()
+    char_ent = get_entity_by_id("cohort-characterization", char_id)
+    options["cohorts"] = char_ent.get("cohorts")
+    options["features"] = list(map(lambda el: el.get("id"), char_ent.get("featureAnalyses")))
 
     return options
 
@@ -840,7 +843,8 @@ def add_update_char(char_id, **options):
     feat_resp = requests.get(features_url, headers=headers)
     fresp_json = feat_resp.json()
 
-    features = origin_options.get("features") or options.get("features")
+    features = origin_options.get("features") or options.get("features") or [
+        "Drug Group Era Long Term", "Charlson Index", "Demographics Age Group", "Demographics Gender"]
 
     features_lst = list(filter(lambda el: el.get("id") in features, fresp_json.get("content")))
 
@@ -862,6 +866,23 @@ def add_update_char(char_id, **options):
     return response.status_code, resp_json
 
 
+def get_char_analysis_features():
+    """ Get analysis features for cohort characterization functionality
+    :return: the analysis features
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    features_url = "{}/feature-analysis?size=100000".format(settings.OHDSI_ENDPOINT)
+    feat_resp = requests.get(features_url, headers=headers)
+    if feat_resp.status_code != 200:
+        return []
+    return feat_resp.json().get("content")
+
 def name_entities_group(entities_names):
     """ Give a name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
     :param entities_names: a list of the entities names
@@ -869,3 +890,4 @@ def name_entities_group(entities_names):
     """
 
     return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
+
