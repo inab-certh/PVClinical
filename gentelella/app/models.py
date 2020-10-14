@@ -189,6 +189,6 @@ class PubMed(models.Model):
     abstract = models.TextField(null=True, blank=True)
     authors = models.CharField(max_length=400, blank=False, default='')
     url = models.CharField(max_length=100, blank=False, default='')
-    relevance = models.CharField(max_length=20, choices=CHOICES)
+    relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
     notes = models.TextField(null=True, blank=True)
     # created = models.DateTimeField(auto_now_add=True)
