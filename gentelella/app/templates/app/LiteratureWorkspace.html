@@ -149,18 +149,21 @@
                                                      {% if rec.relevance == "" %}
                                                         <td style="text-align: center" id="relevance">
                                                             <div class="custom-control custom-radio custom-control-inline">
-                                                                <input style="height: 1.2em; width: 1em;" type="radio" id="Relevant" value="True" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x">
-                                                                <label for="Relevant"><span></span></label><br>
+                                                                <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="relevant_{{ forloop.counter0 }}">
+                                                                <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" class="relevant">
+                                                                </label><br>
 <!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline">
-                                                            <input style="height: 1.2em; width: 1em;" type="radio" id="Irrelevant" value="False" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x">
-                                                                <label for="Irrelevant"><span></span></label><br>
+                                                               <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="irrelevant_{{ forloop.counter0 }}">
+                                                                <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" class="irrelevant" >
+                                                               </label><br>
 <!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
                                                             </div>
                                                             <div class="custom-control custom-radio custom-control-inline">
-                                                            <input style="height: 1.2em; width: 1em;" type="radio" id="Not sure" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x">
-                                                                <label for="Not sure"><span></span></label><br>
+                                                                <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="uncertain_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="uncertain">
+                                                                </label><br>
 <!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
                                                             </div>
 <!--                                                            <br/>-->
@@ -173,19 +176,21 @@
                                                     {% else %}
                                                          {% if rec.relevance == "True" %}
                                                              <td style="text-align: center" id="relevance">
-                                                                 <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="Relevant" value="True" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" checked>
-                                                                    <label for="Relevant"><span></span></label><br>
-<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+                                                                 <div class="custom-control custom-radio custom-control-inline" name="label_{{ forloop.counter0 }}">
+                                                                     <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x">
+                                                                        <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" checked>
+                                                                    </label><br>
                                                                  </div>
                                                                  <div class="custom-control custom-radio custom-control-inline">
-                                                                 <input type="radio" id="Irrelevant" value="False" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x">
-                                                                    <label for="Irrelevant"><span></span></label><br>
+                                                                     <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" >
+                                                                    </label><br>
 <!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
                                                                  </div>
                                                                  <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="Not sure" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x">
-                                                                    <label for="Not sure"><span></span></label><br>
+                                                                     <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}">
+                                                                    </label><br>
 <!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
                                                                  </div>
 <!--                                                                 <br/>-->
@@ -198,18 +203,21 @@
                                                          {% elif rec.relevance == "False" %}
                                                               <td style="text-align: center" id="relevance">
                                                                   <div class="custom-control custom-radio custom-control-inline">
-                                                                  <input type="radio" id="Relevant" value="True" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x">
-                                                                    <label for="Relevant"><span></span></label><br>
+                                                                      <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                  <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" >
+                                                                    <span></span></label><br>
 <!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
                                                                   </div>
                                                                   <div class="custom-control custom-radio custom-control-inline">
-                                                                  <input type="radio" id="Irrelevant" value="False" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" checked>
-                                                                    <label for="Irrelevant"><span></span></label><br>
+                                                                    <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}"  checked>
+                                                                   </label><br>
 <!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
                                                                   </div>
                                                                   <div class="custom-control custom-radio custom-control-inline">
-                                                                  <input type="radio" id="Not sure" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x">
-                                                                    <label for="Not sure"><span></span></label><br>
+                                                                      <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}" >
+                                                                    </label><br>
 <!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
                                                                   </div>
 <!--                                                                  <br/>-->
@@ -222,18 +230,21 @@
                                                          {% else %}
                                                              <td style="text-align: center" id="relevance">
                                                              <div class="custom-control custom-radio custom-control-inline">
-                                                             <input type="radio" id="Relevant" value="True" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x">
-                                                               <label for="Relevant"><span></span></label><br>
+                                                                 <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" >
+                                                               </label><br>
 <!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
                                                              </div>
                                                              <div class="custom-control custom-radio custom-control-inline">
-                                                             <input type="radio" id="Irrelevant" value="False" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x">
-                                                                <label for="Irrelevant"><span></span></label><br>
+                                                                 <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" >
+                                                                </label><br>
 <!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
                                                              </div>
                                                              <div class="custom-control custom-radio custom-control-inline">
-                                                             <input type="radio" id="Not sure" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" checked>
-                                                                <label for="Not sure"><span></span></label><br>
+                                                                 <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Not sure" value="Not sure_{{ forloop.counter0 }}" name="relevance_{{ forloop.counter0 }}"  checked>
+                                                                </label><br>
 <!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
                                                              </div>
                                                                  <br/>
@@ -1102,6 +1113,20 @@
         });
     });
     </script>
+     <script>
+       $(document).ready(function() {
+           var recordslength = '{{ records|length }}'
+
+        for (var i = 0; i < recordslength; i++) {
+            $("tr[name='row_" + i + "'] input[type='radio']:checked").parent().css('color', '#bf2b27');
+        }
+           $('input[name^="relevance_"]').click(function () {
+               var loop_it = $(this).attr('name').replace("relevance_", "");
+               $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+               $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
+           });
+        });
+     </script>
 
 
 
