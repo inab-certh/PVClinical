@@ -1,0 +1,45 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: app/forms.py:180 app/forms.py:181
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-15 12:27+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app/templates/app/characterizations:52
+msgid "Charlson Index"
+msgstr "Δείκτης συνοσηρότητας Charlson"
+
+msgid "Demographics Age Group"
+msgstr "Ηλικιακή Ομάδα (Δημογραφικά Χαρακτηριστικά)"
+
+msgid "Demographics Gender"
+msgstr "Φύλο (Δημογραφικά Χαρακτηριστικά)"
+
+msgid "Drug Group Era Long Term"
+msgstr "Μακροπρόθεσμη Περίοδος Λήψης Ομάδας Φαρμάκων"
+
+#: app/templates/app/characterizations:54
+msgid "One covariate per drug rolled up to ATC groups in the drug_era table overlapping with any part of the long term window."
+msgstr "Λήψη ανά φάρμακο που εμφανίζεται σε ομάδες ATC στον πίνακα drug_era (περίοδος φαρμάκου), που επικαλύπτεται με οποιοδήποτε διάστημα του μακροπρόθεσμου παραθύρου."
+
+msgid "The Charlson comorbidity index (Romano adaptation) using all conditions prior to the window end."
+msgstr "Ο δείκτης συνοσηρότητας Charlson (προσαρμογή Romano), χρησιμοποιώντας όλες τις προγενέστερες από το τέλος του παραθύρου συνθήκες."
+
+msgid "Age of the subject on the index date (in 5 year age groups)"
+msgstr "Ηλικία του υπό εξέταση υποκειμένου κατά την ημερομηνία ευρετηρίου (σε ηλικιακές ομάδες εύρους 5 ετών)"
+
+msgid "Gender of the subject."
+msgstr "Φύλο του υπό εξέταση υποκειμένου"

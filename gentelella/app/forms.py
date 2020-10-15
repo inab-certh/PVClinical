@@ -247,8 +247,9 @@ class CharForm(forms.Form):
 
         analysis_features = ohdsi_wrappers.get_char_analysis_features()
 
+        self.features_descriptions = dict([(el.get("name"), el.get("description")) for el in analysis_features])
         avail_features = ["Drug Group Era Long Term", "Charlson Index",
-                                 "Demographics Age Group", "Demographics Gender"]
+                          "Demographics Age Group", "Demographics Gender"]
 
         self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
                                                   if f.get("name") in avail_features], key=lambda x: x[1])

@@ -586,9 +586,12 @@ def characterizations(request, sc_id, char_id, read_only=1):
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
         char_form = CharForm(request.POST, label_suffix='', char_options=char_options, read_only=read_only)
+        print("POST")
 
         if char_form.is_valid():
-            char_options["features"] = char_form.cleaned_data.get("features")
+            print("POST2")
+            print("Cleaned data: ", char_form.cleaned_data.get("features"))
+            char_options["features"] = list(map(int, char_form.cleaned_data.get("features")))
 
             rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
 

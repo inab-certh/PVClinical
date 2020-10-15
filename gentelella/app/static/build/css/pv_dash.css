@@ -624,3 +624,13 @@ button.close {
 .date-fields {
 	display: none;
 }
+/*.popover {*/
+/*    max-width: 50px; !* Max Width of the popover (depending on the container!) *!*/
+/*}*/
+
+.popover{
+	min-width:100px;
+	width:100%;
+	max-width: 60%;
+	text-align: justify;
+}
