@@ -45,7 +45,6 @@ from app.helper_modules import mendeley_pdf
 
 from app.models import PubMed
 from app.models import Scenario
-from app.models import OHDSIWorkspace
 from app.ohdsi_wrappers import update_ir
 from app.ohdsi_wrappers import create_ir
 from app.retrieve_meddata import KnowledgeGraphWrapper
