@@ -245,7 +245,7 @@
 }
 
 .img-icon {
-    width: 17%;
+    width: 23%;
     min-width: 48px;
 }
 
@@ -289,6 +289,11 @@
 .dropdown-menu-right {
     top: 0!important;
     left: 100%!important;
+}
+
+.dropdown-menu a {
+    cursor: pointer;
+    text-align: center;
 }
 
 .form-h1 {
@@ -397,6 +402,14 @@ a.disabled {
   pointer-events: none;
 }
 
+.light-disabled * {
+  /* Make the disabled links grayish*/
+  color: rgba(199, 199, 199, 0.87);
+  /* And disable the pointer events */
+  pointer-events: none;
+}
+
+
 .mt-1 {
     margin-top: 1rem;
 }
@@ -481,6 +494,7 @@ a.disabled {
 
 .viewExplanation {
 	font-size: 14px;
+	text-align: justify;
 }
 
 #message_container.success,  #message_container.error{
@@ -609,4 +623,14 @@ button.close {
 
 .date-fields {
 	display: none;
+}
+/*.popover {*/
+/*    max-width: 50px; !* Max Width of the popover (depending on the container!) *!*/
+/*}*/
+
+.popover{
+	min-width:100px;
+	width:100%;
+	max-width: 60%;
+	text-align: justify;
 }
