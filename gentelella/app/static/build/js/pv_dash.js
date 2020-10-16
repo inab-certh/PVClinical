@@ -8,4 +8,6 @@ $(function() {
             $(".navbar.nav_title").show();
         }
     })
+
+     $("[data-toggle='popover']").popover();
 });

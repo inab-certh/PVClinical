@@ -6,6 +6,8 @@ from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
+from app import ohdsi_wrappers
+
 from app.models import Drug
 from app.models import Condition
 from app.models import Scenario
@@ -165,15 +167,6 @@ class ScenarioForm(forms.Form):
 
 
 class IRForm(forms.Form):
-    # time_at_risk = forms.CharField(label=_("Διάστημα ανάλυσης:"), required=True)
-    #
-    # study_window = forms.MultipleChoiceField(choices=[0, 1, 7, 14, 21, 30, 60, 90,
-    #                                                   120, 180, 365, 548, 730, 1095],
-    #                                       required=False,
-    #                                       label=_("Διάστημα ανάλυσης:"),
-    #                                       widget=CustomSelect2TagWidget)
-
-    # sc_id = forms.IntegerField(widget=forms.HiddenInput())
     age_crit = forms.ChoiceField(choices=(("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
                                           ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
                                           ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
@@ -191,7 +184,7 @@ class IRForm(forms.Form):
                                         initial=[],
                                         label=_("Φύλο:"),
                                         required=False,
-                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key = lambda x: x[1]))
+                                        choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key=lambda x: x[1]))
     add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παράθυρου μελέτης"), initial=False, required=False)
     study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"),
                                        initial=None,
@@ -237,3 +230,31 @@ class IRForm(forms.Form):
             self.cleaned_data["study_start_date"] = None
 
         return self.cleaned_data
+
+
+class CharForm(forms.Form):
+
+    features = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "char-features-fld"}),
+                                        initial=[],
+                                        label=_("Χαρακτηριστικά ανάλυσης:"),
+                                        required=False,
+                                        choices=[])
+
+    def __init__(self, *args, **kwargs):
+        self.options = kwargs.pop("char_options")
+        self.read_only = kwargs.pop("read_only")
+        super(CharForm, self).__init__(*args, **kwargs)
+
+        analysis_features = ohdsi_wrappers.get_char_analysis_features()
+
+        self.features_descriptions = dict([(el.get("name"), el.get("description")) for el in analysis_features])
+        avail_features = ["Drug Group Era Long Term", "Charlson Index",
+                          "Demographics Age Group", "Demographics Gender"]
+
+        self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
+                                                  if f.get("name") in avail_features], key=lambda x: x[1])
+
+        for k in self.fields.keys():
+            self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
+            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+

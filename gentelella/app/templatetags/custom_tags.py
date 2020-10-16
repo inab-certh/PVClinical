@@ -19,3 +19,7 @@ def lang_to_flag(context, lang=None, *args, **kwargs):
 @register.filter(name='field_type')
 def field_type(field):
     return field.field.widget.__class__.__name__
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
