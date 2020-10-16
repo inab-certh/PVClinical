@@ -727,8 +727,9 @@ def pubMed_view(request, scenario_id=None, page_id=None):
 
         try:
 
-            access_token = mend_cookies[0].value
+            # access_token = mend_cookies[0].value
             # print(access_token)
+            access_token = mend_cookies[0]
 
             if page_id == None:
                 page_id = 1
@@ -819,9 +820,10 @@ def pubmed_search(query, begin, max, access_token):
     the  total number of the retrieved papers for a certain query. If there are no results
     for the query, returns an empty dictionary
     """
-
+    # pvclinical.project @ gmail.com
+    # , apikey = '40987f0b48b279c32047b1386f249d8cb308'
     print(begin)
-    w = entrezpy.conduit.Conduit(email='pvclinical.project@gmail.com', apikey='40987f0b48b279c32047b1386f249d8cb308')
+    w = entrezpy.conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
     fetch_pubmed = w.new_pipeline()
     q = query
 
@@ -860,7 +862,7 @@ def pubmed_search(query, begin, max, access_token):
             res.pubmed_records[i].authors = ';'.join(str(x['lname'] + "," + x['fname'].replace(' ', '')) if x['fname'] else str(x['lname']) for x in res.pubmed_records[i].authors )
 
 
-            Entrez.email = 'sdimitsaki@gmail.com'
+            Entrez.email = 'pvclinical.project@gmail.com'
             handle = Entrez.elink(dbfrom="pubmed", db="pmc", linkname="pubmed_pmc", id=res.pubmed_records[i].pmid,
                                   retmode="text")
             pmcid = getPMCID(handle)
