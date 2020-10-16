@@ -62,9 +62,12 @@ from django.shortcuts import render, redirect
 
 from Bio import Entrez
 
-import entrezpy.conduit
-import entrezpy.base.result
-import entrezpy.base.analyzer
+# import entrezpy.conduit
+# import entrezpy.base.result
+# import entrezpy.base.analyzer
+from app.entrezpy.entrezpylib import conduit
+from app.entrezpy.entrezpylib.base import result
+from app.entrezpy.entrezpylib.base import analyzer
 import time
 import sys
 
@@ -692,7 +695,7 @@ def pubmed_search(query, begin, max, access_token):
     # pvclinical.project @ gmail.com
     # , apikey = '40987f0b48b279c32047b1386f249d8cb308'
     print(begin)
-    w = entrezpy.conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
+    w = conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
     fetch_pubmed = w.new_pipeline()
     q = query
 
@@ -779,7 +782,6 @@ def check_url(url):
 
     r = session.get(url)
 
-    print(r.status_code)
     return r.status_code
 
 

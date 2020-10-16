@@ -111,7 +111,7 @@
 
                             <img class="img-icon" src="{% static 'images/openFDA.png' %}">
                         </a>
-                         <a href="#">
+                         <a href="{% url 'LiteratureWorkspace' scenario.id %}">
                           <!--<i class="fa fa-eye"></i>-->
 
                             <img class="img-icon" name="pubmed_image_{{ scenario.id }}" src="{% static 'images/PubMed.png' %}">
@@ -858,7 +858,7 @@
   </script>
 
 
-<script src="/static/build/js/pv_literature.js"></script>
+<!--<script src="/static/build/js/pv_literature.js"></script>-->
 
   <!--&lt;!&ndash; Chart.js &ndash;&gt;-->
   <!--<script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>-->
