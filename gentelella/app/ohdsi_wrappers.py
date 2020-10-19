@@ -99,8 +99,11 @@ def search_concept(query, domain_lst):
         "Accept": "application/json",
         # "api-key": "{}".format(settings.OHDSI_APIKEY),
     }
-    vocabularies = {"Drug": "ATC", "Condition": "MedDRA", "Gender": "Gender"}
-    vocabulary_ids = [vocabularies.get(d) for d in domain_lst]
+    # vocabularies = {"Drug": ["ATC", "RxNorm"], "Condition": ["MedDRA", "SNOMED", "ICD10CM"],
+    #                 "Gender": "Gender"}
+    vocabularies = {"Drug": ["ATC"], "Condition": ["MedDRA"],
+                    "Gender": ["Gender"]}
+    vocabulary_ids = list(itertools.chain(*[vocabularies.get(d) for d in domain_lst]))
     response = requests.post(search_url, json={"QUERY": query,
                                                "DOMAIN_ID": domain_lst,
                                                "VOCABULARY_ID": vocabulary_ids},
