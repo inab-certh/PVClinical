@@ -1,6 +1,8 @@
 import json
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
 import requests
 
@@ -248,9 +250,10 @@ def getPMCID(handle):
     :return: PMCID if exists
     """
     html_response = handle.read()
-    encoding = handle.headers.get_content_charset('utf-8')
-    decoded_html = html_response.decode(encoding)
-    soup = BeautifulSoup(decoded_html)
+
+    # encoding = handle.headers.get_content_charset('utf-8')
+    # decoded_html = html_response.decode(encoding)
+    soup = BeautifulSoup(html_response)
     for script in soup(["script", "style"]):
         script.extract()
     text = soup.get_text()
@@ -268,35 +271,33 @@ def getPMCID(handle):
 
 #Extract token from Mendeley cookies
 
-def mendeley_cookies():
+# def mendeley_cookies(request):
     """ Search for Mendeley cookies in users browser.
     :return: access toke if exists
     """
 
-    # cj = browser_cookie3.load()
+    # user = request.user
+    social = user.social_auth.get(provider='mendeley-oauth2')
+    # access_token = social.extra_data['access_token']
+
+    # client_id = 8886
+    # redirect_uri = "http://127.0.0.1:8000/"
+    # client_secret = "4en8hOV7M8nz5Eca"
     #
-    # mend_cookie = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
+    # mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
+    # auth = mendeley.start_implicit_grant_flow()
     #
-    # cookie_list = list(mend_cookie)
-
-    client_id = 8886
-    redirect_uri = "http://127.0.0.1:8000/"
-    client_secret = "4en8hOV7M8nz5Eca"
-
-    mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-    auth = mendeley.start_implicit_grant_flow()
-
-    login_url = auth.get_login_url()
-
-    res = requests.post(login_url, allow_redirects=False, data={
-        'username': 'pvclinical.project@gmail.com',
-        'password': 'L$x3k@!7'
-    })
-
-    auth_response = res.headers['Location']
-    session = auth.authenticate(auth_response)
-    token = session.token
-    cookie_list = [token['access_token']]
+    # login_url = auth.get_login_url()
+    #
+    # res = requests.post(login_url, allow_redirects=False, data={
+    #     'username': 'pvclinical.project@gmail.com',
+    #     'password': 'L$x3k@!7'
+    # })
+    #
+    # auth_response = res.headers['Location']
+    # session = auth.authenticate(auth_response)
+    # token = session.token
+    # cookie_list = [social.extra_data['access_token']]
     # if cookie_list == []:
     #     print('if')
     #     mend_cookies = filter(lambda el: el.domain == ".mendeley.com" and el.name == "_at", cj)
@@ -311,7 +312,7 @@ def mendeley_cookies():
     # if response_doc.status_code != 200:
     #     cookie_list = []
 
-    return cookie_list
+    # return cookie_list
 
     # access_token = list(mend_cookies)[0].value
     # print(access_token)
