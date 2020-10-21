@@ -47,4 +47,7 @@ sqlparse==0.3.0
 urllib3==1.25.9
 vital-tools==0.1.13
 zipp==3.1.0
+social-auth-app-django==4.0.0
+social-auth-core==3.3.3
+djangorestframework==3.12.1
 
