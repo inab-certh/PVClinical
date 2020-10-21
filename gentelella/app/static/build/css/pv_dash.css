@@ -634,3 +634,7 @@ button.close {
 	max-width: 60%;
 	text-align: justify;
 }
+
+.modal-body {
+	overflow-x: auto;
+}
