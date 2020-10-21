@@ -99,8 +99,11 @@ def search_concept(query, domain_lst):
         "Accept": "application/json",
         # "api-key": "{}".format(settings.OHDSI_APIKEY),
     }
-    vocabularies = {"Drug": "ATC", "Condition": "MedDRA", "Gender": "Gender"}
-    vocabulary_ids = [vocabularies.get(d) for d in domain_lst]
+    # vocabularies = {"Drug": ["ATC", "RxNorm"], "Condition": ["MedDRA", "SNOMED", "ICD10CM"],
+    #                 "Gender": ["Gender"]}
+    vocabularies = {"Drug": ["ATC"], "Condition": ["MedDRA"],
+                    "Gender": ["Gender"]}
+    vocabulary_ids = list(itertools.chain(*[vocabularies.get(d) for d in domain_lst]))
     response = requests.post(search_url, json={"QUERY": query,
                                                "DOMAIN_ID": domain_lst,
                                                "VOCABULARY_ID": vocabulary_ids},
@@ -281,7 +284,7 @@ def create_concept_set(cterms, cdomain):
     add_items_url = "{}/conceptset/{}/items".format(settings.OHDSI_ENDPOINT, resp_json.get("id"))
 
     # Including both descendants and mapped(synonym) terms
-    payload = [{"conceptId": sc.get("CONCEPT_ID"), "isExcluded": 0, "includeDescendants": 1, "includeMapped": 0
+    payload = [{"conceptId": sc.get("CONCEPT_ID"), "isExcluded": 0, "includeDescendants": 0, "includeMapped": 0
                 } for sc in search_concepts]
     add_items_resp = requests.put(add_items_url, data=json.dumps(payload), headers=headers)
     resp_json = add_items_resp.json()
@@ -413,7 +416,7 @@ def generate_cohort(cohort_id):
             if time.time() - start_time > 300:
                 break
             time.sleep(2)
-            response = requests.get(status_url, headers = headers)
+            response = requests.get(status_url, headers=headers)
             if response.status_code == 200:
                 resp_json = response.json()
                 completed = (resp_json[0].get("status") == "COMPLETE")
@@ -535,12 +538,12 @@ def get_ir_options(ir_id):
     ir_expr = json.loads(ir_ent.get("expression", "{}"))
     options["targetIds"] = ir_expr.get("targetIds", [])
     options["outcomeIds"] = ir_expr.get("outcomeIds", [])
-    ir_strata_lst = list(filter(lambda el: el.get("name") == "Stratification criteria",
-                                ir_expr.get("strata", [])))
-    ir_strata = ir_strata_lst[0] if ir_strata_lst else {}
-    ir_strata_expr = ir_strata.get("expression", {})
+    ir_strata_lst = ir_expr.get("strata", [])
 
-    ir_demographic_criteria = ir_strata_expr.get("DemographicCriteriaList", [])
+    ir_demographic_criteria = []
+    for ir_strata in ir_strata_lst:
+        ir_strata_expr = ir_strata.get("expression", {})
+        ir_demographic_criteria += ir_strata_expr.get("DemographicCriteriaList", [])
 
     # Keep only not null demographic criteria
     valid_demographic_criteria = dict(list(filter(lambda elm: elm[1] != None,
@@ -635,11 +638,13 @@ def add_update_ir(ir_id, **options):
     target_cohorts_ids = list(map(lambda tc: tc.get("id"), target_cohorts)
                               ) if target_cohorts else origin_options.get("targetIds")  # expression.get("targetIds")
     outcome_cohorts_ids = list(map(lambda oc: oc.get("id"), outcome_cohorts)
-                               ) if outcome_cohorts else origin_options.get("outcomeIds")  # expression.get("outcomeIds")
+                               ) if outcome_cohorts else origin_options.get(
+        "outcomeIds")  # expression.get("outcomeIds")
 
     age = options.get("age") or origin_options.get("age")
     ext_age = options.get("ext_age", None) or origin_options.get("ext_age")
-    age_crit = options.get("age_crit", "") or origin_options.get("age_crit")  # Age criterion (i.e. less than [lt] or greater than [gt])
+    age_crit = options.get("age_crit", "") or origin_options.get(
+        "age_crit")  # Age criterion (i.e. less than [lt] or greater than [gt])
     age_dict = {"Age": {"Value": age, "Extent": ext_age, "Op": age_crit}}  # if age > 0 else {}
 
     genders_lst = options.get("genders") or origin_options.get("genders")
@@ -657,12 +662,30 @@ def add_update_ir(ir_id, **options):
     gender_dict = {"Gender": gender_list}  # if gender_list else {}
 
     # demographic_criteria = ([age_dict] if age_dict else []) + ([gender_dict] if gender_dict else [])
-    demographic_criteria = [age_dict] + [gender_dict]
+    demographic_criteria = [tuple(*age_dict.items()), tuple(*gender_dict.items())]
+
+    strata_demo_criteria = [{"name": it[0], "description": None, "expression": {
+        "Type": "ALL", "CriteriaList": [], "DemographicCriteriaList": [
+            {**{"Age": None, "Gender": None, "Race": None, "Ethnicity": None,
+             "OccurrenceStartDate": None, "OccurrenceEndDate": None},
+             it[0]: it[1]
+             }], "Groups": []}} for it in demographic_criteria
+    ] + [{"name": "Exposure to any Drug", "description": None,
+          "expression": {"Type": "ALL", "CriteriaList": [
+              {"Criteria": {"DrugExposure": {"DrugTypeExclude": None, "DrugSourceConcept": None,
+                                             "First": None}},
+               "StartWindow": {"Start": {"Days": None, "Coeff": -1}, "End": {"Days": None, "Coeff": 1},
+                               "UseIndexEnd": False, "UseEventEnd": False}, "RestrictVisit": False,
+               "IgnoreObservationPeriod": False, "Occurrence": {"IsDistinct": False, "Type":2,
+                                                                "Count": 1}}],
+                         "DemographicCriteriaList": [], "Groups": []}}]
 
     # now = datetime.now()
-    study_start_date = options.get("study_start_date") or origin_options.get("study_start_date")  # or now.strftime("%Y-%m-%d")
+    study_start_date = options.get("study_start_date") or origin_options.get(
+        "study_start_date")  # or now.strftime("%Y-%m-%d")
     study_start_date = study_start_date if study_start_date != "None" else None
-    study_end_date = options.get("study_end_date") or origin_options.get("study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
+    study_end_date = options.get("study_end_date") or origin_options.get(
+        "study_end_date")  # or (now + timedelta(days=90)).strftime("%Y-%m-%d")
     study_end_date = study_end_date if study_end_date != "None" else None
 
     # study_window_dict = {"studyWindow": {"startDate": study_start_date, "endDate": study_end_date}
@@ -671,26 +694,8 @@ def add_update_ir(ir_id, **options):
     expression_dict = {"ConceptSets": [], "targetIds": target_cohorts_ids,
                        "outcomeIds": outcome_cohorts_ids,
                        "timeAtRisk": {"start": {"DateField": "StartDate", "Offset": 0},
-                                      "end": {"DateField": "StartDate", "Offset": 0}},
-                       "strata": [{"name": "Stratification criteria", "description": None,
-                                   "expression": {"Type": "ALL", "CriteriaList":
-                                       [{"Criteria": {"DrugExposure":
-                                                          {"DrugTypeExclude": None, "DrugSourceConcept": None,
-                                                           "First": None}}, "StartWindow":
-                                             {"Start": {"Days": None,
-                                                        "Coeff": -1},
-                                              "End": {"Days": None,
-                                                      "Coeff": 1},
-                                              "UseIndexEnd": False,
-                                              "UseEventEnd": False},
-                                         "RestrictVisit": False,
-                                         "IgnoreObservationPeriod": False,
-                                         "Occurrence": {"IsDistinct": False,
-                                                        "Type": 2, "Count": 1}
-                                         }
-                                        ],
-                                                  "DemographicCriteriaList": demographic_criteria,
-                                                  "Groups": []}}],
+                                      "end": {"DateField": "EndDate", "Offset": 0}},
+                       "strata": strata_demo_criteria,
                        "studyWindow": {"startDate": study_start_date,
                                        "endDate": study_end_date} if study_start_date and study_end_date else None
                        }
@@ -701,6 +706,8 @@ def add_update_ir(ir_id, **options):
     payload = {"id": ir_id, "name": ir_name, "description": None,
                "expression": json.dumps(expression_dict)
                }
+
+    print(payload)
 
     if ir_id:
         response = requests.put(ir_url, data=json.dumps(payload), headers=headers)
@@ -883,6 +890,7 @@ def get_char_analysis_features():
         return []
     return feat_resp.json().get("content")
 
+
 def name_entities_group(entities_names):
     """ Give a name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
     :param entities_names: a list of the entities names
@@ -890,4 +898,3 @@ def name_entities_group(entities_names):
     """
 
     return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
-

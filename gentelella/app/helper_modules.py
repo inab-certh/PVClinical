@@ -248,9 +248,7 @@ def getPMCID(handle):
     :return: PMCID if exists
     """
     html_response = handle.read()
-    encoding = handle.headers.get_content_charset('utf-8')
-    decoded_html = html_response.decode(encoding)
-    soup = BeautifulSoup(decoded_html)
+    soup = BeautifulSoup(html_response)
     for script in soup(["script", "style"]):
         script.extract()
     text = soup.get_text()
