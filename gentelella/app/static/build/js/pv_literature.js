@@ -10,7 +10,7 @@ $(function () {
                 dataType: 'json',
                 success: function (data) {
                   if (data.logged_in === true){
-                     window.open('/LiteratureWorkspace/'+ parseInt(scenario_id));
+                     window.open('/LiteratureWorkspace/'+ parseInt(scenario_id), '__self');
                   }
                  else{
                    $('#mendeleyModal').modal('show');
