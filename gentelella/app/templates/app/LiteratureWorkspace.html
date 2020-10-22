@@ -1127,7 +1127,43 @@
            });
         });
      </script>
+<!--     <script>-->
+<!--         $(document).ready(function() {-->
+<!--           var conditions =  $('.conditionchkBox:checked').map(function() {-->
+<!--                return $(this).val();-->
+<!--            }).get();-->
+<!--           var drugs = $('.drugchkBox:checked').map(function() {-->
+<!--                    return $(this).val();-->
+<!--                }).get();-->
+<!--           if (conditions == []) {-->
+<!--                $(".pagination").hide();-->
+<!--           }-->
+<!--            $(".drugchkBox").change(function(){-->
+<!--                var conditions =  $('.conditionchkBox:checked').map(function() {-->
+<!--                    return $(this).val();-->
+<!--                }).get();-->
+<!--               var drugs = $('.drugchkBox:checked').map(function() {-->
+<!--                        return $(this).val();-->
+<!--                    }).get();-->
+<!--               if (conditions == []) {-->
+<!--                    $(".pagination").hide();-->
+<!--               }-->
+<!--                });-->
+<!--            $(".conditionchkBox").change(function(){-->
+<!--                var conditions =  $('.conditionchkBox:checked').map(function() {-->
+<!--                    return $(this).val();-->
+<!--                }).get();-->
+<!--               var drugs = $('.drugchkBox:checked').map(function() {-->
+<!--                        return $(this).val();-->
+<!--                    }).get();-->
+<!--               console.log(conditions[1]);-->
+<!--               if (conditions.length == 1) {-->
+<!--                    $(".pagination").hide();-->
+<!--               }-->
+<!--                });-->
+<!--            });-->
 
+<!--     </script>-->
 
 
 {% endblock javascripts %}

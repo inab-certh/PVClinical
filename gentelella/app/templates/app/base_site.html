@@ -142,9 +142,8 @@
 	    {% include 'app/modals/parametric_modal.html' with modal_type="\"confirmModal\"" modal_id="\"scDeleteConfirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
 	    {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="\"scDeleteInfoModal\"" dismiss_btn=ok_lbl %}
         {% trans '<img src="../static/images/mendeleyicon.png">' as mend_title %}
-        {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
         {% trans 'Οκ' as mend_lbl %}
-        {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title modal_body=mend_body dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
+        {% include 'app/modals/mendeley_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
 
     {% endblock body %}
 
