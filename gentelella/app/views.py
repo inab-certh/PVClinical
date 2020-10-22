@@ -780,7 +780,7 @@ def pubMed_view(request, scenario_id=None, page_id=None):
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = "http://127.0.0.1:8000/"
+            url = '/dashboard'
 
 
             return redirect(url)
@@ -797,10 +797,9 @@ def pubMed_view(request, scenario_id=None, page_id=None):
 
         login_url = auth.get_login_url()
 
-        url = "http://127.0.0.1:8000/"
+        url = '/dashboard'
 
         return redirect(url)
-
 
 def is_logged_in(request):
     """ Checks if the user is logged in Mendeley platform.
