@@ -6,7 +6,7 @@
                 <button type="button" class="close col-xs-1" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                Συνδεθείτε στο Mendeley <a target="_blank" href="{% url 'social:begin' 'mendeley-oauth2' %}"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>
+                Συνδεθείτε στο Mendeley <a href="{% url 'social:begin' 'mendeley-oauth2' %}"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>
             </div>
             {% if modal_type != "\"viewModal\"" %}
                 <div class="modal-footer">
