@@ -9,15 +9,20 @@ $(function () {
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                  if (data.logged_in === true){
-                     window.open('/LiteratureWorkspace/'+ parseInt(scenario_id), '__self');
-                  }
-                 else{
-                   $('#mendeleyModal').modal('show');
-                  }
+                    if (data.logged_in === true) {
+
+                        window.open('/LiteratureWorkspace/' + parseInt(scenario_id), '_self');
+
+                    } else {
+
+                        $('#mendeleyModal').modal('show');
+                    }
 
 
-                  }
+                },
+             error: function (data) {
+                console.log("error");
+             }
                 });
         });
     });
