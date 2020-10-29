@@ -11,6 +11,11 @@
 {% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
+	<script>
+		$(".modalIframe").load(function () {
+			$(this).contents().find("body").css({"background-color": "transparent"});
+		});
+	</script>
 {% endblock %}
 
 {% block content %}
