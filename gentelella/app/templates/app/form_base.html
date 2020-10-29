@@ -14,6 +14,7 @@
 	<script>
 		$(".modalIframe").load(function () {
 			$(this).contents().find("body").css({"background-color": "transparent"});
+			$(this).contents().find("footer").css({"padding": "0 1rem"});
 		});
 	</script>
 {% endblock %}
