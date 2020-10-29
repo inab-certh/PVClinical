@@ -638,3 +638,7 @@ button.close {
 .modal-body {
 	overflow-x: auto;
 }
+
+#analysisCharModal .modal-dialog {
+	width: 93%;
+}
