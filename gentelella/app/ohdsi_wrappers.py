@@ -7,7 +7,9 @@ import time
 from datetime import datetime
 # from datetime import timedelta
 from urllib.parse import urlencode
+
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 
 def cohort_generated_recently(cohort, recent=False, days_before=30):
@@ -426,6 +428,43 @@ def generate_cohort(cohort_id):
             status = "COMPLETE"
 
     return status
+
+
+def create_cs_coh(concepts_names, domain):
+    """ Combines the various functions to create concept sets and cohorts for specific concepts
+    :param concepts_names: a list of the names of the concepts to include in the concept set
+    :param domain: the domain that the specific concepts belong to (i.e. Drug/Condition)
+    :return: the status (COMPLETE or FAILED)
+    """
+
+    print(concepts_names)
+    print(domain)
+    cs_create_errors = {"Drug": _("Σφάλμα δημιουργίας concept set φαρμάκων"),
+                        "Condition": _("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"),
+                        }
+    cohort_create_errors = {"Drug": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                            "Condition": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες"
+                                           " ανεπιθύμητες ενέργειες"),
+                            }
+
+    cs_name = name_entities_group(concepts_names)
+
+    # Check if concept set already exists
+    # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
+    # Create concept set if it does not already exist
+    if exists(cs_name, "conceptset") != (200, True):
+        st_code, resp_json = create_concept_set(concepts_names, domain)
+        if not (st_code == 200 and resp_json):
+            raise Exception(cs_create_errors.get(domain))
+
+    concepts_cohort_name = name_entities_group([cs_name])
+
+    if exists(concepts_cohort_name, "cohortdefinition") != (200, True):
+        st_code, resp_json = create_cohort({domain: [cs_name]})
+        if not (st_code == 200 and resp_json):
+            raise Exception(cohort_create_errors.get(domain))
+
+    return concepts_cohort_name
 
 
 def create_ir(target_cohorts, outcome_cohorts, **options):

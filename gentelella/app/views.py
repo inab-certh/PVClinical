@@ -1,11 +1,9 @@
 import json
-import re
-import requests
 import os
+import re
 import requests
 
 from math import ceil
-
 from itertools import chain
 from itertools import product
 
@@ -26,13 +24,10 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from app import ohdsi_wrappers
-
 from app.errors_redirects import forbidden_redirect
-
 from app.forms import ScenarioForm
 from app.forms import IRForm
 from app.forms import CharForm
-
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
@@ -41,41 +36,16 @@ from app.helper_modules import delete_db_rec
 from app.helper_modules import getPMCID
 from app.helper_modules import mendeley_cookies
 from app.helper_modules import mendeley_pdf
-
-
 from app.models import PubMed
 from app.models import Scenario
 from app.ohdsi_wrappers import update_ir
 from app.ohdsi_wrappers import create_ir
+from app.entrezpy.entrezpylib import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
-
-
 from app.pubmed import PubmedAnalyzer
 
-from mendeley import Mendeley
-from app.mendeley_expand import AutoRefreshMendeleySession
-from oauthlib.oauth2 import TokenExpiredError
-import requests
-from urllib.parse import urlparse
-
-from django.shortcuts import render, redirect
-
 from Bio import Entrez
-
-# import entrezpy.conduit
-# import entrezpy.base.result
-# import entrezpy.base.analyzer
-from app.entrezpy.entrezpylib import conduit
-from app.entrezpy.entrezpylib.base import result
-from app.entrezpy.entrezpylib.base import analyzer
-import time
-import sys
-
-from importlib import reload
-
-from django.core.paginator import Paginator
-
-
+from mendeley import Mendeley
 
 
 def OpenFDAWorkspace(request, scenario_id=None):
@@ -304,84 +274,31 @@ def ohdsi_workspace(request, scenario_id=None):
     sc_drugs = sc.drugs.all()
     if sc_drugs:
         drugs_names = [d.name for d in sc_drugs]
-        ds_name = ohdsi_wrappers.name_entities_group(drugs_names)
 
-        # Check if concept set already exists
-        # ds_id = ohdsi_wrappers.get_concept_set_id(ds_name)
-        # Create concept set if it does not already exist
-        if ohdsi_wrappers.exists(ds_name, "conceptset") != (200, True):
-            st_code, resp_json = ohdsi_wrappers.create_concept_set(drugs_names, "Drug")
-            if not (st_code == 200 and resp_json):
-                # context = {
-                #     "reason": _("Σφάλμα δημιουργίας concept set φαρμάκων")
-                # }
-                # error_response = render(request, "page_500.html", context)
-                # error_response.status_code = 500
+        try:
+            drugs_cohort_name = ohdsi_wrappers.create_cs_coh(drugs_names, "Drug")
+        except Exception as e:
+            error_response = HttpResponse(content=str(e), status=500)
+            return error_response
 
-                error_response = HttpResponse(
-                    content=_("Σφάλμα δημιουργίας concept set φαρμάκων"),
-                    status=500)
-
-                return error_response
-
-        drugs_cohort_name = ohdsi_wrappers.name_entities_group([ds_name])
-
-        if ohdsi_wrappers.exists(drugs_cohort_name, "cohortdefinition") != (200, True):
-            st_code, resp_json = ohdsi_wrappers.create_cohort({"Drug": [ds_name]})
-            if not (st_code == 200 and resp_json):
-                # context = {
-                #     "reason": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα")
-                # }
-                # error_response = render(request, "page_500.html", context)
-                # error_response.status_code = 500
-
-                error_response = HttpResponse(
-                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
-                    status=500)
-
-                return error_response
-
+    condition_distinct_cohort_names = []
     # Get conditions concept set id
     sc_conditions = sc.conditions.all()
     if sc_conditions:
         conditions_names = [c.name for c in sc_conditions]
-        cs_name = ohdsi_wrappers.name_entities_group(conditions_names)
+        try:
+            conditions_cohort_name = ohdsi_wrappers.create_cs_coh(conditions_names, "Condition")
+        except Exception as e:
+            error_response = HttpResponse(content=str(e), status=500)
+            return error_response
 
-        # Check if concept set already exists
-        # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
-        # Create concept set if it does not already exist
-        if ohdsi_wrappers.exists(cs_name, "conceptset") != (200, True):
-            st_code, resp_json = ohdsi_wrappers.create_concept_set(conditions_names, "Condition")
-            if not (st_code == 200 and resp_json):
-                # context = {
-                #     "reason": _("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών")
-                # }
-                # error_response = render(request, "page_500.html", context)
-                # error_response.status_code = 500
-                error_response = HttpResponse(
-                    content=_("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"),
-                    status=500)
-
-                return error_response
-
-
-        conditions_cohort_name = ohdsi_wrappers.name_entities_group([cs_name])
-
-        if ohdsi_wrappers.exists(conditions_cohort_name, "cohortdefinition") != (200, True):
-            st_code, resp_json = ohdsi_wrappers.create_cohort({"Condition": [cs_name]})
-            if not (st_code == 200 and resp_json):
-                # context = {
-                #     "reason":
-                #         _("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"
-                #           )
-                # }
-                # error_response = render(request, "page_500.html", context)
-                # error_response.status_code = 500
-
-                error_response = HttpResponse(
-                    content=_("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες ανεπιθύμητες ενέργειες"),
-                    status=500)
-
+        if len(conditions_names) > 1:
+            try:
+                # Distinct condition concept sets and cohorts creation for cohort pathways
+                for condition_distinct in conditions_names:
+                    condition_distinct_cohort_names.append(ohdsi_wrappers.create_cs_coh([condition_distinct], "Condition"))
+            except Exception as e:
+                error_response = HttpResponse(content=str(e), status=500)
                 return error_response
 
     coh_gen_errors = [_("Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
@@ -389,16 +306,18 @@ def ohdsi_workspace(request, scenario_id=None):
                       ]
     drugs_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", drugs_cohort_name) or {}
     conditions_cohort = ohdsi_wrappers.get_entity_by_name("cohortdefinition", conditions_cohort_name) or {}
+    conditions_distinct_cohorts = [ohdsi_wrappers.get_entity_by_name("cohortdefinition", cond_dist_coh_name) or {}
+                                   for cond_dist_coh_name in condition_distinct_cohort_names]
 
     # Generate cohorts
-    for indx, coh in enumerate(list(filter(None, [drugs_cohort, conditions_cohort]))):
+    for indx, coh in enumerate(list(filter(None, [drugs_cohort, conditions_cohort] + conditions_distinct_cohorts))):
         recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=True, days_before=10)
         coh_id = coh.get("id")
         if coh_id and not recent_gen_exists:
             status = ohdsi_wrappers.generate_cohort(coh_id)
             if status == "FAILED":
                 error_response = HttpResponse(
-                    content= coh_gen_errors[indx], status=500)
+                    content= coh_gen_errors[indx > 0], status=500)
                 return error_response
 
     ir_id = None
