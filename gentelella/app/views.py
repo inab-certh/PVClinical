@@ -322,6 +322,7 @@ def ohdsi_workspace(request, scenario_id=None):
 
     ir_id = None
     char_id = None
+    cp_id = None
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
@@ -334,6 +335,17 @@ def ohdsi_workspace(request, scenario_id=None):
         else:
             res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
             ir_id = res_json.get("id")
+
+        cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
+                                                              [drugs_cohort] + conditions_distinct_cohorts)))
+        cp_ent = ohdsi_wrappers.get_entity_by_name("cp", cp_name)
+
+        if cp_ent:
+            cp_id = cp_ent.get("id")
+        #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
+        else:
+            res_st, res_json = ohdsi_wrappers.create_cp([drugs_cohort], conditions_distinct_cohorts)
+            cp_id = res_json.get("id")
 
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
@@ -479,7 +491,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
 def characterizations(request, sc_id, char_id, read_only=1):
     """ Add or edit characterizations view. Retrieve the specific characterization analysis
-     that ir_id refers to
+     that char_id refers to
     :param request: request
     :param char_id: the specific characterization record's id
     :param sc_id: the specific scenario's id
@@ -507,11 +519,8 @@ def characterizations(request, sc_id, char_id, read_only=1):
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
         char_form = CharForm(request.POST, label_suffix='', char_options=char_options, read_only=read_only)
-        print("POST")
 
         if char_form.is_valid():
-            print("POST2")
-            print("Cleaned data: ", char_form.cleaned_data.get("features"))
             char_options["features"] = list(map(int, char_form.cleaned_data.get("features")))
 
             rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
@@ -582,6 +591,80 @@ def characterizations(request, sc_id, char_id, read_only=1):
         "read_only": read_only,
         "form": char_form,
         "title": _("Χαρακτηρισμός Πληθυσμού")
+    }
+
+    return render(request, 'app/characterizations.html', context, status=status_code)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def pathways(request, sc_id, cp_id, read_only=1):
+    """ Add or edit cohort pathways view. Retrieve the specific cohort pathways analysis
+     that cp_id refers to
+    :param request: request
+    :param cp_id: the specific cohort pathway record's id
+    :param sc_id: the specific scenario's id
+    :param read_only: 0 if False 1 if True
+    :return: the form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    cp_url = "{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id)
+
+    cp_exists = ohdsi_wrappers.url_exists(cp_url)
+    cp_options = {}
+    if cp_exists:
+        cp_options = ohdsi_wrappers.get_cp_options(cp_id)
+    elif cp_id:
+        messages.error(
+            request,
+            _("Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"))
+
+    # delete_switch = "enabled" if ir_exists else "disabled"
+
+
+    if request.method == 'POST':
+        # sc_id = sc_id or request.POST.get("sc_id")
+        cp_form = PathwaysForm(request.POST, label_suffix='', cp_options=cp_options, read_only=read_only)
+
+        if cp_form.is_valid():
+            cp_options["features"] = list(map(int, cp_form.cleaned_data.get("features")))
+
+            rstatus, rjson = ohdsi_wrappers.update_char(cp_id, **cp_options)
+
+            if rstatus == 200:
+                messages.success(
+                    request,
+                    _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+                return HttpResponseRedirect(reverse('edit_char', args=(sc_id, cp_id, )))
+            else:
+                messages.error(
+                    request,
+                    _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+                status_code = 500
+        else:
+            messages.error(
+                request,
+                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+            status_code = 400
+
+    # GET request method
+    else:
+        cp_form = PathwaysForm(label_suffix='', cp_options=cp_options, read_only=read_only)
+        status_code = 200
+
+    results_url = "{}/#/pathways/{}/executions/".format(settings.OHDSI_ATLAS, cp_id)
+
+    context = {
+        # "delete_switch": delete_switch,
+        "sc_id": sc_id,
+        "cp_id": cp_id,
+        "results_url": results_url,
+        "read_only": read_only,
+        "form": cp_form,
+        "title": _("Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού")
     }
 
     return render(request, 'app/characterizations.html', context, status=status_code)
