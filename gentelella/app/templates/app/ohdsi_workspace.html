@@ -46,13 +46,14 @@
 
         </div>
 
-        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="">
+        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item {% if not cp_id %}light-disabled{%endif %}" align="center">
+            <a class="portfolio-link btn no-outline" {% if cp_id %}href="{% url 'edit_cp' cp_id=cp_id sc_id=sc_id %}"{% endif %}>
                 <i class="fa fa-sitemap fa-10x"></i>
-                <h4>{% trans "Πληθυσμιακό Μονοπάτι" %}</h4>
+                <h4>{% trans "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων" %}</h4>
+
             </a>
             <div class="portfolio-caption">
-                <p class="text-muted">{% trans "Το <strong>Πληθυσμιακό Μονοπάτι (Cohort Pathway)</strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής." %}</p>
+                <p class="text-muted">{% trans "Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής." %}</p>
             </div>
 
         </div>

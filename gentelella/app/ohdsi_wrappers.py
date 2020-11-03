@@ -915,9 +915,9 @@ def create_cp(target_cohorts, event_cohorts, **options):
     options["targetCohorts"] = target_cohorts
     options["eventCohorts"] = event_cohorts
     options["name"] = cp_name
-    options["combinationWindow"] = 0
-    options["minCellCount"] = 0
-    options["maxDepth"] = 5
+    options["combinationWindow"] = options.get("combinationWindow", 0)
+    options["minCellCount"] = options.get("minCellCount", 0)
+    options["maxDepth"] = options.get("maxDepth", 5)
 
     return add_update_cp(None, **options)
 

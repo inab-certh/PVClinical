@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-19 12:21+0300\n"
+"POT-Creation-Date: 2020-11-03 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,6 +170,29 @@ msgstr "Disease code"
 msgid "Τίτλος Σεναρίου"
 msgstr "Scenario title"
 
+#: app/ohdsi_wrappers.py:440
+msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
+msgstr "Error occured while creating the drugs concept set"
+
+#: app/ohdsi_wrappers.py:441
+msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
+msgstr "Error occured while creating the conditions concept set"
+
+#: app/ohdsi_wrappers.py:443
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
+msgstr ""
+"Error occured while creating the cohort concerning the patients that are "
+"getting the specific drugs"
+
+#: app/ohdsi_wrappers.py:444
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
+"ανεπιθύμητες ενέργειες"
+msgstr ""
+"Error occured while creating the cohort of patients with the specific "
+"conditions"
+
 #: app/password_validators.py:13
 msgid "Αδύναμο συνθηματικό."
 msgstr "Weak password"
@@ -214,7 +237,7 @@ msgstr "Notes"
 
 #: app/templates/app/LiteratureWorkspace.html:135
 #: app/templates/app/characterizations.html:105
-#: app/templates/app/form_base.html:47 app/templates/app/ir.html:148
+#: app/templates/app/form_base.html:53 app/templates/app/ir.html:148
 msgid "Αποθήκευση"
 msgstr "Save"
 
@@ -495,11 +518,11 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
-#: app/templates/app/form_base.html:56 app/templates/app/index.html:54
+#: app/templates/app/form_base.html:62 app/templates/app/index.html:54
 msgid "Διαγραφή"
 msgstr "Delete"
 
-#: app/templates/app/form_base.html:65
+#: app/templates/app/form_base.html:71
 msgid "Σενάρια"
 msgstr "Scenarios"
 
@@ -517,7 +540,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:278
+#: app/templates/app/index.html:48 app/views.py:251
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -571,8 +594,8 @@ msgstr ""
 "Make sure you have saved your changes, otherwise analysis will be made "
 "withthe previous parameters' values"
 
-#: app/templates/app/ir.html:174 app/views.py:506 app/views.py:524
-#: app/views.py:550
+#: app/templates/app/ir.html:174 app/views.py:440 app/views.py:458
+#: app/views.py:484
 msgid "Ανάλυση Ρυθμού Επίπτωσης"
 msgstr "Incidence Rate Analysis"
 
@@ -605,15 +628,15 @@ msgstr ""
 "covariate data."
 
 #: app/templates/app/ohdsi_workspace.html:52
-msgid "Πληθυσμιακό Μονοπάτι"
+msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων"
 msgstr "Cohort Pathways"
 
-#: app/templates/app/ohdsi_workspace.html:55
+#: app/templates/app/ohdsi_workspace.html:56
 msgid ""
-"Το <strong>Πληθυσμιακό Μονοπάτι (Cohort Pathway)</strong>, ορίζεται ως η "
-"διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις "
-"καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων "
-"επιλογής."
+"Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</"
+"strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας "
+"των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν "
+"στις ομάδες ατόμων επιλογής."
 msgstr ""
 "<strong>Cohort Pathway</strong> is defined as the process of generating an "
 "aggregated sequence of transitions between the Event Cohorts among those "
@@ -756,47 +779,24 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:258 app/views.py:490 app/views.py:600
+#: app/views.py:231 app/views.py:424 app/views.py:531 app/views.py:640
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:265 app/views.py:513 app/views.py:623
+#: app/views.py:238 app/views.py:447 app/views.py:554 app/views.py:650
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
 msgstr "System update failed due to insertion errors. Please try again!"
 
-#: app/views.py:319
-msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
-msgstr "Error occured while creating the drugs concept set"
-
-#: app/views.py:336
-msgid ""
-"Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
-msgstr ""
-"Error occured while creating the cohort concerning the patients that are "
-"getting the specific drugs"
-
-#: app/views.py:359
-msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
-msgstr "Error occured while creating the conditions concept set"
-
-#: app/views.py:379
-msgid ""
-"Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
-"ανεπιθύμητες ενέργειες"
-msgstr ""
-"Error occured while creating the cohort of patients with the specific "
-"conditions"
-
-#: app/views.py:384
+#: app/views.py:304
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
 msgstr ""
 "Error occured while generating the cohort concerning the patients that are "
 "getting the specific drugs"
 
-#: app/views.py:385
+#: app/views.py:305
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
 "ανεπιθύμητες ενέργειες"
@@ -804,25 +804,35 @@ msgstr ""
 "Error occured while generating the cohort of patients with the specific "
 "conditions"
 
-#: app/views.py:428
+#: app/views.py:362
 msgid "Περιβάλλον εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/views.py:460
+#: app/views.py:394
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:495 app/views.py:605
+#: app/views.py:429 app/views.py:536 app/views.py:645
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
-#: app/views.py:580
+#: app/views.py:514
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
 
-#: app/views.py:662
+#: app/views.py:593
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort characterization"
+
+#: app/views.py:623
+msgid ""
+"Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό "
+"εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
+msgstr "No cohort pathways analysis with the specific id found!"
+
+#: app/views.py:667
+msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
+msgstr "Cohort Pathways"
 
 #: gentelella/settings.py:152
 msgid "Ελληνικά"
