@@ -28,6 +28,7 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 from app.forms import IRForm
 from app.forms import CharForm
+from app.forms import PathwaysForm
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
@@ -338,7 +339,7 @@ def ohdsi_workspace(request, scenario_id=None):
 
         cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
                                                               [drugs_cohort] + conditions_distinct_cohorts)))
-        cp_ent = ohdsi_wrappers.get_entity_by_name("cp", cp_name)
+        cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
 
         if cp_ent:
             cp_id = cp_ent.get("id")
@@ -358,10 +359,12 @@ def ohdsi_workspace(request, scenario_id=None):
         else:
             res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
+
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
         "ir_id": ir_id,
         "char_id": char_id,
+        "cp_id": cp_id,
         "sc_id": scenario_id
     }
 
@@ -667,7 +670,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
         "title": _("Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού")
     }
 
-    return render(request, 'app/characterizations.html', context, status=status_code)
+    return render(request, 'app/pathways.html', context, status=status_code)
 
 
 @login_required()

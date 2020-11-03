@@ -258,3 +258,23 @@ class CharForm(forms.Form):
             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
 
+class PathwaysForm(forms.Form):
+    combination_window = forms.ChoiceField(choices=[(i,i) for i in [1, 3, 5, 7, 10, 14, 30]], initial=0, required=False,
+                                           label=_("Χρονικό παράθυρο σύμπτωσης:"))
+
+    min_cell_count = forms.ChoiceField(choices=[(i,i) for i in range(11)], initial=0, required=False,
+                                       label=_("Αριθμός ελάχιστων κελιών:"))
+
+    max_depth = forms.ChoiceField(choices=[(i,i) for i in range(1, 11)], initial=0, required=False,
+                                  label=_("Μέγιστο μήκος μονοπατιού:"))
+
+    def __init__(self, *args, **kwargs):
+        self.options = kwargs.pop("cp_options")
+        self.read_only = kwargs.pop("read_only")
+        super(PathwaysForm, self).__init__(*args, **kwargs)
+
+        for k in self.fields.keys():
+            ok = k.replace("_", " ").title().replace(" ", "")
+            ok = ok[0].lower() + ok[1:]
+            self.initial[k] = self.options.get(ok)  # if self.options else [c[1] for c in self.fields["features"].choices]
+            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
