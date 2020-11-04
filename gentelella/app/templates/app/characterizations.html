@@ -51,7 +51,7 @@
         <div>
             {{ checkbox.tag }} {% trans checkbox.choice_label %}
             {% with form.features_descriptions|get_item:checkbox.choice_label as description %}
-            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{{ checkbox.choice_label }}" data-content="{% trans description%}">
+            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans checkbox.choice_label %}" data-content="{% trans description%}">
                 <i class="fa fa-question-circle-o"></i>
             </a>
             {% endwith %}

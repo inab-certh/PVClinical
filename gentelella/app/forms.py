@@ -263,7 +263,7 @@ class PathwaysForm(forms.Form):
                                            label=_("Χρονικό παράθυρο σύμπτωσης:"))
 
     min_cell_count = forms.ChoiceField(choices=[(i,i) for i in range(11)], initial=0, required=False,
-                                       label=_("Αριθμός ελάχιστων κελιών:"))
+                                       label=_("Πλήθος ελάχιστων κελιών:"))
 
     max_depth = forms.ChoiceField(choices=[(i,i) for i in range(1, 11)], initial=0, required=False,
                                   label=_("Μέγιστο μήκος μονοπατιού:"))
@@ -273,8 +273,18 @@ class PathwaysForm(forms.Form):
         self.read_only = kwargs.pop("read_only")
         super(PathwaysForm, self).__init__(*args, **kwargs)
 
+        self.fields_descriptions = {"combination_window": _("Χρονικό παράθυρο κατά το οποίο πρέπει δύο πληθυσμοί "
+                                                           "συμβάντων να συμπέσουν, προκειμένου να θεωρηθεί ότι υπάρχει"
+                                                           " συνδυασμός συμβάντων."),
+                                    "min_cell_count": _("Ελάχιστος αριθμός υποκειμένων του στοχευμένου πληθυσμού της "
+                                                        "ανάλυσης για κάθε δεδομένο συμβάν, προκειμένου να προσμετρηθεί"
+                                                        " στην ανάλυση μονοπατιού."),
+                                    "max_depth": _("Μέγιστος αριθμός βημάτων σε ένα δεδομένο μονοπάτι, που θα "
+                                                   "συμπεριληφθεί στο σχετικό γράφημα δακτυλίου.")
+                                    }
+
         for k in self.fields.keys():
             ok = k.replace("_", " ").title().replace(" ", "")
             ok = ok[0].lower() + ok[1:]
-            self.initial[k] = self.options.get(ok)  # if self.options else [c[1] for c in self.fields["features"].choices]
+            self.initial[k] = self.options.get(ok)
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)

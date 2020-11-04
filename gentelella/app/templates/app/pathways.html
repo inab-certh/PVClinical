@@ -37,17 +37,25 @@
         {% endblocktrans %}
     </div>
 
-    <div class="mt-3 col text-center">
+    <div class="mt-3 text-center">
+        <div class="mb-1"><strong>{% trans "Ρυθμίσεις ανάλυσης:"%}</strong></div>
+        {% for field in form %}
         <div class="pathways-int-fld">
-            {{ form.combination_window|as_crispy_field }}
+<!--            <div>-->
+                {{ field.label|remove_char:':' }}
+<!--            </div>-->
+<!--            <div>-->
+                {{ field }}
+<!--            </div>-->
+<!--            <div>-->
+                {% with form.fields_descriptions|get_item:field.name as description %}
+                <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans field.label|remove_char:':' %}" data-content="{% trans description %}">
+                    <i class="fa fa-question-circle-o"></i>
+                </a>
+                {% endwith %}
+<!--            </div>-->
         </div>
-
-        <div class="pathways-int-fld">
-            {{ form.min_cell_count|as_crispy_field }}
-        </div>
-        <div class="pathways-int-fld">
-            {{ form.max_depth|as_crispy_field }}
-        </div>
+        {% endfor %}
     </div>
 
 
