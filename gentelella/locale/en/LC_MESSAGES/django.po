@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-03 14:12+0200\n"
+"POT-Creation-Date: 2020-11-04 16:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,6 +112,44 @@ msgstr "YYYY-MM-DD"
 #: app/forms.py:239
 msgid "Χαρακτηριστικά ανάλυσης:"
 msgstr "Cohort characterization features:"
+
+#: app/forms.py:263
+#, fuzzy
+#| msgid "Προσθήκη χρονικού παράθυρου μελέτης"
+msgid "Χρονικό παράθυρο σύμπτωσης:"
+msgstr "Add study window"
+
+#: app/forms.py:266
+msgid "Πλήθος ελάχιστων κελιών:"
+msgstr "Minimum cell count"
+
+#: app/forms.py:269
+msgid "Μέγιστο μήκος μονοπατιού:"
+msgstr "Maximum path length"
+
+#: app/forms.py:276
+msgid ""
+"Χρονικό παράθυρο κατά το οποίο πρέπει δύο πληθυσμοί συμβάντων να συμπέσουν, "
+"προκειμένου να θεωρηθεί ότι υπάρχει συνδυασμός συμβάντων."
+msgstr ""
+"Window of time when two event cohorts need to overlap to be considered a "
+"combination."
+
+#: app/forms.py:279
+msgid ""
+"Ελάχιστος αριθμός υποκειμένων του στοχευμένου πληθυσμού της ανάλυσης για "
+"κάθε δεδομένο συμβάν, προκειμένου να προσμετρηθεί στην ανάλυση μονοπατιού."
+msgstr ""
+"Minimum number of subjects in the target cohort for a given event inorder to "
+"be counted in the pathway."
+
+#: app/forms.py:282
+msgid ""
+"Μέγιστος αριθμός βημάτων σε ένα δεδομένο μονοπάτι, που θα συμπεριληφθεί στο "
+"σχετικό γράφημα δακτυλίου."
+msgstr ""
+"Maximum number of steps in a given pathway to be included in the sunburst "
+"plot."
 
 #: app/helper_modules.py:84
 msgid ""
@@ -238,6 +276,7 @@ msgstr "Notes"
 #: app/templates/app/LiteratureWorkspace.html:135
 #: app/templates/app/characterizations.html:105
 #: app/templates/app/form_base.html:53 app/templates/app/ir.html:148
+#: app/templates/app/pathways.html:92
 msgid "Αποθήκευση"
 msgstr "Save"
 
@@ -412,7 +451,7 @@ msgstr "Confirm"
 
 #: app/templates/app/base_site.html:140
 #: app/templates/app/characterizations.html:112 app/templates/app/ir.html:155
-#: app/templates/app/ir.html:163
+#: app/templates/app/ir.html:163 app/templates/app/pathways.html:99
 msgid "Ακύρωση"
 msgstr "Cancel"
 
@@ -478,23 +517,27 @@ msgstr ""
 "calendar-year."
 
 #: app/templates/app/characterizations.html:80 app/templates/app/index.html:53
-#: app/templates/app/ir.html:123
+#: app/templates/app/ir.html:123 app/templates/app/pathways.html:67
 msgid "Επεξεργασία"
 msgstr "Edit"
 
 #: app/templates/app/characterizations.html:87 app/templates/app/ir.html:130
+#: app/templates/app/pathways.html:74
 msgid "Ανάλυση"
 msgstr "Analysis"
 
 #: app/templates/app/characterizations.html:96 app/templates/app/ir.html:139
+#: app/templates/app/pathways.html:83
 msgid "Επιστροφή"
 msgstr "Return"
 
 #: app/templates/app/characterizations.html:119 app/templates/app/ir.html:168
+#: app/templates/app/pathways.html:106
 msgid "Επεξεργασία παραμέτρων ανάλυσης"
 msgstr "Edit analysis parameters"
 
 #: app/templates/app/characterizations.html:125
+#: app/templates/app/pathways.html:112
 msgid "Ανάλυση Χαρακτηρισμού Πληθυσμού"
 msgstr "Cohort characterization"
 
@@ -540,7 +583,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:251
+#: app/templates/app/index.html:48 app/views.py:252
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -594,8 +637,8 @@ msgstr ""
 "Make sure you have saved your changes, otherwise analysis will be made "
 "withthe previous parameters' values"
 
-#: app/templates/app/ir.html:174 app/views.py:440 app/views.py:458
-#: app/views.py:484
+#: app/templates/app/ir.html:174 app/views.py:443 app/views.py:461
+#: app/views.py:487
 msgid "Ανάλυση Ρυθμού Επίπτωσης"
 msgstr "Incidence Rate Analysis"
 
@@ -628,15 +671,35 @@ msgstr ""
 "covariate data."
 
 #: app/templates/app/ohdsi_workspace.html:52
-msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων"
+msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
 
 #: app/templates/app/ohdsi_workspace.html:56
 msgid ""
+"Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>, ορίζεται "
+"ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων "
+"στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες "
+"ατόμων επιλογής."
+msgstr ""
+"<strong>Cohort Pathway</strong> is defined as the process of generating an "
+"aggregated sequence of transitions between the Event Cohorts among those "
+"people in the Target Cohorts."
+
+#: app/templates/app/pathways.html:34
+#, fuzzy
+#| msgid ""
+#| "Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</"
+#| "strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής "
+#| "ακολουθίας των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, "
+#| "που προκύπτουν στις ομάδες ατόμων επιλογής."
+msgid ""
 "Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</"
-"strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας "
-"των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν "
-"στις ομάδες ατόμων επιλογής."
+"strong>,\n"
+"        ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας "
+"των μεταβάσεων στις καταστάσεις\n"
+"        των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων "
+"επιλογής.\n"
+"        "
 msgstr ""
 "<strong>Cohort Pathway</strong> is defined as the process of generating an "
 "aggregated sequence of transitions between the Event Cohorts among those "
@@ -779,24 +842,24 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:231 app/views.py:424 app/views.py:531 app/views.py:640
+#: app/views.py:232 app/views.py:427 app/views.py:534 app/views.py:643
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:238 app/views.py:447 app/views.py:554 app/views.py:650
+#: app/views.py:239 app/views.py:450 app/views.py:557 app/views.py:653
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
 msgstr "System update failed due to insertion errors. Please try again!"
 
-#: app/views.py:304
+#: app/views.py:305
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
 msgstr ""
 "Error occured while generating the cohort concerning the patients that are "
 "getting the specific drugs"
 
-#: app/views.py:305
+#: app/views.py:306
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
 "ανεπιθύμητες ενέργειες"
@@ -804,33 +867,33 @@ msgstr ""
 "Error occured while generating the cohort of patients with the specific "
 "conditions"
 
-#: app/views.py:362
+#: app/views.py:364
 msgid "Περιβάλλον εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/views.py:394
+#: app/views.py:397
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:429 app/views.py:536 app/views.py:645
+#: app/views.py:432 app/views.py:539 app/views.py:648
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
-#: app/views.py:514
+#: app/views.py:517
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
 
-#: app/views.py:593
+#: app/views.py:596
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort characterization"
 
-#: app/views.py:623
+#: app/views.py:626
 msgid ""
 "Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό "
 "εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No cohort pathways analysis with the specific id found!"
 
-#: app/views.py:667
+#: app/views.py:670
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
 
