@@ -31,7 +31,7 @@
 
     <h1> {{ title }}</h1>
     <div class="viewExplanation mt-3 mb-4">
-        {% blocktrans %}Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</strong>,
+        {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
         ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
         των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
         {% endblocktrans %}
@@ -42,7 +42,7 @@
         {% for field in form %}
         <div class="pathways-int-fld">
 <!--            <div>-->
-                {{ field.label|remove_char:':' }}
+                {{ field.label }}
 <!--            </div>-->
 <!--            <div>-->
                 {{ field }}
@@ -109,7 +109,6 @@
             </button>
         </div>
         {% endif %}
-
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as edit_cp_mod_title %}
 {% with edit_cp_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-04 16:55+0200\n"
+"POT-Creation-Date: 2020-11-05 16:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,18 +114,16 @@ msgid "Χαρακτηριστικά ανάλυσης:"
 msgstr "Cohort characterization features:"
 
 #: app/forms.py:263
-#, fuzzy
-#| msgid "Προσθήκη χρονικού παράθυρου μελέτης"
 msgid "Χρονικό παράθυρο σύμπτωσης:"
-msgstr "Add study window"
+msgstr "Combination Window:"
 
 #: app/forms.py:266
 msgid "Πλήθος ελάχιστων κελιών:"
-msgstr "Minimum cell count"
+msgstr "Minimum cell count:"
 
 #: app/forms.py:269
 msgid "Μέγιστο μήκος μονοπατιού:"
-msgstr "Maximum path length"
+msgstr "Maximum path length:"
 
 #: app/forms.py:276
 msgid ""
@@ -276,7 +274,7 @@ msgstr "Notes"
 #: app/templates/app/LiteratureWorkspace.html:135
 #: app/templates/app/characterizations.html:105
 #: app/templates/app/form_base.html:53 app/templates/app/ir.html:148
-#: app/templates/app/pathways.html:92
+#: app/templates/app/pathways.html:100
 msgid "Αποθήκευση"
 msgstr "Save"
 
@@ -451,7 +449,7 @@ msgstr "Confirm"
 
 #: app/templates/app/base_site.html:140
 #: app/templates/app/characterizations.html:112 app/templates/app/ir.html:155
-#: app/templates/app/ir.html:163 app/templates/app/pathways.html:99
+#: app/templates/app/ir.html:163 app/templates/app/pathways.html:107
 msgid "Ακύρωση"
 msgstr "Cancel"
 
@@ -487,24 +485,18 @@ msgstr "Deletion failure!"
 
 #: app/templates/app/characterizations.html:34
 msgid ""
-"Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία\n"
-"         δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε "
-"επίπεδο πληθυσμού από δεδομένα\n"
-"        συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών "
-"των συμμεταβλητών σε επίπεδο\n"
-"        ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η "
-"διασπορά, η ελάχιστη και\n"
-"        μέγιστη τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου "
-"δεδομένων.\n"
-"        Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να "
-"διαστρωματοποιηθούν σε\n"
-"        χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών όπως σταθερά "
-"χρονικά διαστήματα σε σχέση με την\n"
-"        ημερομηνία εκκίνησης (π.χ. κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε "
-"απόλυτα διαστήματα ημερολογίου\n"
-"        όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό "
-"τρίμηνο, ημερολογιακό έτος.\n"
-"        "
+"Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία "
+"δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο "
+"πληθυσμού από δεδομένα συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά "
+"στοιχεία αυτών των συμμεταβλητών σε επίπεδο ατόμου, μπορεί να είναι το "
+"πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και μέγιστη "
+"τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου δεδομένων. "
+"Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να "
+"διαστρωματοποιηθούν σε χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών "
+"όπως σταθερά χρονικά διαστήματα σε σχέση με την ημερομηνία εκκίνησης (π.χ. "
+"κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε απόλυτα διαστήματα ημερολογίου "
+"όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό τρίμηνο, "
+"ημερολογιακό έτος."
 msgstr ""
 "<strong>Cohort characterization</strong> is defined as the process of "
 "generating cohort level descriptive summary statistics from person level "
@@ -517,27 +509,27 @@ msgstr ""
 "calendar-year."
 
 #: app/templates/app/characterizations.html:80 app/templates/app/index.html:53
-#: app/templates/app/ir.html:123 app/templates/app/pathways.html:67
+#: app/templates/app/ir.html:123 app/templates/app/pathways.html:75
 msgid "Επεξεργασία"
 msgstr "Edit"
 
 #: app/templates/app/characterizations.html:87 app/templates/app/ir.html:130
-#: app/templates/app/pathways.html:74
+#: app/templates/app/pathways.html:82
 msgid "Ανάλυση"
 msgstr "Analysis"
 
 #: app/templates/app/characterizations.html:96 app/templates/app/ir.html:139
-#: app/templates/app/pathways.html:83
+#: app/templates/app/pathways.html:91
 msgid "Επιστροφή"
 msgstr "Return"
 
 #: app/templates/app/characterizations.html:119 app/templates/app/ir.html:168
-#: app/templates/app/pathways.html:106
+#: app/templates/app/pathways.html:113
 msgid "Επεξεργασία παραμέτρων ανάλυσης"
 msgstr "Edit analysis parameters"
 
 #: app/templates/app/characterizations.html:125
-#: app/templates/app/pathways.html:112
+#: app/templates/app/pathways.html:119
 msgid "Ανάλυση Χαρακτηρισμού Πληθυσμού"
 msgstr "Cohort characterization"
 
@@ -607,11 +599,11 @@ msgstr "Disease/Diseases"
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
-#: app/templates/app/ir.html:36
+#: app/templates/app/ir.html:36 app/templates/app/ohdsi_workspace.html:24
 msgid ""
 "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης "
-"μιας ασθένειας ή άλλου περιστατικού κατά\n"
-"        τη διάρκεια συγκεκριμένης χρονικής περιόδου."
+"μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
+"περιόδου."
 msgstr ""
 "The <strong>Incidence Rate</strong> is a measure of the frequency with which "
 "some event, such as a disease or other incidence, occurs over a specified "
@@ -646,16 +638,6 @@ msgstr "Incidence Rate Analysis"
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
-#: app/templates/app/ohdsi_workspace.html:24
-msgid ""
-"Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης "
-"μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
-"περιόδου."
-msgstr ""
-"The <strong>Incidence Rate</strong> is a measure of the frequency with which "
-"some event, such as a disease or other incidence, occurs over a specified "
-"time period."
-
 #: app/templates/app/ohdsi_workspace.html:32
 msgid "Χαρακτηρισμός Πληθυσμού "
 msgstr "Cohort characterization"
@@ -674,7 +656,7 @@ msgstr ""
 msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
 
-#: app/templates/app/ohdsi_workspace.html:56
+#: app/templates/app/ohdsi_workspace.html:57 app/templates/app/pathways.html:34
 msgid ""
 "Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>, ορίζεται "
 "ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων "
@@ -685,25 +667,9 @@ msgstr ""
 "aggregated sequence of transitions between the Event Cohorts among those "
 "people in the Target Cohorts."
 
-#: app/templates/app/pathways.html:34
-#, fuzzy
-#| msgid ""
-#| "Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</"
-#| "strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής "
-#| "ακολουθίας των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, "
-#| "που προκύπτουν στις ομάδες ατόμων επιλογής."
-msgid ""
-"Το <strong>Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων (Cohort Pathway)</"
-"strong>,\n"
-"        ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας "
-"των μεταβάσεων στις καταστάσεις\n"
-"        των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων "
-"επιλογής.\n"
-"        "
-msgstr ""
-"<strong>Cohort Pathway</strong> is defined as the process of generating an "
-"aggregated sequence of transitions between the Event Cohorts among those "
-"people in the Target Cohorts."
+#: app/templates/app/pathways.html:41
+msgid "Ρυθμίσεις ανάλυσης:"
+msgstr "Analysis settings:"
 
 #: app/templates/app/sidebar.html:27
 msgid "Καλωσήλθατε"
@@ -905,14 +871,6 @@ msgstr "Greek"
 msgid "Αγγλικά"
 msgstr "English"
 
-#~ msgid ""
-#~ "Ο <b>Ρυθμός Επίπτωσης</b> είναι ένα μέτρο της συχνότητας εμφάνισης μιας "
-#~ "ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
-#~ "περιόδου."
-#~ msgstr ""
-#~ "The <b>Incidence Rate</b> is a measure of the frequency with which some "
-#~ "event, such as a disease or other incidence, occurs over a specified time "
-#~ "period."
 
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
