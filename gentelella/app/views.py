@@ -633,9 +633,11 @@ def pathways(request, sc_id, cp_id, read_only=1):
         cp_form = PathwaysForm(request.POST, label_suffix='', cp_options=cp_options, read_only=read_only)
 
         if cp_form.is_valid():
-            cp_options["features"] = list(map(int, cp_form.cleaned_data.get("features")))
+            cp_options["combinationWindow"] = cp_form.cleaned_data.get("combination_window")
+            cp_options["minCellCount"] = cp_form.cleaned_data.get("min_cell_count")
+            cp_options["maxDepth"] = cp_form.cleaned_data.get("max_depth")
 
-            rstatus, rjson = ohdsi_wrappers.update_char(cp_id, **cp_options)
+            rstatus, rjson = ohdsi_wrappers.update_cp(cp_id, **cp_options)
 
             if rstatus == 200:
                 messages.success(
@@ -658,7 +660,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
         cp_form = PathwaysForm(label_suffix='', cp_options=cp_options, read_only=read_only)
         status_code = 200
 
-    results_url = "{}/#/pathways/{}/executions/".format(settings.OHDSI_ATLAS, cp_id)
+    results_url = "{}/#/pathways/{}/executions".format(settings.OHDSI_ATLAS, cp_id)
 
     context = {
         # "delete_switch": delete_switch,
