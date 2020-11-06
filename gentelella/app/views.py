@@ -35,7 +35,7 @@ from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
 from app.helper_modules import delete_db_rec
 from app.helper_modules import getPMCID
-from app.helper_modules import mendeley_cookies
+# from app.helper_modules import mendeley_cookies
 from app.helper_modules import mendeley_pdf
 from app.models import PubMed
 from app.models import Scenario
@@ -728,8 +728,10 @@ def pubMed_view(request, scenario_id=None, page_id=None):
 
     records={}
     total_results = 0
-
-    mend_cookies = mendeley_cookies()
+    user = request.user
+    social = user.social_auth.get(provider='mendeley-oauth2')
+    mend_cookies = [social.extra_data['access_token']]
+    # mend_cookies = mendeley_cookies()
 
 
     if mend_cookies != []:
@@ -785,7 +787,7 @@ def pubMed_view(request, scenario_id=None, page_id=None):
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = "http://127.0.0.1:8000/"
+            url = '/dashboard'
 
 
             return redirect(url)
@@ -802,21 +804,37 @@ def pubMed_view(request, scenario_id=None, page_id=None):
 
         login_url = auth.get_login_url()
 
-        url = "http://127.0.0.1:8000/"
+        url = '/dashboard'
 
         return redirect(url)
-
 
 def is_logged_in(request):
     """ Checks if the user is logged in Mendeley platform.
     :param request: request
     :return: Json response
     """
+    try:
+        user = request.user
+        social = user.social_auth.get(provider='mendeley-oauth2')
+        cookie_list = [social.extra_data['access_token']]
+        print(cookie_list)
+        restoken = requests.get(
+            'https://api.mendeley.com/files',
+            headers={'Authorization': 'Bearer {}'.format(cookie_list[0]),
+                     'Accept': 'application/vnd.mendeley-file.1+json'},
+        )
+        if restoken.status_code != 200:
+            cookie_list = []
+    except:
+        cookie_list = []
+
     data = {
-        'logged_in': (mendeley_cookies() != [])
+        'logged_in': (cookie_list != [])
     }
 
     return JsonResponse(data)
+
+
 
 def pubmed_search(query, begin, max, access_token):
     """ Search for papers relevant to the scerario that user creates in PubMed library.
