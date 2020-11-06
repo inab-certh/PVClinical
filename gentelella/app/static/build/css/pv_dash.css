@@ -642,3 +642,21 @@ button.close {
 #analysisCharModal .modal-dialog {
 	width: 93%;
 }
+
+@media (max-width: 768px) {
+    #ohdsiMenu .portfolio-item .portfolio-link h4 {
+		white-space: normal;
+	}
+}
+
+
+
+.pathways-int-fld select {
+	margin: 0 1rem;
+	direction: ltr;
+}
+
+.pathways-int-fld select option {
+	direction: rtl;
+}
+

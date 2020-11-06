@@ -31,7 +31,7 @@
 
     <h1> {{ title }}</h1>
     <div class="viewExplanation mt-3 mb-4">
-        {% blocktrans %}Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία
+        {% blocktrans trimmed %}Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία
          δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα
         συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών των συμμεταβλητών σε επίπεδο
         ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και
@@ -51,7 +51,7 @@
         <div>
             {{ checkbox.tag }} {% trans checkbox.choice_label %}
             {% with form.features_descriptions|get_item:checkbox.choice_label as description %}
-            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{{ checkbox.choice_label }}" data-content="{% trans description%}">
+            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans checkbox.choice_label %}" data-content="{% trans description%}">
                 <i class="fa fa-question-circle-o"></i>
             </a>
             {% endwith %}

@@ -15,7 +15,7 @@
 
 {% block content %}
     <div id="ohdsiMenu" class="col-xs-8 col-lg-9 col-xs-offset-3 col-lg-offset-2 mt-3">
-        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
+        <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
             <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' ir_id=ir_id sc_id=sc_id %}"{% endif %}>
                 <i class="fa fa-bolt fa-10x"></i>
                 <h4>{% trans "Ρυθμός Επίπτωσης" %}</h4>
@@ -26,7 +26,7 @@
 
         </div>
 
-        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
+        <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
             <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' char_id=char_id sc_id=sc_id %}"{% endif %}>
                 <i class="fa fa-line-chart fa-10x"></i>
                 <h4>{% trans "Χαρακτηρισμός Πληθυσμού " %}</h4>
@@ -46,13 +46,19 @@
 
         </div>
 
-        <div class="col-xs-10 col-sm-6 col-md-4 portfolio-item" align="center">
-            <a class="portfolio-link btn no-outline" href="">
+        <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not cp_id %}light-disabled{%endif %}" align="center">
+            <a class="portfolio-link btn no-outline" {% if cp_id %}href="{% url 'edit_cp' cp_id=cp_id sc_id=sc_id %}"{% endif %}>
                 <i class="fa fa-sitemap fa-10x"></i>
-                <h4>{% trans "Πληθυσμιακό Μονοπάτι" %}</h4>
+                <h4>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</h4>
+
             </a>
             <div class="portfolio-caption">
-                <p class="text-muted">{% trans "Το <strong>Πληθυσμιακό Μονοπάτι (Cohort Pathway)</strong>, ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής." %}</p>
+                <p class="text-muted">
+                    {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
+                    ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
+                    των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
+                    {% endblocktrans %}
+                </p>
             </div>
 
         </div>
