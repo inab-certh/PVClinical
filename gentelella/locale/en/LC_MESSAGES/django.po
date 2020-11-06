@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-05 16:11+0200\n"
+"POT-Creation-Date: 2020-11-06 16:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -458,10 +458,6 @@ msgid "Εντάξει"
 msgstr "OK"
 
 #: app/templates/app/base_site.html:144
-msgid "<img src=\"../static/images/mendeleyicon.png\">"
-msgstr "<img src=\"../static/images/mendeleyicon.png\">"
-
-#: app/templates/app/base_site.html:145
 msgid ""
 "Συνδεθείτε στο Mendeley <a target=\"_blank\" href=\"https://www.mendeley.com/"
 "reference-manager/library/all-references\"><strong>εδώ</strong> και "
@@ -471,15 +467,15 @@ msgstr ""
 "reference-manager/library/all-references\"><strong>here</strong> and refresh "
 "the page.</a>"
 
-#: app/templates/app/base_site.html:146
+#: app/templates/app/base_site.html:145
 msgid "Οκ"
 msgstr "Ok"
 
-#: app/templates/app/base_site.html:242
+#: app/templates/app/base_site.html:243
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:257
+#: app/templates/app/base_site.html:258
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -808,11 +804,11 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:232 app/views.py:427 app/views.py:534 app/views.py:643
+#: app/views.py:232 app/views.py:427 app/views.py:534 app/views.py:645
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:239 app/views.py:450 app/views.py:557 app/views.py:653
+#: app/views.py:239 app/views.py:450 app/views.py:557 app/views.py:655
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
@@ -841,7 +837,7 @@ msgstr "OHDSI Workspace"
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:432 app/views.py:539 app/views.py:648
+#: app/views.py:432 app/views.py:539 app/views.py:650
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
@@ -859,7 +855,7 @@ msgid ""
 "εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No cohort pathways analysis with the specific id found!"
 
-#: app/views.py:670
+#: app/views.py:672
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
 
@@ -871,6 +867,8 @@ msgstr "Greek"
 msgid "Αγγλικά"
 msgstr "English"
 
+#~ msgid "<img src=\"../static/images/mendeleyicon.png\">"
+#~ msgstr "<img src=\"../static/images/mendeleyicon.png\">"
 
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
