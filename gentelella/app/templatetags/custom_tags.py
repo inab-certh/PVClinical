@@ -23,3 +23,7 @@ def field_type(field):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+@register.filter
+def remove_char(string, char):
+    return string.replace(char, "")

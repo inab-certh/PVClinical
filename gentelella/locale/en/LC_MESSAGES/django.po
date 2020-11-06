@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-19 12:21+0300\n"
+"POT-Creation-Date: 2020-11-06 16:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,6 +113,42 @@ msgstr "YYYY-MM-DD"
 msgid "Χαρακτηριστικά ανάλυσης:"
 msgstr "Cohort characterization features:"
 
+#: app/forms.py:263
+msgid "Χρονικό παράθυρο σύμπτωσης:"
+msgstr "Combination Window:"
+
+#: app/forms.py:266
+msgid "Πλήθος ελάχιστων κελιών:"
+msgstr "Minimum cell count:"
+
+#: app/forms.py:269
+msgid "Μέγιστο μήκος μονοπατιού:"
+msgstr "Maximum path length:"
+
+#: app/forms.py:276
+msgid ""
+"Χρονικό παράθυρο κατά το οποίο πρέπει δύο πληθυσμοί συμβάντων να συμπέσουν, "
+"προκειμένου να θεωρηθεί ότι υπάρχει συνδυασμός συμβάντων."
+msgstr ""
+"Window of time when two event cohorts need to overlap to be considered a "
+"combination."
+
+#: app/forms.py:279
+msgid ""
+"Ελάχιστος αριθμός υποκειμένων του στοχευμένου πληθυσμού της ανάλυσης για "
+"κάθε δεδομένο συμβάν, προκειμένου να προσμετρηθεί στην ανάλυση μονοπατιού."
+msgstr ""
+"Minimum number of subjects in the target cohort for a given event inorder to "
+"be counted in the pathway."
+
+#: app/forms.py:282
+msgid ""
+"Μέγιστος αριθμός βημάτων σε ένα δεδομένο μονοπάτι, που θα συμπεριληφθεί στο "
+"σχετικό γράφημα δακτυλίου."
+msgstr ""
+"Maximum number of steps in a given pathway to be included in the sunburst "
+"plot."
+
 #: app/helper_modules.py:84
 msgid ""
 "Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί! Δεν υπάρχει η "
@@ -170,6 +206,29 @@ msgstr "Disease code"
 msgid "Τίτλος Σεναρίου"
 msgstr "Scenario title"
 
+#: app/ohdsi_wrappers.py:440
+msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
+msgstr "Error occured while creating the drugs concept set"
+
+#: app/ohdsi_wrappers.py:441
+msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
+msgstr "Error occured while creating the conditions concept set"
+
+#: app/ohdsi_wrappers.py:443
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
+msgstr ""
+"Error occured while creating the cohort concerning the patients that are "
+"getting the specific drugs"
+
+#: app/ohdsi_wrappers.py:444
+msgid ""
+"Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
+"ανεπιθύμητες ενέργειες"
+msgstr ""
+"Error occured while creating the cohort of patients with the specific "
+"conditions"
+
 #: app/password_validators.py:13
 msgid "Αδύναμο συνθηματικό."
 msgstr "Weak password"
@@ -214,7 +273,8 @@ msgstr "Notes"
 
 #: app/templates/app/LiteratureWorkspace.html:135
 #: app/templates/app/characterizations.html:105
-#: app/templates/app/form_base.html:47 app/templates/app/ir.html:148
+#: app/templates/app/form_base.html:53 app/templates/app/ir.html:148
+#: app/templates/app/pathways.html:100
 msgid "Αποθήκευση"
 msgstr "Save"
 
@@ -389,7 +449,7 @@ msgstr "Confirm"
 
 #: app/templates/app/base_site.html:140
 #: app/templates/app/characterizations.html:112 app/templates/app/ir.html:155
-#: app/templates/app/ir.html:163
+#: app/templates/app/ir.html:163 app/templates/app/pathways.html:107
 msgid "Ακύρωση"
 msgstr "Cancel"
 
@@ -398,10 +458,6 @@ msgid "Εντάξει"
 msgstr "OK"
 
 #: app/templates/app/base_site.html:144
-msgid "<img src=\"../static/images/mendeleyicon.png\">"
-msgstr "<img src=\"../static/images/mendeleyicon.png\">"
-
-#: app/templates/app/base_site.html:145
 msgid ""
 "Συνδεθείτε στο Mendeley <a target=\"_blank\" href=\"https://www.mendeley.com/"
 "reference-manager/library/all-references\"><strong>εδώ</strong> και "
@@ -411,38 +467,32 @@ msgstr ""
 "reference-manager/library/all-references\"><strong>here</strong> and refresh "
 "the page.</a>"
 
-#: app/templates/app/base_site.html:146
+#: app/templates/app/base_site.html:145
 msgid "Οκ"
 msgstr "Ok"
 
-#: app/templates/app/base_site.html:242
+#: app/templates/app/base_site.html:243
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:257
+#: app/templates/app/base_site.html:258
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
 #: app/templates/app/characterizations.html:34
 msgid ""
-"Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία\n"
-"         δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε "
-"επίπεδο πληθυσμού από δεδομένα\n"
-"        συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών "
-"των συμμεταβλητών σε επίπεδο\n"
-"        ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η "
-"διασπορά, η ελάχιστη και\n"
-"        μέγιστη τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου "
-"δεδομένων.\n"
-"        Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να "
-"διαστρωματοποιηθούν σε\n"
-"        χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών όπως σταθερά "
-"χρονικά διαστήματα σε σχέση με την\n"
-"        ημερομηνία εκκίνησης (π.χ. κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε "
-"απόλυτα διαστήματα ημερολογίου\n"
-"        όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό "
-"τρίμηνο, ημερολογιακό έτος.\n"
-"        "
+"Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία "
+"δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο "
+"πληθυσμού από δεδομένα συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά "
+"στοιχεία αυτών των συμμεταβλητών σε επίπεδο ατόμου, μπορεί να είναι το "
+"πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και μέγιστη "
+"τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου δεδομένων. "
+"Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να "
+"διαστρωματοποιηθούν σε χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών "
+"όπως σταθερά χρονικά διαστήματα σε σχέση με την ημερομηνία εκκίνησης (π.χ. "
+"κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε απόλυτα διαστήματα ημερολογίου "
+"όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό τρίμηνο, "
+"ημερολογιακό έτος."
 msgstr ""
 "<strong>Cohort characterization</strong> is defined as the process of "
 "generating cohort level descriptive summary statistics from person level "
@@ -455,23 +505,27 @@ msgstr ""
 "calendar-year."
 
 #: app/templates/app/characterizations.html:80 app/templates/app/index.html:53
-#: app/templates/app/ir.html:123
+#: app/templates/app/ir.html:123 app/templates/app/pathways.html:75
 msgid "Επεξεργασία"
 msgstr "Edit"
 
 #: app/templates/app/characterizations.html:87 app/templates/app/ir.html:130
+#: app/templates/app/pathways.html:82
 msgid "Ανάλυση"
 msgstr "Analysis"
 
 #: app/templates/app/characterizations.html:96 app/templates/app/ir.html:139
+#: app/templates/app/pathways.html:91
 msgid "Επιστροφή"
 msgstr "Return"
 
 #: app/templates/app/characterizations.html:119 app/templates/app/ir.html:168
+#: app/templates/app/pathways.html:113
 msgid "Επεξεργασία παραμέτρων ανάλυσης"
 msgstr "Edit analysis parameters"
 
 #: app/templates/app/characterizations.html:125
+#: app/templates/app/pathways.html:119
 msgid "Ανάλυση Χαρακτηρισμού Πληθυσμού"
 msgstr "Cohort characterization"
 
@@ -495,11 +549,11 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
-#: app/templates/app/form_base.html:56 app/templates/app/index.html:54
+#: app/templates/app/form_base.html:62 app/templates/app/index.html:54
 msgid "Διαγραφή"
 msgstr "Delete"
 
-#: app/templates/app/form_base.html:65
+#: app/templates/app/form_base.html:71
 msgid "Σενάρια"
 msgstr "Scenarios"
 
@@ -517,7 +571,7 @@ msgstr ""
 "can also create a new scenario, by selecting the \"Add Scenario\" button at "
 "the bottom of this table."
 
-#: app/templates/app/index.html:48 app/views.py:278
+#: app/templates/app/index.html:48 app/views.py:252
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -541,11 +595,11 @@ msgstr "Disease/Diseases"
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
-#: app/templates/app/ir.html:36
+#: app/templates/app/ir.html:36 app/templates/app/ohdsi_workspace.html:24
 msgid ""
 "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης "
-"μιας ασθένειας ή άλλου περιστατικού κατά\n"
-"        τη διάρκεια συγκεκριμένης χρονικής περιόδου."
+"μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
+"περιόδου."
 msgstr ""
 "The <strong>Incidence Rate</strong> is a measure of the frequency with which "
 "some event, such as a disease or other incidence, occurs over a specified "
@@ -571,24 +625,14 @@ msgstr ""
 "Make sure you have saved your changes, otherwise analysis will be made "
 "withthe previous parameters' values"
 
-#: app/templates/app/ir.html:174 app/views.py:506 app/views.py:524
-#: app/views.py:550
+#: app/templates/app/ir.html:174 app/views.py:443 app/views.py:461
+#: app/views.py:487
 msgid "Ανάλυση Ρυθμού Επίπτωσης"
 msgstr "Incidence Rate Analysis"
 
 #: app/templates/app/ohdsi_workspace.html:21
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
-
-#: app/templates/app/ohdsi_workspace.html:24
-msgid ""
-"Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης "
-"μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
-"περιόδου."
-msgstr ""
-"The <strong>Incidence Rate</strong> is a measure of the frequency with which "
-"some event, such as a disease or other incidence, occurs over a specified "
-"time period."
 
 #: app/templates/app/ohdsi_workspace.html:32
 msgid "Χαρακτηρισμός Πληθυσμού "
@@ -605,19 +649,23 @@ msgstr ""
 "covariate data."
 
 #: app/templates/app/ohdsi_workspace.html:52
-msgid "Πληθυσμιακό Μονοπάτι"
+msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
 
-#: app/templates/app/ohdsi_workspace.html:55
+#: app/templates/app/ohdsi_workspace.html:57 app/templates/app/pathways.html:34
 msgid ""
-"Το <strong>Πληθυσμιακό Μονοπάτι (Cohort Pathway)</strong>, ορίζεται ως η "
-"διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις "
-"καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων "
-"επιλογής."
+"Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>, ορίζεται "
+"ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων "
+"στις καταστάσεις των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες "
+"ατόμων επιλογής."
 msgstr ""
 "<strong>Cohort Pathway</strong> is defined as the process of generating an "
 "aggregated sequence of transitions between the Event Cohorts among those "
 "people in the Target Cohorts."
+
+#: app/templates/app/pathways.html:41
+msgid "Ρυθμίσεις ανάλυσης:"
+msgstr "Analysis settings:"
 
 #: app/templates/app/sidebar.html:27
 msgid "Καλωσήλθατε"
@@ -756,47 +804,24 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:258 app/views.py:490 app/views.py:600
+#: app/views.py:232 app/views.py:427 app/views.py:534 app/views.py:645
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:265 app/views.py:513 app/views.py:623
+#: app/views.py:239 app/views.py:450 app/views.py:557 app/views.py:655
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
 msgstr "System update failed due to insertion errors. Please try again!"
 
-#: app/views.py:319
-msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
-msgstr "Error occured while creating the drugs concept set"
-
-#: app/views.py:336
-msgid ""
-"Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
-msgstr ""
-"Error occured while creating the cohort concerning the patients that are "
-"getting the specific drugs"
-
-#: app/views.py:359
-msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
-msgstr "Error occured while creating the conditions concept set"
-
-#: app/views.py:379
-msgid ""
-"Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
-"ανεπιθύμητες ενέργειες"
-msgstr ""
-"Error occured while creating the cohort of patients with the specific "
-"conditions"
-
-#: app/views.py:384
+#: app/views.py:305
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
 msgstr ""
 "Error occured while generating the cohort concerning the patients that are "
 "getting the specific drugs"
 
-#: app/views.py:385
+#: app/views.py:306
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
 "ανεπιθύμητες ενέργειες"
@@ -804,25 +829,35 @@ msgstr ""
 "Error occured while generating the cohort of patients with the specific "
 "conditions"
 
-#: app/views.py:428
+#: app/views.py:364
 msgid "Περιβάλλον εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/views.py:460
+#: app/views.py:397
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:495 app/views.py:605
+#: app/views.py:432 app/views.py:539 app/views.py:650
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
-#: app/views.py:580
+#: app/views.py:517
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
 
-#: app/views.py:662
+#: app/views.py:596
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort characterization"
+
+#: app/views.py:626
+msgid ""
+"Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό "
+"εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
+msgstr "No cohort pathways analysis with the specific id found!"
+
+#: app/views.py:672
+msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
+msgstr "Cohort Pathways"
 
 #: gentelella/settings.py:152
 msgid "Ελληνικά"
@@ -832,14 +867,8 @@ msgstr "Greek"
 msgid "Αγγλικά"
 msgstr "English"
 
-#~ msgid ""
-#~ "Ο <b>Ρυθμός Επίπτωσης</b> είναι ένα μέτρο της συχνότητας εμφάνισης μιας "
-#~ "ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
-#~ "περιόδου."
-#~ msgstr ""
-#~ "The <b>Incidence Rate</b> is a measure of the frequency with which some "
-#~ "event, such as a disease or other incidence, occurs over a specified time "
-#~ "period."
+#~ msgid "<img src=\"../static/images/mendeleyicon.png\">"
+#~ msgstr "<img src=\"../static/images/mendeleyicon.png\">"
 
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
