@@ -1,4 +1,4 @@
-require(shiny)
+1require(shiny)
 
 require(shinyBS)
 
