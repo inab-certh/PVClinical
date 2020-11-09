@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-06 16:50+0200\n"
+"POT-Creation-Date: 2020-11-09 14:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/apps.py:45
+msgid "Could not generate conditions cohort"
+msgstr ""
+
+#: app/apps.py:46
+msgid "Could not generate drugs cohort"
+msgstr ""
 
 #: app/errors_redirects.py:17
 #: app/templates/registration/password_change_done.html:12
@@ -206,22 +214,26 @@ msgstr "Disease code"
 msgid "Τίτλος Σεναρίου"
 msgstr "Scenario title"
 
-#: app/ohdsi_wrappers.py:440
+#: app/ohdsi_wrappers.py:317
+msgid "All {}s cs"
+msgstr ""
+
+#: app/ohdsi_wrappers.py:476
 msgid "Σφάλμα δημιουργίας concept set φαρμάκων"
 msgstr "Error occured while creating the drugs concept set"
 
-#: app/ohdsi_wrappers.py:441
+#: app/ohdsi_wrappers.py:477
 msgid "Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"
 msgstr "Error occured while creating the conditions concept set"
 
-#: app/ohdsi_wrappers.py:443
+#: app/ohdsi_wrappers.py:479
 msgid ""
 "Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
 msgstr ""
 "Error occured while creating the cohort concerning the patients that are "
 "getting the specific drugs"
 
-#: app/ohdsi_wrappers.py:444
+#: app/ohdsi_wrappers.py:480
 msgid ""
 "Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
 "ανεπιθύμητες ενέργειες"
@@ -625,8 +637,8 @@ msgstr ""
 "Make sure you have saved your changes, otherwise analysis will be made "
 "withthe previous parameters' values"
 
-#: app/templates/app/ir.html:174 app/views.py:443 app/views.py:461
-#: app/views.py:487
+#: app/templates/app/ir.html:174 app/views.py:444 app/views.py:462
+#: app/views.py:488
 msgid "Ανάλυση Ρυθμού Επίπτωσης"
 msgstr "Incidence Rate Analysis"
 
@@ -804,11 +816,11 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:232 app/views.py:427 app/views.py:534 app/views.py:645
+#: app/views.py:232 app/views.py:428 app/views.py:535 app/views.py:646
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:239 app/views.py:450 app/views.py:557 app/views.py:655
+#: app/views.py:239 app/views.py:451 app/views.py:558 app/views.py:656
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
@@ -829,33 +841,33 @@ msgstr ""
 "Error occured while generating the cohort of patients with the specific "
 "conditions"
 
-#: app/views.py:364
+#: app/views.py:365
 msgid "Περιβάλλον εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/views.py:397
+#: app/views.py:398
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:432 app/views.py:539 app/views.py:650
+#: app/views.py:433 app/views.py:540 app/views.py:651
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
-#: app/views.py:517
+#: app/views.py:518
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
 
-#: app/views.py:596
+#: app/views.py:597
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort characterization"
 
-#: app/views.py:626
+#: app/views.py:627
 msgid ""
 "Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό "
 "εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No cohort pathways analysis with the specific id found!"
 
-#: app/views.py:672
+#: app/views.py:673
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
 
