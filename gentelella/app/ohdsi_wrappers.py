@@ -1052,6 +1052,7 @@ def name_entities_group(entities_names, domain=""):
     :domain: the name of the domain the entities belong to
     :return: the name of the group
     """
-    name_sec_part = (hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
-        else " ".join(entities_names)).replace("Condition - ", "").replace("Drug - ", "")
-    return "{}{} - {}".format(domain, "s" if len(entities_names) > 1 else "", name_sec_part)
+    name_sec_part = hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
+        else " ".join(entities_names)
+    return "{}{}{}{}".format(domain if domain not in name_sec_part else "", "s" if len(entities_names) > 1 else "",
+                         " - " if domain not in name_sec_part else "", name_sec_part)
