@@ -42,8 +42,8 @@ class AppConfig(AppConfig):
                                                               days_before=settings.COHORT_RECENT_DAYS_LIMIT)
                 coh_id = coh.get("id")
                 if coh_id and not recent_gen_exists:
-                    errors = {"condition": _("Could not generate conditions cohort"),
-                              "drug": _("Could not generate drugs cohort")}
+                    errors = {"condition": _("Η τροφοδότηση του πληθυσμού που εκδηλώνει τις επιλεγμένες ανεπιθύμητες ενέργειες δεν ήταν εφικτή"),
+                              "drug": _("Η τροφοδότηση του πληθυσμού που λαμβάνουν τα επιλεγμένα φάρμακα δεν ήταν εφικτή")}
                     status = generate_cohort(coh_id)
                     if status == "FAILED":
                         error_response = HttpResponse(
