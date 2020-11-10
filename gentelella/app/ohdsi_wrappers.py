@@ -1054,5 +1054,6 @@ def name_entities_group(entities_names, domain=""):
     """
     name_sec_part = hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
         else " ".join(entities_names)
-    return "{}{}{}{}".format(domain if domain not in name_sec_part else "", "s" if len(entities_names) > 1 else "",
+    return "{}{}{}{}".format(domain if domain not in name_sec_part else "",
+                             "s" if len(entities_names) > 1 and domain not in ["ir", "char", "cp"] else "",
                          " - " if domain not in name_sec_part else "", name_sec_part)
