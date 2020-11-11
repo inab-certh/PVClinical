@@ -1936,7 +1936,7 @@ shinyServer(function(input, output, session) {
     #     comb <- comb[order(comb$prr, decreasing = TRUE),]
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
-    
+    print(comb)
     countname <- paste( 'Counts for', getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
