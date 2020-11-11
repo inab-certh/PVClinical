@@ -1001,7 +1001,11 @@ shinyServer(function(input, output, session) {
 
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
-
+    # q<-NULL
+    # q$v1<-"patient.drug.openfda.generic_name"
+    # q$v2<-"patient.reaction.reactionmeddrapt"
+    # q$t1<-"Omeprazole"
+    # q$t2<-"Hypokalaemia"
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
@@ -1193,21 +1197,23 @@ shinyServer(function(input, output, session) {
 
   getdrugcounts999 <- reactive({
 
-    geturlquery()
+    q<-geturlquery()
+    
     mylist <- getcounts999 ( session, v= getexactdrugvarname(), t= getterm1( session, quote = FALSE ),
-                             count=geteventvarname(), limit=999, exactrad=input$useexact, counter=1 )
+                             count=geteventvarname(), limit=999, exactrad=input$useexact, counter=1,eventName=q$t2 )
     return( list(mydf=mylist$mydf, myurl=(mylist$myurl), exact = mylist$exact  ) )
   })
 
-  # Only use the first value of limit rows
-  getdrugcounts <- reactive({
-    mylist <-  getdrugcounts999()
-    mydf <-  mylist$mydf
-    totdf <- gettotals()
-    percents <- 100*mydf[,2]/totdf$totaldrug
-    mydf <- data.frame( mydf[], percents)
-    return( list(mydf=mydf, myurl=mylist$myurl  ) )
-  })
+  # # Only use the first value of limit rows
+  # getdrugcounts <- reactive({
+  #   browser()
+  #   mylist <-  getdrugcounts999()
+  #   mydf <-  mylist$mydf
+  #   totdf <- gettotals()
+  #   percents <- 100*mydf[,2]/totdf$totaldrug
+  #   mydf <- data.frame( mydf[], percents)
+  #   return( list(mydf=mydf, myurl=mylist$myurl  ) )
+  # })
 
 
   #Build table containing drug-event pairs
@@ -1855,11 +1861,13 @@ shinyServer(function(input, output, session) {
   
   # Only use the first value of limit rows
   getdrugcounts <- reactive({
-    geturlquery()
+
+    q<-geturlquery()
     v <- c('_exists_' , getexactvar1(), gettimevar() )
     t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
+
     mylist <-  getcounts999( session, v= v, t= t, 
-                             count=getprrvarname(), exactrad = input$useexact )
+                             count=getprrvarname(), exactrad = input$useexact,eventName=toupper(q$t2) )
     mydfAll <- mylist$mydf
     start <- getstart( session )
     last <- min(getlimit( session ) + start - 1, nrow(  mydfAll ) )
@@ -1869,7 +1877,7 @@ shinyServer(function(input, output, session) {
       start <- last - getlimit( session )
     }
     mydf <- mydfAll[ start:last,]
-    return( list(mydf=mydf, mydfAll= mydfAll, myurl=mylist$myurl, excludeddf = mylist$excludeddf, exact = mylist$exact   ) )
+    return( list(mydf=mydf, mydfAll= mydfAll, myurl=mylist$myurl, excludeddf = mylist$excludeddf, exact = mylist$exact) )
   })  
   
   
@@ -2028,10 +2036,11 @@ shinyServer(function(input, output, session) {
   #Calculate PRR and put in merged table
   getprr <- reactive({
     geturlquery()
+    print(session)
     #    totals <- gettotals()
     #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
-    
+    # print(getdrugcounts())
     # print(comblist$comb[comblist$comb[,'term']==toupper(input$t2),])
     # comb <- comblist$comb
     comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
@@ -2196,6 +2205,11 @@ shinyServer(function(input, output, session) {
   
   output$prr2 <- DT::renderDT({  
     prr<-prr()
+    
+    
+    # print(comblist$comb[comblist$comb[,'term']==toupper(input$t2),])
+    # comb <- comblist$comb
+    
     write.xlsx(prr, "../mydata.xlsx")
     # js_callback = paste0("function( row, data, index ) {
     #       if (data[2] != '", toupper(input$t2),"') {

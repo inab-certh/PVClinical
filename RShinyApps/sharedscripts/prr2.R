@@ -25,6 +25,7 @@ shinyServer(function(input, output, session) {
   #     })
   #   }
   # })
+  
   #Getters ===============================================================
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
@@ -279,6 +280,11 @@ shinyServer(function(input, output, session) {
   
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
+    q<-NULL
+    q$v1<-"patient.drug.openfda.generic_name"
+    # q$v2<-"patient.reaction.reactionmeddrapt"
+    q$t1<-"Omeprazole"
+    # q$t2<-"Hypokalaemia"
     updateNumericInput(session, "limit", value = q$limit)
     updateNumericInput(session, "limit2", value = q$limit)
     if( getwhich()== 'D'){
@@ -486,6 +492,7 @@ shinyServer(function(input, output, session) {
     v <- c( '_exists_', '_exists_', gettimevar() )
     t <- c( getprrvarname(), getbestvar1(), gettimerange() )
     totalurl <- buildURL(v, t,  count='', limit=1)
+    browser()
     totalreports <- fda_fetch_p( session, totalurl, flag=NULL) 
     total <- totalreports$meta$results$total
     v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
@@ -605,7 +612,7 @@ shinyServer(function(input, output, session) {
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- coltohyper(mydf[,1], ifelse( getwhich()=='D', 'E', 'D'), 
                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
-#    print(head(mydf))
+    #print(head(mydf))
     return( list(mydf=mydf, sourcedf=sourcedf) )
   })  
   
@@ -631,7 +638,7 @@ geteventtotals <- reactive(
     myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
 #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
     cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
- #   print(cururl)
+    #print(cururl)
 #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
     all_events2 <- fda_fetch_p( session, cururl, message= i )
 #    Sys.sleep( .25 )
@@ -710,6 +717,7 @@ output$prr2 <- DT::renderDT({
   
   query <- parseQueryString(session$clientData$url_search)
   selectedLang = tail(query[['lang']], 1)
+  
   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
   {
     selectedLang='en'
@@ -717,6 +725,8 @@ output$prr2 <- DT::renderDT({
   translator$set_translation_language(selectedLang)
   mydf<-prr()
   prr2ForExcel<<-mydf
+  #comblista <- makecomb(session, getdrugcounts(), geteventtotals(), gettotals(), getsearchtype())
+  #print(comblista)
   if (!is.null(mydf) )
   {
     if(!is.null(session$nodataAlert))
@@ -782,6 +792,7 @@ textplot <- reactive({
     y <-NULL
     x <- NULL
   }
+  
   #  browser()
   #plot with no overlap and all words visible
   return ( mytp(x, y, w, myylab='PRR') )
@@ -1167,6 +1178,7 @@ output$coquery2 <- DT::renderDT({
       )
     ),  escape=FALSE
   )
+  
 },  escape=FALSE)
 
 # tabPanel("Counts For Indications In Selected Reports"
@@ -1562,6 +1574,9 @@ getcururl <- reactive({
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
   })
+  
+  
+  
   
    
 })

@@ -53,7 +53,7 @@ from app.retrieve_meddata import KnowledgeGraphWrapper
 from app.pubmed import PubmedAnalyzer
 
 from mendeley import Mendeley
-from app.mendeley_expand import AutoRefreshMendeleySession
+
 from oauthlib.oauth2 import TokenExpiredError
 import requests
 from urllib.parse import urlparse
