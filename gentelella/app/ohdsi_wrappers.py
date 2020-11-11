@@ -95,7 +95,7 @@ def search_concept(query, domain_lst):
     :param domain_lst: the domain or list of domains  the query term might belong to
     :return: the status_code and the json data of the response
     """
-    search_url = "{}/vocabulary/OHDSI-CDMV5-synpuf/search".format(settings.OHDSI_ENDPOINT)
+    search_url = "{}/vocabulary/{}/search".format(settings.OHDSI_ENDPOINT, settings.OHDSI_CDM_NAME)
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -239,7 +239,7 @@ def create_concept_set(cterms, cdomain):
     """
 
     # The name of the concept set to be created
-    cs_name = name_entities_group(cterms)
+    cs_name = name_entities_group(cterms, cdomain)
 
     status_code, exists_json = exists(cs_name, "conceptset")
     # print(status_code, exists_json)
@@ -296,9 +296,48 @@ def create_concept_set(cterms, cdomain):
     return add_items_resp.status_code, resp_json
 
 
-def create_cohort(domains_csets_dict):
+def create_domain_conceptset(domain):
+    """ Create a concept set containing all drugs or all conditions
+    :param domain: possible values drug or condition
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    domain_retrieval_url = "{}/cdmresults/{}/{}".format(settings.OHDSI_ENDPOINT, settings.OHDSI_CDM_NAME, domain)
+
+    all_concepts = requests.get(domain_retrieval_url, headers=headers)
+    all_concepts_ids = list(map(lambda el: el.get("conceptId"), all_concepts.json()))
+
+    cs_create_url = "{}/conceptset/".format(settings.OHDSI_ENDPOINT)
+
+    # Create new concept set with specific name
+    create_resp = requests.post(cs_create_url, json={"name": "All {}s cs".format(domain), "id": 0}, headers=headers)
+    resp_json = create_resp.json()
+
+    if create_resp.status_code != 200:
+        return create_resp.status_code, {}
+
+    # Adding concepts to newly created concept set
+    add_items_url = "{}/conceptset/{}/items".format(settings.OHDSI_ENDPOINT, resp_json.get("id"))
+
+    # Including both descendants and mapped(synonym) terms
+    payload = [{"conceptId": cs_id, "isExcluded": 0, "includeDescendants": 0, "includeMapped": 0
+                } for cs_id in all_concepts_ids]
+    add_items_resp = requests.put(add_items_url, data=json.dumps(payload), headers=headers)
+    resp_json = add_items_resp.json()
+
+    return add_items_resp.status_code, resp_json
+
+
+def create_cohort(domains_csets_dict, cname=""):
     """ Create cohort wrapper. Allows drugs_cohorts, conditions_cohort and even combination cohorts creation
     :param domains_csets_dict: a dictionary consisting of domain - concept_sets_names pairs
+    :param cname: optional cohort name
     :return: the status_code and the json data of the response
     """
 
@@ -315,9 +354,9 @@ def create_cohort(domains_csets_dict):
     # if resp_json:
 
     # The name of the cohort to be created
-    cohort_name = name_entities_group(
-        domains_csets_dict.get("Drug", []) + domains_csets_dict.get("Condition", [])
-    )
+    cohort_name = cname or name_entities_group(
+        domains_csets_dict.get("Drug", []) + domains_csets_dict.get("Condition", []),
+    domain=" - ".join(sorted(domains_csets_dict.keys(), reverse=True)))
 
     status_code, exists_json = exists(cohort_name, "cohortdefinition")
     # print(status_code, exists_json)
@@ -399,8 +438,8 @@ def generate_cohort(cohort_id):
     """
 
     status = "FAILED"
-    gen_cohort_url = "{}/cohortdefinition/{}/generate/OHDSI-CDMV5-synpuf".format(settings.OHDSI_ENDPOINT,
-                                                                                 cohort_id)
+    gen_cohort_url = "{}/cohortdefinition/{}/generate/{}".format(settings.OHDSI_ENDPOINT, cohort_id,
+                                                                 settings.OHDSI_CDM_NAME)
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -445,7 +484,7 @@ def create_cs_coh(concepts_names, domain):
                                            " ανεπιθύμητες ενέργειες"),
                             }
 
-    cs_name = name_entities_group(concepts_names)
+    cs_name = name_entities_group(concepts_names, domain)
 
     # Check if concept set already exists
     # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
@@ -455,7 +494,7 @@ def create_cs_coh(concepts_names, domain):
         if not (st_code == 200 and resp_json):
             raise Exception(cs_create_errors.get(domain))
 
-    concepts_cohort_name = name_entities_group([cs_name])
+    concepts_cohort_name = name_entities_group([cs_name], domain)
 
     if exists(concepts_cohort_name, "cohortdefinition") != (200, True):
         st_code, resp_json = create_cohort({domain: [cs_name]})
@@ -480,7 +519,7 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     }
 
     # The name of the ir to be created
-    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)))
+    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)), domain="ir")
 
     status_code, exists_json = exists(ir_name, "ir")
     # print(status_code, exists_json)
@@ -756,7 +795,7 @@ def create_char(cohorts, **options):
     }
 
     # The name of the char to be created
-    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)))
+    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)), "char")
 
     status_code, exists_json = exists(char_name, "cohort-characterization")
     # print(status_code, exists_json)
@@ -902,7 +941,7 @@ def create_cp(target_cohorts, event_cohorts, **options):
     }
 
     # The name of the ir to be created
-    cp_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + event_cohorts)))
+    cp_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + event_cohorts)), "cp")
 
     status_code, exists_json = exists(cp_name, "pathway-analysis")
 
@@ -1007,10 +1046,14 @@ def add_update_cp(cp_id, **options):
     return response.status_code, resp_json
 
 
-def name_entities_group(entities_names):
-    """ Give a name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
+def name_entities_group(entities_names, domain=""):
+    """ Give a unique name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
     :param entities_names: a list of the entities names
+    :domain: the name of the domain the entities belong to
     :return: the name of the group
     """
-
-    return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
+    name_sec_part = hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
+        else " ".join(entities_names)
+    return "{}{}{}{}".format(domain if domain not in name_sec_part else "",
+                             "s" if len(entities_names) > 1 and domain not in ["ir", "char", "cp"] else "",
+                         " - " if domain not in name_sec_part else "", name_sec_part)

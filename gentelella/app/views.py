@@ -312,7 +312,8 @@ def ohdsi_workspace(request, scenario_id=None):
 
     # Generate cohorts
     for indx, coh in enumerate(list(filter(None, [drugs_cohort, conditions_cohort] + conditions_distinct_cohorts))):
-        recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=True, days_before=10)
+        recent_gen_exists = ohdsi_wrappers.cohort_generated_recently(coh, recent=True,
+                                                                     days_before=settings.COHORT_RECENT_DAYS_LIMIT)
         coh_id = coh.get("id")
         if coh_id and not recent_gen_exists:
             status = ohdsi_wrappers.generate_cohort(coh_id)
@@ -327,7 +328,7 @@ def ohdsi_workspace(request, scenario_id=None):
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + [conditions_cohort])))
+                                                              [drugs_cohort] + [conditions_cohort])), "ir")
         ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
         if ir_ent:
@@ -338,7 +339,7 @@ def ohdsi_workspace(request, scenario_id=None):
             ir_id = res_json.get("id")
 
         cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + conditions_distinct_cohorts)))
+                                                              [drugs_cohort] + conditions_distinct_cohorts)), "cp")
         cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
 
         if cp_ent:
@@ -350,7 +351,7 @@ def ohdsi_workspace(request, scenario_id=None):
 
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
-                                                                filter(None,[drugs_cohort, conditions_cohort]))))
+                                                                filter(None,[drugs_cohort, conditions_cohort]))), "char")
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
         if char_ent:
