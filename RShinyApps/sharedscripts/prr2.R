@@ -280,10 +280,10 @@ shinyServer(function(input, output, session) {
   
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
-    q<-NULL
-    q$v1<-"patient.drug.openfda.generic_name"
+    #q<-NULL
+    #q$v1<-"patient.drug.openfda.generic_name"
     # q$v2<-"patient.reaction.reactionmeddrapt"
-    q$t1<-"Omeprazole"
+    #q$t1<-"Omeprazole"
     # q$t2<-"Hypokalaemia"
     updateNumericInput(session, "limit", value = q$limit)
     updateNumericInput(session, "limit2", value = q$limit)
@@ -492,7 +492,7 @@ shinyServer(function(input, output, session) {
     v <- c( '_exists_', '_exists_', gettimevar() )
     t <- c( getprrvarname(), getbestvar1(), gettimerange() )
     totalurl <- buildURL(v, t,  count='', limit=1)
-    browser()
+
     totalreports <- fda_fetch_p( session, totalurl, flag=NULL) 
     total <- totalreports$meta$results$total
     v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
