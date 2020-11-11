@@ -7,7 +7,9 @@ import time
 from datetime import datetime
 # from datetime import timedelta
 from urllib.parse import urlencode
+
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 
 def cohort_generated_recently(cohort, recent=False, days_before=30):
@@ -93,7 +95,7 @@ def search_concept(query, domain_lst):
     :param domain_lst: the domain or list of domains  the query term might belong to
     :return: the status_code and the json data of the response
     """
-    search_url = "{}/vocabulary/OHDSI-CDMV5-synpuf/search".format(settings.OHDSI_ENDPOINT)
+    search_url = "{}/vocabulary/{}/search".format(settings.OHDSI_ENDPOINT, settings.OHDSI_CDM_NAME)
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -237,7 +239,7 @@ def create_concept_set(cterms, cdomain):
     """
 
     # The name of the concept set to be created
-    cs_name = name_entities_group(cterms)
+    cs_name = name_entities_group(cterms, cdomain)
 
     status_code, exists_json = exists(cs_name, "conceptset")
     # print(status_code, exists_json)
@@ -294,9 +296,48 @@ def create_concept_set(cterms, cdomain):
     return add_items_resp.status_code, resp_json
 
 
-def create_cohort(domains_csets_dict):
+def create_domain_conceptset(domain):
+    """ Create a concept set containing all drugs or all conditions
+    :param domain: possible values drug or condition
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    domain_retrieval_url = "{}/cdmresults/{}/{}".format(settings.OHDSI_ENDPOINT, settings.OHDSI_CDM_NAME, domain)
+
+    all_concepts = requests.get(domain_retrieval_url, headers=headers)
+    all_concepts_ids = list(map(lambda el: el.get("conceptId"), all_concepts.json()))
+
+    cs_create_url = "{}/conceptset/".format(settings.OHDSI_ENDPOINT)
+
+    # Create new concept set with specific name
+    create_resp = requests.post(cs_create_url, json={"name": "All {}s cs".format(domain), "id": 0}, headers=headers)
+    resp_json = create_resp.json()
+
+    if create_resp.status_code != 200:
+        return create_resp.status_code, {}
+
+    # Adding concepts to newly created concept set
+    add_items_url = "{}/conceptset/{}/items".format(settings.OHDSI_ENDPOINT, resp_json.get("id"))
+
+    # Including both descendants and mapped(synonym) terms
+    payload = [{"conceptId": cs_id, "isExcluded": 0, "includeDescendants": 0, "includeMapped": 0
+                } for cs_id in all_concepts_ids]
+    add_items_resp = requests.put(add_items_url, data=json.dumps(payload), headers=headers)
+    resp_json = add_items_resp.json()
+
+    return add_items_resp.status_code, resp_json
+
+
+def create_cohort(domains_csets_dict, cname=""):
     """ Create cohort wrapper. Allows drugs_cohorts, conditions_cohort and even combination cohorts creation
     :param domains_csets_dict: a dictionary consisting of domain - concept_sets_names pairs
+    :param cname: optional cohort name
     :return: the status_code and the json data of the response
     """
 
@@ -313,9 +354,9 @@ def create_cohort(domains_csets_dict):
     # if resp_json:
 
     # The name of the cohort to be created
-    cohort_name = name_entities_group(
-        domains_csets_dict.get("Drug", []) + domains_csets_dict.get("Condition", [])
-    )
+    cohort_name = cname or name_entities_group(
+        domains_csets_dict.get("Drug", []) + domains_csets_dict.get("Condition", []),
+    domain=" - ".join(sorted(domains_csets_dict.keys(), reverse=True)))
 
     status_code, exists_json = exists(cohort_name, "cohortdefinition")
     # print(status_code, exists_json)
@@ -397,8 +438,8 @@ def generate_cohort(cohort_id):
     """
 
     status = "FAILED"
-    gen_cohort_url = "{}/cohortdefinition/{}/generate/OHDSI-CDMV5-synpuf".format(settings.OHDSI_ENDPOINT,
-                                                                                 cohort_id)
+    gen_cohort_url = "{}/cohortdefinition/{}/generate/{}".format(settings.OHDSI_ENDPOINT, cohort_id,
+                                                                 settings.OHDSI_CDM_NAME)
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -428,6 +469,41 @@ def generate_cohort(cohort_id):
     return status
 
 
+def create_cs_coh(concepts_names, domain):
+    """ Combines the various functions to create concept sets and cohorts for specific concepts
+    :param concepts_names: a list of the names of the concepts to include in the concept set
+    :param domain: the domain that the specific concepts belong to (i.e. Drug/Condition)
+    :return: the status (COMPLETE or FAILED)
+    """
+
+    cs_create_errors = {"Drug": _("Σφάλμα δημιουργίας concept set φαρμάκων"),
+                        "Condition": _("Σφάλμα δημιουργίας concept set ανεπιθύμητων ενεργειών"),
+                        }
+    cohort_create_errors = {"Drug": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"),
+                            "Condition": _("Σφάλμα δημιουργίας πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες"
+                                           " ανεπιθύμητες ενέργειες"),
+                            }
+
+    cs_name = name_entities_group(concepts_names, domain)
+
+    # Check if concept set already exists
+    # cs_id = ohdsi_wrappers.get_concept_set_id(cs_name)
+    # Create concept set if it does not already exist
+    if exists(cs_name, "conceptset") != (200, True):
+        st_code, resp_json = create_concept_set(concepts_names, domain)
+        if not (st_code == 200 and resp_json):
+            raise Exception(cs_create_errors.get(domain))
+
+    concepts_cohort_name = name_entities_group([cs_name], domain)
+
+    if exists(concepts_cohort_name, "cohortdefinition") != (200, True):
+        st_code, resp_json = create_cohort({domain: [cs_name]})
+        if not (st_code == 200 and resp_json):
+            raise Exception(cohort_create_errors.get(domain))
+
+    return concepts_cohort_name
+
+
 def create_ir(target_cohorts, outcome_cohorts, **options):
     """ Create ir wrapper
     :param target_cohorts: a list of the target cohorts (id, name, etc.)
@@ -443,7 +519,7 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     }
 
     # The name of the ir to be created
-    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)))
+    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)), domain="ir")
 
     status_code, exists_json = exists(ir_name, "ir")
     # print(status_code, exists_json)
@@ -568,18 +644,6 @@ def get_ir_options(ir_id):
     return options
 
 
-def get_char_options(char_id):
-    options = {}
-    # resp = requests.get("{}/cohort-characterization/{}/design".format(settings.OHDSI_ENDPOINT, char_id),
-    #                     headers=headers)
-    # resp_json = resp.json()
-    char_ent = get_entity_by_id("cohort-characterization", char_id)
-    options["cohorts"] = char_ent.get("cohorts")
-    options["features"] = list(map(lambda el: el.get("id"), char_ent.get("featureAnalyses")))
-
-    return options
-
-
 def update_ir(ir_id, **options):
     """ Change/update ir wrapper
     :param ir_id: the id of the ir to be changed
@@ -609,7 +673,7 @@ def update_ir(ir_id, **options):
 def add_update_ir(ir_id, **options):
     """ Helper function for both create_ir and update_ir
     :param ir_id: the id of the ir to be changed, otherwise (to be created) None
-    :param options: the various options concerning option of the ir study depending on the function that calls helper
+    :param **options: the various options concerning option of the ir study depending on the function that calls helper
     function
     :return: the status_code and the json data of the response
     """
@@ -707,8 +771,6 @@ def add_update_ir(ir_id, **options):
                "expression": json.dumps(expression_dict)
                }
 
-    print(payload)
-
     if ir_id:
         response = requests.put(ir_url, data=json.dumps(payload), headers=headers)
     else:
@@ -733,7 +795,7 @@ def create_char(cohorts, **options):
     }
 
     # The name of the char to be created
-    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)))
+    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)), "char")
 
     status_code, exists_json = exists(char_name, "cohort-characterization")
     # print(status_code, exists_json)
@@ -750,51 +812,23 @@ def create_char(cohorts, **options):
     return add_update_char(None, **options)
 
 
-# def get_ir_options(ir_id):
-#     """ Get the options of an existing ir
-#     :param ir_id: the id of the existing ir
-#     :return: the options of the specific ir
-#     """
-#     options = {}
-#
-#     ir_ent = get_entity_by_id("ir", ir_id)
-#     ir_expr = json.loads(ir_ent.get("expression", "{}"))
-#     options["targetIds"] = ir_expr.get("targetIds", [])
-#     options["outcomeIds"] = ir_expr.get("outcomeIds", [])
-#     ir_strata_lst = list(filter(lambda el: el.get("name") == "Stratification criteria",
-#                                 ir_expr.get("strata", [])))
-#     ir_strata = ir_strata_lst[0] if ir_strata_lst else {}
-#     ir_strata_expr = ir_strata.get("expression", {})
-#
-#     ir_demographic_criteria = ir_strata_expr.get("DemographicCriteriaList", [])
-#
-#     # Keep only not null demographic criteria
-#     valid_demographic_criteria = dict(list(filter(lambda elm: elm[1] != None,
-#                                                   itertools.chain(
-#                                                       *map(lambda el: tuple(el.items()),
-#                                                            ir_demographic_criteria)))))
-#
-#     age_crit = valid_demographic_criteria.get("Age", {})
-#     options["age"] = age_crit.get("Value")
-#     options["ext_age"] = age_crit.get("Extent")
-#     options["age_crit"] = age_crit.get("Op")
-#
-#     options["genders"] = list(map(lambda g: g.get("CONCEPT_NAME"),
-#                                   valid_demographic_criteria.get("Gender", [])))
-#
-#     ir_study_window = ir_expr.get("studyWindow") or {}
-#     check_value = ir_study_window.get("startDate")
-#     options["study_start_date"] = check_value if ir_study_window and check_value != "None" else None
-#     check_value = ir_study_window.get("endDate")
-#     options["study_end_date"] = check_value if ir_study_window and check_value != "None" else None
-#
-#     return options
+def get_char_options(char_id):
+    options = {}
+    # resp = requests.get("{}/cohort-characterization/{}/design".format(settings.OHDSI_ENDPOINT, char_id),
+    #                     headers=headers)
+    # resp_json = resp.json()
+    char_ent = get_entity_by_id("cohort-characterization", char_id)
+    options["cohorts"] = char_ent.get("cohorts")
+    options["features"] = list(map(lambda el: el.get("id"), char_ent.get("featureAnalyses")))
+
+    return options
 
 
 def update_char(char_id, **options):
     """ Change/update char wrapper
     :param char_id: the id of the characterization to be changed
-    :param **options: the various options concerning option of the char analysis (i.e. analysis features)
+    :param **options: the various options concerning option of the char analysis (i.e. name, cohorts,
+    analysis features etc.)
     :return: the status_code and the json data of the response
     """
 
@@ -819,7 +853,7 @@ def update_char(char_id, **options):
 def add_update_char(char_id, **options):
     """ Helper function for both create_char and update_char
     :param char_id: the id of the characterization to be changed otherwise (to be created) None
-    :param options: the various options concerning option of the characterization depending on the function that calls
+    :param **options: the various options concerning option of the characterization depending on the function that calls
      helper function
     :return: the status_code and the json data of the response
     """
@@ -891,10 +925,135 @@ def get_char_analysis_features():
     return feat_resp.json().get("content")
 
 
-def name_entities_group(entities_names):
-    """ Give a name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
-    :param entities_names: a list of the entities names
-    :return: the name of the group
+def create_cp(target_cohorts, event_cohorts, **options):
+    """ Create cp wrapper
+    :param target_cohorts: a list of the target cohorts (id, name, etc.)
+    :param event_cohorts: a list of the event cohorts (id, name, etc.)
+    :param **options: the various options concerning option of the cp analysis (i.e. name,
+    target and event cohorts, combinationWindow, minCellCount, maxDepth etc.)
+    :return: the status_code and the json data of the response
     """
 
-    return hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest()
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    # The name of the ir to be created
+    cp_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + event_cohorts)), "cp")
+
+    status_code, exists_json = exists(cp_name, "pathway-analysis")
+
+    if status_code != 200:
+        return status_code, {}
+
+    if exists_json:
+        return 500, {}
+
+    options["targetCohorts"] = target_cohorts
+    options["eventCohorts"] = event_cohorts
+    options["name"] = cp_name
+    options["combinationWindow"] = options.get("combinationWindow", 0)
+    options["minCellCount"] = options.get("minCellCount", 0)
+    options["maxDepth"] = options.get("maxDepth", 5)
+
+    return add_update_cp(None, **options)
+
+
+def get_cp_options(cp_id):
+    """ Get the options of an existing cohort pathway
+    :param cp_id: the id of the existing cp
+    :return: the options of the specific cp (i.e. target and event cohorts)
+    """
+    options = {}
+
+    cp_ent = get_entity_by_id("pathway-analysis", cp_id)
+    options["targetCohorts"] = cp_ent.get("targetCohorts", [])
+    options["eventCohorts"] = cp_ent.get("eventCohorts", [])
+    options["combinationWindow"] = cp_ent.get("combinationWindow", 0)
+    options["minCellCount"] = cp_ent.get("minCellCount", 0)
+    options["maxDepth"] = cp_ent.get("maxDepth", 5)
+    return options
+
+
+def update_cp(cp_id, **options):
+    """ Change/update cp wrapper
+    :param cp_id: the id of the cp to be changed
+    :param **options: the various options concerning option of the cp study (i.e. age, gender, study period etc.)
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    cp_url = "{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id)
+
+    exists = url_exists(cp_url)
+
+    if not exists:
+        return 404, {}
+
+    # if exists_json:
+    #     return 500, {}
+
+    return add_update_cp(cp_id, **options)
+
+
+def add_update_cp(cp_id, **options):
+    """ Helper function for both create_cp and update_cp
+    :param cp_id: the id of the cp to be changed, otherwise (to be created) None
+    :param **options:  the various options concerning option of the cp analysis (i.e. name,
+    target and event cohorts, combinationWindow, minCellCount, maxDepth etc.)
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    cp_url = "{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id or "")
+    cp_name = options.get("name")
+    if cp_id:
+        response = requests.get("{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id), headers=headers)
+        response_json = response.json()
+        cp_name = response_json.get("name")
+
+    origin_options = get_cp_options(cp_id)
+
+    target_cohorts = options.get("targetCohorts") or origin_options.get("targetCohorts")
+    event_cohorts = options.get("eventCohorts") or origin_options.get("eventCohorts")
+    combination_window = options.get("combinationWindow") or origin_options.get("combinationWindow")
+    min_cell_count = options.get("minCellCount") or origin_options.get("minCellCount")
+    max_depth = options.get("maxDepth") or origin_options.get("maxDepth")
+
+
+    payload = {"id": cp_id, "name": cp_name, "targetCohorts": target_cohorts, "eventCohorts": event_cohorts,
+               "combinationWindow": combination_window, "minCellCount": min_cell_count,"maxDepth": max_depth}
+
+    if cp_id:
+        response = requests.put(cp_url, data=json.dumps(payload), headers=headers)
+    else:
+        response = requests.post(cp_url, data=json.dumps(payload), headers=headers)
+    resp_json = response.json()
+    # print(resp_json)
+    #
+    return response.status_code, resp_json
+
+
+def name_entities_group(entities_names, domain=""):
+    """ Give a unique name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
+    :param entities_names: a list of the entities names
+    :domain: the name of the domain the entities belong to
+    :return: the name of the group
+    """
+    name_sec_part = hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
+        else " ".join(entities_names)
+    return "{}{}{}{}".format(domain if domain not in name_sec_part else "",
+                             "s" if len(entities_names) > 1 and domain not in ["ir", "char", "cp"] else "",
+                         " - " if domain not in name_sec_part else "", name_sec_part)

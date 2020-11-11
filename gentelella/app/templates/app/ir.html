@@ -33,7 +33,7 @@
 
 
     <div class="viewExplanation mt-3 mb-3">
-        {% blocktrans %}Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά
+        {% blocktrans trimmed %}Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά
         τη διάρκεια συγκεκριμένης χρονικής περιόδου.{% endblocktrans %}</div>
 
     <div class="mt-3">
@@ -158,12 +158,6 @@
         </div>
         {% endif %}
 
-{% trans "Επιβεβαίωση ανάλυσης" as analysis_mod_title %}
-{% trans "Συνέχεια" as continue_lbl%}
-{% trans "Ακύρωση" as dismiss_lbl %}
-{% trans "Βεβαιωθείτε ότι αποθηκεύσατε τις αλλαγές για να δείτε τη νέα ανάλυση, διαφορετικά θα επαναλάβετε την ανάλυση με τις προηγούμενες τιμές παραμέτρων" as analysis_mod_body%}
-{% include 'app/modals/parametric_modal.html' with modal_type="\"confirmModal\"" modal_id="analysisConfirmModal" modal_title=analysis_mod_title modal_body=analysis_mod_body main_btn=continue_lbl dismiss_btn=dismiss_lbl data_target="#analysisViewModal" %}
-
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as editIR_mod_title %}
 {% with editIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}
@@ -172,8 +166,14 @@
 
 
 {% trans "Ανάλυση Ρυθμού Επίπτωσης" as analysisIR_mod_title %}
+{% trans " έως " as to_lex %}
+{% if form.add_study_window.value %}
+    {% trans "Χρονικό παράθυρο μελέτης: "|add:form.study_start_date.value|add:to_lex|add:form.study_end_date.value as study_window_lex %}
+{% else %}
+    {% trans "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!" as study_window_lex %}
+{% endif %}
 {% with analysisIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:results_url|add:"'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe additional_info=study_window_lex %}
 {% endwith %}
 
 

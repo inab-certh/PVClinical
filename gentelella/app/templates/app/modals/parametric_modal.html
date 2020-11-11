@@ -6,6 +6,9 @@
                 <button type="button" class="close col-xs-1" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
+                {% if additional_info %}
+                    <div class="container alert time-study-info">{{ additional_info }}</div>
+                {% endif %}
                 {{ modal_body }}
             </div>
             {% if modal_type != "\"viewModal\"" %}

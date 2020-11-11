@@ -638,3 +638,33 @@ button.close {
 .modal-body {
 	overflow-x: auto;
 }
+
+#analysisCharModal .modal-dialog {
+	width: 93%;
+}
+
+@media (max-width: 768px) {
+    #ohdsiMenu .portfolio-item .portfolio-link h4 {
+		white-space: normal;
+	}
+}
+
+
+
+.pathways-int-fld select {
+	margin: 0 1rem;
+	direction: ltr;
+}
+
+.pathways-int-fld select option {
+	direction: rtl;
+}
+
+.time-study-info {
+    text-align: center;
+    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
+	border-color: rgba(52, 152, 219, 0.88);
+    color: white;
+    font-size: 1.4rem;
+    font-weight: bolder;
+}
