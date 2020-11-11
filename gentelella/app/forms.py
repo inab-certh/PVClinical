@@ -185,7 +185,7 @@ class IRForm(forms.Form):
                                         label=_("Φύλο:"),
                                         required=False,
                                         choices=sorted((("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))), key=lambda x: x[1]))
-    add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παράθυρου μελέτης"), initial=False, required=False)
+    add_study_window = forms.BooleanField(label=_("Προσθήκη χρονικού παραθύρου μελέτης"), initial=False, required=False)
     study_start_date = forms.DateField(label=_("Ημερομηνία έναρξης για το χρονικό παράθυρο της μελέτης:"),
                                        initial=None,
                                        required=False,
@@ -221,6 +221,11 @@ class IRForm(forms.Form):
             else:
                 self.initial[k] = self.options.get(k)
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+
+    def is_valid(self):
+        self.fields.get("study_start_date").required = self.data.get("add_study_window")
+        self.fields.get("study_end_date").required = self.data.get("add_study_window")
+        return super(IRForm, self).is_valid()
 
     def clean(self):
         super(IRForm, self).clean()
