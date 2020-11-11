@@ -240,6 +240,7 @@ shinyServer(function(input, output, session) {
       curinds <-  which( prrtab$d==s & prrtab$A >= getlimit( session ) )
       mydf <- prrtab[ curinds ,]
       mydf <- mydf[order(mydf$PRR, decreasing = TRUE ),]
+      print(paste0(mydf))
       eventcounts <- data.frame( Event=mydf[, 'e'], Count=mydf[, 'A'] )
     }
     
