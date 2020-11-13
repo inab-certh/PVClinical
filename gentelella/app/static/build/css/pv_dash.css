@@ -635,11 +635,17 @@ button.close {
 	text-align: justify;
 }
 
+.popover-content {
+	max-height: 50rem;
+	padding: 1.5rem;
+	overflow-y: auto;
+}
+
 .modal-body {
 	overflow-x: auto;
 }
 
-#analysisCharModal .modal-dialog {
+#analysisIRModal .modal-dialog, #analysisCharModal .modal-dialog {
 	width: 93%;
 }
 
@@ -667,4 +673,8 @@ button.close {
     color: white;
     font-size: 1.4rem;
     font-weight: bolder;
+}
+
+.view-info-btn {
+	display: none;
 }
