@@ -144,7 +144,7 @@
         {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
         {% trans 'Οκ' as mend_lbl %}
         {% with '<img src="/static/images/mendeleyicon.png">' as mend_title %}
-        {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title modal_body=mend_body dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
+        {% include 'app/modals/mendeley_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
         {% endwith %}
 
     {% endblock body %}

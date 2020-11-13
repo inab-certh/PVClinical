@@ -9,6 +9,13 @@
                 {% if additional_info %}
                     <div class="container alert time-study-info">{{ additional_info }}</div>
                 {% endif %}
+
+                {% if help_info %}
+                    <a tabindex="0" class="view-info-btn btn btn-lg btn-outline pull-right" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-html="true" data-placement="left" title="{{ help_info_title }}" data-content="{{ help_info }}">
+                        <i class="fa fa-question-circle-o"></i>
+                    </a>
+                {% endif %}
+
                 {{ modal_body }}
             </div>
             {% if modal_type != "\"viewModal\"" %}
