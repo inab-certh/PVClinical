@@ -208,7 +208,8 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   if ( !is.data.frame(mydf1) )  {
     return(data.frame(Term=paste( 'No events for', type,  getterm1( session ) ), Count=0 , Count=0,Count2=0, PRR='prr'))
   }
-  comb <- merge(mydf1, mydf2[, c('term', 'count')], by.x='term', by.y='term')
+  comb <- merge(mydf1, mydf2[, c('term', 'count', 'diff')], by.x='term', by.y='term')
+  
   if (type=='Drug')
   {
     #x is # reports for DE, y is # reports for Events
@@ -216,6 +217,19 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
 #     denom <- (comb$count.y-comb$count.x)/(totals$total-totals$totaldrug)
 #     num2 <- comb$count.x/(totals$totaldrug-comb$count.x)
 #     denom2 <- comb$count.y/(totals$total-comb$count.y)#Total reports for drug j
+    
+    #without cocomitant
+    cn.j <- totals$dcocomtotal
+    #Total reports for DE combination
+    cnij <-  comb$diff.x
+    cnum <- cnij/cn.j
+    #Total reports forevent i
+    cni. <- comb$diff.y
+    cn.. <- totals$cocomtotal
+    cdenom <- ( cni.-cnij )/(  cn.. - cn.j )
+    
+    
+    #with cocomitant
     n.j <- totals$totaldrug
     #Total reports for DE combination
     nij <-  comb$count.x
@@ -232,6 +246,16 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
 #    num2 <- comb$count.x/(comb$count.y - comb$count.x)
 #    denom2 <-(totals$totaldrug)/(totals$total-totals$totaldrug)
     
+    #without cocomitant
+    cn.j <- comb$diff.y
+    #Total reports for DE combination
+    cnij <-  comb$diff.x
+    cnum <- cnij/cn.j
+    #Total reports forevent i
+    cni. <- totals$dcocomtotal
+    cn.. <- totals$cocomtotal
+    cdenom <- ( cni.-cnij )/(  cn.. - cn.j )
+    
     n.j <- comb$count.y
     #Total reports for DE combination
     nij <-  comb$count.x
@@ -242,11 +266,20 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   }
 #  ror <- num2/denom2
 #  comb <- data.frame(comb, prr=num/denom, num, denom)
+  #without cocomitant
+  cprr <- prre( cn.., cni., cn.j, cnij ) 
+  crrr <- prrd( cn.., cni., cn.j, cnij ) 
+  cror <- ror(  cn.., cni., cn.j, cnij )
+  cllr <- LLR(  cn.., cni., cn.j, cnij ) 
+  
+  
+  #with cocomitant
   prr <- prre( n.., ni., n.j, nij ) 
   rrr <- prrd( n.., ni., n.j, nij ) 
   ror <- ror( n.., ni., n.j, nij )
   llr <- LLR( n.., ni., n.j, nij )  
-  comb <- data.frame(comb, prr=round( prr, digits = 2), ror=ror, nij, ni., n.j, n..)   
+  # browser()
+  comb <- data.frame(comb, prr=round( prr, digits = 2), ror=ror, cprr = round( cprr, digits = 2), cror=round( cror, digits = 2), nij, ni., n.j, n..)   
   comb <- comb[order(comb[, sortvar], decreasing = TRUE),]
   row.names(comb)<- seq(1:nrow(comb))
   return( list(comb=comb, ror=ror) )

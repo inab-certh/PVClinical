@@ -326,6 +326,8 @@ getfullquery <- reactive({
     v1 <- c(input$v1, input$v2, input$v3)
     t1 <- c(gett1(), gett2(), gett3() ) 
   }
+  v1[1]<-paste0(v1[1],'.exact')
+  v1[2]<-paste0(v1[2],'.exact')
   myurl <- buildURL(v1, t1, limit=1)
   mydf <- fda_fetch_p(session, myurl)
   out <- c(df=mydf, url=myurl)
@@ -745,6 +747,11 @@ output$applinks <- renderText({
 
 geturlquery <- observe({
    q <- parseQueryString(session$clientData$url_search)
+   # q<-NULL
+   # q$v1<-"patient.drug.openfda.generic_name"
+   # q$v2<-"patient.reaction.reactionmeddrapt"
+   # q$t1<-"Omeprazole"
+   # q$t2<-"Hypokalaemia"
    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
    

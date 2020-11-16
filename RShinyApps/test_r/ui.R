@@ -65,7 +65,6 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            #        )
                            ),
                   fluidRow(useShinyjs(),
-                           tags$head(tags$script(src="code.js")),
                            column(width=12, 
                                   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
                                   uiOutput("dtlocator"),
