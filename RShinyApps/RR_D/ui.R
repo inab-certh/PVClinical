@@ -44,7 +44,7 @@ getcurtab <- function() {
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(), 
-                    
+                  tags$head(tags$script(src="code.js")), 
                     column(width=12,bsAlert("nodata_rrd"),
                            # titlePanel("RR-Drug" ) 
                            ),
