@@ -49,6 +49,8 @@ from Bio import Entrez
 from mendeley import Mendeley
 
 
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
 def OpenFDAWorkspace(request, scenario_id=None):
     template = loader.get_template('app/OpenFDAWorkspace.html')
     scenario = {}
@@ -361,8 +363,13 @@ def ohdsi_workspace(request, scenario_id=None):
             res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
 
+    all_drugs_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All drugs cohort") or {}
+    all_conditions_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All conditions cohort") or {}
+
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
+        "de_id": all_drugs_coh.get("id"),
+        "co_id": all_conditions_coh.get("id"),
         "ir_id": ir_id,
         "char_id": char_id,
         "cp_id": cp_id,
@@ -598,6 +605,48 @@ def characterizations(request, sc_id, char_id, read_only=1):
     }
 
     return render(request, 'app/characterizations.html', context, status=status_code)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def drug_exposure(request):
+    """ View drug exposure of the whole population
+    :param request: request
+    :return: the drug exposure view (iframe)
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    de_url = "{}/#/datasources/{}/drug".format(settings.OHDSI_ATLAS, settings.OHDSI_CDM_NAME)
+
+    context = {
+        "de_url": de_url,
+        "title": _("Έκθεση σε φάρμακα")
+    }
+
+    return render(request, 'app/drug_exposure.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def condition_occurrence(request):
+    """ View conditions occurrences distribution on the whole population
+    :param request: request
+    :return: the condition occurrence view (iframe)
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    co_url = "{}/#/datasources/{}/condition".format(settings.OHDSI_ATLAS, settings.OHDSI_CDM_NAME)
+
+    context = {
+        "co_url": co_url,
+        "title": _("Εκδήλωση κατάστασης")
+    }
+
+    return render(request, 'app/condition_occurrence.html', context)
 
 
 @login_required()
