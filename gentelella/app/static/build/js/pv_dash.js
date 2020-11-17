@@ -10,4 +10,15 @@ $(function() {
     })
 
      $("[data-toggle='popover']").popover();
+
+    // $(".iframe-box iframe").hover(function () {
+    //     console.log("hover");
+    //
+    // });
+
+    // $(".fullscreen-btn").click(function (e) {
+    //     e.preventDefault();
+    //     console.log($(this).parent().parent().find("iframe"));
+    //     $(this).parent().parent().find("iframe").addClass("full-screen");
+    // });
 });

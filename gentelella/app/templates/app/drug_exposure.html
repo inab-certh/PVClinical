@@ -1,10 +1,6 @@
-{% extends 'app/base_site.html' %}
+{% extends 'app/data_source_views.html' %}
 {% load i18n %}
 {% load staticfiles %}
-{% load crispy_forms_tags %}
-{% load crispy_forms_field %}
-{% load custom_tags %}
-
 
 {% block javascripts %}
     {{ block.super }}
@@ -19,148 +15,13 @@
 {% endblock stylesheets %}
 
 {% block title %} {{title}} {% endblock %}
-
-{% block formcontent %}
-    {{ form|as_crispy_errors }}
-
-    <h1> {{ title }}</h1>
-
-    <div class="viewExplanation mt-3 mb-3">
-        {% blocktrans trimmed %}Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό
+{% block view_title %}{{ title }}{% endblock view_title %}
+{% block view_content_txt %}
+    {% blocktrans trimmed %}
+        Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό
         εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
         την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
         στο σύστημα, ως προς την έκθεση του στα διάφορα φάρμακα.
-        {% endblocktrans %}
-
-    <div class="mt-3">
-        <iframe allowfullscreen class="data-sources-view" src="{{ de_url }}"></iframe>
-    </div>
-
-<!--    <div class="iframe-cnt">-->
-<!--        <iframe id="irframe" src="{{ results_url}}"></iframe>-->
-<!--    </div>-->
-
-{% endblock %}
-
-{% block toolbarbuttons %}
-        {% if read_only == 1 %}
-        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
-            <button id="editFormBtn" class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editIRModal" type="button">
-                <i class="fa fa-edit"></i>
-                <span class="visible-lg">
-                    {% trans "Επεξεργασία" %}
-                </span>
-            </button>
-
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
-                    <i class="fa fa-bar-chart"></i>
-                    <span class="visible-lg">
-                        {% trans "Ανάλυση" %}
-                     </span>
-            </button>
-
-
-            <a class="btn btn-dark col-xs-4" type="button"
-                href="{% url 'ohdsi_workspace' sc_id %}">
-                <i class="fa fa-reply"></i>
-                <span class="visible-lg">
-                    {% trans "Επιστροφή" %}
-                </span>
-            </a>
-        </div>
-        {% else %}
-        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
-            <button id="irSaveBtn" class="btn btn-primary col-xs-4" type="submit">
-                <i class="fa fa-save"></i>
-                <span class="visible-sm">
-                    {% trans "Αποθήκευση" %}
-                </span>
-            </button>
-
-            <button id="irCancelBtn" class="btn btn-danger col-xs-4" type="button" data-dismiss="modal" data-target="#editIRModal">
-                    <i class="fa fa-close"></i>
-                    <span class="visible-sm">
-                        {% trans "Ακύρωση" %}
-                     </span>
-            </button>
-        </div>
-        {% endif %}
-
-
-{% trans "Επεξεργασία παραμέτρων ανάλυσης" as editIR_mod_title %}
-{% with editIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editIRModal" modal_title=editIR_mod_title modal_body=editIR_mod_body|safe %}
-{% endwith %}
-
-
-{% trans "Ανάλυση Ρυθμού Επίπτωσης" as analysisIR_mod_title %}
-{% trans " έως " as to_lex %}
-{% if form.add_study_window.value %}
-    {% trans "Χρονικό παράθυρο μελέτης: "|add:form.study_start_date.value|add:to_lex|add:form.study_end_date.value as study_window_lex %}
-{% else %}
-    {% trans "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!" as study_window_lex %}
-{% endif %}
-{% trans "Πληροφορίες για αναφορά ανάλυσης" as expl_info_title %}
-{% blocktrans asvar expl_info %}
-    <p>Το αποτέλεσμα της ανάλυσης που πραγματοποιήθηκε, εμφανίζεται με δύο διαφορετικές οπτικές απεικονίσεις,
-        πατώντας στο κουμπί <strong>Reports</strong>.</p>
-    <ul>
-        <li>
-            <p>Η πρώτη μορφή απεικόνισης γίνεται σε επίπεδο <strong>πίνακα</strong>, με τα αποτελέσματα που αφορούν τόσο
-                τα συγκεντρωτικά όσο και τα αναλυτικά αριθμητικά και στατιστικά στοιχεία των κριτηρίων που ορίστηκαν από
-                τον χρήστη, για την ανάλυση ρυθμού επίπτωσης.</p>
-            <p>
-                Τα στοιχεία αυτά <strong>αφορούν συγκεκριμένο χρονικό παράθυρο μελέτης, αν αυτό επιλέχθηκε,
-                διαφορετικά αφορούν τη συνολική περίοδο για την οποία υπάρχουν δεδομένα στο σύστημα</strong>.
-                Συγκεκριμένα τα προαναφερόμενα στοιχεία είναι τα ακόλουθα:
-                <ul>
-                    <li><strong>Persons/N</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο.</li>
-                    <li><strong>Cases</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο και στα οποία
-                        παρατηρείται η εκδήλωση συμβάντος.</li>
-                    <li><strong>Proportions [+|-] per 1k persons</strong>: Η αναλογία αριθμού ατόμων που πληρούν το
-                        κριτήριο και στα οποία παρατηρείται η εκδήλωση συμβάντος προς τον αριθμό των ατόμων που απλά
-                        πληρούν το κριτήριο, με αναγωγή σε χιλιάδα ατόμων.</li>
-                    <li><strong>Time at Risk (years)</strong>: Το μέγεθος "Time At Risk" είναι ένα μέτρο
-                        κινδύνου βάσει χρόνου. Συγκεκριμένα, δείχνει την αθροιστική περίοδο χρόνου, όπου δεν
-                        παρατηρήθηκε κάποιο συμβάν (από τα επιλεγμένα βάσει σεναρίου), στον πληθυσμό που πληροί το
-                        εκάστοτε κριτήριο.
-                    </li>
-                    <li><strong>Rate [+|-] per 1k years</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο
-                        και στα οποία παρατηρείται εκδήλωση κάποιου συμβάντος (από τα επιλεγμένα βάσει σεναρίου),
-                        προς το σχετικό Time at Risk, ανά χίλια έτη (<strong>[Cases/TaR]*1000</strong>).
-                    </li>
-                </ul>
-            </p>
-        </li>
-        <li>
-            <p>
-                Η δεύτερη μορφή απεικόνισης είναι ένα <strong>treemap γράφημα</strong>, όπου τα αποτελέσματα της
-                ανάλυσης, απεικονίζονται με τη μορφή ορθογωνίων. Η απεικόνιση αυτή παρέχει μια ιεραρχική προβολή των
-                δεδομένων και διευκολύνει να εντοπίστούν μοτίβα στην ανάλυση. Το γράφημα treemap εμφανίζει κατηγορίες
-                κατά χρώμα και εγγύτητα και μπορεί εύκολα να παρουσιάσει πολλά δεδομένα, κάτι που θα ήταν δύσκολο να
-                γίνει με άλλους τύπους γραφημάτων.
-            </p>
-            <p>
-                <strong>Η διέλευση πάνω από κάθε ορθογώνιο, οδηγεί στην αναγραφή λεπτομερειών για τη συγκεκριμένη ομαδοποίηση.</strong>
-                Οι λεπτομέρειες αυτές αφορούν το συνδυασμό κριτηρίων που πληρούνται, σε σχέση με τα κριτήρια που
-                ορίστηκαν για την συγκεκριμένη ανάλυση, καθώς και τα αντίστοιχα μεγέθη και στατιστικά όπως ο αριθμός των
-                σχετικών περιπτώσεων (εκδήλωσης συμβάντος), το Time at Risk, το πληθυσμιακό ποσοστό ανά χιλιετία και ο
-                συνολικός αριθμός των ατόμων της συγκεκριμένης ομάδας. <strong>Παράλληλα, επισημαίνονται στον σχετικό πίνακα
-                (βλ. πρώτη μορφή απεικόνισης), με κόκκινο χρώμα, τα κριτήρια τα οποία δεν πληρούνται για το συγκεκριμένο
-                ορθογώνιο/ομαδοποίηση</strong>.
-            </p>
-        </li>
-    </ul>
-
-{% endblocktrans %}
-{% with analysisIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:results_url|add:"'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe additional_info=study_window_lex help_info_title=expl_info_title help_info=expl_info %}
-{% endwith %}
-
-
-{% endblock %}
-
-
-
-
-
+    {% endblocktrans %}
+{% endblock view_content_txt %}
+{% block iframe_url %}"{{ de_url }}"{% endblock iframe_url %}
