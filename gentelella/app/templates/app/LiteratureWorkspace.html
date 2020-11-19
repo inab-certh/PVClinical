@@ -116,8 +116,12 @@
                             </div>
                         </div>
 
-
-
+                <div style="float: left; display: none; width: 300px;" class="input-group input-daterange">
+                    <input type="text" class="form-control" value="2012-04-05">
+                    <div class="input-group-addon">to</div>
+                    <input type="text" class="form-control" value="2012-04-19">
+                </div>
+                <div style="float: right">Total results: {{ results }}</div>
                 {% if records.items %}
                     <div class="tab-content">
 
@@ -430,6 +434,7 @@
                                      </ul>
 
                                 {% endif %}
+
                             {% endif %}
                         {% elif pages|length == 2 %}
                              <ul class="pagination justify-content-center mb-4 float-right">
@@ -1124,6 +1129,14 @@
                $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
            });
         });
+     </script>
+     <script>
+         $(document).ready(function() {
+             $('.input-daterange input').each(function() {
+                $(this).datepicker('setDate', new Date());
+            });
+         });
+
      </script>
 <!--     <script>-->
 <!--         $(document).ready(function() {-->

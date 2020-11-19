@@ -1005,7 +1005,7 @@ shinyServer(function(input, output, session) {
     # q$v1<-"patient.drug.openfda.generic_name"
     # q$v2<-"patient.reaction.reactionmeddrapt"
     # q$t1<-"Omeprazole"
-    # q$t2<-"Anaemia"
+    # q$t2<-"Hypokalaemia"
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
@@ -1303,15 +1303,7 @@ shinyServer(function(input, output, session) {
     t <- c( geteventvarname(), getexactdrugvarname() )
     totalurl <- buildURL(v, t,  count='', limit=1)
     totalreports <- fda_fetch_p( session, totalurl)
-    
-    #cocomitant results
-    string_split <- strsplit(totalurl,'&limit')
-    cocomquery <- '+AND+patient.drug.drugcharacterization:2'
-    cocomurl <- paste0(string_split[[1]][1],cocomquery,'&limit',string_split[[1]][2])
-    cocomitantreports <- fda_fetch_p( session, cocomurl)
-    
     total <- totalreports$meta$results$total
-    cocomtotal <- cocomitantreports$meta$results$total
     v <- c( '_exists_', getbestdrugvarname() )
     t <- c( geteventvarname(), getbestdrugname() )
     totaldrugurl <- buildURL( v, t, count='', limit=1)
@@ -1321,19 +1313,11 @@ shinyServer(function(input, output, session) {
       totaldrugurl <- buildURL( v= getdrugvarname(), t=getdrugname(), count='', limit=1)
       totaldrugreports <- fda_fetch_p( session, totaldrugurl)
     }
-    
-    #cocomitant drug results
-    string_split <- strsplit(totaldrugurl,'&limit')
-    dcocomquery <- '+AND+patient.drug.drugcharacterization:2'
-    dcocomurl <- paste0(string_split[[1]][1],dcocomquery,'&limit',string_split[[1]][2])
-    dcocomitantreports <- fda_fetch_p( session, dcocomurl) 
 
     totaldrug <- totaldrugreports$meta$results$total
-    dcocomtotal <- dcocomitantreports$meta$results$total
-    # browser()
+
     adjust <- total/totaldrug
     out <- list(total=total, totaldrug=totaldrug, adjust=adjust,
-                dcocomtotal = dcocomtotal, cocomtotal = cocomtotal,
                 totalurl=(totalurl), totaldrugurl=(totaldrugurl) )
   })
 
@@ -1882,8 +1866,16 @@ shinyServer(function(input, output, session) {
     v <- c('_exists_' , getexactvar1(), gettimevar() )
     t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
 
-    mylist <-  getcounts999( session, v= v, t= t, 
-                             count=getprrvarname(), exactrad = input$useexact,eventName=toupper(q$t2) )
+    #changes 19-11-2020
+    if (!is.null(q$t2))
+      mylist <-  getcounts999( session, v= v, t= t, 
+                               count=getprrvarname(), exactrad = input$useexact,eventName=toupper(q$t2) )
+    else
+      mylist <-  getcounts999( session, v= v, t= t, 
+                               count=getprrvarname(), exactrad = input$useexact )
+    #end of changes
+    
+    
     mydfAll <- mylist$mydf
     start <- getstart( session )
     last <- min(getlimit( session ) + start - 1, nrow(  mydfAll ) )
@@ -2028,16 +2020,8 @@ shinyServer(function(input, output, session) {
     v <- c( '_exists_', '_exists_', gettimevar() )
     t <- c( getprrvarname(), getbestvar1(), gettimerange() )
     totalurl <- buildURL(v, t,  count='', limit=1)
-    totalreports <- fda_fetch_p( session, totalurl, flag=NULL)
-    
-    #cocomitant results
-    string_split <- strsplit(totalurl,'&limit')
-    cocomquery <- '+AND+patient.drug.drugcharacterization:2'
-    cocomurl <- paste0(string_split[[1]][1],cocomquery,'&limit',string_split[[1]][2])
-    cocomitantreports <- fda_fetch_p( session, cocomurl, flag=NULL) 
-    
+    totalreports <- fda_fetch_p( session, totalurl, flag=NULL) 
     total <- totalreports$meta$results$total
-    cocomtotal <- cocomitantreports$meta$results$total
     v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
     t <- c( getbestvar1(), getprrvarname(), getbestterm1(), gettimerange() )
     totaldrugurl <- buildURL( v, t, count='', limit=1)
@@ -2050,37 +2034,31 @@ shinyServer(function(input, output, session) {
     #       totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag= paste( 'No Reports of Drug', getterm1( session ) ) )
     #       }
     
-    #cocomitant drug results
-    string_split <- strsplit(totaldrugurl,'&limit')
-    dcocomquery <- '+AND+patient.drug.drugcharacterization:2'
-    dcocomurl <- paste0(string_split[[1]][1],dcocomquery,'&limit',string_split[[1]][2])
-    dcocomitantreports <- fda_fetch_p( session, dcocomurl, flag=paste( 'No Reports for',
-                                                                       ifelse(getwhich()=='D', 'drug', 'event' ), getterm1( session ), '<br>' ) ) 
-    
-    
     totaldrug <- totaldrugreports$meta$results$total
-    dcocomtotal <- dcocomitantreports$meta$results$total
     
     adjust <- total/totaldrug
     out <- list(total=total, totaldrug=totaldrug, adjust=adjust, 
-                dcocomtotal = dcocomtotal, cocomtotal = cocomtotal,
                 totalurl=(totalurl), totaldrugurl=(totaldrugurl) )
   }) 
   
   #Calculate PRR and put in merged table
   getprr <- reactive({
-    q = geturlquery()
+    q<-geturlquery()
     print(session)
     #    totals <- gettotals()
-    # browser()
+    #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
-    # print(getdrugcounts())
-    # browser()
-    # print(comblist$comb[comblist$comb[,'term']==toupper(input$t2),])
-    # comb <- comblist$comb
-    comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
+
     
-    # browser()
+    #changes 19-11-2020
+    if (is.null(q$t2))
+      comb <- comblist$comb
+    else
+      comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
+    #end of changes
+    
+    
+
     # print(length(comb))
     # if (length(comb) < 1)
     if (nrow(comb) < 1)
@@ -2093,9 +2071,8 @@ shinyServer(function(input, output, session) {
     }
     
     row.names(comb) <- 1:nrow(comb)
-    # browser()
+    
     comb$ror <- round(comb$ror, 2)
-    alterComb <- comb
     #    ror <- comblist$ror
     if (getwhich() =='D'){ 
       names <- c('exactD', 'exactE','v1', 'term1','term2')
@@ -2150,7 +2127,7 @@ shinyServer(function(input, output, session) {
     #     comb <- comb[order(comb$prr, decreasing = TRUE),]
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
-    print(comb)
+    
     countname <- paste( i18n()$t("Counts for"), getterm1( session ))
     names(comb) <-  c( iname, colname,countname, 
                        'Counts for All Reports','PRR', 'RRR',  'a', 'b', 'c', 'd', 'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
@@ -2158,18 +2135,12 @@ shinyServer(function(input, output, session) {
     #                                 'Counts for All Reports', 'PRR',  'Dynamic PRR', 'Change Point Analysis', 'ROR', 'nij')
     keptcols <-  c( iname, colname, countname, 
                     'PRR', 'ROR')
-    alterCombNames<-c("term","count.x","prr","ror")
-    alterComb<-alterComb[, which(colnames(alterComb)%in%c("term","count.x","prr","ror", "cprr","cror"))]
-
-    newalterCombNames<-c("Preferred Term",paste0("Counts for ",toupper(q$t1)),"PRR", "ROR", "CPRR", "CROR")
-    colnames(alterComb)<-newalterCombNames
     
     # print(comb[,keptcols])
     # print(comb$ror)
     
-    # comb[, keptcols]
     #    mydf <- mydf[, c(1:4, 7,8,9)]
-    return( list( comb=alterComb, sourcedf=sourcedf, countname=countname, colname=colname) )
+    return( list( comb=comb[, keptcols], sourcedf=sourcedf, countname=countname, colname=colname) )
   })
   
   geteventtotalstable <- reactive({
@@ -2211,23 +2182,14 @@ shinyServer(function(input, output, session) {
         #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
         all_events2 <- fda_fetch_p( session, cururl, message= i )
         #    Sys.sleep( .25 )
-        
-        #Cocomitan search
-        string_split <- strsplit(cururl,'&limit')
-        ecocomquery <- '+AND+patient.drug.drugcharacterization:2'
-        ecocomurl <- paste0(string_split[[1]][1],ecocomquery,'&limit',string_split[[1]][2])
-        ecocomitantall <- fda_fetch_p( session, ecocomurl, message= i )
-        
         all[i, 'URL'] <- removekey( makelink( cururl ) )
         all[i, 'term'] <- realterms[[i]]
         curcount <- all_events2$meta$results$total
-        cocomcurcount <- ecocomitantall$meta$results$total
         if( is.null( curcount ) )
         {
           curcount <- NA
         }
         all[i, 'count'] <- curcount
-        all[i, 'diff'] <- curcount - cocomcurcount
       }
       return(all) 
     } )

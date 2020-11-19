@@ -81,7 +81,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
   }
-  # browser()
+#  browser()
   #Can we find exact name?
   if ( exactrad=='exact' )
   {
@@ -91,7 +91,6 @@ getcounts999 <- function( session, v, t, count, limit=1000,
                       count = count, limit=limit, db= db, addplus = FALSE  )
     mylist <- fda_fetch_p( session, myurl,  message = counter, flag=paste( 'No Reports for', t, '<br>' ) )
   
-    
   } else {
     #No, can we find close name?
     exact <- FALSE
@@ -100,36 +99,12 @@ getcounts999 <- function( session, v, t, count, limit=1000,
                       count=count,limit=limit, db= db)
     mylist <- fda_fetch_p( session, myurl,  message = counter, flag=paste( 'No Reports for', t, '<br>' ) )
   }
-  
-  #Cocomitan search
-  string_split <- strsplit(myurl,'&limit')
-  tcocomquery <- '+AND+patient.drug.drugcharacterization:2'
-  tcocomurl <- paste0(string_split[[1]][1],tcocomquery,'&limit',string_split[[1]][2])
-  tcocomitantlist <- fda_fetch_p( session, tcocomurl,  message = counter, flag=paste( 'No Reports for', t, '<br>' ) )
-  
-  
-  
   mydf <- mylist$result
-  myconcomitantdf <-tcocomitantlist$results
-  for (i in 1:nrow(mydf)){
-    
-    if (nrow(myconcomitantdf[myconcomitantdf$term==mydf$term[i],])>0){
-      
-      temp<-myconcomitantdf[myconcomitantdf$term==mydf$term[i],]
-      mydf$diff[i]<-mydf$count[i]-temp$count
-      
-      
-    }
-    else
-    {
-      mydf$diff[i]<-mydf$count[i]
-    }
-  }
   # browser()
   excludeddf <- data.frame()
   if( length(mydf)>0 )
     {
-    mydfsource <- mydf
+    mydfsource <- mylist$result
 #    browser()
     caretrow <- which(grepl('^', mydfsource[,'term'], fixed=TRUE) )
     if (length(caretrow) > 0)
@@ -157,13 +132,12 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     }
     if (length(excludeddf) > 0 )
       {
-      names(excludeddf) <- c( "Terms that contain '^',  '/',  ','  or ' ' ' can't be analyzed and are excluded", 'count')
+      names(excludeddf) <- c( "Terms that contain '^',  '/',  ','  or ' ' ' can't be analyzed and are excluded", 'count' )
       }
   } else {
     excludeddf <- mydf
   }
   max <- min(100, nrow(mydf) )
-  # browser()
   if (!is.null(eventName))
     mydf<-mydf[which(mydf$term==eventName),]
   else
