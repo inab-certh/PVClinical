@@ -160,9 +160,7 @@
 
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as editIR_mod_title %}
-{% with editIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editIRModal" modal_title=editIR_mod_title modal_body=editIR_mod_body|safe %}
-{% endwith %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="editIRModal" modal_title=editIR_mod_title modal_iframe_url=request.get_full_path|add:"/0" %}
 
 
 {% trans "Ανάλυση Ρυθμού Επίπτωσης" as analysisIR_mod_title %}
@@ -225,14 +223,7 @@
     </ul>
 
 {% endblocktrans %}
-{% with analysisIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:results_url|add:"'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe additional_info=study_window_lex help_info_title=expl_info_title help_info=expl_info %}
-{% endwith %}
 
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=study_window_lex help_info_title=expl_info_title help_info=expl_info %}
 
 {% endblock %}
-
-
-
-
-
