@@ -25,3 +25,10 @@
     {% endblocktrans %}
 {% endblock view_content_txt %}
 {% block iframe_url %}"{{ de_url }}"{% endblock iframe_url %}
+
+{% block modal_target %}"#drugExposureModal"{% endblock modal_target %}
+
+{% block modals %}
+    {% trans "Έκθεση σε Φάρμακα" as dsModalTitle %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="dataSourcesModal" modal_id="drugExposureModal" modal_title=dsModalTitle modal_iframe_url="http://83.212.101.101:8080/atlas/#/datasources/OHDSI-CDMV5-synpuf/drug" %}
+{% endblock modals %}

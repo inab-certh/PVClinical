@@ -9,13 +9,13 @@
     {% block head %}
       {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
         <!-- Meta, title, CSS, favicons, etc. -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
       {% endblock meta %}
 
       <title>PVClinical | {% block title %}{% endblock %}</title>
@@ -136,19 +136,22 @@
           </div>
         </div>
 
+        {% block modals %}
+
         {% trans "Επιβεβαίωση διαγραφής" as mod_title %}
-	    {% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
-	    {% trans "Επιβεβαίωση" as main_lbl%}
-	    {% trans "Ακύρωση" as dismiss_lbl %}
-	    {% trans "Εντάξει" as ok_lbl%}
-	    {% include 'app/modals/parametric_modal.html' with modal_type="\"confirmModal\"" modal_id="\"scDeleteConfirmModal\"" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
-	    {% include 'app/modals/parametric_modal.html' with modal_type="\"infoModal\"" modal_id="\"scDeleteInfoModal\"" dismiss_btn=ok_lbl %}
+        {% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
+        {% trans "Επιβεβαίωση" as main_lbl%}
+        {% trans "Ακύρωση" as dismiss_lbl %}
+        {% trans "Εντάξει" as ok_lbl%}
+        {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="scDeleteConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
+        {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="scDeleteInfoModal" dismiss_btn=ok_lbl %}
         {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
         {% trans 'Οκ' as mend_lbl %}
         {% with '<img src="/static/images/mendeleyicon.png">' as mend_title %}
-        {% include 'app/modals/mendeley_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
+        {% include 'app/modals/mendeley_modal.html' with modal_type="infoModal" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
         {% endwith %}
 
+        {% endblock modals %}
     {% endblock body %}
 
         {% block javascripts %}
