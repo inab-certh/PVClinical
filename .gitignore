@@ -33,3 +33,6 @@ gentelella/db_b.sqlite3
 gentelella/db.sqlite3
 gentelella/db_b (conflicted copy 2019-12-02 150546).sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
+RShinyApps/.RData
+RShinyApps/.Rhistory
+
