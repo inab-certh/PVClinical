@@ -58,7 +58,7 @@ tableout <- function( mydf, mynames=NULL, error)
     if (!is.null(mynames))
     {
       names(mydf) <- mynames
-      }
+    }
     return(mydf) 
   } else  {return(data.frame(Term=error, Count=0))}
 }
@@ -68,15 +68,15 @@ cloudout <- function(mydf, title)
   if ( is.data.frame(mydf) )
   {
     mydf <- mydf[ 1:min( 100, nrow(mydf) ), ]
- #   print(mydf)
     return( getcloud(mydf,  title = title ) )  
   } else  {
     return( data.frame( error) )
-  }  
+  }
+  
   
 }
 getcounts999 <- function( session, v, t, count, limit=1000, 
-                         exactrad='exact', counter=1, db= '/drug/' )
+                         exactrad='exact', counter=1, db= '/drug/',eventName=NULL )
   {
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
@@ -100,6 +100,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     mylist <- fda_fetch_p( session, myurl,  message = counter, flag=paste( 'No Reports for', t, '<br>' ) )
   }
   mydf <- mylist$result
+  # browser()
   excludeddf <- data.frame()
   if( length(mydf)>0 )
     {
@@ -137,5 +138,9 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     excludeddf <- mydf
   }
   max <- min(100, nrow(mydf) )
-  return( list(mydf=mydf[1:max,], myurl=myurl, exact = exact, excludeddf = excludeddf   ) )
+  if (!is.null(eventName))
+    mydf<-mydf[which(mydf$term==eventName),]
+  else
+    mydf<-mydf[1:max,]
+  return( list(mydf=mydf, myurl=myurl, exact = exact, excludeddf = excludeddf   ) )
   }
