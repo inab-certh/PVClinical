@@ -40,7 +40,7 @@ urlpatterns = [
     path("ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
     path("edit-scenario/ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
     path("paper_notes_view", views.paper_notes_view, name='paper_notes'),
-    path('social-auth/', include('social_django.urls', namespace='social')),
+    path('social-auth/', include('social_django.urls', namespace='social_mendeley')),
 
 
     # Permission denied

@@ -28,7 +28,7 @@ renderLimit <- function() {
 
 renderStart <- function() { 
   
-
+  
   ( htmlOutput('start') )
   
 }  
@@ -39,15 +39,15 @@ renderStart2 <- function() {
 }  
 
 getcurtab <- function() { 
-#  browser()
-#  print( textOutput('curtab') )
+  #  browser()
+  #  print( textOutput('curtab') )
   
-#  browser()
-   s<-( textOutput('limit') )
-   print(s)
-#   ss <- strsplit( as.character(s), ">" , fixed=TRUE)
-#   ss <- strsplit( as.character(ss[[1]][2]), "<" , fixed=TRUE)
-#   print(ss[[1]][1])
+  #  browser()
+  s<-( textOutput('limit') )
+  print(s)
+  #   ss <- strsplit( as.character(s), ">" , fixed=TRUE)
+  #   ss <- strsplit( as.character(ss[[1]][2]), "<" , fixed=TRUE)
+  #   print(ss[[1]][1])
   return(  "PRR and ROR Results" )
   
 }  
@@ -63,8 +63,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            column(id="xlsrow", width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", textOutput("downloadBtnLbl"))))),
                            # column(width=4,bsAlert("nodata_qvde"),uiOutput("infocpmeantext",style = "position:absolute;right:40px;z-index:10")
                            #        )
-                           ),
+                  ),
                   fluidRow(useShinyjs(),
+                           tags$head(tags$script(src="code.js")),
                            column(width=12, 
                                   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
                                   uiOutput("dtlocator"),
@@ -74,16 +75,16 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                             ),
                                             # withSpinner(plotOutput( 'cpmeanplot' ))
                                             withSpinner(plotlyOutput( 'cpmeanplot'))
-                                            )
+                                  )
                                   
                                   
                                   
-                                 # wellPanel(
-                                 #   plotOutput_p( 'cpmeanplot' ),
-                                 #   htmlOutput_p( 'cpmeantext' )
-                                 # )
+                                  # wellPanel(
+                                  #   plotOutput_p( 'cpmeanplot' ),
+                                  #   htmlOutput_p( 'cpmeantext' )
+                                  # )
                            ),
-                                  
+                           
                            hidden(
                              # numericInput_p('limit', 'Maximum number of event terms', 50,
                              #                1, 100, step=1, 
@@ -159,55 +160,55 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                              
                            )
                            
-                    
-                    
+                           
+                           
+                           
+                  ),
                   
+                  
+                  
+                  
+                  tabsetPanel(
+                    tabPanel(uiOutput("PRRRORResults"),
+                             wellPanel(
+                               style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
+                             ),
+                             DTOutput( 'prr2' )
                     ),
-                  
-                                  
-                                  
-                                  
-                                  tabsetPanel(
-                                    tabPanel(uiOutput("PRRRORResults"),
-                                             wellPanel(
-                                               style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
-                                             ),
-                                             DTOutput( 'prr2' )
-                                    ),
-                                    # tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
-                                    #          wellPanel(
-                                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
-                                    #          ),
-                                    #          withSpinner(plotlyOutput( 'cpvarplot' ) )
-                                    # ),
-                                    # tabPanel(uiOutput("BayesianChangepointAnalysis"),  
-                                    #          wellPanel(
-                                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
-                                    #          ),
-                                    #          withSpinner(plotlyOutput( 'cpbayesplot' ))
-                                    #          # verbatimTextOutput( 'cpbayestext' )
-                                    # ),
-                                    # tabPanel(uiOutput("ReportCountsbyDate"),  
-                                    #          wellPanel(
-                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
-                                    #          ),
-                                    #          withSpinner(plotlyOutput('queryplot'))
-                                    #          
-                                    # ),
-                                    # tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
-                                    #          wellPanel(
-                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
-                                    #          ),
-                                    #          withSpinner(dataTableOutput('coquery'))
-                                    # ),
-                                    # tabPanel(uiOutput("CountsForEventsInSelectedReports"),
-                                    #          wellPanel(
-                                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
-                                    #          ),
-                                    #          withSpinner(dataTableOutput('coqueryE'))
-                                    # ),
-                                    id='PRRRORPanel', selected = uiOutput("PRRRORResults")
-                                  )
-        )
-      )
+                    # tabPanel(uiOutput("ChangeinVarianceAnalysis"), 
+                    #          wellPanel(
+                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpvartext", style = "position:absolute;right:40px;z-index:10")
+                    #          ),
+                    #          withSpinner(plotlyOutput( 'cpvarplot' ) )
+                    # ),
+                    # tabPanel(uiOutput("BayesianChangepointAnalysis"),  
+                    #          wellPanel(
+                    #            style="background-color:white;height:60px;border:none",uiOutput("infocpbayestext", style = "position:absolute;right:40px;z-index:10")
+                    #          ),
+                    #          withSpinner(plotlyOutput( 'cpbayesplot' ))
+                    #          # verbatimTextOutput( 'cpbayestext' )
+                    # ),
+                    # tabPanel(uiOutput("ReportCountsbyDate"),  
+                    #          wellPanel(
+                    #            style="background-color:white;height:60px;border:none",uiOutput("infoReportCountsbyDate", style = "position:absolute;right:40px;z-index:10")
+                    #          ),
+                    #          withSpinner(plotlyOutput('queryplot'))
+                    #          
+                    # ),
+                    # tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
+                    #          wellPanel(
+                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                    #          ),
+                    #          withSpinner(dataTableOutput('coquery'))
+                    # ),
+                    # tabPanel(uiOutput("CountsForEventsInSelectedReports"),
+                    #          wellPanel(
+                    #            style="background-color:white;height:60px;border:none",uiOutput("infoCountsForEventsInSelectedReports", style = "position:absolute;right:40px;z-index:10")
+                    #          ),
+                    #          withSpinner(dataTableOutput('coqueryE'))
+                    # ),
+                    id='PRRRORPanel', selected = uiOutput("PRRRORResults")
+                  )
+)
+)
 
