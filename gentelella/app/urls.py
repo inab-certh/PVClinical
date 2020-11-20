@@ -15,6 +15,8 @@ urlpatterns = [
     # path('dashboard', RedirectView.as_view(url='', permanent=False), name='index'),
     path('add-scenario', views.add_edit_scenario, name='add_scenario'),
     path('edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='edit_scenario'),
+    path('drug-exposure', views.drug_exposure, name='drug_exposure'),
+    path('condition-occurrence', views.condition_occurrence, name='condition_occurrence'),
     path('ir', views.incidence_rates, name='add_ir'),
     path('ir/<int:sc_id>/<int:ir_id>', views.incidence_rates, name='edit_ir'),
     path('ir/<int:sc_id>/<int:ir_id>/<int:read_only>', views.incidence_rates, name='edit_ir'),

@@ -7,7 +7,7 @@ $(function() {
             $("#topPVLogo").addClass("hidden-md hidden-lg").removeClass("ml-5");
             $(".navbar.nav_title").show();
         }
-    })
+    });
 
      $("[data-toggle='popover']").popover();
 });

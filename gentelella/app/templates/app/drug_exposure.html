@@ -1,0 +1,34 @@
+{% extends 'app/data_source_views.html' %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block javascripts %}
+    {{ block.super }}
+
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+<!--    <script src='{% static "build/js/ir.js" %}'></script>-->
+{% endblock %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} {{title}} {% endblock %}
+{% block view_title %}{{ title }}{% endblock view_title %}
+{% block view_content_txt %}
+    {% blocktrans trimmed %}
+        Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό
+        εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
+        την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
+        στο σύστημα, ως προς την έκθεση του στα διάφορα φάρμακα.
+    {% endblocktrans %}
+{% endblock view_content_txt %}
+{% block iframe_url %}"{{ de_url }}"{% endblock iframe_url %}
+
+{% block modal_target %}"#drugExposureModal"{% endblock modal_target %}
+
+{% block modals %}
+    {% trans "Έκθεση σε Φάρμακα" as dsModalTitle %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="dataSourcesModal" modal_id="drugExposureModal" modal_title=dsModalTitle modal_iframe_url="http://83.212.101.101:8080/atlas/#/datasources/OHDSI-CDMV5-synpuf/drug" %}
+{% endblock modals %}
