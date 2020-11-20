@@ -76,16 +76,16 @@ shinyServer(function(input, output, session) {
     # }
     langs = list(gr="el", en="en")
     
-    removeUI(
-      selector = "#daterange",
-      multiple = FALSE
-    )
-    
-    insertUI(
-      selector = "#dtlocator",
-      where = "beforeBegin",
-      ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
-    )
+    # removeUI(
+    #   selector = "#daterange",
+    #   multiple = FALSE
+    # )
+    # 
+    # insertUI(
+    #   selector = "#dtlocator",
+    #   where = "beforeBegin",
+    #   ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+    # )
     
   })
   #Getters
@@ -1866,8 +1866,16 @@ shinyServer(function(input, output, session) {
     v <- c('_exists_' , getexactvar1(), gettimevar() )
     t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
 
-    mylist <-  getcounts999( session, v= v, t= t, 
-                             count=getprrvarname(), exactrad = input$useexact,eventName=toupper(q$t2) )
+    #changes 19-11-2020
+    if (!is.null(q$t2))
+      mylist <-  getcounts999( session, v= v, t= t, 
+                               count=getprrvarname(), exactrad = input$useexact,eventName=toupper(q$t2) )
+    else
+      mylist <-  getcounts999( session, v= v, t= t, 
+                               count=getprrvarname(), exactrad = input$useexact )
+    #end of changes
+    
+    
     mydfAll <- mylist$mydf
     start <- getstart( session )
     last <- min(getlimit( session ) + start - 1, nrow(  mydfAll ) )
@@ -2035,15 +2043,21 @@ shinyServer(function(input, output, session) {
   
   #Calculate PRR and put in merged table
   getprr <- reactive({
-    geturlquery()
+    q<-geturlquery()
     print(session)
     #    totals <- gettotals()
     #    browser()
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
-    # print(getdrugcounts())
-    # print(comblist$comb[comblist$comb[,'term']==toupper(input$t2),])
-    # comb <- comblist$comb
-    comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
+
+    
+    #changes 19-11-2020
+    if (is.null(q$t2))
+      comb <- comblist$comb
+    else
+      comb <- comblist$comb[comblist$comb[,'term']==toupper(input$t2),]
+    #end of changes
+    
+    
 
     # print(length(comb))
     # if (length(comb) < 1)
