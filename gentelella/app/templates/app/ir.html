@@ -36,6 +36,14 @@
         {% blocktrans trimmed %}Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά
         τη διάρκεια συγκεκριμένης χρονικής περιόδου.{% endblocktrans %}</div>
 
+     <a class="btn btn-dark col-xs-4" type="button"
+        href="{% url 'keep_notes' sc_id=sc_id ws_id="OHDSI" wsview_id='ir' %}">
+        <i class="fa fa-reply"></i>
+        <span class="visible-lg">
+            {% trans "Σημειώσεις" %}
+        </span>
+    </a>
+
     <div class="mt-3">
         <div class="row">
             <div id="ageCrit" name="ageCrit" >{{ form.age_crit|as_crispy_field }}</div>

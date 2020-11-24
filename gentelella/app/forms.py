@@ -6,13 +6,14 @@ from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
-from app import ohdsi_wrappers
+from tinymce.widgets import TinyMCE
 
+from app import ohdsi_wrappers
 from app.models import Drug
 from app.models import Condition
+from app.models import Notes
 from app.models import Scenario
 from app.models import Status
-
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
 
@@ -293,3 +294,24 @@ class PathwaysForm(forms.Form):
             ok = ok[0].lower() + ok[1:]
             self.initial[k] = self.options.get(ok)
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+
+
+class TinyMCEWidget(TinyMCE):
+    def use_required_attribute(self, *args):
+        return False
+
+
+class NotesForm(forms.ModelForm):
+    content = forms.CharField(
+        label=_("Σημειώσεις"),
+        required=False,
+        widget=TinyMCE(
+            attrs={'required': False, 'cols': 30, 'rows': 10}
+        )
+    )
+
+
+    class Meta:
+        model = Notes
+        fields = ['content']
+
