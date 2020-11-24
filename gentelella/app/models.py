@@ -10,6 +10,8 @@ from django.core.validators import MinValueValidator
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
+from tinymce.models import HTMLField
+
 from app.helper_modules import choices_max_length
 
 
@@ -184,3 +186,20 @@ class PubMed(models.Model):
     relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
     notes = models.TextField(null=True, blank=True)
     # created = models.DateTimeField(auto_now_add=True)
+
+
+class Notes(models.Model):
+    """ Notes for users for the various workspaces of a scenario
+    """
+    content = HTMLField(blank=True, default="")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
+    workspace = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
+                                                             MaxValueValidator(5)])
+    wsview = models.CharField(max_length=32, default='')  # Workspace specific view
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "scenario", "workspace", "wsview"],
+                                    name="unique_condition")
+        ]

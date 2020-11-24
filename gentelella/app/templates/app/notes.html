@@ -1,0 +1,64 @@
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {% block meta %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      {% endblock meta %}
+      <link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
+      <link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
+      <link href='{% static "vendors/bootstrap/dist/css/bootstrap.min.css" %}' rel="stylesheet">
+      <link href='{% static "build/css/notes.css" %}' rel="stylesheet">
+      {{ form.media }}
+    {% endblock head %}
+
+    <title>PVClinical | {{title}}</title>
+  </head>
+
+  <body>
+    <form action="" method="post" class="ma-form col-xs-10  col-xs-offset-1 mt-3"  id="first-section" autocomplete="off" novalidate>
+      {% csrf_token %}
+
+      {% if messages %}
+          {% for message in messages %}
+              <div id="message_container" {% if message.tags %} class="mt-5 {{ message.tags }}" {% endif %}>
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+
+      {{ form|crispy }}
+        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
+            <button id="notesSaveBtn" class="btn btn-primary col-xs-4" type="submit">
+              <i class="fa fa-save"></i>
+                <span class="visible-sm visible-lg visible-md">
+                  {% trans "Αποθήκευση" %}
+                </span>
+            </button>
+
+            <button id="irCancelBtn" class="btn btn-danger col-xs-4" type="button" data-dismiss="modal" data-target="#editIRModal">
+              <i class="fa fa-close"></i>
+              <span class="visible-sm visible-lg visible-md">
+                {% trans "Ακύρωση" %}
+              </span>
+            </button>
+        </div>
+    </form>
+
+  </body>
+
+</html>
+
