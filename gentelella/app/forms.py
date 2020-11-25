@@ -303,7 +303,7 @@ class TinyMCEWidget(TinyMCE):
 
 class NotesForm(forms.ModelForm):
     content = forms.CharField(
-        label=_("Σημειώσεις"),
+        label="",
         required=False,
         widget=TinyMCE(
             attrs={'required': False, 'cols': 30, 'rows': 10}

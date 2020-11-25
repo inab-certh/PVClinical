@@ -26,6 +26,20 @@
 
 {% block title %} {{title}} {% endblock %}
 
+{% block sliding_toolbar %}
+    {% if read_only == 1 %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=sc_id ws_id='OHDSI' wsview_id='ir' %}", data-id="ir_notes_OHDSI_{{ sc_id }}">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+
+    {% endif %}
+{% endblock %}
+
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
@@ -35,14 +49,6 @@
     <div class="viewExplanation mt-3 mb-3">
         {% blocktrans trimmed %}Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά
         τη διάρκεια συγκεκριμένης χρονικής περιόδου.{% endblocktrans %}</div>
-
-     <a class="btn btn-dark col-xs-4" type="button"
-        href="{% url 'keep_notes' sc_id=sc_id ws_id="OHDSI" wsview_id='ir' %}">
-        <i class="fa fa-reply"></i>
-        <span class="visible-lg">
-            {% trans "Σημειώσεις" %}
-        </span>
-    </a>
 
     <div class="mt-3">
         <div class="row">

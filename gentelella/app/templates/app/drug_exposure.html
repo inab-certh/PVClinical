@@ -15,6 +15,17 @@
 {% endblock stylesheets %}
 
 {% block title %} {{title}} {% endblock %}
+{% block sliding_toolbar %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' ws_id='OHDSI' wsview_id='de' %}", data-id="de_notes_OHDSI">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+{% endblock %}
+
 {% block view_title %}{{ title }}{% endblock view_title %}
 {% block view_content_txt %}
     {% blocktrans trimmed %}
