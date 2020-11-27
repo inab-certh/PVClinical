@@ -145,6 +145,10 @@
         {% with '<img src="/static/images/mendeleyicon.png">' as mend_title %}
         {% include 'app/modals/mendeley_modal.html' with modal_type="\"infoModal\"" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
         {% endwith %}
+        {% trans 'Cancel' as date_lbl %}
+        {% with 'Update dates' as date_title %}
+        {% include 'app/modals/date_modal.html' with modal_type="\"infoModal\"" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
+        {% endwith %}
 
 
 
@@ -215,6 +219,7 @@
         <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.el.min.js" %}'></script>
 
         <script src='{% static "build/js/pv_dash.js" %}'></script>
+
 
         <!-- Convert fields with 'datepicker' class to bootstrap's  datepicker input type -->
         <script type="text/javascript" src='{% static "build/js/datepickerconv.js" %}'></script>

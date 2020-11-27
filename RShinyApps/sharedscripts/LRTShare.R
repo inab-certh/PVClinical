@@ -149,6 +149,7 @@ calcLRTstats <- function(totals, combe, combr=NULL, allevents)
   #Total events
   n.. <- sum(allevents)
   
+  # browser()
   
   pi. <- ni./n..
   a <- nij
