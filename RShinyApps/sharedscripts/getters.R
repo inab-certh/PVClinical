@@ -137,7 +137,9 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   } else {
     excludeddf <- mydf
   }
-  max <- min(100, nrow(mydf) )
+  # max <- min(100, nrow(mydf) )
+  max <- nrow(mydf)
+  # max <- min(900, nrow(mydf) )
   if (!is.null(eventName))
     mydf<-mydf[which(mydf$term==eventName),]
   else

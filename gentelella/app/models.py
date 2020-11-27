@@ -175,7 +175,7 @@ class PubMed(models.Model):
     """
     CHOICES = [(True, 'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    pid = models.CharField(max_length=70, blank=False, default='', primary_key=True)
+    pid = models.CharField(max_length=70, blank=False, default='')
     title = models.CharField(max_length=500, blank=False, default='')
     pubdate = models.CharField(max_length=400, blank=False, default='')
     abstract = models.TextField(null=True, blank=True)
@@ -183,4 +183,10 @@ class PubMed(models.Model):
     url = models.CharField(max_length=100, blank=False, default='')
     relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
     notes = models.TextField(null=True, blank=True)
+    scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
     # created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["pid", "user", "scenario_id"], name="unique_article")
+        ]

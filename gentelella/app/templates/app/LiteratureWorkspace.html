@@ -115,12 +115,22 @@
                                 </div>
                             </div>
                         </div>
+                {% if dates|length > 0 %}
+                        <div style="float: left; width: 300px; pointer-events: none;" class="input-group in-daterange">
+                            <input type="text" class="form-control" value='{{ dates.0 }}'>
+                            <div class="input-group-addon">to</div>
+                            <input type="text" class="form-control" value='{{ dates.1 }}'>
+                        </div>
+                 {% else %}
+                         <div style="float: left; width: 300px; pointer-events: none;" class="input-group input-daterange">
+                            <input type="text" class="form-control" value="2012-04-05">
+                            <div class="input-group-addon">to</div>
+                            <input type="text" class="form-control" value="2012-04-19">
+                        </div>
+                {% endif %}
 
-                <div style="float: left; display: none; width: 300px;" class="input-group input-daterange">
-                    <input type="text" class="form-control" value="2012-04-05">
-                    <div class="input-group-addon">to</div>
-                    <input type="text" class="form-control" value="2012-04-19">
-                </div>
+                 <button style="height: 33px" class="glyphicon glyphicon-calendar" id="dateUpdate" data-target="#dateModal"></button>
+                 <div style="display:none;" id="scenario_id">{{ scenario.id }}</div>
                 <div style="float: right">Total results: {{ results }}</div>
                 {% if records.items %}
                     <div class="tab-content">
@@ -373,7 +383,7 @@
 
                                             </tbody>
                                           </table>
-
+                    {% if dates|length == 0 %}
                         {% if pages|length > 3 %}
                             {% if pages|length > page_id %}
                                  {% if page_id > 1 %}
@@ -383,13 +393,13 @@
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }} '>{{ page_id }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }} '>{{ page_id|add:1 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }} '>{{ page_id|add:2 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
                                             </li>
                                              <li class="page-item">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
@@ -403,10 +413,10 @@
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }} '>{{ page_id|add:1 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }} '>{{ page_id|add:2 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
                                             </li>
                                              <li class="page-item disabled">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
@@ -420,13 +430,13 @@
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }} '>{{ page_id }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }} '>{{ page_id|add:1 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }} '>{{ page_id|add:2 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
                                             </li>
                                              <li class="page-item">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
@@ -440,10 +450,10 @@
                              <ul class="pagination justify-content-center mb-4 float-right">
 
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }} '>{{ page_id }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }} '>{{ page_id|add:1 }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
                                             </li>
                                             <li class="page-item disabled">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
@@ -455,7 +465,7 @@
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
                                             </li>
                                             <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }} '>{{ page_id }}</a>
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
                                             <li class="page-item disabled">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
@@ -463,10 +473,106 @@
                                      </ul>
                         {% endif %}
 
-                                    {% else %}
-                                         <p>{% trans 'Δεν υπάρχουν αποτελέσματα' %}</p>
-                                    {% endif %}
-                      </div>
+
+
+                    {% endif %}
+                  {% if dates|length > 0 %}
+                    {% if pages|length > 3 %}
+                        {% if pages|length > page_id %}
+                             {% if page_id > 1 %}
+
+                                    <ul class="pagination justify-content-center mb-4" >
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
+                                        </li>
+                                         <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                        </ul>
+                            {% elif page_id == pages|length %}
+
+                                <ul class="pagination justify-content-center mb-4 float-right">
+
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
+                                        </li>
+                                         <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+
+                            {% else %}
+
+                                <ul class="pagination justify-content-center mb-4 float-right">
+                                        <li class="page-item disabled">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
+                                        </li>
+                                         <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+
+                            {% endif %}
+
+                        {% endif %}
+                    {% elif pages|length == 2 %}
+                         <ul class="pagination justify-content-center mb-4 float-right">
+
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+                    {% else %}
+                                <ul class="pagination justify-content-center mb-4 float-right">
+                                        <li class="page-item disabled">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+                    {% endif %}
+
+
+
+                {% endif %}
+               {% else %}
+                     <p>{% trans 'Δεν υπάρχουν αποτελέσματα' %}</p>
+                {% endif %}
+                        </div>
                     </div>
                 </div>
            </div>
@@ -477,6 +583,7 @@
     {{ block.super }}
     <!-- jQuery custom content scroller -->
    <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+     <script src="/static/build/js/pv_literature.js"></script>
     <script>
         var language = $('#curLang').attr('data-lang');
         var lang='gr'
@@ -1086,15 +1193,17 @@
             var url = $("a[name^='url_"+loop_it+"']").attr("href");
             var abstract = $("p[name^='abstract_"+loop_it+"']").text();
             var notes = $("textarea[name^='notes_"+loop_it+"']").val();
-            console.log(notes);
             var pubmeddate = $("span[name^='pubdate_"+loop_it+"']").text();
             var authors = $("td[name^='author_"+loop_it+"']").text();
             var med = $("td[name^='med_"+loop_it+"']").text();
+            var scenario_id = $("#scenario_id").text();
+            
 
 
             $.ajax({
                 url: '{% url "save_pubmed_input" %}',
                 data: {
+                  'scenario_id': scenario_id,
                   'title': title,
                   'pubmeddate' : pubmeddate,
                   'relevance' : relevance,
@@ -1133,48 +1242,17 @@
      <script>
          $(document).ready(function() {
              $('.input-daterange input').each(function() {
+                $(this).datepicker({
+                    format: "yyyy",
+                    viewMode: "years",
+                    minViewMode: "years"
+                });
                 $(this).datepicker('setDate', new Date());
             });
          });
 
      </script>
-<!--     <script>-->
-<!--         $(document).ready(function() {-->
-<!--           var conditions =  $('.conditionchkBox:checked').map(function() {-->
-<!--                return $(this).val();-->
-<!--            }).get();-->
-<!--           var drugs = $('.drugchkBox:checked').map(function() {-->
-<!--                    return $(this).val();-->
-<!--                }).get();-->
-<!--           if (conditions == []) {-->
-<!--                $(".pagination").hide();-->
-<!--           }-->
-<!--            $(".drugchkBox").change(function(){-->
-<!--                var conditions =  $('.conditionchkBox:checked').map(function() {-->
-<!--                    return $(this).val();-->
-<!--                }).get();-->
-<!--               var drugs = $('.drugchkBox:checked').map(function() {-->
-<!--                        return $(this).val();-->
-<!--                    }).get();-->
-<!--               if (conditions == []) {-->
-<!--                    $(".pagination").hide();-->
-<!--               }-->
-<!--                });-->
-<!--            $(".conditionchkBox").change(function(){-->
-<!--                var conditions =  $('.conditionchkBox:checked').map(function() {-->
-<!--                    return $(this).val();-->
-<!--                }).get();-->
-<!--               var drugs = $('.drugchkBox:checked').map(function() {-->
-<!--                        return $(this).val();-->
-<!--                    }).get();-->
-<!--               console.log(conditions[1]);-->
-<!--               if (conditions.length == 1) {-->
-<!--                    $(".pagination").hide();-->
-<!--               }-->
-<!--                });-->
-<!--            });-->
 
-<!--     </script>-->
 
 
 {% endblock javascripts %}
