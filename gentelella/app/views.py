@@ -1080,8 +1080,6 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
                      wsview=wsview_id)
 
     if request.method == 'POST':
-        print(nobj)
-        print(nobj.content)
         notes_form = NotesForm(request.POST, instance=nobj, label_suffix='')
         # sc_id = sc_id or request.POST.get("sc_id")
 
@@ -1101,7 +1099,7 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
             messages.success(
                 request,
                 _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
-            return HttpResponseRedirect(reverse('keep_notes', args=(sc_id, ws_id, wsview_id)))
+            return HttpResponseRedirect(reverse('keep_notes', args=tuple(filter(None,(sc_id, ws_id, wsview_id)))))
 
         else:
             messages.error(
