@@ -44,7 +44,8 @@ urlpatterns = [
     # path("notes/<int:scenario_id>/<int:workspace_id>", views.keep_notes, name='keep_notes'),
     path("notes/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
     path("notes/<int:sc_id>/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
-    path('tinymce/', include('tinymce.urls')),
+    # path('tinymce/', include('tinymce.urls')),
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

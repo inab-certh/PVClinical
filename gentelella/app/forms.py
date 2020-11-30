@@ -6,7 +6,8 @@ from django import forms
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
-from tinymce.widgets import TinyMCE
+from ckeditor.widgets import CKEditorWidget
+# from tinymce.widgets import TinyMCE
 
 from app import ohdsi_wrappers
 from app.models import Drug
@@ -296,19 +297,22 @@ class PathwaysForm(forms.Form):
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
 
 
-class TinyMCEWidget(TinyMCE):
-    def use_required_attribute(self, *args):
-        return False
+# class TinyMCEWidget(TinyMCE):
+#     def use_required_attribute(self, *args):
+#         return False
 
 
 class NotesForm(forms.ModelForm):
-    content = forms.CharField(
-        label="",
-        required=False,
-        widget=TinyMCE(
-            attrs={'required': False, 'cols': 30, 'rows': 10}
-        )
-    )
+    content = forms.CharField(label="", required=False,
+                              widget=CKEditorWidget(attrs={'required': False,}))
+
+    # content = forms.CharField(
+    #     label="",
+    #     required=False,
+    #     widget=TinyMCE(
+    #         attrs={'required': False, 'cols': 30, 'rows': 10}
+    #     )
+    # )
 
 
     class Meta:
