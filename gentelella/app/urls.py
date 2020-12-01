@@ -41,7 +41,11 @@ urlpatterns = [
     path("edit-scenario/ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
     path("paper_notes_view", views.paper_notes_view, name='paper_notes'),
     path('social-auth/', include('social_django.urls', namespace='social_mendeley')),
-
+    # path("notes/<int:scenario_id>/<int:workspace_id>", views.keep_notes, name='keep_notes'),
+    path("notes/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
+    path("notes/<int:sc_id>/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
+    # path('tinymce/', include('tinymce.urls')),
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

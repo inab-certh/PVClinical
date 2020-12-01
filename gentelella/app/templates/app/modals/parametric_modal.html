@@ -18,11 +18,11 @@
                 {% endif %}
 
                 {{ modal_body }}
-                {% if modal_iframe_url %}
+                {% if modal_iframe_url or modal_type == 'notesModal' %}
                     {% if modal_type == 'dataSourcesModal' %}
                         <iframe src="" data-src={{modal_iframe_url}} class="modalIframe" allowfullscreen>
                     {% else %}
-                        <iframe src={{modal_iframe_url}} class="modalIframe" allowfullscreen>
+                        <iframe src="{{modal_iframe_url}}" class="modalIframe" allowfullscreen>
                     {% endif %}
                         {% trans "Ο περιηγητής σας δεν υποστηρίζει πλαίσια (iframes). Για να δείτε αυτήν τη σελίδα, χρησιμοποιήστε κάποιο κατάλληλο πρόγραμμα περιήγησης." %}
                     </iframe>
