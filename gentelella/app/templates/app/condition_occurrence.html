@@ -16,6 +16,16 @@
 
 {% block title %} {{title}} {% endblock %}
 {% block view_title %}{{ title }}{% endblock view_title %}
+{% block sliding_toolbar %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' ws_id='OHDSI' wsview_id='co' %}", data-id="co_notes_OHDSI">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+{% endblock %}
 {% block view_content_txt %}
     {% blocktrans trimmed %}
         Η λειτουργικότητα <strong>Εκδήλωση Κατάστασης</strong>, αποτελεί ένα βοηθητικό
