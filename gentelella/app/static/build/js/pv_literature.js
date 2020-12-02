@@ -26,3 +26,22 @@ $(function () {
                 });
         });
     });
+
+$(function () {
+        $("#dateUpdate").click(function () {
+            $('#dateModal').modal('show');
+        });
+    });
+
+$(function () {
+        $("#updatebtn").click(function () {
+            console.log("Link starting");
+            var first = $('#firstDate').val();
+            console.log(first)
+            var last = $('#lastDate').val();
+            console.log(last)
+            var scenario_id = $("#scenario_id").text();
+            window.open('/LiteratureWorkspace/' + parseInt(scenario_id) +'/' + parseInt(first) +'/' + parseInt(last), '_self');
+
+        });
+    });

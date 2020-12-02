@@ -33,7 +33,6 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
   fluidRow(useShinyjs(), 
            column(width=12,bsAlert("nodata_lrtest"))),
   fluidRow(id="mainrow", useShinyjs(), 
-           tags$head(tags$script(src="code.js")),
            column(width=12,
                   # titlePanel(uiOutput("LRTSignalAnalysisforaDrug") ),                           
                   
