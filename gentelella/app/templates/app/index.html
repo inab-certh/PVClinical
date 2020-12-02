@@ -109,6 +109,15 @@
                         <table>
                           <tr>
                             <td>
+                              <a href="{% url 'ohdsi_workspace' scenario.id %}">
+                                <!--<i class="fa fa-eye"></i>-->
+                                <!--<span class="badge">-->
+                                  <img class="img-icon" src="{% static 'images/ohdsi.png' %}">
+                                <!--</span>-->
+
+                              </a>
+                            </td>
+                            <td>
                               <a href="{% url 'OpenFDAWorkspace' scenario.id %}">
                                 <!--<i class="fa fa-eye"></i>-->
 
@@ -120,15 +129,6 @@
                                 <!--<i class="fa fa-eye"></i>-->
 
                                   <img class="img-icon" name="pubmed_image_{{ scenario.id }}" src="{% static 'images/PubMed.png' %}">
-                              </a>
-                            </td>
-                            <td>
-                              <a href="{% url 'ohdsi_workspace' scenario.id %}">
-                                <!--<i class="fa fa-eye"></i>-->
-                                <!--<span class="badge">-->
-                                  <img class="img-icon" src="{% static 'images/ohdsi.png' %}">
-                                <!--</span>-->
-
                               </a>
                             </td>
                           </tr>
@@ -867,40 +867,6 @@
 
 
 <script src="/static/build/js/pv_literature.js"></script>
-
-
-<script>
-  $(document).ready(function () {
-
-
-    $("img[name^='pubmed_image_']").click(function () {
-            console.log("Link starting");
-            // scenario_id = $(".delete-sc-btn").data("scid");
-            var scenario_id = $(this).attr('name').replace("pubmed_image_", "");
-            console.log(scenario_id);
-            $.ajax({
-                url: 'ajax/mendeley_login',
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.logged_in === true) {
-
-                        window.open('/LiteratureWorkspace/' + parseInt(scenario_id), '_self');
-
-                    } else {
-
-                        $('#mendeleyModal').modal('show');
-                    }
-
-
-                },
-             error: function (data) {
-                console.log("error");
-             }
-                });
-        });
-  });
-</script>
 
   <!--&lt;!&ndash; Chart.js &ndash;&gt;-->
   <!--<script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>-->

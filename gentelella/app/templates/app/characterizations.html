@@ -26,6 +26,21 @@
 
 {% block title %} {{title}} {% endblock %}
 
+{% block sliding_toolbar %}
+    {% if read_only == 1 %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=sc_id ws_id='OHDSI' wsview_id='char' %}", data-id="char_notes_OHDSI_{{ sc_id }}">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+
+    {% endif %}
+{% endblock %}
+
+
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
@@ -117,16 +132,11 @@
 
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as edit_char_mod_title %}
-{% with edit_char_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editCharModal" modal_title=edit_char_mod_title modal_body=edit_char_mod_body|safe %}
-{% endwith %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="editCharModal" modal_title=edit_char_mod_title modal_iframe_url=request.get_full_path|add:"/0" %}
 
 
 {% trans "Ανάλυση Χαρακτηρισμού Πληθυσμού" as analysis_char_mod_title %}
-{% with analysis_char_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:results_url|add:"'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisCharModal" modal_title=analysis_char_mod_title modal_body=analysis_char_mod_body|safe %}
-{% endwith %}
-
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCharModal" modal_title=analysis_char_mod_title modal_iframe_url=results_url %}
 
 {% endblock %}
 

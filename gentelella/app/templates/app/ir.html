@@ -26,6 +26,20 @@
 
 {% block title %} {{title}} {% endblock %}
 
+{% block sliding_toolbar %}
+    {% if read_only == 1 %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=sc_id ws_id='OHDSI' wsview_id='ir' %}", data-id="ir_notes_OHDSI_{{ sc_id }}">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+
+    {% endif %}
+{% endblock %}
+
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
@@ -160,9 +174,7 @@
 
 
 {% trans "Επεξεργασία παραμέτρων ανάλυσης" as editIR_mod_title %}
-{% with editIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:request.get_full_path|add:"/0'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="editIRModal" modal_title=editIR_mod_title modal_body=editIR_mod_body|safe %}
-{% endwith %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="editIRModal" modal_title=editIR_mod_title modal_iframe_url=request.get_full_path|add:"/0" %}
 
 
 {% trans "Ανάλυση Ρυθμού Επίπτωσης" as analysisIR_mod_title %}
@@ -172,14 +184,60 @@
 {% else %}
     {% trans "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!" as study_window_lex %}
 {% endif %}
-{% with analysisIR_mod_body="<iframe allowfullscreen class='modalIframe' src='"|add:results_url|add:"'></iframe>" %}
-    {% include 'app/modals/parametric_modal.html' with modal_type="\"viewModal\"" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_body=analysisIR_mod_body|safe additional_info=study_window_lex %}
-{% endwith %}
+{% trans "Πληροφορίες για αναφορά ανάλυσης" as expl_info_title %}
+{% blocktrans asvar expl_info %}
+    <p>Το αποτέλεσμα της ανάλυσης που πραγματοποιήθηκε, εμφανίζεται με δύο διαφορετικές οπτικές απεικονίσεις,
+        πατώντας στο κουμπί <strong>Reports</strong>.</p>
+    <ul>
+        <li>
+            <p>Η πρώτη μορφή απεικόνισης γίνεται σε επίπεδο <strong>πίνακα</strong>, με τα αποτελέσματα που αφορούν τόσο
+                τα συγκεντρωτικά όσο και τα αναλυτικά αριθμητικά και στατιστικά στοιχεία των κριτηρίων που ορίστηκαν από
+                τον χρήστη, για την ανάλυση ρυθμού επίπτωσης.</p>
+            <p>
+                Τα στοιχεία αυτά <strong>αφορούν συγκεκριμένο χρονικό παράθυρο μελέτης, αν αυτό επιλέχθηκε,
+                διαφορετικά αφορούν τη συνολική περίοδο για την οποία υπάρχουν δεδομένα στο σύστημα</strong>.
+                Συγκεκριμένα τα προαναφερόμενα στοιχεία είναι τα ακόλουθα:
+                <ul>
+                    <li><strong>Persons/N</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο.</li>
+                    <li><strong>Cases</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο και στα οποία
+                        παρατηρείται η εκδήλωση συμβάντος.</li>
+                    <li><strong>Proportions [+|-] per 1k persons</strong>: Η αναλογία αριθμού ατόμων που πληρούν το
+                        κριτήριο και στα οποία παρατηρείται η εκδήλωση συμβάντος προς τον αριθμό των ατόμων που απλά
+                        πληρούν το κριτήριο, με αναγωγή σε χιλιάδα ατόμων.</li>
+                    <li><strong>Time at Risk (years)</strong>: Το μέγεθος "Time At Risk" είναι ένα μέτρο
+                        κινδύνου βάσει χρόνου. Συγκεκριμένα, δείχνει την αθροιστική περίοδο χρόνου, όπου δεν
+                        παρατηρήθηκε κάποιο συμβάν (από τα επιλεγμένα βάσει σεναρίου), στον πληθυσμό που πληροί το
+                        εκάστοτε κριτήριο.
+                    </li>
+                    <li><strong>Rate [+|-] per 1k years</strong>: Ο αριθμός των ατόμων που πληρούν το εκάστοτε κριτήριο
+                        και στα οποία παρατηρείται εκδήλωση κάποιου συμβάντος (από τα επιλεγμένα βάσει σεναρίου),
+                        προς το σχετικό Time at Risk, ανά χίλια έτη (<strong>[Cases/TaR]*1000</strong>).
+                    </li>
+                </ul>
+            </p>
+        </li>
+        <li>
+            <p>
+                Η δεύτερη μορφή απεικόνισης είναι ένα <strong>treemap γράφημα</strong>, όπου τα αποτελέσματα της
+                ανάλυσης, απεικονίζονται με τη μορφή ορθογωνίων. Η απεικόνιση αυτή παρέχει μια ιεραρχική προβολή των
+                δεδομένων και διευκολύνει να εντοπίστούν μοτίβα στην ανάλυση. Το γράφημα treemap εμφανίζει κατηγορίες
+                κατά χρώμα και εγγύτητα και μπορεί εύκολα να παρουσιάσει πολλά δεδομένα, κάτι που θα ήταν δύσκολο να
+                γίνει με άλλους τύπους γραφημάτων.
+            </p>
+            <p>
+                <strong>Η διέλευση πάνω από κάθε ορθογώνιο, οδηγεί στην αναγραφή λεπτομερειών για τη συγκεκριμένη ομαδοποίηση.</strong>
+                Οι λεπτομέρειες αυτές αφορούν το συνδυασμό κριτηρίων που πληρούνται, σε σχέση με τα κριτήρια που
+                ορίστηκαν για την συγκεκριμένη ανάλυση, καθώς και τα αντίστοιχα μεγέθη και στατιστικά όπως ο αριθμός των
+                σχετικών περιπτώσεων (εκδήλωσης συμβάντος), το Time at Risk, το πληθυσμιακό ποσοστό ανά χιλιετία και ο
+                συνολικός αριθμός των ατόμων της συγκεκριμένης ομάδας. <strong>Παράλληλα, επισημαίνονται στον σχετικό πίνακα
+                (βλ. πρώτη μορφή απεικόνισης), με κόκκινο χρώμα, τα κριτήρια τα οποία δεν πληρούνται για το συγκεκριμένο
+                ορθογώνιο/ομαδοποίηση</strong>.
+            </p>
+        </li>
+    </ul>
 
+{% endblocktrans %}
+
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=study_window_lex help_info_title=expl_info_title help_info=expl_info %}
 
 {% endblock %}
-
-
-
-
-

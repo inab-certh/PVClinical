@@ -10,6 +10,7 @@ from itertools import product
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -28,6 +29,7 @@ from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 from app.forms import IRForm
 from app.forms import CharForm
+from app.forms import NotesForm
 from app.forms import PathwaysForm
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
@@ -37,6 +39,7 @@ from app.helper_modules import delete_db_rec
 from app.helper_modules import getPMCID
 # from app.helper_modules import mendeley_cookies
 from app.helper_modules import mendeley_pdf
+from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
 from app.ohdsi_wrappers import update_ir
@@ -49,6 +52,8 @@ from Bio import Entrez
 from mendeley import Mendeley
 
 
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
 def OpenFDAWorkspace(request, scenario_id=None):
     template = loader.get_template('app/OpenFDAWorkspace.html')
     scenario = {}
@@ -214,8 +219,7 @@ def add_edit_scenario(request, scenario_id=None):
         scenario = get_object_or_404(Scenario, pk=scenario_id)
     else:
         scenario = Scenario()
-
-    scenario.owner = request.user
+        scenario.owner = request.user
 
 
     delete_switch = "enabled" if scenario.id else "disabled"
@@ -361,8 +365,13 @@ def ohdsi_workspace(request, scenario_id=None):
             res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
 
+    all_drugs_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All drugs cohort") or {}
+    all_conditions_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All conditions cohort") or {}
+
     context = {
         "title": _("Περιβάλλον εργασίας OHDSI"),
+        "de_id": all_drugs_coh.get("id"),
+        "co_id": all_conditions_coh.get("id"),
         "ir_id": ir_id,
         "char_id": char_id,
         "cp_id": cp_id,
@@ -598,6 +607,48 @@ def characterizations(request, sc_id, char_id, read_only=1):
     }
 
     return render(request, 'app/characterizations.html', context, status=status_code)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def drug_exposure(request):
+    """ View drug exposure of the whole population
+    :param request: request
+    :return: the drug exposure view (iframe)
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    de_url = "{}/#/datasources/{}/drug".format(settings.OHDSI_ATLAS, settings.OHDSI_CDM_NAME)
+
+    context = {
+        "de_url": de_url,
+        "title": _("Έκθεση σε φάρμακα")
+    }
+
+    return render(request, 'app/drug_exposure.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+def condition_occurrence(request):
+    """ View conditions occurrences distribution on the whole population
+    :param request: request
+    :return: the condition occurrence view (iframe)
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    co_url = "{}/#/datasources/{}/condition".format(settings.OHDSI_ATLAS, settings.OHDSI_CDM_NAME)
+
+    context = {
+        "co_url": co_url,
+        "title": _("Εκδήλωση κατάστασης")
+    }
+
+    return render(request, 'app/condition_occurrence.html', context)
 
 
 @login_required()
@@ -1024,23 +1075,81 @@ def paper_notes_view(request):
 
     return render(request, 'app/paper_notes.html', {'metainfo': metainfo})
 
-# @login_required()
-# @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-# def date_input(request, scenario_id=None, page_id=None):
-#     """ Save the notes and the relevance of a paper that user chose.
-#     :param request: request
-#     :return: Json response
-#     """
-#     start = request.GET.get('start', None)
-#     end = request.GET.get('end', None)
-#     scenario_id = request.GET.get('scenario_id', None)
-#     begin = start.split('/')
-#     finish = end.split('/')
-#     pubMed_view(request, scenario_id=scenario_id, page_id=None, start=begin[-1], end=finish[-1])
-#
-#
-#     data = {
-#         'is_taken': True
-#
-#     }
-#     return JsonResponse(data)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def keep_notes(request, ws_id, wsview_id, sc_id=None ):
+    """ Add or edit notes as a user for a specific view in a workspace of a scenario
+    :param request: request
+    :param sc_id: the specific scenario's id.
+    Can be None in the cases of drug exposure and condition occurence views in OHDSI workspace
+    :param ws_id:  the workspace's id
+    :param wsview_id: the workspace's view id
+    :return: the form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    tmp_user = User.objects.get(username=request.user)
+    try:
+        tmp_scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        tmp_scenario = None
+
+    tmp_workspace = settings.WORKSPACES.get(ws_id)
+
+    try:
+        nobj = Notes.objects.get(user=tmp_user,
+                                 scenario=tmp_scenario, workspace=tmp_workspace,
+                                 wsview=wsview_id)
+    except Notes.DoesNotExist:
+        nobj = Notes(user=tmp_user,
+                     scenario=tmp_scenario, workspace=tmp_workspace,
+                     wsview=wsview_id)
+
+    if request.method == 'POST':
+        notes_form = NotesForm(request.POST, instance=nobj, label_suffix='')
+        # sc_id = sc_id or request.POST.get("sc_id")
+
+        if notes_form.is_valid():
+            nf = notes_form.save(commit=False)
+            nf.user = tmp_user
+            nf.workspace = tmp_workspace
+            nf.scenario = tmp_scenario
+            nf.wsview = wsview_id
+
+            # clean_content = notes_form.cleaned_data.get("content")
+
+            # notes_form.content = clean_content
+
+            nf.save()
+
+            messages.success(
+                request,
+                _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+            return HttpResponseRedirect(reverse('keep_notes', args=tuple(filter(None,(sc_id, ws_id, wsview_id)))))
+
+        else:
+            messages.error(
+                request,
+                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+            status_code = 400
+
+    # GET request method
+    else:
+        notes_form = NotesForm(instance=nobj, label_suffix='')
+        status_code = 200
+
+    context = {
+        # "delete_switch": delete_switch,
+        "sc_id": sc_id,
+        "ws_id": ws_id,
+        "wsview_id": wsview_id,
+        "form": notes_form,
+        "title": _("Σημειώσεις")
+    }
+
+    return render(request, 'app/notes.html', context, status=status_code)
+

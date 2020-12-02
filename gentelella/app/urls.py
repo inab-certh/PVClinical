@@ -15,6 +15,8 @@ urlpatterns = [
     # path('dashboard', RedirectView.as_view(url='', permanent=False), name='index'),
     path('add-scenario', views.add_edit_scenario, name='add_scenario'),
     path('edit-scenario/<int:scenario_id>', views.add_edit_scenario, name='edit_scenario'),
+    path('drug-exposure', views.drug_exposure, name='drug_exposure'),
+    path('condition-occurrence', views.condition_occurrence, name='condition_occurrence'),
     path('ir', views.incidence_rates, name='add_ir'),
     path('ir/<int:sc_id>/<int:ir_id>', views.incidence_rates, name='edit_ir'),
     path('ir/<int:sc_id>/<int:ir_id>/<int:read_only>', views.incidence_rates, name='edit_ir'),
@@ -41,7 +43,11 @@ urlpatterns = [
     path("edit-scenario/ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
     path("paper_notes_view", views.paper_notes_view, name='paper_notes'),
     path('social-auth/', include('social_django.urls', namespace='social_mendeley')),
-
+    # path("notes/<int:scenario_id>/<int:workspace_id>", views.keep_notes, name='keep_notes'),
+    path("notes/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
+    path("notes/<int:sc_id>/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
+    # path('tinymce/', include('tinymce.urls')),
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
