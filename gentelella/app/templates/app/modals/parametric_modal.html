@@ -1,5 +1,6 @@
-<div class="modal fade {{ modal_type }}" id={{ modal_id }} tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog {% if modal_type == "\"viewModal\"" %}modal-lg{% endif %}">
+{% load i18n %}
+<div class="modal fade {{ modal_type }}" id="{{ modal_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog {% if modal_type == 'viewModal' %}modal-lg{% endif %}">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title col-xs-11" id="myModalLabel">{{ modal_title }}</h4>
@@ -9,18 +10,36 @@
                 {% if additional_info %}
                     <div class="container alert time-study-info">{{ additional_info }}</div>
                 {% endif %}
+
+                {% if help_info %}
+                    <a tabindex="0" class="view-info-btn btn btn-lg btn-outline pull-right" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-html="true" data-placement="left" title="{{ help_info_title }}" data-content="{{ help_info }}">
+                        <i class="fa fa-question-circle-o"></i>
+                    </a>
+                {% endif %}
+
                 {{ modal_body }}
+                {% if modal_iframe_url or modal_type == 'notesModal' %}
+                    {% if modal_type == 'dataSourcesModal' %}
+                        <iframe src="" data-src={{modal_iframe_url}} class="modalIframe" allowfullscreen>
+                    {% else %}
+                        <iframe src="{{modal_iframe_url}}" class="modalIframe" allowfullscreen>
+                    {% endif %}
+                        {% trans "Ο περιηγητής σας δεν υποστηρίζει πλαίσια (iframes). Για να δείτε αυτήν τη σελίδα, χρησιμοποιήστε κάποιο κατάλληλο πρόγραμμα περιήγησης." %}
+                    </iframe>
+                {% endif %}
             </div>
-            {% if modal_type != "\"viewModal\"" %}
+            {% if modal_type != "viewModal" %}
                 <div class="modal-footer">
-                        <button id="dismissBtn" type="button" data-record=""
-                            {% if modal_type == "\"confirmModal\"" %} class="btn btn-default"
-                            {% elif modal_type == "\"infoModal\"" %} class="btn btn-primary" {% endif %}
-                            data-dismiss="modal">{{ dismiss_btn }}
-                        </button>
-                        {% if modal_type == "\"confirmModal\"" %}
-                            <button type="button" class="btn btn-primary"
-                                id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
+                        {% if modal_type == "infoModal" %}
+                            <button id="dismissBtn" type="button" data-record="" class="btn btn-primary" data-dismiss="modal">
+                                {{ dismiss_btn }}
+                            </button>
+                        {% elif modal_type == "confirmModal" %}
+                            <button id="dismissBtn" type="button" data-record="" class="btn btn-default" data-dismiss="modal">
+                                {{ dismiss_btn }}
+                            </button>
+
+                            <button type="button" class="btn btn-primary" id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
                                 {{ main_btn }}
                             </button>
                         {% endif %}
