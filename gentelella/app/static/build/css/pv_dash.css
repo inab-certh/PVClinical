@@ -708,13 +708,27 @@ button.close {
 	direction: rtl;
 }
 
-.time-study-info {
+.time-study-info, .age_crit_info, .gender_crit_info {
     text-align: center;
-    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
-	border-color: rgba(52, 152, 219, 0.88);
     color: white;
     font-size: 1.4rem;
     font-weight: bolder;
+}
+
+.time-study-info {
+    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
+	border-color: rgba(52, 152, 219, 0.88);
+}
+
+
+.age_crit_info {
+    background-color: rgba(75, 95, 113, 0.88);  /*#4d6f80;*/
+	border-color: rgba(75, 95, 113, 0.88);
+}
+
+.gender_crit_info {
+    background-color: rgba(236, 151, 31, 0.88);  /*#4d6f80;*/
+	background-color: rgba(236, 151, 31, 0.88);
 }
 
 .view-info-btn {

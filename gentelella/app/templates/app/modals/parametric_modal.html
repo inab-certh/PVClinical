@@ -8,7 +8,9 @@
             </div>
             <div class="modal-body">
                 {% if additional_info %}
-                    <div class="container alert time-study-info">{{ additional_info }}</div>
+                    {% for key,val in additional_info.items %}
+                    <div class="container alert {{ key }}">{{ val }}</div>
+                    {% endfor %}
                 {% endif %}
 
                 {% if help_info %}
