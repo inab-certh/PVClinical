@@ -837,8 +837,9 @@ msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
 #: app/templates/app/ohdsi_workspace.html:72
-msgid "Χαρακτηρισμός Πληθυσμού "
-msgstr "Cohort characterization"
+#: app/views.py:604
+msgid "Χαρακτηρισμός Πληθυσμού"
+msgstr "Cohort Characterization"
 
 #: app/templates/app/ohdsi_workspace.html:75
 msgid ""
@@ -1046,10 +1047,6 @@ msgstr "Error occured. Please try again!"
 #: app/views.py:525
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
-
-#: app/views.py:604
-msgid "Χαρακτηρισμός Πληθυσμού"
-msgstr "Cohort characterization"
 
 #: app/views.py:625
 msgid "Έκθεση σε φάρμακα"
