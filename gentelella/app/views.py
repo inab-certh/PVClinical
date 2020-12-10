@@ -170,6 +170,19 @@ def get_conditions_nodes_ids(request):
 
     return JsonResponse(data)
 
+def get_note_content(request):
+    """ Get note content from db
+    :param request: The request from which the note content is asked
+    :return: The note content
+    """
+
+    data = {}
+    try:
+        data["note_content"] = Notes.objects.get(id=request.GET.get("note_id", None)).content
+    except Notes.DoesNotExist:
+        data["note_content"] = ""
+    return JsonResponse(data)
+
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
@@ -1084,8 +1097,8 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
     :return: the form view
     """
 
-    if not request.META.get('HTTP_REFERER'):
-        return forbidden_redirect(request)
+    # if not request.META.get('HTTP_REFERER'):
+    #     return forbidden_redirect(request)
 
     tmp_user = User.objects.get(username=request.user)
     try:
@@ -1147,3 +1160,61 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
     }
 
     return render(request, 'app/notes.html', context, status=status_code)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def aggregated_notes(request):
+    """ Add, edit or view aggregated the notes kept for user's scenarios
+    :param request: request
+    :return: the form view
+    """
+    #
+    # if not request.META.get('HTTP_REFERER'):
+    #     return forbidden_redirect(request)
+
+    user = User.objects.get(username=request.user)
+    user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+
+    # Get scenarios that the user's notes concern
+    scenarios = Scenario.objects.filter(
+        id__in=map(lambda el: el.scenario.id, filter(lambda elm: elm.scenario!=None, user_notes))
+    ).order_by("title")
+
+    # List of structured notes in form {<scenario>:{<workspace>:{<worskpace_view>: <note>, ...}, ...}
+    struct_notes = []
+    views_dict = {"ir": _("Ρυθμός Επίπτωσης"), "char": _("Χαρακτηρισμός Πληθυσμού"),
+                  "pathways": _("Μονοπάτι Ακολουθίας Συμβάντων")}
+    for sc in scenarios:
+        notes_for_scenario = Notes.objects.filter(scenario=sc)
+        workspaces_ids = set(map(lambda n: n.workspace, notes_for_scenario))
+        sc_info = {}
+        sc_info[sc]= {}
+        rev_avail_workspaces = dict(map(reversed, settings.WORKSPACES.items()))
+        # sc_info[sc]["workspaces"] = map(lambda ws_id: rev_avail_workspaces.get(ws_id), workspaces_ids)
+        for ws_id in workspaces_ids:
+            # Not for workspace with ws_id in the specific scenario
+            notes_for_ws = notes_for_scenario.filter(workspace=ws_id)
+            wsviews = list(map(lambda n: n.wsview, notes_for_ws))
+            sc_info[sc][rev_avail_workspaces[ws_id]] = {}
+            # sc_info[sc][rev_avail_workspaces[ws_id]] = {"wsviews": wsviews}
+            for wsv in wsviews:
+                wsv_trans = views_dict.get(wsv) or wsv
+                sc_info[sc][rev_avail_workspaces[ws_id]][wsv_trans] = notes_for_ws.get(wsview=wsv)
+        struct_notes.append(sc_info)
+
+    print(struct_notes)
+    # for note in user_notes:
+    #     scenario = Scenario.objects.get(id=note.scenario)
+    #     workspace = note.workspace
+    #     wsview = note.wsview
+
+
+
+    status_code=200
+    context = {"struct_notes": struct_notes,
+               # "workspaces": settings.WORKSPACES
+               }
+
+
+    return render(request, 'app/notes_aggregated.html', context, status=status_code)

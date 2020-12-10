@@ -1,0 +1,175 @@
+{% load i18n %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+      {% block meta %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      {% endblock meta %}
+      <link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
+      <link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
+      <link href='{% static "vendors/bootstrap/dist/css/bootstrap.min.css" %}' rel="stylesheet">
+
+      <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+
+      <link href='{% static "build/css/notes.css" %}' rel="stylesheet">
+      <link href='{% static "build/css/notes_aggregated.css" %}' rel="stylesheet">
+      {{ form.media }}
+    {% endblock head %}
+
+    <title>PVClinical | {{title}}</title>
+  </head>
+
+  <body>
+    <div id="curLang" data-lang="English"></div>
+    <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>{% trans "Σενάρια" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for struct_note in struct_notes %}
+          {% for sc, workspaces in struct_note.items %}
+          <tr class="view">
+            <td>{{ sc.title }}</td>
+          </tr>
+          <tr class="fold">
+            <td>
+              <div class="fold-content">
+                <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap">
+                  <thead>
+                    <tr>
+                      <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for ws_name, wsviews in workspaces.items %}
+                    <tr class="view">
+                      <td>{{ ws_name }}</td>
+                    </tr>
+                    <tr class="fold">
+                      <td>
+                        <div class="fold-content">
+                          <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap">
+                            <thead>
+                              <tr>
+                                <th>{% trans "Επιμέρους στοιχεία περιβάλλοντος εργασίας" %}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for wsv, note in wsviews.items %}
+                              <tr class="view">
+                                <td>{{ wsv }}</td>
+                              </tr>
+                              <tr class="fold">
+                                <td>
+                                  <div class="fold-content">
+                                    <button id="editBtn{{ note.id }}" class="btn btn-dark pull-right"><i class="fas fa-edit"></i></button>
+                                    <button id="closeBtn{{ note.id }}" class="btn btn-dark pull-right"><i class="fas fa-close"></i></button>
+                                    <div id="noteContent{{ note.id }}">{{ note.content|safe }}</div>
+                                    <iframe id="noteIframe{{ note.id }}" src="{% url 'keep_notes' sc_id=note.scenario.id ws_id=ws_name wsview_id=note.wsview %}" allowfullscreen></iframe>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                            </tbody>
+                          </table>
+
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+      {% endfor %}
+      </tbody>
+    </table>
+<!--    <form action="" method="post" class="ma-form col-xs-12 mt-3"  id="notesForm" autocomplete="off" novalidate>-->
+<!--      {% csrf_token %}-->
+
+<!--      {% if messages %}-->
+<!--          {% for message in messages %}-->
+<!--              <div id="message_container" {% if message.tags %} class="mt-5 {{ message.tags }}" {% endif %}>-->
+<!--                  {{ message }}-->
+<!--              </div>-->
+<!--          {% endfor %}-->
+<!--      {% endif %}-->
+
+<!--      {{ form|crispy }}-->
+<!--      <div class="btn-group col-xs-4 col-xs-offset-8 mt-4" role="group" aria-label="Toolbar buttons">-->
+<!--          <button id="notesSaveBtn" class="btn btn-primary col-xs-12" type="submit">-->
+<!--            <i class="fa fa-save"></i>-->
+<!--              <span class="visible-sm visible-lg visible-md">-->
+<!--                {% trans "Αποθήκευση" %}-->
+<!--              </span>-->
+<!--          </button>-->
+<!--      </div>-->
+<!--    </form>-->
+        <!-- jQuery -->
+        <script src='{% static "vendors/jquery/dist/jquery.min.js" %}'></script>
+        <!-- Bootstrap -->
+        <script src='{% static "vendors/bootstrap/dist/js/bootstrap.min.js" %}'></script>
+        <!-- bootstrap-progressbar -->
+        <script src='{% static "vendors/bootstrap-progressbar/bootstrap-progressbar.min.js" %}'></script>
+        <!-- iCheck -->
+        <script src='{% static "vendors/iCheck/icheck.min.js" %}'></script>
+        <!-- bootstrap-daterangepicker -->
+        <script src='{% static "vendors/moment/min/moment.min.js" %}'></script>
+        <script src='{% static "vendors/bootstrap-daterangepicker/daterangepicker.js" %}'></script>
+        <!-- bootstrap-wysiwyg -->
+        <script src='{% static "vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js" %}'></script>
+        <script src='{% static "vendors/jquery.hotkeys/jquery.hotkeys.js" %}'></script>
+        <script src='{% static "vendors/google-code-prettify/src/prettify.js" %}'></script>
+        <!-- jQuery Tags Input -->
+        <script src='{% static "vendors/jquery.tagsinput/src/jquery.tagsinput.js" %}'></script>
+        <!-- Switchery -->
+        <script src='{% static "vendors/switchery/dist/switchery.min.js" %}'></script>
+        <!-- Select2 -->
+        <script src='{% static "vendors/select2/dist/js/select2.full.min.js" %}'></script>
+        <script src='{% static "vendors/select2/dist/js/i18n/el.js" %}'></script>
+        <script src='{% static "vendors/select2/dist/js/i18n/en.js" %}'></script>
+        <!-- Select2 multiple checkboxes plugin -->
+        <script src='{% static "vendors/select2-multi-checkboxes/select2.multi-checkboxes.js" %}'></script>
+        <!-- Parsley -->
+        <script src='{% static "vendors/parsleyjs/dist/parsley.min.js" %}'></script>
+        <!-- Autosize -->
+        <script src='{% static "vendors/autosize/dist/autosize.min.js" %}'></script>
+        <!-- jQuery autocomplete -->
+        <script src='{% static "vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js" %}'></script>
+        <!-- starrr -->
+        <script src='{% static "vendors/starrr/dist/starrr.js" %}'></script>
+        <!-- Custom Theme Scripts -->
+        <script src='{% static "build/js/custom.js" %}'></script>
+        <!-- Translations for javascript -->
+        <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.10.15/api/row().show().js"></script>
+
+      <script src='{% static "build/js/notes_aggregated.js" %}'></script>
+  </body>
+</html>
+
