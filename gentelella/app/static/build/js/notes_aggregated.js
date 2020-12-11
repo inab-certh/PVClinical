@@ -1,6 +1,6 @@
 $(function(){
   $(".fold-table tr.view").on("click", function(){
-    $(this).toggleClass("open").next(".fold").toggleClass("open");
+    $(this).toggleClass("open").next(".fold").toggleClass("open").find("tr").toggleClass("open");
   });
 
   $("iframe[id^='noteIframe']").hide();
@@ -36,29 +36,44 @@ $(function(){
     });
   });
 
-  $(".fold-table").DataTable({
+  $(".user-notes-table").DataTable({
       // pageLength: 10,
       filter: true,
+      ordering: false,
+      paging: true,
+      columns: [{ visible: true, "bSearchable": true }],
+      mark: {
+        className: "highlight"
+      }
+      // deferRender: true,
+      // scrollY: 200,
+      // scrollCollapse: true,
+      // scroller: true
+  });
+
+  $(".fold-table:not('.user-notes-table')").DataTable({
+      // pageLength: 10,
+      filter: false,
+      ordering: false,
+      paging: false,
+      info: false,
       columns: [{ visible: true, "bSearchable": true }]
       // deferRender: true,
       // scrollY: 200,
       // scrollCollapse: true,
       // scroller: true
   });
-  $(".fold-table").on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
 
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( format(row.data()) ).show();
-            tr.addClass('shown');
-        }
-    } );
+  $(".dataTables_filter input").bind('change keydown keyup',function (){
+    // console.log($(this).val().length);
+    if($(this).val().length!=0) {
+      $(".fold-table tr.view").addClass("open").next(".fold").addClass("open").find("tr").addClass("open");
+    }
+    if($(this).val().length===0) {
+      $(".fold-table tr.view").removeClass("open").next(".fold").removeClass("open").find("tr").removeClass("open");
+    }
+    // console.log($("tr.fold:visible").closest("tr.view"));
+    //
+  });
 
 });

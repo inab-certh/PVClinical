@@ -1,0 +1,125 @@
+{
+  "_args": [
+    [
+      "mark.js@>=6.1.0",
+      "/home/viper/PycharmProjects/PVClinical/pvclinical-dashboard/node_modules/datatables.mark.js"
+    ]
+  ],
+  "_from": "mark.js@>=6.1.0",
+  "_id": "mark.js@8.11.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/mark.js",
+  "_nodeVersion": "6.11.3",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/mark.js-8.11.1.tgz_1515711352010_0.08769821911118925"
+  },
+  "_npmUser": {
+    "email": "npm@juliankuehnel.com",
+    "name": "julmot"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "mark.js",
+    "raw": "mark.js@>=6.1.0",
+    "rawSpec": ">=6.1.0",
+    "scope": null,
+    "spec": ">=6.1.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/datatables.mark.js"
+  ],
+  "_resolved": "https://registry.npmjs.org/mark.js/-/mark.js-8.11.1.tgz",
+  "_shasum": "180f1f9ebef8b0e638e4166ad52db879beb2ffc5",
+  "_shrinkwrap": null,
+  "_spec": "mark.js@>=6.1.0",
+  "_where": "/home/viper/PycharmProjects/PVClinical/pvclinical-dashboard/node_modules/datatables.mark.js",
+  "author": {
+    "name": "Julian Kühnel",
+    "url": "https://github.com/julmot"
+  },
+  "bugs": {
+    "url": "https://github.com/julmot/mark.js/issues"
+  },
+  "dependencies": {},
+  "description": "Highlight keywords using JavaScript. Intended for every use case. Can e.g. be used to mark text in search results.",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.14.0",
+    "eslint-plugin-jasmine-jquery": "^1.0.0",
+    "handlebars": "^4.0.11",
+    "jasmine-core": "^2.8.0",
+    "jquery": "^3.2.1",
+    "jsdoc": "^3.5.5",
+    "karma": "^2.0.0",
+    "karma-cli": "^1.0.1",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.1.1",
+    "karma-jasmine-jquery": "^0.1.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-sauce-launcher": "^1.2.0",
+    "karma-spec-reporter": "0.0.32",
+    "karma-summary-reporter": "^1.4.0",
+    "nodemon": "^1.14.10",
+    "phantomjs-prebuilt": "^2.1.16",
+    "rollup": "^0.53.3",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-cleanup": "^2.0.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "uglify-es": "^3.3.4"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "180f1f9ebef8b0e638e4166ad52db879beb2ffc5",
+    "tarball": "https://registry.npmjs.org/mark.js/-/mark.js-8.11.1.tgz"
+  },
+  "gitHead": "025b51ad151cbe0b75bf27e8b29fbc5bd5552cb9",
+  "homepage": "https://markjs.io/",
+  "keywords": [
+    "highlight",
+    "javascript",
+    "jmHighlight",
+    "jquery",
+    "jquery.mark",
+    "keyword",
+    "mark",
+    "mark.js",
+    "markjs",
+    "search",
+    "text"
+  ],
+  "license": "MIT",
+  "main": "dist/mark.js",
+  "maintainers": [
+    {
+      "name": "julmot",
+      "email": "me@julianmotz.com"
+    }
+  ],
+  "name": "mark.js",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julmot/mark.js.git"
+  },
+  "scripts": {
+    "build": "npm run eslint && npm run compile && npm run karma && npm run jsdoc",
+    "compile": "rollup -c build/rollup.config.js",
+    "dev": "nodemon --exec \"npm run eslint && npm run compile\" --watch src/ --watch test/ -e js,html",
+    "eslint": "eslint src/ test/",
+    "jsdoc": "jsdoc src/lib/ -d build/doc -R README.md -P package.json -r",
+    "karma": "karma start build/karma.config.js",
+    "karma-ci": "karma start build/karma.config-ci.js",
+    "test": "npm run build"
+  },
+  "version": "8.11.1"
+}
