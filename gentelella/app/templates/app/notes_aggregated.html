@@ -38,8 +38,8 @@
   </head>
 
   <body>
-    <div id="curLang" data-lang="English"></div>
-    <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
+<!--    <div id="curLang" data-lang="Greek"></div>-->
+    <table id="userNotes{{ request.user }}" class="user-notes-table fold-table table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
       <thead>
         <tr>
           <th>{% trans "Σενάρια" %}</th>
@@ -48,13 +48,14 @@
       <tbody>
         {% for struct_note in struct_notes %}
           {% for sc, workspaces in struct_note.items %}
+        <tr><td><table class="fold-table"> <thead><tr><th></th></tr></thead><tbody>
           <tr class="view">
             <td>{{ sc.title }}</td>
           </tr>
           <tr class="fold">
             <td>
               <div class="fold-content">
-                <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap">
+                <table class="fold-table">
                   <thead>
                     <tr>
                       <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
@@ -68,7 +69,7 @@
                     <tr class="fold">
                       <td>
                         <div class="fold-content">
-                          <table class="fold-table table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap">
+                          <table class="fold-table">
                             <thead>
                               <tr>
                                 <th>{% trans "Επιμέρους στοιχεία περιβάλλοντος εργασίας" %}</th>
@@ -102,6 +103,7 @@
               </div>
             </td>
           </tr>
+          </tbody></table></td></tr>
           {% endfor %}
       {% endfor %}
       </tbody>
@@ -131,45 +133,38 @@
         <script src='{% static "vendors/jquery/dist/jquery.min.js" %}'></script>
         <!-- Bootstrap -->
         <script src='{% static "vendors/bootstrap/dist/js/bootstrap.min.js" %}'></script>
-        <!-- bootstrap-progressbar -->
-        <script src='{% static "vendors/bootstrap-progressbar/bootstrap-progressbar.min.js" %}'></script>
-        <!-- iCheck -->
-        <script src='{% static "vendors/iCheck/icheck.min.js" %}'></script>
-        <!-- bootstrap-daterangepicker -->
-        <script src='{% static "vendors/moment/min/moment.min.js" %}'></script>
-        <script src='{% static "vendors/bootstrap-daterangepicker/daterangepicker.js" %}'></script>
-        <!-- bootstrap-wysiwyg -->
-        <script src='{% static "vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js" %}'></script>
-        <script src='{% static "vendors/jquery.hotkeys/jquery.hotkeys.js" %}'></script>
-        <script src='{% static "vendors/google-code-prettify/src/prettify.js" %}'></script>
-        <!-- jQuery Tags Input -->
-        <script src='{% static "vendors/jquery.tagsinput/src/jquery.tagsinput.js" %}'></script>
-        <!-- Switchery -->
-        <script src='{% static "vendors/switchery/dist/switchery.min.js" %}'></script>
-        <!-- Select2 -->
-        <script src='{% static "vendors/select2/dist/js/select2.full.min.js" %}'></script>
-        <script src='{% static "vendors/select2/dist/js/i18n/el.js" %}'></script>
-        <script src='{% static "vendors/select2/dist/js/i18n/en.js" %}'></script>
-        <!-- Select2 multiple checkboxes plugin -->
-        <script src='{% static "vendors/select2-multi-checkboxes/select2.multi-checkboxes.js" %}'></script>
-        <!-- Parsley -->
-        <script src='{% static "vendors/parsleyjs/dist/parsley.min.js" %}'></script>
-        <!-- Autosize -->
-        <script src='{% static "vendors/autosize/dist/autosize.min.js" %}'></script>
-        <!-- jQuery autocomplete -->
-        <script src='{% static "vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js" %}'></script>
-        <!-- starrr -->
-        <script src='{% static "vendors/starrr/dist/starrr.js" %}'></script>
-        <!-- Custom Theme Scripts -->
-        <script src='{% static "build/js/custom.js" %}'></script>
         <!-- Translations for javascript -->
         <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
 
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
-        <script src="https://cdn.datatables.net/plug-ins/1.10.15/api/row().show().js"></script>
+<!--        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
 
-      <script src='{% static "build/js/notes_aggregated.js" %}'></script>
+        <script src="{% static '/vendors/jquery-highlight/js/jquery.highlight.js' %}"></script>
+
+        <!-- Translations for datatables -->
+        <script src='{% static "build/js/datatables-translate.js" %}'></script>
+
+        <!-- Datatables -->
+        <!-- Translations for datatables -->
+        <script src='{% static "build/js/datatables-translate.js" %}'></script>
+
+        <!-- Datatables -->
+        <script src='{% static "vendors/datatables.net/js/jquery.dataTables.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-bs/js/dataTables.bootstrap.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-buttons/js/dataTables.buttons.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-buttons/js/buttons.flash.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-buttons/js/buttons.html5.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-buttons/js/buttons.print.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-keytable/js/dataTables.keyTable.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-responsive/js/dataTables.responsive.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js" %}'></script>
+        <script src='{% static "vendors/datatables.net-scroller/js/dataTables.scroller.min.js" %}'></script>
+        <script src='{% static "vendors/datatables.mark.js/dist/datatables.mark.js" %}'></script>
+        <script src='{% static "vendors/mark.js/dist/jquery.mark.js" %}'></script>
+        <script src='{% static "vendors/mark.js/dist/mark.js" %}'></script>
+
+        <script src='{% static "build/js/notes_aggregated.js" %}'></script>
   </body>
 </html>
 
