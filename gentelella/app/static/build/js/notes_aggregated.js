@@ -24,7 +24,7 @@ $(function(){
   $("iframe").load(function () {
     var note_id = parseInt($(this).attr("id").replace("noteIframe", ""));
     $.ajax({
-      url: "ajax/get-note-content",
+      url: "/ajax/get-note-content",
       data: {
         "note_id": note_id
       },
@@ -36,8 +36,13 @@ $(function(){
     });
   });
 
+  var language = $('#curLang').attr('data-lang');
+
   $(".user-notes-table").DataTable({
       // pageLength: 10,
+      language: {
+        "url": "/static/tr/datatables/"+language+".json"
+      },
       filter: true,
       ordering: false,
       paging: true,
@@ -53,6 +58,9 @@ $(function(){
 
   $(".fold-table:not('.user-notes-table')").DataTable({
       // pageLength: 10,
+      language: {
+        "url": "/static/tr/datatables/"+language+".json"
+      },
       filter: false,
       ordering: false,
       paging: false,

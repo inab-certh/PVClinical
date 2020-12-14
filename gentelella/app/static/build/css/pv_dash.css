@@ -784,11 +784,18 @@ button.close {
 }
 
 .notesModal iframe.modalIframe {
-  width: 100%;
-  min-height: 80vh;
-  max-height: 800px;
-  border: none;
-  overflow: hidden;
+	width: 100%;
+  /*min-height: 80vh;*/
+  /*max-height: 800px;*/
+	border: none;
+  /*overflow: hidden;*/
+	min-height: 67vh;
+	max-height: 550px;
+	overflow: scroll;
+}
+
+#aggrUserNotes.notesModal .modal-dialog {
+	width: 78%;
 }
 
 #floater {
