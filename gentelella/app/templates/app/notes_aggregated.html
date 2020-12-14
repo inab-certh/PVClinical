@@ -38,11 +38,11 @@
   </head>
 
   <body>
-<!--    <div id="curLang" data-lang="Greek"></div>-->
+    <div id="curLang" data-lang={{ lang }}></div>
     <table id="userNotes{{ request.user }}" class="user-notes-table fold-table table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
       <thead>
         <tr>
-          <th>{% trans "Σενάρια" %}</th>
+          <th>{% trans "Σημειώσεις χρήστη (κοινές και ανά σενάριο)" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +50,11 @@
           {% for sc, workspaces in struct_note.items %}
         <tr><td><table class="fold-table"> <thead><tr><th></th></tr></thead><tbody>
           <tr class="view">
-            <td>{{ sc.title }}</td>
+            {% if sc %}
+              <td>{{ sc.title }}</td>
+            {% else %}
+              <td>{% trans "Κοινές για όλα τα σενάρια" %}</td>
+            {% endif %}
           </tr>
           <tr class="fold">
             <td>
@@ -86,7 +90,11 @@
                                     <button id="editBtn{{ note.id }}" class="btn btn-dark pull-right"><i class="fas fa-edit"></i></button>
                                     <button id="closeBtn{{ note.id }}" class="btn btn-dark pull-right"><i class="fas fa-close"></i></button>
                                     <div id="noteContent{{ note.id }}">{{ note.content|safe }}</div>
-                                    <iframe id="noteIframe{{ note.id }}" src="{% url 'keep_notes' sc_id=note.scenario.id ws_id=ws_name wsview_id=note.wsview %}" allowfullscreen></iframe>
+                                    {% if sc %}
+                                      <iframe id="noteIframe{{ note.id }}" src="{% url 'keep_notes' sc_id=note.scenario.id ws_id=ws_name wsview_id=note.wsview %}" allowfullscreen></iframe>
+                                    {% else %}
+                                      <iframe id="noteIframe{{ note.id }}" src="{% url 'keep_notes' ws_id=ws_name wsview_id=note.wsview %}" allowfullscreen></iframe>
+                                    {% endif %}
                                   </div>
                                 </td>
                               </tr>
@@ -108,6 +116,8 @@
       {% endfor %}
       </tbody>
     </table>
+
+
 <!--    <form action="" method="post" class="ma-form col-xs-12 mt-3"  id="notesForm" autocomplete="off" novalidate>-->
 <!--      {% csrf_token %}-->
 
@@ -165,6 +175,7 @@
         <script src='{% static "vendors/mark.js/dist/mark.js" %}'></script>
 
         <script src='{% static "build/js/notes_aggregated.js" %}'></script>
+        <script src='{% static "build/js/datatables-translate.js" %}'></script>
   </body>
 </html>
 

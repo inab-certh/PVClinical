@@ -176,6 +176,23 @@
                                     </div>
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
                                       <div class="panel-body">
+<!--                                          <div id="floater">-->
+<!--                                              {% if d and c %}-->
+<!--                                                {% with "{{ d }} - {{ c }}" as box_label %}-->
+<!--                                                    <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=box_label %}", data-id="notesOpenFDA{{box_label}}">-->
+<!--                                                {% endwith %}-->
+<!--                                              {% else %}-->
+<!--                                                {% with "{{ d }}{{ c }}" as box_label %}-->
+<!--                                                    <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=box_label %}", data-id="notesOpenFDA{{box_label}}">-->
+<!--                                                {% endwith %}-->
+<!--                                              {% endif %}-->
+
+<!--                                                    <i class="fas fa-notes-medical fa-2x"></i>-->
+<!--                                                    <span class="visible-lg">-->
+<!--                                                        {% trans "Σημειώσεις" %}-->
+<!--                                                    </span>-->
+<!--                                               </button>-->
+<!--                                           </div>-->
                                         <ul class="nav nav-tabs nav-items-custom mt-2" id="shinnyAppsTabsComb{{ forloop.counter }}">
                                             <li class="nav-item active" id="QuickViewDrugEventComb{{ forloop.counter }}"><a onclick="openProgressIndicator()" class="nav-link" role="tab" data-toggle="tab" href="#tab-1" aria-expanded="true">{% trans 'Γρήγορη επισκόπηση' %}</a>
                                             </li>

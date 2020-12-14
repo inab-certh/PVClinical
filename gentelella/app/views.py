@@ -67,7 +67,8 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
-                "timestamp": sc.timestamp
+                "timestamp": sc.timestamp,
+                "sc_id": scenario_id
                 }
 
     return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.SHINY_ENDPOINT}, request))
@@ -517,7 +518,6 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         if ir_options.get("age_crit") else _("Δεν έχει οριστεί συγκεκριμένο ηλικιακό κριτήριο!")
 
     genders_dict = dict([("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))])
-    print([genders_dict.get(k) for k in ir_options.get("genders")])
     additional_info["gender_crit_info"] = "{} {}".format(
         _("Κριτήριο φύλου:"), " {} ".format(_("και")).join([str(genders_dict.get(k)) for k in ir_options.get("genders")])) \
         if ir_options.get("genders") else _("Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!")
@@ -531,7 +531,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         "results_url": results_url,
         "read_only": read_only,
         "form": irform,
-        "additional_info": additional_info,
+        "add_info": additional_info,
         "title": _("Ανάλυση Ρυθμού Επίπτωσης")
     }
 
@@ -1164,57 +1164,66 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def aggregated_notes(request):
+def aggregated_notes(request, lang):
     """ Add, edit or view aggregated the notes kept for user's scenarios
     :param request: request
     :return: the form view
     """
     #
-    # if not request.META.get('HTTP_REFERER'):
-    #     return forbidden_redirect(request)
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
-    user = User.objects.get(username=request.user)
-    user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+    try:
+        user = User.objects.get(username=request.user)
+        user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
 
-    # Get scenarios that the user's notes concern
-    scenarios = Scenario.objects.filter(
-        id__in=map(lambda el: el.scenario.id, filter(lambda elm: elm.scenario!=None, user_notes))
-    ).order_by("title")
+        # Get scenarios that the user's notes concern
+        scenarios = Scenario.objects.filter(
+            id__in=map(lambda el: el.scenario.id, filter(lambda elm: elm.scenario!=None, user_notes))
+        ).order_by("title")
 
-    # List of structured notes in form {<scenario>:{<workspace>:{<worskpace_view>: <note>, ...}, ...}
-    struct_notes = []
-    views_dict = {"ir": _("Ρυθμός Επίπτωσης"), "char": _("Χαρακτηρισμός Πληθυσμού"),
-                  "pathways": _("Μονοπάτι Ακολουθίας Συμβάντων")}
-    for sc in scenarios:
-        notes_for_scenario = Notes.objects.filter(scenario=sc)
-        workspaces_ids = set(map(lambda n: n.workspace, notes_for_scenario))
-        sc_info = {}
-        sc_info[sc]= {}
+        # List of structured notes in form {<scenario>:{<workspace>:{<worskpace_view>: <note>, ...}, ...}
+        struct_notes = []
+        views_dict = {"ir": _("Ρυθμός Επίπτωσης"), "char": _("Χαρακτηρισμός Πληθυσμού"),
+                      "pathways": _("Μονοπάτι Ακολουθίας Συμβάντων"), "de": _("Έκθεση σε Φάρμακα"),
+                      "co": _("Εκδήλωση Κατάστασης")}
         rev_avail_workspaces = dict(map(reversed, settings.WORKSPACES.items()))
-        # sc_info[sc]["workspaces"] = map(lambda ws_id: rev_avail_workspaces.get(ws_id), workspaces_ids)
-        for ws_id in workspaces_ids:
-            # Not for workspace with ws_id in the specific scenario
-            notes_for_ws = notes_for_scenario.filter(workspace=ws_id)
-            wsviews = list(map(lambda n: n.wsview, notes_for_ws))
-            sc_info[sc][rev_avail_workspaces[ws_id]] = {}
-            # sc_info[sc][rev_avail_workspaces[ws_id]] = {"wsviews": wsviews}
-            for wsv in wsviews:
-                wsv_trans = views_dict.get(wsv) or wsv
-                sc_info[sc][rev_avail_workspaces[ws_id]][wsv_trans] = notes_for_ws.get(wsview=wsv)
-        struct_notes.append(sc_info)
+        for sc in scenarios:
+            notes_for_scenario = Notes.objects.filter(scenario=sc)
+            workspaces_ids = set(map(lambda n: n.workspace, notes_for_scenario))
+            sc_info = {}
+            sc_info[sc]= {}
+            # sc_info[sc]["workspaces"] = map(lambda ws_id: rev_avail_workspaces.get(ws_id), workspaces_ids)
+            for ws_id in workspaces_ids:
+                # Not for workspace with ws_id in the specific scenario
+                notes_for_ws = notes_for_scenario.filter(workspace=ws_id)
+                wsviews = list(map(lambda n: n.wsview, notes_for_ws))
+                sc_info[sc][rev_avail_workspaces[ws_id]] = {}
+                # sc_info[sc][rev_avail_workspaces[ws_id]] = {"wsviews": wsviews}
+                for wsv in wsviews:
+                    wsv_trans = views_dict.get(wsv) or wsv
+                    sc_info[sc][rev_avail_workspaces[ws_id]][wsv_trans] = notes_for_ws.get(wsview=wsv)
+            struct_notes.append(sc_info)
 
-    print(struct_notes)
-    # for note in user_notes:
-    #     scenario = Scenario.objects.get(id=note.scenario)
-    #     workspace = note.workspace
-    #     wsview = note.wsview
+        # Notes that are common for all scenarios, on the various workspaces
+        scenarios_independent_notes = user_notes.filter(scenario=None)
 
+        workspaces_for_ind_notes = set(map(lambda n: n.workspace, scenarios_independent_notes))
+        sc_ind_ws_wsview_notes = dict([(rev_avail_workspaces.get(ws),
+                                        dict([(views_dict.get(ws_note.wsview) or ws_note.wsview, ws_note
+                                             ) for ws_note in scenarios_independent_notes.filter(workspace=ws)
+                                       ])) for ws in workspaces_for_ind_notes])
 
+        struct_notes.append({None: sc_ind_ws_wsview_notes})
 
-    status_code=200
+        status_code = 200
+    except Exception as e:
+        status_code = 500
+
     context = {"struct_notes": struct_notes,
-               # "workspaces": settings.WORKSPACES
+               "lang": lang,
+               # "sc_ind_notes": sc_ind_ws_wsview_notes,
+               "status": status_code
                }
 
-
-    return render(request, 'app/notes_aggregated.html', context, status=status_code)
+    return render(request, 'app/notes_aggregated.html', context)
