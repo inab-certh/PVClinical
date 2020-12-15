@@ -837,3 +837,12 @@ button.close {
 /*.icon-bar li {*/
 /*    margin: 1.2rem 0;*/
 /*}*/
+
+.btn-no-bg {
+	background-color: transparent;
+}
+
+#scTblTitle {
+	font-size: 1.9rem;
+	margin-top: 1rem;
+}

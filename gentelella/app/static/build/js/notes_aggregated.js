@@ -36,12 +36,13 @@ $(function(){
     });
   });
 
-  var language = $('#curLang').attr('data-lang');
+  var lang = $('#curLang').attr('data-lang');
+  console.log(lang);
 
   $(".user-notes-table").DataTable({
       // pageLength: 10,
       language: {
-        "url": "/static/tr/datatables/"+language+".json"
+        url: "/static/tr/datatables/"+lang+".json"
       },
       filter: true,
       ordering: false,
@@ -49,6 +50,19 @@ $(function(){
       columns: [{ visible: true, "bSearchable": true }],
       mark: {
         className: "highlight"
+      },
+
+      initComplete: function (settings, json) {
+          $(".dataTables_filter input").on('change keydown keyup', function (){
+            console.log($(this).val().length);
+            if($(this).val().length!==0) {
+              $(".fold-table tr.view").addClass("open").next(".fold").addClass("open").find("tr").addClass("open");
+            }
+            if($(this).val().length===0) {
+                console.log("reset");
+              $(".fold-table tr.view").removeClass("open").next(".fold").removeClass("open").find("tr").removeClass("open");
+            }
+          });
       }
       // deferRender: true,
       // scrollY: 200,
@@ -59,7 +73,7 @@ $(function(){
   $(".fold-table:not('.user-notes-table')").DataTable({
       // pageLength: 10,
       language: {
-        "url": "/static/tr/datatables/"+language+".json"
+        url: "/static/tr/datatables/"+lang+".json"
       },
       filter: false,
       ordering: false,
@@ -70,18 +84,6 @@ $(function(){
       // scrollY: 200,
       // scrollCollapse: true,
       // scroller: true
-  });
-
-  $(".dataTables_filter input").bind('change keydown keyup',function (){
-    // console.log($(this).val().length);
-    if($(this).val().length!=0) {
-      $(".fold-table tr.view").addClass("open").next(".fold").addClass("open").find("tr").addClass("open");
-    }
-    if($(this).val().length===0) {
-      $(".fold-table tr.view").removeClass("open").next(".fold").removeClass("open").find("tr").removeClass("open");
-    }
-    // console.log($("tr.fold:visible").closest("tr.view"));
-    //
   });
 
 });
