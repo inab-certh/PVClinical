@@ -151,9 +151,8 @@ class KnowledgeGraphWrapper:
         synonyms = []
         if drugs:
             drugs = list(map(lambda d: d.lower(), drugs))
-
             drugs_union = "UNION".join(["{{?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.\n"
-                                        "?drugbank_drug_name bif:contains \"{}\"}}".format(d) for d in drugs])
+                                        "?drugbank_drug_name bif:contains \"'{}'\"}}".format(d) for d in drugs])
 
             # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
             whole_query = """
