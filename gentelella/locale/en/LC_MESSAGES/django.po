@@ -150,7 +150,7 @@ msgid ""
 "Ελάχιστος αριθμός υποκειμένων του στοχευμένου πληθυσμού της ανάλυσης για "
 "κάθε δεδομένο συμβάν, προκειμένου να προσμετρηθεί στην ανάλυση μονοπατιού."
 msgstr ""
-"Minimum number of subjects in the target cohort for a given event inorder to "
+"Minimum number of subjects in the target cohort for a given event in order to "
 "be counted in the pathway."
 
 #: app/forms.py:289
