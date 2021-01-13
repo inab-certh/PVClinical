@@ -311,7 +311,7 @@
 
 .select2-results__option .wrap:before {
     font-family:fontAwesome;
-    color: #ffffff;
+    color: inherit!important;
     content:"\f096";
     width:25px;
     height:25px;
@@ -326,8 +326,6 @@
 .select2-results__option[aria-selected=true] .wrap:before {
     content:"\f14a";
 }
-
-
 
 .synonymsEntity {
     width: 97%;
@@ -846,3 +844,4 @@ button.close {
 	font-size: 1.9rem;
 	margin-top: 1rem;
 }
+
