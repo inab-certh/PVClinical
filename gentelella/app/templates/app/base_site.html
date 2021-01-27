@@ -155,6 +155,10 @@
 
         {% trans "Σημειώσεις" as mod_title %}
         {% include 'app/modals/parametric_modal.html' with modal_type="notesModal" modal_title=mod_title modal_id="notesModal" modal_iframe_url=""%}
+        {% trans 'Cancel' as date_lbl %}
+        {% with 'Update dates' as date_title %}
+        {% include 'app/modals/date_modal.html' with modal_type="\"infoModal\"" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
+        {% endwith %}
 
     {% endblock body %}
 
@@ -223,6 +227,7 @@
         <script src='{% static "vendors/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.el.min.js" %}'></script>
 
         <script src='{% static "build/js/pv_dash.js" %}'></script>
+
 
         <!-- Convert fields with 'datepicker' class to bootstrap's  datepicker input type -->
         <script type="text/javascript" src='{% static "build/js/datepickerconv.js" %}'></script>
