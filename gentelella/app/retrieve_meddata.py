@@ -151,27 +151,43 @@ class KnowledgeGraphWrapper:
         synonyms = []
         if drugs:
             drugs = list(map(lambda d: d.lower(), drugs))
-
-            drugs_union = "UNION".join(["{{?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.\n"
-                                        "?drugbank_drug_name bif:contains \"{}\"}}".format(d) for d in drugs])
+            drugs_union = "UNION".join(["{{?drugbank_drug dc:title ?drugbank_drug_name.\n"
+                                        "?drugbank_drug_name bif:contains \"'{}'\"}}".format(d) for d in drugs])
 
             # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
+            # whole_query = """
+            #         prefix dc: <http://purl.org/dc/terms/>
+            #         select ?synonym_name, ?drug_code
+            #         from <http://purl.bioontology.org/ontology/UATC/>
+            #         from <https://bio2rdf.org/drugbank>
+            #         where {{
+            #         {}.
+            #         ?drug skos:prefLabel ?drug_name.
+            #         FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
+            #         ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+            #         ?drug skos:notation ?code.
+            #         bind(str(?code) as ?drug_code)
+            #         ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+            #         ?synonym dc:title ?synonym_name.
+            #         FILTER(?synonym_name!=?drugbank_drug_name)
+            #         }}
+            #         """.format(drugs_union)
+
             whole_query = """
-                    select ?synonym_name, ?drug_code
-                    from <http://purl.bioontology.org/ontology/UATC/>
-                    from <https://bio2rdf.org/drugbank>
-                    where {{
+                prefix dc: <http://purl.org/dc/terms/>
+                select ?drug_code, ?synonym_name
+                where {{
                     {}.
-                    ?drug skos:prefLabel ?drug_name.
-                    FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
-                    ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-                    ?drug skos:notation ?code.
-                    bind(str(?code) as ?drug_code)
-                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
-                    ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
-                    FILTER(?synonym_name!=?drugbank_drug_name)
-                    }}
-                    """.format(drugs_union)
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
+                    bind(strafter(str(?atc),str("http://bio2rdf.org/atc:")) as ?drug_code).
+                    {{?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:product> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:brand> ?synonym.
+                    ?synonym dc:title ?synonym_name}}
+                }}
+            """.format(drugs_union)
 
             self.sparql.setQuery(whole_query)
             synonyms = self.sparql.query().bindings
@@ -187,16 +203,25 @@ class KnowledgeGraphWrapper:
         """ Caches the drugs for faster retrieval
         """
 
+        # whole_query = """
+        # select ?drug_name, ?drug_code from <http://purl.bioontology.org/ontology/UATC/> where {
+        #     {
+        #         ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+        #         ?drug skos:prefLabel ?drug_name.
+        #         ?drug skos:notation ?code.
+        #         bind(str(?code) as ?drug_code)
+        #     }
+        # }
+        # """
+
         whole_query = """
-        select ?drug_name, ?drug_code from <http://purl.bioontology.org/ontology/UATC/> where {
-            {
-                ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-                ?drug skos:prefLabel ?drug_name.
-                ?drug skos:notation ?code.
-                bind(str(?code) as ?drug_code)
+            prefix dc: <http://purl.org/dc/terms/>
+            select ?drug_name, ?drug_code where {
+                ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
+                bind(strafter(str(?atc),str("http://bio2rdf.org/atc:")) as ?drug_code).
+                ?drugbank_drug dc:title ?drug_name.
             }
-        }
-        """
+            """
         #
         self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings

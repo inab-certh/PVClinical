@@ -1,6 +1,6 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
-{% load static %}
+{% load staticfiles %}
 
 {% block title %} Dashboard {% endblock title %}
 
@@ -20,9 +20,19 @@
       <div class="col-4 col-offset-6">
           <div class="x_panel">
             <div class="x_title">
-              <h2>{% trans "Προσωπικά Σενάρια Διερεύνησης" %}
+              <h2 id="scTblTitle">{% trans "Προσωπικά Σενάρια Διερεύνησης" %}
                 <!--<small> user.groups.all|join:"," </small>-->
               </h2>
+              <button id="aggrNotesBtn" class="btn notes-btn btn-no-bg pull-right" type="button" data-id="aggrUserNotes" data-toggle="tooltip" data-placement="left" title={% trans "Σημειώσεις" %}>
+                  <i class="fas fa-notes-medical fa-2x"></i>
+<!--                        <span class="visible-lg">-->
+<!--                            {% trans "Σημειώσεις" %}-->
+<!--                        </span>-->
+              </button>
+
+<!--              <div id="floater">-->
+<!--                  -->
+<!--              </div>-->
               <!--<ul class="nav navbar-right panel_toolbox">-->
                 <!--<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>-->
                 <!--</li>-->
@@ -857,6 +867,10 @@
 
   <script>
     $(function() {
+      var url = "aggr-notes/" + $("#curLang").data("lang");
+      $("#aggrNotesBtn").attr("data-url", url);
+
+
       $(".delete-sc-btn").on("click", function () {
         // On trash can button click, pass record id to modal confirm btn
         $("#confirmBtn").data("record", $(this).data("scid"));
@@ -866,7 +880,7 @@
   </script>
 
 
-<script src="/static/build/js/pv_literature.js"></script>
+  <script src="/static/build/js/pv_literature.js"></script>
 
   <!--&lt;!&ndash; Chart.js &ndash;&gt;-->
   <!--<script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>-->

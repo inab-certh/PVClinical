@@ -31,6 +31,7 @@ urlpatterns = [
     path('ajax/all-drugs', views.get_all_drugs, name='get_all_drugs'),
     path('ajax/medDRA-tree', views.get_medDRA_tree, name='get_medDRA_tree'),
     path('ajax/conds-nodes-ids', views.get_conditions_nodes_ids, name='conds_nodes_ids'),
+    path('ajax/get-note-content', views.get_note_content, name='get_note_content'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('ohdsi-workspace/<int:scenario_id>', views.ohdsi_workspace, name='ohdsi_workspace'),
@@ -46,6 +47,7 @@ urlpatterns = [
     # path("notes/<int:scenario_id>/<int:workspace_id>", views.keep_notes, name='keep_notes'),
     path("notes/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
     path("notes/<int:sc_id>/<str:ws_id>/<str:wsview_id>", views.keep_notes, name='keep_notes'),
+    path("aggr-notes/<str:lang>", views.aggregated_notes, name='aggregated_notes'),
     # path('tinymce/', include('tinymce.urls')),
     # path('ckeditor/', include('ckeditor_uploader.urls')),
 
