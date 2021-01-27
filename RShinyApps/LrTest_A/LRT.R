@@ -63,16 +63,16 @@ shinyServer(function(input, output, session) {
     # }
     langs = list(gr="el", en="en")
     
-    # removeUI(
-    #   selector = "#daterange",
-    #   multiple = FALSE
-    # )
-    # 
-    # insertUI(
-    #   selector = "#dtlocator",
-    #   where = "beforeBegin",
-    #   ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
-    # )
+    removeUI(
+      selector = "#daterange",
+      multiple = FALSE
+    )
+    
+    insertUI(
+      selector = "#dtlocator",
+      where = "beforeBegin",
+      ui = dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language = langs[[selectedLang]], separator=i18n()$t("to"))
+    )
     
   })
   getqueryvars <- function( num = 1 ) {
@@ -150,7 +150,7 @@ shinyServer(function(input, output, session) {
   getquotedterm1 <- reactive({ 
     q <- geturlquery()
     # s <- toupper( v$t1 )
-    s<-toupper(q$t1)
+    s<-q$t1
     if  (is.null(s) | s =="" ) {
       return("")
     }
@@ -267,7 +267,7 @@ shinyServer(function(input, output, session) {
     input$update
     q <- geturlquery()
     isolate( {
-       updateTextInput(session, "t1", value=( toupper(q$t1) ) )
+       updateTextInput(session, "t1", value=( q$t1 ) )
       updateNumericInput(session, "limit", value= ( input$limit2 ) )
       updateNumericInput(session, "start", value= ( input$start2 ) )
       updateNumericInput(session, "numsims", value= ( input$numsims2 ) )
@@ -367,7 +367,7 @@ shinyServer(function(input, output, session) {
     t <- c( input$v1, getterm1( session, quote = TRUE ), gettimerange() )
     mylist <-  getcounts999( session, v= v, t= t , 
                              count=getprrvarname(), exactrad = input$useexact )
-
+    
     return( list(mydf=mylist$mydf, myurl=mylist$myurl, excludeddf = mylist$excludeddf, exact = mylist$exact   ) )
   })    
   
@@ -628,7 +628,7 @@ getindcounts <- reactive({
   #Calculate PRR and put in merged table
   getprr <- reactive({
     geturlquery()
-
+    
     drug1_event <- getdrugcounts()$mydfE
 
 #    drug2_event <- getdrugcounts()$mydfR
@@ -668,15 +668,11 @@ getindcounts <- reactive({
       n.. <- sum(alleventdf$count)
       #Total reporst for drug j
       n.j <- sum(comb$count.x)
-
-
       n.. <- sum(alleventdf$count)
-
       #Total reports for DE combination
       nij <-  comb$count.x
       #Total report for event i
       ni. <- comb$count.y
-      
       
 
       pi. <- ni./n..
@@ -815,7 +811,6 @@ geteventtotals <- reactive(
   {
   geturlquery()
   starttime <- Sys.time()
-
   mydf <- getdrugcounts()$mydfE
   
   if ( !is.data.frame(mydf) ) {return(NULL)}
@@ -834,7 +829,7 @@ geteventtotals <- reactive(
     {
     if ( realterms[[i]] =='Other')
     {
-
+      
       #Find exact # without any of the events
 #       s <- foundtermslist
 #       s<- paste0( s,  collapse='+')
@@ -864,7 +859,6 @@ geteventtotals <- reactive(
 #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
       cururl <- buildURL(v= myv, t=myt, limit=1)
 #Sys.sleep( .25 )
-      
       all_events2 <- fda_fetch_p( session, cururl, message= i )
       allevent[i, 'URL'] <- removekey( makelink( cururl ) )
       allevent[i, 'term'] <- realterms[[i]]
@@ -1728,24 +1722,24 @@ output$date1 <- renderText({
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
   
-  # q<-NULL
-  # q$v1<-"patient.drug.openfda.generic_name"
+  q<-NULL
+  q$v1<-"patient.drug.openfda.generic_name"
   # q$v2<-"patient.reaction.reactionmeddrapt"
-  # q$t1<-"Omeprazole"
-  # q$drug<-toupper(q$t1)
+  q$t1<-"Omeprazole"
+  q$drug<-q$t1
   # q$t2<-"Anaemia"
   
   
-  v$t1<-toupper(toupper(q$t1))
+  v$t1<-q$t1
   updateNumericInput(session, "limit", value = q$limit)
   updateNumericInput(session, "limit2", value = q$limit)
   if( getwhich()== 'D'){
     updateSelectizeInput(session, 't1', selected= q$drug)
-    updateSelectizeInput(session, 't1', selected= toupper(q$t1))
+    updateSelectizeInput(session, 't1', selected= q$t1)
 
 } else {
   updateSelectizeInput(session, 't1', selected= q$event)
-  updateSelectizeInput(session, 't1', selected= toupper(q$t1))
+  updateSelectizeInput(session, 't1', selected= q$t1)
   
 }
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)

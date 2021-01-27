@@ -4,6 +4,7 @@ LLR <- function( n.., ni., n.j, nij )
   b <- ni. - nij
   c <- n.j - nij
   d <- n.. - ni. - n.j + nij
+  # browser()
   aterm <- suppressWarnings( a*( log(a) - log( a + b) ) )
   cterm <- suppressWarnings( c*( log(c) - log(c + d) ) )
   acterm <- suppressWarnings( ( a + c ) * ( log(a + c) - log ( a + b + c + d)) )

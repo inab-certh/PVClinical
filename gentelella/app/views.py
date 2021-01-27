@@ -786,12 +786,14 @@ def unauthorized(request):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def pubMed_view(request, scenario_id=None, page_id=None):
+def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
     """ Load papers that are relevant to scenario that user creates and check user's Mendeley library for papers that
     get from the results.
     :param request: request
     :param scenario_id: the specific scenario, None for new scenario
     :param page_id: the specific result page that user searching for, None for first page
+    :param start: the start date for search query
+    :param end: the end date for search query
     :return: the Literature Workspase view view
     """
     data = {}
@@ -823,6 +825,12 @@ def pubMed_view(request, scenario_id=None, page_id=None):
     mend_cookies = [social.extra_data['access_token']]
     # mend_cookies = mendeley_cookies()
 
+    if first != None and end != None:
+        begin = int(first) -1
+        last = int(end) - 1
+    else:
+        begin = first
+        last = end
 
     if mend_cookies != []:
 
@@ -838,14 +846,13 @@ def pubMed_view(request, scenario_id=None, page_id=None):
                 for j in all_combs:
                     if j[1]:
                         query = j[0] +' AND '+ j[1]
-
-                        results = pubmed_search(query, 0, 10, access_token)
+                        results = pubmed_search(query, 0, 10, access_token, begin, last)
                         if results != {}:
                             records.update(results[0])
                             total_results = total_results + results[1]
                     else:
                         query = j[0]
-                        results = pubmed_search(query, 0, 10, access_token)
+                        results = pubmed_search(query, 0, 10, access_token, begin, last)
                         if results != {}:
                             records.update(results[0])
                             total_results = total_results + results[1]
@@ -856,22 +863,26 @@ def pubMed_view(request, scenario_id=None, page_id=None):
                 for j in all_combs:
                     if j[1]:
                         query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, start, 10, access_token)
+                        results = pubmed_search(query, start, 10, access_token, begin, last)
                         records.update(results[0])
                         total_results = results[1]
                     else:
                         query = j[0]
-                        results = pubmed_search(query, start, 10, access_token)
+                        results = pubmed_search(query, start, 10, access_token, begin, last)
                         records.update(results[0])
                         total_results = results[1]
 
             pages_no = ceil(total_results/10)
             pages = list(range(1, pages_no))
+            if first != None and end != None:
+                dates = [str(first), str(end)]
+            else:
+                dates = []
 
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
 
-            return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results})
+            return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results, 'dates':dates})
 
         except Exception as e:
             print(e)
@@ -926,7 +937,7 @@ def is_logged_in(request):
 
 
 
-def pubmed_search(query, begin, max, access_token):
+def pubmed_search(query, begin, max, access_token, start, end):
     """ Search for papers relevant to the scerario that user creates in PubMed library.
     :param query: query for Pubmed library search that created from combo of drug and
     reaction with the logic operator AND
@@ -943,24 +954,41 @@ def pubmed_search(query, begin, max, access_token):
     w = conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
     fetch_pubmed = w.new_pipeline()
     q = query
+    if start==None and end==None:
+        sid = fetch_pubmed.add_search(
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released',
+             'datetype': 'pdat'})
 
-    sid = fetch_pubmed.add_search(
-        {'db': 'pubmed', 'term': q, 'sort': 'Date Released',
-         'datetype': 'pdat'})
-
-    s = w.run(fetch_pubmed)
-    qres = s.get_result()
-    total_results = qres.size()
-    sid = fetch_pubmed.add_search(
-        {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max,
-         'datetype': 'pdat'})
-    fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
-                           analyzer=PubmedAnalyzer())
+        s = w.run(fetch_pubmed)
+        qres = s.get_result()
+        total_results = qres.size()
+        sid = fetch_pubmed.add_search(
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max,
+             'datetype': 'pdat'})
+        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
+                               analyzer=PubmedAnalyzer())
 
 
-    a = w.run(fetch_pubmed)
+        a = w.run(fetch_pubmed)
 
-    res = a.get_result()
+        res = a.get_result()
+    else:
+        sid = fetch_pubmed.add_search(
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'mindate': start, 'maxdate':end,
+             'datetype': 'pdat'})
+
+        s = w.run(fetch_pubmed)
+        qres = s.get_result()
+        total_results = qres.size()
+        sid = fetch_pubmed.add_search(
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max, 'mindate': start, 'maxdate':end,
+             'datetype': 'pdat'})
+        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
+                               analyzer=PubmedAnalyzer())
+
+        a = w.run(fetch_pubmed)
+
+        res = a.get_result()
 
     try:
 
@@ -1040,7 +1068,7 @@ def save_pubmed_input(request):
     :param request: request
     :return: Json response
     """
-
+    scenario_id = request.GET.get('scenario_id', None)
     relevance = request.GET.get('relevance', None)
     notes = request.GET.get('notes', None)
     pid = request.GET.get("pmid", None)
@@ -1051,9 +1079,10 @@ def save_pubmed_input(request):
     url = request.GET.get("url", None)
     user = request.user
 
+    scenario = Scenario.objects.get(id=scenario_id)
 
     pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
-                url=url, relevance=relevance, notes=notes)
+                url=url, relevance=relevance, notes=notes, scenario_id =scenario)
     pm.save()
 
     data = {
@@ -1085,6 +1114,7 @@ def paper_notes_view(request):
     return render(request, 'app/paper_notes.html', {'metainfo': metainfo})
 
 
+
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def keep_notes(request, ws_id, wsview_id, sc_id=None ):
@@ -1097,8 +1127,8 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
     :return: the form view
     """
 
-    # if not request.META.get('HTTP_REFERER'):
-    #     return forbidden_redirect(request)
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
     tmp_user = User.objects.get(username=request.user)
     try:
