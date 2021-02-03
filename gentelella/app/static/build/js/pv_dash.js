@@ -10,8 +10,7 @@ $(function() {
     });
 
      $("[data-toggle='popover']").popover();
-
-     $(".notes-btn").click(function() {
+     $(".dataTable").on("click", ".notes-btn", function() {
         var mod_url = $(this).data("url");
         var mod_id = $(this).data("id");
         $(".notesModal").attr("id", mod_id);
