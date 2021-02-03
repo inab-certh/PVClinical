@@ -918,7 +918,7 @@ def is_logged_in(request):
         user = request.user
         social = user.social_auth.get(provider='mendeley-oauth2')
         cookie_list = [social.extra_data['access_token']]
-        print(cookie_list)
+        # print(cookie_list)
         restoken = requests.get(
             'https://api.mendeley.com/files',
             headers={'Authorization': 'Bearer {}'.format(cookie_list[0]),
@@ -950,7 +950,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
     """
     # pvclinical.project @ gmail.com
     # , apikey = '40987f0b48b279c32047b1386f249d8cb308'
-    print(begin)
+
     w = conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
     fetch_pubmed = w.new_pipeline()
     q = query
@@ -1058,7 +1058,27 @@ def check_url(url):
     return r.status_code
 
 
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def get_note(request):
+    """ Get note from db
+    :param request: The request from which the note is asked
+    :return: The note
+    """
 
+    data = {}
+    # note_id is <pid>_<scenario_id>
+    (pid, scid) = request.GET.get("note_id", "").split("_")
+
+    try:
+        note = PubMed.objects.get(pid=pid, scenario_id=scid, user=request.user)
+        data = {"scenario_id": note.scenario_id.id, "title": note.title, "user": note.user.id,
+                "pubmeddate": note.pubdate, "content": note.notes, "pid": note.pid,
+                "abstract": note.abstract, "authors": note.authors, "url": note.url,
+                "relevance": note.relevance}
+    except Notes.DoesNotExist:
+        data = {}
+    return JsonResponse(data)
 
 
 @login_required()
@@ -1068,6 +1088,7 @@ def save_pubmed_input(request):
     :param request: request
     :return: Json response
     """
+
     scenario_id = request.GET.get('scenario_id', None)
     relevance = request.GET.get('relevance', None)
     notes = request.GET.get('notes', None)
@@ -1081,15 +1102,27 @@ def save_pubmed_input(request):
 
     scenario = Scenario.objects.get(id=scenario_id)
 
-    pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
-                url=url, relevance=relevance, notes=notes, scenario_id =scenario)
-    pm.save()
-
-    data = {
-        'message': 'Ok'
-
-    }
+    try:
+        pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
+        if relevance:
+            pm.notes = notes
+            pm.relevance = relevance
+        else:
+            pm.notes = notes
+    except PubMed.DoesNotExist:
+        pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
+                    url=url, relevance=relevance, notes=notes, scenario_id =scenario)
+    try:
+        pm.save()
+        data = {
+            'message': 'Success'
+        }
+    except:
+        data = {
+            'message': 'Failure'
+        }
     return JsonResponse(data)
+
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
@@ -1112,7 +1145,6 @@ def paper_notes_view(request):
 
 
     return render(request, 'app/paper_notes.html', {'metainfo': metainfo})
-
 
 
 @login_required()
@@ -1199,7 +1231,7 @@ def aggregated_notes(request, lang):
     :param request: request
     :return: the form view
     """
-    #
+
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
@@ -1257,3 +1289,175 @@ def aggregated_notes(request, lang):
                }
 
     return render(request, 'app/notes_aggregated.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def allnotes(request):
+    """ Add, edit or view aggregated the notes kept for user's scenarios (version in use)
+    :param request: request
+    :return: the form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    tmp_user = User.objects.get(username=request.user)
+
+    lista_scenarios=[]
+    scenarios = {'id': 14}
+    try:
+        for scenario in scenarios:
+            scenarios[scenario] = Scenario.objects.filter(owner_id=tmp_user)
+            lista_scenarios=list(scenarios['id'])
+    except Scenario.DoesNotExist:
+        lista_scenarios=None
+
+    list_pub_scenarios=[]
+    pub_scenarios = {'id': 14}
+    try:
+        for sc in pub_scenarios:
+            pub_scenarios[sc] = PubMed.objects.filter(user=tmp_user)
+            list_pub_scenarios=list(pub_scenarios['id'])
+    except PubMed.DoesNotExist:
+        list_pub_scenarios=None
+
+
+    lista_id_scenarios = []
+    lista_title_scenarios = []
+    for i in range(len(lista_scenarios)):
+        lista_id_scenarios.append(lista_scenarios[i].id)
+        lista_title_scenarios.append(lista_scenarios[i].title)
+
+    list_pubscen_title=[]
+    list_pubscen_sc=[]
+    for i in range(len(list_pub_scenarios)):
+        for j in range(len(lista_scenarios)):
+            if list_pub_scenarios[i].scenario_id_id == lista_scenarios[j].id:
+                list_pubscen_title.append(lista_scenarios[j].title)
+                list_pubscen_sc.append(lista_scenarios[j].id)
+
+    dictpub_sc_id_title={}
+    dictpub_sc_id_title = dict(zip(list_pubscen_sc, list_pubscen_title))
+
+    notesforexample1 = []
+    notesforexample = []
+    pubmedexample = []
+
+    if Notes.objects.filter(user=tmp_user) != "":
+
+        lista_notes = []
+        notes = {'id': 14}
+        for note in notes:
+            notes[note] = Notes.objects.filter(user=tmp_user)
+            lista_notes = list(notes['id'])
+
+        lista_notes_scid = []
+        lista_notes_workspace = []
+        lista_notes_view = []
+
+        for i in range(len(lista_notes)):
+            lista_notes_scid.append(lista_notes[i].scenario_id)
+
+        lista_notes_scid_without = []
+        lista_title_scenarios_without = []
+        lista_notes_content_without = []
+
+        for i in range(len(lista_id_scenarios)):
+            for j in range(len(lista_notes_scid)):
+                if lista_id_scenarios[i] == lista_notes_scid[j]:
+                    lista_notes_view.append(lista_notes[j].wsview)
+                    lista_notes_content_without.append(lista_notes[j].content)
+                    lista_notes_scid_without.append(lista_notes[j].scenario_id)
+                    lista_title_scenarios_without.append(lista_scenarios[i].title)
+                    lista_notes_workspace.append(lista_notes[j].workspace)
+
+        dict_sc_id_title = dict(zip(lista_notes_scid_without, lista_title_scenarios_without))
+
+        notesforexample = []
+        work = ""
+        wsview_title = ""
+        scenario_title = ""
+
+        for n in Notes.objects.order_by('-note_datetime').all():
+            if n.scenario_id != None:
+                if n.workspace == 1:
+                    work = 'OHDSI'
+                if n.workspace == 2:
+                    work = 'OpenFDA'
+                if n.workspace == 3:
+                    work = 'PubMed'
+                if n.wsview == 'ir':
+                    wsview_title = 'Incidence Rate'
+                elif n.wsview == 'char':
+                    wsview_title = 'Cohort Caracterization'
+                elif n.wsview == 'pathways':
+                    wsview_title = 'Cohort Pathways'
+                    # edw prepei na mpoun kai ta onomata twn wsview tou OpenFDA analoga me to pws apofasisoume na ta emfanizoume
+                else:
+                    wsview_title = n.wsview
+
+
+                for key in dict_sc_id_title:
+                    if n.scenario_id == key:
+
+                        scenario_title = dict_sc_id_title[key]
+
+                notesforexample.append({
+                    "workspace": work,
+                    "content": n.content,
+                    "wsview": n.wsview,
+                    "wsview_title": wsview_title,
+                    "scenario": n.scenario_id,
+                    "scenario_title": scenario_title,
+                    "note_datetime": n.note_datetime,
+                })
+                pubmedexample = []
+                if PubMed.objects.filter(user=tmp_user) != "":
+                    for p in PubMed.objects.order_by('-pubdate').all():
+                        for key in dictpub_sc_id_title:
+                             if p.scenario_id_id == key:
+                                scenario_title = dictpub_sc_id_title[key]
+                        pubmedexample.append({
+                            "workspace": 'PubMed',
+                            "notes": p.notes,
+                            "wsview": p.title,
+                            "title": p.title,
+                            "scenario_id": p.scenario_id_id,
+                            "scenario_title": scenario_title,
+                            "pubmeddate": p.pubdate,
+                            "abstract": p.abstract,
+                            "pmid": p.pid,
+                            "authors": p.authors,
+                            "created": p.created
+                        })
+
+                notesforexample1 = []
+                for n in Notes.objects.order_by('-note_datetime').all():
+                    if n.scenario_id == None:
+                        if n.workspace == 1:
+                            work = 'OHDSI'
+                        if n.workspace == 2:
+                            work = 'OpenFDA'
+                        if n.workspace == 3:
+                            work = 'PubMed'
+                        if n.wsview == 'de':
+                            wsview_title = 'Drug Exposure'
+                        elif n.wsview == 'co':
+                            wsview_title = 'Condition Occurence'
+
+                        notesforexample1.append({
+                            "scenario": None,
+                            "note_datetime": n.note_datetime,
+                            "workspace": work,
+                            "content": n.content,
+                            "wsview": n.wsview,
+                            "wsview_title": wsview_title
+
+                        })
+
+        # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample , 'pubmedexample': pubmedexample}
+        # return render(request, 'app/all_notes.html', context)
+
+    context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
+    return render(request, 'app/all_notes.html', context)

@@ -188,7 +188,7 @@ class PubMed(models.Model):
     notes = models.TextField(null=True, blank=True)
 
     scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
-    # created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
         constraints = [
@@ -221,6 +221,7 @@ class Notes(models.Model):
     workspace = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                              MaxValueValidator(5)])
     wsview = models.CharField(max_length=32, default='')  # Workspace specific view
+    note_datetime = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
         constraints = [

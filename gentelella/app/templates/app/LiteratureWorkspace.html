@@ -577,7 +577,6 @@
                 </div>
            </div>
 
-
 {% endblock content %}
 {% block javascripts %}
     {{ block.super }}
@@ -1217,9 +1216,13 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                  if (data.is_taken) {
-                    alert("A user with this username already exists.");
-                  }
+                    if (data.message === 'Failure') {
+                        $("#pubMedSaveInfoModal .modal-body").text(gettext("Αποτυχία αποθήκευσης"));
+                        $("#pubMedSaveInfoModal").modal("show");
+                    } else {
+                        $("#pubMedSaveInfoModal .modal-body").text(gettext("Επιτυχής αποθήκευση"));
+                        $("#pubMedSaveInfoModal").modal("show");
+                    }
                 }
                 });
         });
