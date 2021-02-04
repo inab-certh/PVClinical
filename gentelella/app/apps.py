@@ -20,7 +20,7 @@ class AppConfig(AppConfig):
         knw = KnowledgeGraphWrapper()
         knw.cache_drugs()
         # knw.cache_conditions()
-    """
+
         domains = ["drug", "condition"]
 
         # Create concept sets and cohorts for all drugs and all conditions if not already created
@@ -50,5 +50,3 @@ class AppConfig(AppConfig):
                             content=errors.get(domain), status=500)
                         return error_response
 
-
-    """

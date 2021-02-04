@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-03 14:08+0200\n"
+"POT-Creation-Date: 2021-02-04 17:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/apps.py:45
+msgid ""
+"Η τροφοδότηση του πληθυσμού που εκδηλώνει τις επιλεγμένες ανεπιθύμητες "
+"ενέργειες δεν ήταν εφικτή"
+msgstr "Could not generate conditions cohort"
+
+#: app/apps.py:46
+msgid ""
+"Η τροφοδότηση του πληθυσμού που λαμβάνουν τα επιλεγμένα φάρμακα δεν ήταν "
+"εφικτή"
+msgstr "Could not generate drugs cohort"
 
 #: app/errors_redirects.py:17
 #: app/templates/registration/password_change_done.html:12
@@ -271,7 +283,7 @@ msgstr "Relevance"
 #: app/templates/app/OpenFDAWorkspace.html:181
 #: app/templates/app/OpenFDAWorkspace.html:183
 #: app/templates/app/OpenFDAWorkspace.html:188
-#: app/templates/app/all_notes.html:119 app/templates/app/base_site.html:158
+#: app/templates/app/all_notes.html:118 app/templates/app/base_site.html:158
 #: app/templates/app/characterizations.html:35
 #: app/templates/app/condition_occurrence.html:24
 #: app/templates/app/drug_exposure.html:23 app/templates/app/index.html:26
@@ -281,6 +293,7 @@ msgid "Σημειώσεις"
 msgstr "Notes"
 
 #: app/templates/app/LiteratureWorkspace.html:149
+#: app/templates/app/all_notes.html:130
 #: app/templates/app/characterizations.html:120
 #: app/templates/app/form_base.html:53 app/templates/app/ir.html:162
 #: app/templates/app/notes.html:48 app/templates/app/notes_aggregated.html:137
@@ -289,7 +302,7 @@ msgid "Αποθήκευση"
 msgstr "Save"
 
 #: app/templates/app/LiteratureWorkspace.html:284
-#: app/templates/app/all_notes.html:125
+#: app/templates/app/all_notes.html:124
 msgid "Προσθέστε τις σημειώσεις σας εδώ"
 msgstr "Enter your notes here"
 
@@ -1095,9 +1108,7 @@ msgid "Χρονικό παράθυρο μελέτης: "
 msgstr "Study Time Window: "
 
 #: app/views.py:506
-#, fuzzy
-#| msgid " έως "
-msgid "εως"
+msgid "έως"
 msgstr " to "
 
 #: app/views.py:508
@@ -1105,26 +1116,20 @@ msgid "Δεν έχει οριστεί συγκεκριμένο χρονικό π
 msgstr "No specific study time window has been appointed!"
 
 #: app/views.py:516
-#, fuzzy
-#| msgid "Με ηλικία:"
 msgid "Κριτήριο ηλικίας:"
-msgstr "With age"
+msgstr "Age criterion:"
 
 #: app/views.py:518
-#, fuzzy
-#| msgid "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!"
 msgid "Δεν έχει οριστεί συγκεκριμένο ηλικιακό κριτήριο!"
-msgstr "No specific study time window has been appointed!"
+msgstr "No specific age criterion has been appointed!"
 
 #: app/views.py:522
 msgid "Κριτήριο φύλου:"
-msgstr "Gender criterion"
+msgstr "Gender criterion:"
 
 #: app/views.py:523
-#, fuzzy
-#| msgid "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!"
 msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
-msgstr "No specific study time window has been appointed!"
+msgstr "No specific gender criterion has been appointed!"
 
 #: app/views.py:565
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
@@ -1155,16 +1160,6 @@ msgstr "Greek"
 #: gentelella/settings.py:168
 msgid "Αγγλικά"
 msgstr "English"
-
-#~ msgid ""
-#~ "Η τροφοδότηση του πληθυσμού που εκδηλώνει τις επιλεγμένες ανεπιθύμητες "
-#~ "ενέργειες δεν ήταν εφικτή"
-#~ msgstr "Could not generate conditions cohort"
-
-#~ msgid ""
-#~ "Η τροφοδότηση του πληθυσμού που λαμβάνουν τα επιλεγμένα φάρμακα δεν ήταν "
-#~ "εφικτή"
-#~ msgstr "Could not generate drugs cohort"
 
 #, fuzzy
 #~| msgid "Αναφορές"
