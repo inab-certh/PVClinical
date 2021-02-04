@@ -881,7 +881,7 @@ button.close {
 	font-size: medium;
 }
 
-.pm-notes-btn, .notes-btn {
+#allNotesTbl .pm-notes-btn, #allNotesTbl .notes-btn {
 	background: transparent;
 }
 
