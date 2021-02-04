@@ -845,3 +845,47 @@ button.close {
 	margin-top: 1rem;
 }
 
+.notesellipsis {
+    text-overflow: ellipsis;
+    display: block;
+    text-align:left;
+    width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+/*.modal-title {*/
+/*    width: 150em;*/
+/*    text-overflow: ellipsis;*/
+/*    display: block;*/
+/*    text-align:left;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*}*/
+
+
+#notesTbl td {
+	vertical-align: middle;
+    text-align: left;
+}
+#notesTbl td.cen {
+	vertical-align: middle;
+    text-align: center;
+}
+#pubTbl td.cen {
+	vertical-align: middle;
+    text-align: center;
+}
+
+#pubMedNotesModal .note-title {
+	font-weight: bold;
+	font-size: medium;
+}
+
+.pm-notes-btn, .notes-btn {
+	background: transparent;
+}
+
+/*#notesTbl td {*/
+/*    vertical-align: middle;*/
+/*    text-align: center;*/
+/*}*/

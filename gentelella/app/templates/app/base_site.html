@@ -144,6 +144,7 @@
             {% trans "Επιβεβαίωση" as main_lbl%}
             {% trans "Ακύρωση" as dismiss_lbl %}
             {% trans "Εντάξει" as ok_lbl%}
+            {% trans "Πληροφορίες" as info_title %}
             {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="scDeleteConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
             {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="scDeleteInfoModal" dismiss_btn=ok_lbl %}
             {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
@@ -151,6 +152,7 @@
             {% with '<img src="/static/images/mendeleyicon.png">' as mend_title %}
                 {% include 'app/modals/mendeley_modal.html' with modal_type="infoModal" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
             {% endwith %}
+            {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="pubMedSaveInfoModal" modal_title=info_title dismiss_btn=ok_lbl %}
         {% endblock modals %}
 
         {% trans "Σημειώσεις" as mod_title %}
