@@ -42,8 +42,8 @@ from app.helper_modules import mendeley_pdf
 from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
-from app.ohdsi_wrappers import update_ir
-from app.ohdsi_wrappers import create_ir
+# from app.ohdsi_wrappers import update_ir
+# from app.ohdsi_wrappers import create_ir
 from app.entrezpy.entrezpylib import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
 from app.pubmed import PubmedAnalyzer
@@ -503,7 +503,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
 
     additional_info = {}
     additional_info["time-study-info"] = "{} {} {} {}".format(
-        _("Χρονικό παράθυρο μελέτης: "), ir_options.get("study_start_date"), _("εως"),
+        _("Χρονικό παράθυρο μελέτης: "), ir_options.get("study_start_date"), _("έως"),
         ir_options.get("study_end_date")) if ir_options.get("study_start_date") and ir_options.get("study_end_date") \
         else _("Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!")
     # additional_info["age_crit_info"] = "{} {}"
