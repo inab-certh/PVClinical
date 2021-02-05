@@ -242,6 +242,7 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   }
 #  ror <- num2/denom2
 #  comb <- data.frame(comb, prr=num/denom, num, denom)
+  
   prr <- prre( n.., ni., n.j, nij ) 
   rrr <- prrd( n.., ni., n.j, nij ) 
   ror <- ror( n.., ni., n.j, nij )
