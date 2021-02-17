@@ -51,6 +51,7 @@ urlpatterns = [
     path("aggr-notes/<str:lang>", views.aggregated_notes, name='aggregated_notes'),
     path("notes/<int:sc_id>", views.allnotes, name='allnotes'),
     path("notes/dashboard", views.allnotes, name='allnotes'),
+    path("social-media/<int:sc_id>", views.social_media, name='social_media_workspace'),
     # path('tinymce/', include('tinymce.urls')),
     # path('ckeditor/', include('ckeditor_uploader.urls')),
 
