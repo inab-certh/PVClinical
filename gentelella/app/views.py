@@ -370,6 +370,7 @@ def ohdsi_workspace(request, scenario_id=None):
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
                                                                 filter(None,[drugs_cohort, conditions_cohort]))), "char")
+
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
         if char_ent:
@@ -1461,3 +1462,40 @@ def allnotes(request):
 
     context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
     return render(request, 'app/all_notes.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def social_media(request, sc_id):
+    """ Social media view for a scenario (and specific user)
+    :param request: request
+    :param sc_id: the specific scenario's id.
+    :return: the social media form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    tmp_user = User.objects.get(username=request.user)
+    try:
+        sc = Scenario.objects.get(id=sc_id)
+
+        # Retrieve scenario drugs
+        drugs = [d for d in sc.drugs.all()]
+
+        # Retrieve scenario conditions
+        conditions = [c for c in sc.conditions.all()]
+
+        keywords = drugs + conditions
+        print(keywords)
+
+    except Scenario.DoesNotExist:
+        sc = None
+
+    context = {
+        "sc_id": sc_id,
+        "keywords": keywords,
+        "title": _("Social Media Workspace")
+    }
+
+    return render(request, 'app/social_media_workspace.html', context)
