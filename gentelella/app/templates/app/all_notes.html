@@ -42,7 +42,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for note in notesforexample %}
+                        {% for note in notesforscenario %}
                         {% if note.workspace != PubMed %}
                         <tr>
                             <td>{{ note.scenario_title }}</td>
@@ -63,7 +63,7 @@
                         {% endif%}
                         {% endfor %}
 
-                        {% for note in pubmedexample %}
+                        {% for note in notespubmed %}
                         <tr>
                             <td>{{ note.scenario_title }}</td>
 
@@ -82,7 +82,7 @@
                         </tr>
                         {% endfor %}
 
-                        {% for note in notesforexample1 %}
+                        {% for note in notesfornonescen %}
                         <tr>
                             <td>{{ note.scenario }}</td>
 
