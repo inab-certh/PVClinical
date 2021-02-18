@@ -53,6 +53,8 @@ urlpatterns = [
     path("notes/dashboard", views.allnotes, name='allnotes'),
     # path('tinymce/', include('tinymce.urls')),
     # path('ckeditor/', include('ckeditor_uploader.urls')),
+    path("final_report", views.final_report, name='final_report'),
+    path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

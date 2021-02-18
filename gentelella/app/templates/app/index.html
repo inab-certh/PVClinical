@@ -59,6 +59,7 @@
                     <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                     <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
                     <th>{% trans "Επεξεργασία" %}</th>
+                    <th>{% trans "Αναφορά" %}</th>
                     <th>{% trans "Διαγραφή" %}</th>
                   </tr>
                 </thead>
@@ -155,6 +156,12 @@
                       <td>
                         <a href={% url 'edit_scenario' scenario.id %}>
                           <i class="fa fa-edit"></i>
+                        </a>
+                      </td>
+
+                      <td>
+                        <a href="{% url 'final_report' scenario.id %}">
+                          <i class="fas fa-file-pdf fa-1x"></i>
                         </a>
                       </td>
 
