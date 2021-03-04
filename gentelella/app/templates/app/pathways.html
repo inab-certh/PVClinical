@@ -128,7 +128,7 @@
 {% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="editCpModal" modal_title=edit_cp_mod_title modal_iframe_url=request.get_full_path|add:"/0" %}
 
 {% trans "Ανάλυση Χαρακτηρισμού Πληθυσμού" as analysis_cp_mod_title %}
-{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCpModal" modal_title=analysis_cp_mod_title modal_iframe_url=results_url %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCpModal" modal_title=analysis_cp_mod_title modal_iframe_url=results_url scenario=scenario %}
 
 {% endblock %}
 
