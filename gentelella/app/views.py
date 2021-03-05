@@ -410,6 +410,11 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
+
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
 
     ir_exists = ohdsi_wrappers.url_exists(ir_url)
@@ -461,6 +466,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 context = {
                     # "delete_switch": delete_switch,
                     "sc_id": sc_id,
+                    "scenario": scenario,
                     "ir_id": ir_id,
                     "results_url": results_url,
                     "read_only": read_only,
@@ -479,6 +485,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             context = {
                 # "delete_switch": delete_switch,
                 "sc_id": sc_id,
+                "scenario": scenario,
                 "ir_id": ir_id,
                 "results_url": results_url,
                 "read_only": read_only,
@@ -528,6 +535,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "ir_id": ir_id,
         "results_url": results_url,
         "read_only": read_only,
@@ -553,6 +561,11 @@ def characterizations(request, sc_id, char_id, read_only=1):
 
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
+
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
 
     char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id)
 
@@ -638,6 +651,7 @@ def characterizations(request, sc_id, char_id, read_only=1):
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "char_id": char_id,
         "results_url": results_url,
         "read_only": read_only,
@@ -705,6 +719,11 @@ def pathways(request, sc_id, cp_id, read_only=1):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
+
     cp_url = "{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id)
 
     cp_exists = ohdsi_wrappers.url_exists(cp_url)
@@ -756,6 +775,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "cp_id": cp_id,
         "results_url": results_url,
         "read_only": read_only,
@@ -1495,7 +1515,7 @@ def social_media(request, sc_id):
     context = {
         "sc_id": sc_id,
         "keywords": keywords,
-        "title": _("Social Media Workspace")
+        "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
 
     return render(request, 'app/social_media_workspace.html', context)

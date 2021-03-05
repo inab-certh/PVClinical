@@ -912,3 +912,20 @@ iframe.social-iframe {
 /*    vertical-align: middle;*/
 /*    text-align: center;*/
 /*}*/
+
+.alert-geninfo {
+	text-align: center;
+}
+
+.scenario-info {
+	background-color: #73879C;
+	font-weight: bold;
+	font-size: large;
+	text-align: center;
+	color: white;
+	/*vertical-align: middle;*/
+}
+
+.scenario-info a {
+	color: white;
+}
