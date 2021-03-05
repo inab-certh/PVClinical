@@ -26,4 +26,10 @@ $(function() {
         var top = winScrollTop + winHeight - floaterHeight - fromBottom;
         $('#floater').css({'top': top + 'px'});
     });
+
+    $(".viewModal").on('shown.bs.modal', function() {
+        var iframe_cnts = $(this).find("iframe").contents();
+        iframe_cnts.find(".alert-geninfo").hide();
+        iframe_cnts.find(".scenario-details").hide();
+    });
 });
