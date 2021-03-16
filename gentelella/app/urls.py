@@ -55,6 +55,9 @@ urlpatterns = [
     # path('ckeditor/', include('ckeditor_uploader.urls')),
     path("final_report", views.final_report, name='final_report'),
     path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
+    path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
+    path("report_pdf/<int:scenario_id>", views.report_pdf, name='report_pdf'),
+    path("ajax/print_report", views.print_report, name='ajax_print_report'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

@@ -19,6 +19,7 @@
 
 {% block content %}
 
+
 <div class="right_col" role="main">
     <div class="row tile_count">
         <div class="col-4 col-offset-6">
@@ -29,6 +30,9 @@
                 </div>
 
                 <div class="x_content">
+
+                <div id="div1">
+
                     <p class="text-muted font-13 m-b-30">
                         {% trans "Make your own review by following next steps:" %}
                     </p>
@@ -41,11 +45,6 @@
 
                         <li class="nav-item">
                             <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="result" disabled>Step 2</button>
-                                <i class="fas fa-long-arrow-alt-right fa-2x"></i>
-                        </li>
-                        <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step3" disabled>Step 3</button>
-
                         </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
@@ -55,16 +54,10 @@
                            <p> -if you wat to choose witch information of every workspace you want to take part on your report press the buttom in the right side to see in detail what you will include. </p>
                         </div>
                         <div class="collapse" id="step2" role="tabpanel" aria-labelledby="pills-profile-tab">
-                            <p>Now you can edit your report and include some additions that you think will be helpfull to complete your review.</p>
-
-                            <p>Click in frames bellow to write your commets, save it or deleted with the buttoms in the right sight of those boxes.</p>
-                        </div>
-                        <div class="collapse" id="step3" role="tabpanel" aria-labelledby="pills-profile-tab">
-                            <p>Choose the type of your file.</p>
-
+                            <p>You can edit your report and include some additions that you think will be helpful to complete your review.</p>
+                            <p>Click the button bellow to see your preview until now.</p>
                         </div>
                         </div>
-
                     <div class="container">
                             <h2>Step 1: Choose your options for every workspace</h2>
                             <br>
@@ -80,11 +73,10 @@
                               <a class="nav-link" data-toggle="tab" href="#PubMed">PubMed</a>
                             </li>
                             </ul>
-
                             <!-- Tab panes -->
                             <div class="tab-content">
                             <div id="OHDSI" class="container tab-pane active"><br>
-                                <input type="checkbox"   onclick="enablebutton()">
+                                <input type="checkbox" onclick="enablebutton()" id="allOHDSI">
                               <label for="ohdsi"  > Add every information that I had from OHDSI</label>
                                 <br></br>
                                 <div class="container">
@@ -99,24 +91,24 @@
                                               <br></br>
                                               <table class="table table-striped table-bordered" style="width:500px">
                                                 <tr>
-                                                <td><input type="checkbox"  onclick="enablebutton()" value="yes" id="check">  &nbsp Incidence Rate</td>
-                                                <td><input type="checkbox" onclick="enablebutton()" value="yes">&nbsp Notes</td>
+                                                <td><input type="checkbox"  onclick="enablebutton()" id="ir">  &nbsp Incidence Rate</td>
+                                                <td><input type="checkbox" onclick="enablebutton()" id="irnote">&nbsp Notes</td>
                                                 </tr>
                                                 <tr>
-                                                <td><input type="checkbox" name="checkenable"onclick="enablebutton()" value="yes">&nbsp Cohort Characterization</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Notes</td>
+                                                <td><input type="checkbox" name="checkenable"onclick="enablebutton()" id="char">&nbsp Cohort Characterization</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="charnote">&nbsp Notes</td>
                                                 </tr>
                                                   <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Cohort Pathways</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="pathways">&nbsp Cohort Pathways</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="pathwaysnote">&nbsp Notes</td>
                                                 </tr>
                                                   <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Condition Occurence</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="occur">&nbsp Condition Occurence</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="occurnote">&nbsp Notes</td>
                                                 </tr>
                                                     <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Drug Exposure</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="dr">&nbsp Drug Exposure</td>
+                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="drnote">&nbsp Notes</td>
                                                 </tr>
 
                                                 </table>
@@ -128,13 +120,15 @@
                             </div>
 
                             <div id="OpenFDA" class="container tab-pane fade"><br>
-                                <input type="checkbox" id="openfda" name="openfda" value="yes">
-                              <label for="openfda"> Add every information that I had from OpenFDA</label>
+                                <i class="fas fa-check-circle"></i>
+                              <label for="openfda">&nbsp Open the folder button in every case to check any
+                                  information you want from OpenFDA workspace in your final report.</label>
                                 <br></br>
                                 <div class="container">
-                                    <div class="panel-group" id="ombsAccordion">
+                                    <div class="panel-group" id="combsAccordion">
 
-                                        {% for d,c in scenario.all_combs %}
+
+                                        {% for d,c,k in drug_condition_hash %}
 
                                 <div id="{{ d }}{% if d and c %} - {% endif %}{{ c }}" class="panel panel-default">
                                     <div class="panel-heading">
@@ -146,44 +140,30 @@
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
                                       <div class="panel-body">
 
-                                          <table>
+                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Quick View &nbsp</strong>
 
-                                              <tr><th><input type="checkbox"  value="yes">&nbsp Quick View &nbsp</th><th><button class="btn btn-secondary" data-toggle="modal" data-target="#OpenModal"><i class="fas fa-folder-open"></i></button></th> </tr>
-                                          </table>
-                                          <br>
-                                          <table>
-                                            <tr>
-                                            <th><input type="checkbox"  value="yes">&nbsp Dynamic PRR</th>
-                                            </tr>
-                                            <tr>
-                                            <td>&nbsp &nbsp &nbsp<input type="checkbox"  value="yes">&nbsp PRR over time &nbsp &nbsp</td>
-                                            <td><input type="checkbox"  value="yes">&nbsp Report counts and PRR &nbsp &nbsp</td>
-                                            <td><input type="checkbox"  value="yes">&nbspDrugs in scenario reports &nbsp &nbsp</td>
-                                                <td><input type="checkbox"  value="yes">&nbspEvents in scenario reports &nbsp &nbsp</td>
-                                            </tr>
-                                          </table>
-                                          <br>
-                                          <table>
-                                            <tr>
-                                            <th><input type="checkbox"  value="yes">&nbsp Change Points Analysis</th>
-                                            </tr>
-                                            <tr>
-                                            <td>&nbsp &nbsp &nbsp<input type="checkbox"  value="yes">&nbsp Change in mean analysis &nbsp &nbsp</td>
-                                            <td><input type="checkbox"  value="yes">&nbsp Change in variance analysis &nbsp &nbsp</td>
-                                            <td><input type="checkbox"  value="yes">&nbsp Bayesian changepoint analysis  &nbsp &nbsp</td>
-                                                <td><input type="checkbox"  value="yes">&nbsp Report counts by date &nbsp &nbsp</td>
-                                                <td><input type="checkbox"  value="yes">&nbsp Drug in scenario reports  &nbsp &nbsp</td>
-                                                <td><input type="checkbox"  value="yes">&nbsp Events in scenario reports &nbsp &nbsp</td>
-                                            </tr>
-                                          </table>
-                                          <br>
-                                          <table>
-                                              <tr><th><input type="checkbox"  value="yes">&nbsp Report View</th></tr>
-                                          </table>
-                                          <br>
-                                          <table>
-                                              <tr><th><input type="checkbox"  value="yes">&nbsp Notes</th></tr>
-                                          </table>
+                                          {% if d and c %}
+
+                                         <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button> Dynamic PRR</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Change Points Analysis</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Report View</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Notes</strong>
+
+                                          {% else %}
+
+                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Dashboard &nbsp &nbsp</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Report view &nbsp &nbsp</strong>
+
+                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
+
+
+                                          {%endif%}
 
 
                                         </div>
@@ -195,7 +175,7 @@
                                 </div>
                             </div>
                             <div id="PubMed" class="container tab-pane fade"><br>
-                                <input type="checkbox" id="pubmed" name="pubmed" value="yes">
+                                <input type="checkbox" id="allPubMed">
                               <label for="pubmed"> Add every information that I had from PubMed</label>
                                 <br></br>
                                 <div class="container">
@@ -228,48 +208,94 @@
                             </div>
                             </div>
                             </div>
-                            </div>
+                    <button type="button" class="btn btn-primary active" name="checkenable" id="result1"  disabled>
+                    <i class="fas fa-spinner"></i> &nbsp Proseed to step 2 to see the review's status until now</button></a>
                 </div>
+
+                <div id="div2">
+                    <p class="text-muted font-13 m-b-30">
+                        {% trans "Make your own review by following next steps:" %}
+                    </p>
+
+                    <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
+                        <li class="nav-item">
+                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step11" id="link1">Step 1</button>
+                                <i class="fas fa-long-arrow-alt-left fa-2x"></i>
+                        </li>
+
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step21" name="checkenable" >Step 2</button>
+                        </li>
+                    </ul>
+                        <div class="tab-content" id="pills-tabContent1">
+                        <div class="collapse" id="step11" role="tabpanel" aria-labelledby="pills-home-tab">
+                           <p></p>
+                        </div>
+                        <div class="collapse" id="step21" role="tabpanel" aria-labelledby="pills-profile-tab">
+                            <p>Now you can edit your report and include some additions that you think will be helpfull to complete your review.</p>
+                            <p>Click in frames bellow to write your comments and save some extra text in your final report.</p>
+                        </div>
+                        </div>
+                     <div class="container">
+<!--                           <a id="bakalia" href={% url 'report_pdf' scenario_open %}>-->
+<!--                        </a>-->
+                         <h2>Step 2: Edit and fill in your review with the last additions.</h2>
+                        <div class="x_panel">
+
+                            <div style="color:black" id="report_preview"></div>
+
+                        </div>
+                     </div>
+
+                    <br>
+                    <button type="button" class="btn btn-primary active" id="download">
+                    <i class="fas fa-spinner"></i> &nbsp Download your final report</button>
+
+                </div>
+
+<!--                </div>-->
             </div>
+
+{% include 'app/modals/shiny_modal.html'   %}
+
         </div>
-            <button type="button" class="btn btn-primary active" name="checkenable" id="result1" onclick="openwindow()" disabled><i class="fas fa-spinner"></i> &nbsp Proseed to step 2 to see the review's status until now</button>
-<!-- Modal -->
-<div class="modal fade" id="OpenModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-           <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-      <div class="modal-body">
-          <iframe src="http://127.0.0.1:8000/OpenFDAWorkspace/{{scenario_open}}" width="100%" height="550" frameborder="0" allowtransparency="true"></iframe>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-<!--        <button type="button" class="btn btn-primary">Save changes</button>-->
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
 
 </div>
+
 </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 {% endblock content %}
+
+
 
 {% block javascripts %}
 
 {{ block.super }}
 
-    <script>
-function openwindow() {
-  var myWindow = window.open("", "myWin");
-  myWindow.document.write("<p>This is 'pdf'");
+<!--    call modals for views via jquery-->
+<script>
+$(document).ready(function(){
 
-}
+  $("[id*=ShinyBtn]").click(function(){
+      var drug= $(this).data('drug');
+      var con= $(this).data('con');
+      var hash= $(this).data('hash');
+      var urlquickview1= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+	  var urlquickview2= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
+
+        console.log(urlquickview1);
+     if (con!=''){
+        document.getElementById('iframe_shiny').src = urlquickview1;
+        }else{
+        document.getElementById('iframe_shiny').src = urlquickview2;
+
+        };
+
+  });
+});
 </script>
+<!--modals until here-->
 
 <script>
 	$(document).ready(function(){
@@ -307,6 +333,64 @@ function openwindow() {
             }
         });
     });
+</script>
+<script>
+    $(document).ready(function() {
+
+    $("#div2").hide();
+});
+
+$("#link1").click(function() {
+    $("#div1").show();
+    $("#div2").hide();
+});
+
+$("#result1").click(function() {
+    var scid={{scenario_open}};
+    console.log(scid);
+
+    $.ajax({
+            url: "/ajax/report_pdf",
+            data: {"scenario_id": scid },
+            dataType: "html",
+            success: function (res) {
+<!--                console.log(data)-->
+                    $('#report_preview').html(res);
+
+
+              },
+              error: function (res) {
+                console.log("error "+res);
+            }
+        });
+
+<!--    $("#bakalia").trigger("click");-->
+
+    $("#div2").show();
+    $("#div1").hide();
+});
+</script>
+
+<script>
+    $("#download").click(function() {
+        var scid={{scenario_open}};
+            console.log(scid);
+
+    $.ajax({
+            url: "/ajax/print_report",
+            data: {"scenario_id": scid },
+            dataType: "html",
+            success: function (res) {
+                   console.log("success "+res);
+
+              },
+              error: function (res) {
+                console.log("error "+res);
+            }
+        });
+
+
+});
 </script>
 
 {% endblock javascripts%}
