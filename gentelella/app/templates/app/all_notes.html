@@ -90,11 +90,9 @@
 
                             <td class="cen">{{ note.workspace }}</td>
 
-                            <td>{{ note.wsview_title }}</td>
+                            <td><p class="notesellipsis">{{ note.wsview_title }}</p></td>
 
-                            <td class="notesellipsis" >
-                                {{ note.content|striptags }}
-                            </td>
+                            <td ><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
 
                             <td class="cen">
                                 <button class="btn notes-btn btn-white" type="button" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}", data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
@@ -103,6 +101,7 @@
                             </td>
                         </tr>
                         {% endfor %}
+
                         </tbody>
                     </table>
                 </div>

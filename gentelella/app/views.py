@@ -1397,26 +1397,195 @@ def allnotes(request):
 
 def final_report(request, scenario_id=None):
     # template = loader.get_template('app/final_report.html')
-    scenario = {}
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
     all_combs = list(product([d.name for d in drugs] or [""],
                              [c.name for c in conditions] or [""]))
-    scenario_id=sc
-    scenario = {"drugs": drugs,
-                "conditions": conditions,
-                "all_combs": all_combs,
-                "owner": sc.owner.username,
-                "status": sc.status.status,
-                "timestamp": sc.timestamp,
-                }
 
     scenario_open = sc.id
+    synolo=[]
+    from hashlib import blake2b
+    for i in range(len(all_combs)):
+        p = sc.id+i
+        k = repr(p).encode('utf-8')
+        h = blake2b(key=k, digest_size=16)
+        hash = h.hexdigest()
+        synolo.append(hash)
+    drug_condition_hash=[]
+    m=0
+    for i in all_combs:
+            k=list(i)
+            k.append(synolo[m])
+            p=tuple(k)
+            drug_condition_hash.append(p)
+            m=m+1
 
-    context = {'scenario': scenario, 'scenario_open':scenario_open}
-    return render(request, 'app/final_report.html',context)
+    context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,'drug_condition_hash':drug_condition_hash}
+    return render(request, 'app/final_report.html', context)
 
-    # return HttpResponse(template.render({"scenario": scenario}, request))
 
+
+def report_pdf(request, scenario_id=None):
+    import requests
+    from bs4 import BeautifulSoup
+    import pandas as pd
+    import os
+
+    scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
+
+    sc = Scenario.objects.get(id=scenario_id)
+    scenario = sc.title
+
+    drugs = [d for d in sc.drugs.all()]
+    conditions = [c for c in sc.conditions.all()]
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
+
+    synolo=[]
+    from hashlib import blake2b
+    for i in range(len(all_combs)):
+        p = sc.id+i
+        k = repr(p).encode('utf-8')
+        h = blake2b(key=k, digest_size=16)
+        hash = h.hexdigest()
+        synolo.append(hash)
+    drug_condition_hash=[]
+    m=0
+    for i in all_combs:
+            k=list(i)
+            k.append(synolo[m])
+            p=tuple(k)
+            drug_condition_hash.append(p)
+            m=m+1
+
+    r = requests.get(settings.REPORT_ENDPOINT)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    dictpng={}
+    dictcsv={}
+    dictpng_dynprr={}
+    dictcsv_dynprr={}
+    dict_dash_csv={}
+
+
+    for i,j,k in drug_condition_hash:
+
+        files_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
+                            map(lambda el: el.get_text(), soup.find_all('a'))))
+
+        files_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_timeseries_prr".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        if files_png:
+            dictpng[k] = files_png[0]
+        if files_csv:
+            dictcsv[k] = files_csv[0]
+
+        dynprr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_prrplot".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dynprr_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrcounts".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dynprr_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_concocounts".format(k) in elm,
+                                 map(lambda el: el.get_text(), soup.find_all('a'))))
+        dynprr_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_eventcounts".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        if dynprr_png: dictpng_dynprr[k] = dynprr_png[0]
+        if dynprr_csv: dictcsv_dynprr.setdefault(k , []).append(dynprr_csv[0])
+        if dynprr_csv1: dictcsv_dynprr.setdefault(k , []).append(dynprr_csv1[0])
+        if dynprr_csv2: dictcsv_dynprr.setdefault(k , []).append(dynprr_csv2[0])
+
+
+
+        dash_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_primary".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_png1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_serious".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_png2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_sexplot".format(k) in elm,
+                                  map(lambda el: el.get_text(), soup.find_all('a'))))
+        if dash_png1: dash_png.append(dash_png1[0])
+        if dash_png2: dash_png.append(dash_png2[0])
+
+
+        dash_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_event".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_concomitant".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_indication".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+
+        if dash_csv: dict_dash_csv['Events']=dash_csv[0]
+        if dash_csv1:dict_dash_csv['Concomitant Medications']=dash_csv1[0]
+        if dash_csv2:dict_dash_csv['Indications']=dash_csv2[0]
+
+    dict_quickview={}
+    for i, j, k in drug_condition_hash:
+        for key in dictpng:
+            if k == key:
+                if not j == "":
+                    dict_quickview.setdefault(i+'-'+j, []).append(dictpng[key])
+
+                else:
+                    dict_quickview.setdefault(i, []).append(dictpng[key])
+
+    for i, j, k in drug_condition_hash:
+        for key in dictcsv:
+            if k == key:
+                df1 = pd.read_csv(r'http://83.212.101.89/openfda/media/{}'.format(dictcsv[key]))
+                styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
+                if not j == "":
+                    if i+'-'+j in dict_quickview.keys():
+                        dict_quickview[i+'-'+j].append(styler1.render())
+                    else:
+                        dict_quickview.setdefault(i + '-' + j, []).append('')
+                        dict_quickview[i+'-'+j].append(styler1.render())
+                else:
+                    # dict_quickview[i].append(styler1.render())
+                    if i in dict_quickview.keys():
+                        dict_quickview[i].append(styler1.render())
+                    else:
+                        dict_quickview.setdefault(i, []).append('')
+                        dict_quickview[i].append(styler1.render())
+
+    dict_dynprr={}
+    for i, j, k in drug_condition_hash:
+        for key in dictpng_dynprr:
+            if k == key:
+                if not j == "":
+                    dict_dynprr.setdefault(i+'-'+j, []).append(dictpng_dynprr[key])
+
+                else:
+                    dict_dynprr.setdefault(i, []).append(dictpng_dynprr[key])
+
+    for i, j, k in drug_condition_hash:
+        for key in dictcsv_dynprr:
+            if k == key:
+                for m in range(len(dictcsv_dynprr[key])):
+                    dfdok = pd.read_csv(r'http://83.212.101.89/openfda/media/{}'.format(dictcsv_dynprr[key][m]))
+                    styler1 = dfdok.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+
+                    if i + '-' + j in dict_dynprr.keys():
+                        dict_dynprr[i+'-'+j].append(styler1.render())
+                    else:
+                        dict_dynprr.setdefault(i + '-' + j, []).append('')
+                        dict_dynprr.setdefault(i + '-' + j, []).append(styler1.render())
+
+    for i in dict_dash_csv:
+        df2 = pd.read_csv(r'http://83.212.101.89/openfda/media/{}'.format(dict_dash_csv[i]))
+        styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+        dict_dash_csv[i]=styler1.render()
+    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, 'scenario': scenario,'dict_quickview': dict_quickview, 'dash_png':dash_png, 'dict_dash_csv':dict_dash_csv ,'dict_dynprr': dict_dynprr,'dictcsv_dynprr':dictcsv_dynprr}
+    return render(request, 'app/report_pdf.html', context)
+
+
+def print_report(request,scenario_id=None):
+
+    scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
+    sc=Scenario.objects.get(id=scenario_id)
+
+    import pdfkit
+    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}'.format(sc.id), '/tmp/report.pdf')
+
+    import webbrowser
+    webbrowser.open(r'file:///tmp/report.pdf')
+
+    return render(request, 'app/print_report.html')
 
