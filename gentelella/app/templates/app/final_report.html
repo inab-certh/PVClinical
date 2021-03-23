@@ -13,8 +13,16 @@
 <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{% endblock stylesheets %}
+<style>
+    .report{
+    width:793.700787px;
+    border-style: solid;
+    border-width: thin;
+    padding: 3px;
 
+    }
+</style>
+{% endblock stylesheets %}
 
 
 {% block content %}
@@ -146,25 +154,23 @@
 
                                          <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button> Dynamic PRR</strong>
 
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Change Points Analysis</strong>
+                                         <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Change Points Analysis</strong>
 
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Report View</strong>
-
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Notes</strong>
-
-                                          {% else %}
+                                          {% elif d %}
 
                                          <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Dashboard &nbsp &nbsp</strong>
 
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
 
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Report view &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
 
-                                         <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
-
+                                          {% elif c %}
+                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
 
                                           {%endif%}
-
+<!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
+                                          <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Notes</strong>
 
                                         </div>
                                     </div>
@@ -241,8 +247,11 @@
 <!--                        </a>-->
                          <h2>Step 2: Edit and fill in your review with the last additions.</h2>
                         <div class="x_panel">
+                            <div class="report">
 
-                            <div style="color:black" id="report_preview"></div>
+
+                            <div style="color:black" id="report_preview" ></div>
+                            </div>
 
                         </div>
                      </div>
@@ -283,12 +292,15 @@ $(document).ready(function(){
       var hash= $(this).data('hash');
       var urlquickview1= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
 	  var urlquickview2= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
+      var urlquickview3= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+       console.log(urlquickview1);
 
-        console.log(urlquickview1);
-     if (con!=''){
-        document.getElementById('iframe_shiny').src = urlquickview1;
-        }else{
+     if (con == ''){
         document.getElementById('iframe_shiny').src = urlquickview2;
+        }else if (drug == ''){
+        document.getElementById('iframe_shiny').src = urlquickview3;
+        }else{
+        document.getElementById('iframe_shiny').src = urlquickview1;
 
         };
 

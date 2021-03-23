@@ -1,158 +1,162 @@
-    <style>
+
+<style>
 table       { margin-bottom: 1.4em; width:50%; }
 th          { font-weight: bold; }
 thead th    { background: #bcc8d4; }
 th,td,caption { padding: 4px 10px 4px 5px; }
 p    { font-weight: bold; }
 
-* {
-  box-sizing: border-box;
-}
 
-.column {
-  float: left;
-  width: 33.33%;
-  padding: 5px;
-}
-
-/* Clearfix (clear floats) */
-.row::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-
-#quickview_title {
-  width:400px;
-  background-color: #d4d4d4;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px;
-  color: #294461;
-  font-size:18px;
-  font-weight: bold;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.view_title {
+  width:40%;
+  color:  #0d0d0d
+  font-size:16px;
   text-align:center;
+  background-color: #bcc8d4;
+  padding: 20px;
+  color:  #0d0d0d
+  font-size:16px;
+  font-weight: bold;
+    font-family: Arial;
 
   }
-#dash_title {
-  width:400px;
-  background-color: #d4d4d4;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px;
-  color: #294461;
-  font-size:18px;
-  font-weight: bold;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+
+.info_title{
+  width:40%;
+  color:  #0d0d0d
+  font-size:16px;
   text-align:center;
-}
-#dynprr_title {
-  width:400px;
-  background-color: #d4d4d4;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 10px;
-  color: #294461;
-  font-size:18px;
-  font-weight: bold;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  text-align:center;
-}
-#drug_event1{
-  color: #353838;
+  background-color: #bcc8d4;
   padding: 20px;
+  color:  #0d0d0d
   font-size:16px;
   font-weight: bold;
-  background-color: #e9e9e2;
-  border-radius: 8px;
-  margin: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  text-align:center;
+    font-family: Arial;
+
 }
-#drug_event2{
-  color: #353838;
+
+.drug_event{
+  width:100%;
+  color:  #0d0d0d
+  font-size:16px;
+  background-color: #bcc8d4;
   padding: 20px;
+  color:  #0d0d0d
   font-size:16px;
   font-weight: bold;
-  background-color: #e9e9e2;
-  border-radius: 8px;
-  margin: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  padding-left:20px;
   text-align:center;
+    font-family: Arial;
 
 }
 
 #workspace{
-  background-color: #d4d4d4;
-  width: 100%;
+  width:100%;
+  color:  #0d0d0d
+  font-size:16px;
+  text-align:center;
+  background-color: #bcc8d4;
   padding: 20px;
-  color: #294461;
-  border: 3px solid #5d6163;
-  font-size:20px;
+  color:  #0d0d0d
+  font-size:16px;
   font-weight: bold;
+  page-break-before: always;
+    font-family: Arial;
+
+
 
 }
 #review{
 text-align: center;
-color:#294461;
+color: #0d0d0d
  font-weight: bold;
- font-size:30px;
- padding-top:220px;
- padding-bottom:40px;
+ font-size:32px;
+   font-family: Arial;
+
 }
 subt {
-  color: #294461;
-  font-size:15px;
+  color:  #0d0d0d
+  font-size:22px;
   font-weight: bold;
-  font-style: italic;
-  padding-left:480px;
+  font-style: bold;
+  padding-left:20px;
+    font-family: Arial;
+
 }
-subdash {
-  color: #294461;
-  font-size:15px;
+info{
+  color: #0d0d0d
+  width: 100%
+  padding: 20px;
+  color:  #0d0d0d
+  font-size:20px;
   font-weight: bold;
-  font-style: italic;
-  padding-left:380px;
+  padding-left:20px;
+    font-family: Arial;
+
+
 }
-img{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+table, figure {
+  page-break-inside: avoid;
+    font-family: Arial;
+
+}
+div{
+  font-family: Arial;
+}
+.notes_title {
+  width:70%;
+  font-size:18px;
+  word-break: keep-all;
+  background: #bcc8d4;
+}
+.notes_content {
+  width: 100%;
+<!--  border: 1px solid #000000;-->
+  font-size:18px;
+  word-break: keep-all;
 }
     </style>
 
 
-<img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="400" height="150">
-    <img src='https://www.certh.gr/skn/logo_el.png' align="right" width="450" height="80" >
+    <img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="35%">
+    <img src='https://www.certh.gr/skn/logo_el.png' align="right" width="40%" >
+<br>
+    <div style="padding-top:250px"></div>
+
+<div align="center"><img src="/static/images/pvclinical.png" width="35%"></div>
+    <div style="padding-top:200px"></div>
 
 
 <div id="review">Review of {{scenario}}</div>
     <br>
+    <div style="padding-top:500px"></div>
+        <div class="info_title">Personal Informations</div>
+            <div style="padding-top:30px"></div>
+        <info>First Name:</info>
+            <div style="padding-top:30px"></div>
+        <info>Last Name:</info>
+            <div style="padding-top:30px"></div>
+        <info>Date Issued:</info>
+    <div style="padding-top:100px"></div>
+
+
+
     <br>
+    {% if dict_quickview or dashboard_png or dict_dash_csv or dict_dynprr %}
     <div id="workspace"> OpenFDA Workspace</div>
+    {% endif %}
     <br>
     <br>
 <!--    Quickview-->
 
     {% if dict_quickview.items%}
-    <strong id="quickview_title">Quick View</strong>
-    <br>
+    <div class="view_title">Quick View</div>
+                <div style="padding-bottom:20px"></div>
+
 
         {% for key,value in dict_quickview.items %}
 
-        <div id="drug_event1">{{key}}</div>
+        <div class="drug_event">{{key}}</div>
 
         {% if value.0 %}
             <img src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
@@ -160,73 +164,98 @@ img{
     <br>
     <br>
     <br>
-           <div align="center">{{value.1|safe}}</div>
+           <div style="margin-left: 20px;">{{value.1|safe}}</div>
     <br>
     <br>
 
         {% endfor %}
     {% endif %}
-<!--    End of Quickview-->
-
-<!--Dashboard-->
-    {% if dash_png%}
-        <strong id="dash_title" >Dashboard</strong>
+            <br>
+        <!--Dashboard-->
+    {% if dashboard_png or dict_dash_csv %}
+        <div class="view_title" >Dashboard</div>
         <br>
-            <div class="row">
-                {% for img in dash_png %}
-                <div class="column">
-                    <img src='{{REPORT_ENDPOINT}}{{ img }}' style="width:100%">
-                </div>
+                <div style="padding-bottom:30px"></div>
+                {% for img in dashboard_png %}
+                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                <div style="padding-bottom:20px"></div>
+
                 {% endfor %}
-            </div>
 
-            <div style="padding-bottom:80px"></div>
-        {% endif %}
-
+            <div style="padding-bottom:30px"></div>
 
         {% for key,value in dict_dash_csv.items %}
-            <subdash> -{{key}}</subdash>
+            <subt> -{{key}}</subt>
             <div style="padding-bottom:30px"></div>
-            <div align="center">{{value|safe}}</div>
+            <div style="margin-left: 20px;">{{value|safe}}</div>
             <div style="padding-bottom:30px"></div>
         {% endfor %}
-
+    {% endif %}
 <!--    End of Dashboard-->
+<!--Reporting Rates for Drug-->
+    {% if dict_rr_d %}
+    <div class="view_title" >Reporting Rates</div>
+    <br>
+<br>
+<br>
+    {% for key,value in dict_rr_d.items %}
+        <subt> -{{key}}</subt>
+        <div style="padding-bottom:30px"></div>
+        <div style="margin-left: 20px;">{{value|safe}}</div>
+        <div style="padding-bottom:40px"></div>
+    {% endfor %}
+    {% endif %}
+<!--End of Reporting Rates for Drug-->
 
-<!-- DynamicPRR-->
+<!--Reporting Rates for Event-->
+    {% if dict_rr_e %}
+    <div class="view_title" >Reporting Rates</div>
+    <br>
+    <br>
+    <br>
+    {% for key,value in dict_rr_e.items %}
+        <subt> -{{key}}</subt>
+        <div style="padding-bottom:30px"></div>
+        <div style="margin-left: 20px;">{{value|safe}}</div>
+        <div style="padding-bottom:40px"></div>
+    {% endfor %}
+    {% endif %}
+<!--End of Reporting Rates for Event-->
 
+<!--DynamicPrr-->
+         <br>
    {% if dict_dynprr.items%}
-        <strong id="dynprr_title">DynamicPRR</strong>
+        <div class="view_title">DynamicPRR</div>
         <br>
         {% for key,value in dict_dynprr.items %}
-            <div id="drug_event2">{{key}}</div>
+            <div class="drug_event">{{key}}</div>
             {% if value.0 %}
                 <br>
                 <subt>-PRR over time</subt>
-                <img src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
+                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
             {% endif %}
         <br>
         <br>
         <br>
         {% if value.1 %}
             <br>
-            <subt>-Report counts and PRR</subt>
+            <subt>-{{value.2}}</subt>
             <br>
             <br>
-            <div align="center">{{value.1|safe}}</div>
-        {% endif %}
-        {% if value.2 %}
-            <subt>-Drugs in scenario reports</subt>
-            <br>
-            <br>
-            <div align="center">{{value.2|safe}}</div>
+            <div style="margin-left: 20px;">{{value.1|safe}}</div>
         {% endif %}
         {% if value.3 %}
+            <subt>-{{value.4}}</subt>
             <br>
-            <subt >-Events in scenario reports</subt>
+            <br>
+            <div style="margin-left: 20px;">{{value.3|safe}}</div>
+        {% endif %}
+        {% if value.5 %}
+            <br>
+            <subt >-{{value.6}}</subt>
             <br>
             <br>
-            <div align="center">{{value.3|safe}}</div>
+            <div style="margin-left: 20px;">{{value.5|safe}}</div>
         {% endif %}
 
         <br>
@@ -234,3 +263,166 @@ img{
         {% endfor %}
    {% endif %}
 <!--    End of DynamicPrr-->
+
+<!--Change Point-->
+
+   {% if dict_changepoint.items%}
+        <div class="view_title">Change Point Analysis</div>
+        <br>
+        {% for key,value in dict_changepoint.items %}
+        <br>
+        <br>
+            <div class="drug_event">{{key}}</div>
+            {% if value.0.0 %}
+                <br>
+                <br>
+                <subt>-{{ value.0.1 }}</subt>
+                <br>
+                <br>
+                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.0 }}'>
+            {% endif %}
+
+        {% if value.0.2 %}
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <subt>-{{ value.0.3 }}</subt>
+            <br>
+            <br>
+            <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.2 }}'>
+        {% endif %}
+
+        {% if value.0.4 %}
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <subt>-{{ value.0.5 }}</subt>
+            <br>
+            <br>
+
+            <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.4 }}'>
+        {% endif %}
+
+        {% if value.0.6 %}
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <subt >-{{ value.0.7 }}</subt>
+            <br>
+            <br>
+                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.6 }}'>
+        {% endif %}
+
+        {% if value.1 %}
+            <br>
+            <br>
+            <subt >-{{value.2}}</subt>
+            <br>
+            <br>
+
+            <div style="margin-left: 20px;">{{value.1|safe}}</div>
+        {% endif %}
+
+        {% if value.3 %}
+            <br>
+            <br>
+            <subt >-{{value.4}}</subt>
+            <br>
+            <br>
+            <div style="margin-left: 20px;">{{value.3|safe}}</div>
+        {% endif %}
+        {% endfor %}
+   {% endif %}
+
+<!--End Change Point-->
+
+<!--Likelihood for Drug-->
+{% if lrTest_png or dict_lr %}
+        <div class="view_title" >Likelihood Rate Test</div>
+        <br>
+                <div style="padding-bottom:30px"></div>
+                {% for img in lrTest_png %}
+                <subt>-Simulation Results for Event Based LRT</subt>
+                <div style="padding-bottom:30px"></div>
+                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                <div style="padding-bottom:30px"></div>
+
+                {% endfor %}
+
+            <div style="padding-bottom:30px"></div>
+
+        {% for key,value in dict_lr.items %}
+            <subt> -{{key}}</subt>
+            <div style="padding-bottom:30px"></div>
+            <div style="margin-left: 20px;">{{value|safe}}</div>
+            <div style="padding-bottom:30px"></div>
+        {% endfor %}
+
+{% endif %}
+
+<!--End Likelihood for Drug-->
+
+<!--Likelihood for Event-->
+{% if lreTest_png or dict_lre %}
+        <div class="view_title" >Likelihood Rate Test</div>
+        <br>
+                <div style="padding-bottom:30px"></div>
+                {% for img in lreTest_png %}
+                <subt>-Simulation Results for Drug Based LRT</subt>
+                <div style="padding-bottom:30px"></div>
+                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                <div style="padding-bottom:30px"></div>
+
+                {% endfor %}
+
+            <div style="padding-bottom:30px"></div>
+
+        {% for key,value in dict_lre.items %}
+            <subt> -{{key}}</subt>
+            <div style="padding-bottom:30px"></div>
+            <div style="margin-left: 20px;">{{value|safe}}</div>
+            <div style="padding-bottom:30px"></div>
+        {% endfor %}
+
+{% endif %}
+
+<!--End Likelihood for Event-->
+<!--Report-->
+
+<!--{% if dict_report_view %}-->
+<!--    <div class="view_title" >Report View</div>-->
+<!--    <br>-->
+<!--<br>-->
+<!--<br>-->
+<!--    {% for key,value in dict_report_view.items %}-->
+<!--        <subt> -{{key}}</subt>-->
+<!--        <div style="padding-bottom:30px"></div>-->
+<!--        <csv style="margin-left: 20px;">{{value|safe}}</csv>-->
+<!--        <div style="padding-bottom:40px"></div>-->
+<!--    {% endfor %}-->
+<!--    {% endif %}-->
+
+<!--End Report-->
+<br>
+<br>
+<!--Notes-->
+{% if notes_openfda %}
+
+        <div class="view_title" >Notes</div>
+
+    {% for key,value in notes_openfda.items %}
+        <br>
+   <div class="notes_title"> {{key}} </div>
+    <br>
+    <div class="notes_content">{{value|striptags|safe}}</div>
+
+
+    {% endfor %}
+{% endif %}
+<!--End Notes-->
