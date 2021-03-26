@@ -226,6 +226,6 @@ class Notes(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "scenario", "workspace", "wsview"],
-                                    name="unique_condition")
+                                    name="unique_note")
         ]
 

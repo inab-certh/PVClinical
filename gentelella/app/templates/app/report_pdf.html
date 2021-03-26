@@ -50,7 +50,7 @@ p    { font-weight: bold; }
 
 }
 
-#workspace{
+.workspace{
   width:100%;
   color:  #0d0d0d
   font-size:16px;
@@ -62,9 +62,6 @@ p    { font-weight: bold; }
   font-weight: bold;
   page-break-before: always;
     font-family: Arial;
-
-
-
 }
 #review{
 text-align: center;
@@ -80,7 +77,7 @@ subt {
   font-weight: bold;
   font-style: bold;
   padding-left:20px;
-    font-family: Arial;
+   font-family: Arial;
 
 }
 info{
@@ -97,8 +94,8 @@ info{
 }
 table, figure {
   page-break-inside: avoid;
-    font-family: Arial;
-
+   font-family: Arial;
+   padding-left:20px;
 }
 div{
   font-family: Arial;
@@ -139,31 +136,56 @@ div{
         <info>Date Issued:</info>
     <div style="padding-top:100px"></div>
 
-
-
+<!--For drug or condition only-->
+    {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
     <br>
-    {% if dict_quickview or dashboard_png or dict_dash_csv or dict_dynprr %}
-    <div id="workspace"> OpenFDA Workspace</div>
+    <div class="workspace"> OpenFDA Workspace</div>
+    <br>
+    <br>
+    {% for drug, con in all_combs%}
+        <div class="drug_event">{%if drug != '' %}{{drug}}{% else %}{{con}}{% endif %}</div>
+        <div style="padding-bottom:20px"></div>
+    {% endfor %}
     {% endif %}
-    <br>
-    <br>
+
+<!--Notes-->
+{% if notes_openfda %}
+{% for drug, con in all_combs%}
+    {% for key,value in notes_openfda.items %}
+        {% if drug == key or con == key %}
+<div class="view_title" >Notes</div>
+        <br>
+    <div class="notes_content">{{value|striptags|safe}}</div>
+        <br>
+        <br>
+
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+{% endif %}
+<!--End Notes-->
 <!--    Quickview-->
 
     {% if dict_quickview.items%}
-    <div class="view_title">Quick View</div>
-                <div style="padding-bottom:20px"></div>
-
 
         {% for key,value in dict_quickview.items %}
 
-        <div class="drug_event">{{key}}</div>
+    <div class="view_title">Quick View</div>
 
         {% if value.0 %}
-            <img src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
+                    <br>
+                    <br>
+            <subt>- Change in mean analysis</subt>
+                    <br>
+                    <br>
+            <img width="80%" src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
         {% endif %}
     <br>
     <br>
     <br>
+            <subt>- PRR and ROR results </subt>
+                    <br>
+                    <br>
            <div style="margin-left: 20px;">{{value.1|safe}}</div>
     <br>
     <br>
@@ -177,7 +199,7 @@ div{
         <br>
                 <div style="padding-bottom:30px"></div>
                 {% for img in dashboard_png %}
-                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
                 <div style="padding-bottom:20px"></div>
 
                 {% endfor %}
@@ -222,126 +244,6 @@ div{
     {% endif %}
 <!--End of Reporting Rates for Event-->
 
-<!--DynamicPrr-->
-         <br>
-   {% if dict_dynprr.items%}
-        <div class="view_title">DynamicPRR</div>
-        <br>
-        {% for key,value in dict_dynprr.items %}
-            <div class="drug_event">{{key}}</div>
-            {% if value.0 %}
-                <br>
-                <subt>-PRR over time</subt>
-                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
-            {% endif %}
-        <br>
-        <br>
-        <br>
-        {% if value.1 %}
-            <br>
-            <subt>-{{value.2}}</subt>
-            <br>
-            <br>
-            <div style="margin-left: 20px;">{{value.1|safe}}</div>
-        {% endif %}
-        {% if value.3 %}
-            <subt>-{{value.4}}</subt>
-            <br>
-            <br>
-            <div style="margin-left: 20px;">{{value.3|safe}}</div>
-        {% endif %}
-        {% if value.5 %}
-            <br>
-            <subt >-{{value.6}}</subt>
-            <br>
-            <br>
-            <div style="margin-left: 20px;">{{value.5|safe}}</div>
-        {% endif %}
-
-        <br>
-        <br>
-        {% endfor %}
-   {% endif %}
-<!--    End of DynamicPrr-->
-
-<!--Change Point-->
-
-   {% if dict_changepoint.items%}
-        <div class="view_title">Change Point Analysis</div>
-        <br>
-        {% for key,value in dict_changepoint.items %}
-        <br>
-        <br>
-            <div class="drug_event">{{key}}</div>
-            {% if value.0.0 %}
-                <br>
-                <br>
-                <subt>-{{ value.0.1 }}</subt>
-                <br>
-                <br>
-                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.0 }}'>
-            {% endif %}
-
-        {% if value.0.2 %}
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <subt>-{{ value.0.3 }}</subt>
-            <br>
-            <br>
-            <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.2 }}'>
-        {% endif %}
-
-        {% if value.0.4 %}
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <subt>-{{ value.0.5 }}</subt>
-            <br>
-            <br>
-
-            <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.4 }}'>
-        {% endif %}
-
-        {% if value.0.6 %}
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <subt >-{{ value.0.7 }}</subt>
-            <br>
-            <br>
-                <img style="width: 90%;" src='{{REPORT_ENDPOINT}}{{ value.0.6 }}'>
-        {% endif %}
-
-        {% if value.1 %}
-            <br>
-            <br>
-            <subt >-{{value.2}}</subt>
-            <br>
-            <br>
-
-            <div style="margin-left: 20px;">{{value.1|safe}}</div>
-        {% endif %}
-
-        {% if value.3 %}
-            <br>
-            <br>
-            <subt >-{{value.4}}</subt>
-            <br>
-            <br>
-            <div style="margin-left: 20px;">{{value.3|safe}}</div>
-        {% endif %}
-        {% endfor %}
-   {% endif %}
-
-<!--End Change Point-->
-
 <!--Likelihood for Drug-->
 {% if lrTest_png or dict_lr %}
         <div class="view_title" >Likelihood Rate Test</div>
@@ -350,7 +252,7 @@ div{
                 {% for img in lrTest_png %}
                 <subt>-Simulation Results for Event Based LRT</subt>
                 <div style="padding-bottom:30px"></div>
-                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
                 <div style="padding-bottom:30px"></div>
 
                 {% endfor %}
@@ -376,7 +278,7 @@ div{
                 {% for img in lreTest_png %}
                 <subt>-Simulation Results for Drug Based LRT</subt>
                 <div style="padding-bottom:30px"></div>
-                    <img src='{{REPORT_ENDPOINT}}{{ img }}'>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
                 <div style="padding-bottom:30px"></div>
 
                 {% endfor %}
@@ -393,36 +295,202 @@ div{
 {% endif %}
 
 <!--End Likelihood for Event-->
-<!--Report-->
 
-<!--{% if dict_report_view %}-->
-<!--    <div class="view_title" >Report View</div>-->
-<!--    <br>-->
-<!--<br>-->
-<!--<br>-->
-<!--    {% for key,value in dict_report_view.items %}-->
-<!--        <subt> -{{key}}</subt>-->
-<!--        <div style="padding-bottom:30px"></div>-->
-<!--        <csv style="margin-left: 20px;">{{value|safe}}</csv>-->
-<!--        <div style="padding-bottom:40px"></div>-->
-<!--    {% endfor %}-->
-<!--    {% endif %}-->
+<!--End for drug or con only-->
 
-<!--End Report-->
+<!--for combination of drug-condition-->
+{% if empty_OpenFDA != '' %}
+<div class="workspace">OpenFDA Workspace</div>
 <br>
-<br>
-<!--Notes-->
-{% if notes_openfda %}
-
-        <div class="view_title" >Notes</div>
-
-    {% for key,value in notes_openfda.items %}
-        <br>
-   <div class="notes_title"> {{key}} </div>
-    <br>
-    <div class="notes_content">{{value|striptags|safe}}</div>
-
-
-    {% endfor %}
 {% endif %}
-<!--End Notes-->
+
+
+        {% for key1,val1 in dict1.items%}
+        {% for key2,val2 in dict2.items%}
+
+                {% if key1 == key2  %}
+
+{%if val1.0 != '' or val1.1 != '' or val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
+
+{% for k,v in dict_hash_combination.items %}
+{% if k == key1 %}
+
+<div class="drug_event">{{v}}</div>
+<br>
+<br>
+<!--edw prepei episis na valw jquery ean epilexei na exei tis simiwseis-->
+{% for key2,value2 in notes_openfda.items %}
+{% if key2 == v %}
+<div class="view_title">Notes</div>
+<br>
+<div class="notes_content">{{value2|striptags|safe}}</div>
+<br>
+<br>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+
+{% if val1.0 != '' or val1.1 != '' %}
+                 <div class="view_title">Quick View</div>
+                    <br>
+                    <br>
+                    {% if val1.0 != '' %}
+                    <subt>- Change in mean analysis</subt>
+                    <br>
+                    <br>
+                    <img width="70%" src='{{REPORT_ENDPOINT}}{{val1.0}}'>
+                    {%endif%}
+                    <br>
+                    <br>
+                    {% if val1.1 != '' %}
+                    <subt>- PRR and ROR results </subt>
+                    <br>
+                    <br>
+                   <div style="margin-left: 20px;">{{ val1.1|safe }}</div>
+                    <br>
+                    <br>
+
+                    {% endif %}
+{%endif%}
+
+{% if val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
+
+                    <div class="view_title">Dynamic PRR</div>
+
+                    {% if val2.0 != '' %}
+                    <br>
+                    <br>
+                    <subt>- PRR over time </subt>
+                    <br>
+                    <img width="90%" src='{{REPORT_ENDPOINT}}{{val2.0}}'>
+                    {% endif %}
+                    {% if val2.1 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val2.1|safe}}</subt>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val2.2|safe}}</div>
+
+                    {% endif %}
+                    {% if val2.3 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val2.3|safe}}</subt>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val2.4|safe}}</div>
+                    {% endif %}
+                    {% if val2.5 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val2.5|safe}}</subt>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val2.6|safe}}</div>
+
+                    {% endif %}
+
+{% endif %}
+
+                {% endif %}
+                {%endfor%}
+
+        {% for key3,val3 in dict3.items%}
+
+                {% if key1 == key3  %}
+{%if val1.0 == '' and val1.1 == '' and val2.0 == '' and val2.1 == '' and val2.2 == '' and val2.3 == '' and val2.4 == '' and val2.5 == '' and val2.6 == '' %}
+{%if val3.0 != '' or val3.1 != '' or val3.2 != '' or val3.3 != '' or val3.4 != '' or val3.5 != '' or val3.6 != '' or val3.7 != '' or val3.8 != '' or val3.9 != '' or val3.10 != '' or val3.11 != '' %}
+
+{% for k,v in dict_hash_combination.items %}
+{% if k == key1 %}
+<div class="drug_event">{{v}} </div>
+<br>
+<br>
+<!--edw prepei episis na valw jquery ean epilexei na exei tis simiwseis-->
+{% for key2,value2 in notes_openfda.items %}
+{% if key2 == v %}
+<div class="view_title">Notes</div>
+<br>
+<div class="notes_content">{{value2|striptags|safe}}</div>
+<br>
+<br>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% endif %}
+{%if val3.0 != '' or val3.1 != '' or val3.2 != '' or val3.3 != '' or val3.4 != '' or val3.5 != '' or val3.6 != '' or val3.7 != '' or val3.8 != '' or val3.9 != '' or val3.10 != '' or val3.11 != '' %}
+
+
+                    <div class="view_title">Change Point Analysis</div>
+                    {% if val3.0 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.0}}</subt>
+                    <br>
+                    <br>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.1}}'>
+
+                    {% endif %}
+
+                    {% if val3.2 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.2}}</subt>
+                    <br>
+                    <br>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.3}}'>
+                    {% endif %}
+
+                    {% if val3.4 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.4|safe}}</subt>
+                    <br>
+                    <br>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.5}}'>
+                    {% endif %}
+
+                    {% if val3.6 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.6|safe}}</subt>
+                    <br>
+                    <br>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.7}}'>
+                    {% endif %}
+                    {% if val3.8 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.8|safe}}</subt>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val3.9|safe}}</div>
+                    {% endif %}
+                    {% if val3.10 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.10|safe}}</subt>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;"> {{val3.11|safe}}</div>
+
+                    {% endif %}
+
+                {% endif %}
+{%endif%}
+        {%endfor%}
+
+        {%endfor%}
+
+
+<!--End for combination of drug-condition-->
+
+
+
