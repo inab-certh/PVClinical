@@ -1,4 +1,3 @@
-
 <style>
 table       { margin-bottom: 1.4em; width:50%; }
 th          { font-weight: bold; }
@@ -77,7 +76,7 @@ subt {
   font-weight: bold;
   font-style: bold;
   padding-left:20px;
-   font-family: Arial;
+  font-family: Arial;
 
 }
 info{
@@ -111,6 +110,19 @@ div{
 <!--  border: 1px solid #000000;-->
   font-size:18px;
   word-break: keep-all;
+}
+.details{
+   font-family: Arial;
+   padding-left:20px;
+}
+.fig{
+  color:  #0d0d0d
+  font-size:22px;
+  font-weight: bold;
+  font-style: bold;
+  padding-left:20px;
+  font-family: Arial;
+
 }
     </style>
 
@@ -169,37 +181,43 @@ div{
     {% if dict_quickview.items%}
 
         {% for key,value in dict_quickview.items %}
-
+ {% if value.2 or value.0 != '' %}
     <div class="view_title">Quick View</div>
+ {% endif %}
 
-        {% if value.0 %}
+        {% if value.0 != '' %}
                     <br>
                     <br>
-            <subt>- Change in mean analysis</subt>
+            <subt>{{value.1}}- Change in mean analysis</subt>
                     <br>
                     <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
+    <br>
+    <br>
         {% endif %}
     <br>
-    <br>
-    <br>
-            <subt>- PRR and ROR results </subt>
+        {% if value.2 %}
+
+            <subt>{{value.3}}- PRR and ROR results </subt>
                     <br>
                     <br>
-           <div style="margin-left: 20px;">{{value.1|safe}}</div>
+           <div style="margin-left: 20px;">{{value.2|safe}}</div>
     <br>
     <br>
+        {% endif %}
 
         {% endfor %}
     {% endif %}
             <br>
         <!--Dashboard-->
-    {% if dashboard_png or dict_dash_csv %}
+    {% if dict_dashboard_png or dict_dash_csv %}
         <div class="view_title" >Dashboard</div>
         <br>
                 <div style="padding-bottom:30px"></div>
-                {% for img in dashboard_png %}
+                {% for img,fig in dict_dashboard_png.items %}
+                    <div class="fig"><br>{{fig}}</div>
                     <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
+
                 <div style="padding-bottom:20px"></div>
 
                 {% endfor %}
@@ -207,9 +225,10 @@ div{
             <div style="padding-bottom:30px"></div>
 
         {% for key,value in dict_dash_csv.items %}
-            <subt> -{{key}}</subt>
+            <subt> {{value.1}}-{{key}}</subt>
             <div style="padding-bottom:30px"></div>
-            <div style="margin-left: 20px;">{{value|safe}}</div>
+            <div style="margin-left: 20px;">{{value.0|safe}}</div>
+<!--            <div class="fig">{{value.1}}</div>-->
             <div style="padding-bottom:30px"></div>
         {% endfor %}
     {% endif %}
@@ -221,9 +240,9 @@ div{
 <br>
 <br>
     {% for key,value in dict_rr_d.items %}
-        <subt> -{{key}}</subt>
+        <subt>{{value.1}} -{{key}}</subt>
         <div style="padding-bottom:30px"></div>
-        <div style="margin-left: 20px;">{{value|safe}}</div>
+        <div style="margin-left: 20px;">{{value.0|safe}}</div>
         <div style="padding-bottom:40px"></div>
     {% endfor %}
     {% endif %}
@@ -236,21 +255,22 @@ div{
     <br>
     <br>
     {% for key,value in dict_rr_e.items %}
-        <subt> -{{key}}</subt>
+        <subt>{{value.1}} -{{key}}</subt>
         <div style="padding-bottom:30px"></div>
-        <div style="margin-left: 20px;">{{value|safe}}</div>
+        <div style="margin-left: 20px;">{{value.0|safe}}</div>
         <div style="padding-bottom:40px"></div>
     {% endfor %}
     {% endif %}
 <!--End of Reporting Rates for Event-->
 
 <!--Likelihood for Drug-->
-{% if lrTest_png or dict_lr %}
+{% if dict_lrTest_png or dict_lr %}
         <div class="view_title" >Likelihood Rate Test</div>
         <br>
+                {% for img, fig in dict_lrTest_png.items %}
                 <div style="padding-bottom:30px"></div>
-                {% for img in lrTest_png %}
-                <subt>-Simulation Results for Event Based LRT</subt>
+
+                <subt>{{fig}}- Simulation Results for Event Based LRT</subt>
                 <div style="padding-bottom:30px"></div>
                     <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
                 <div style="padding-bottom:30px"></div>
@@ -260,23 +280,22 @@ div{
             <div style="padding-bottom:30px"></div>
 
         {% for key,value in dict_lr.items %}
-            <subt> -{{key}}</subt>
+            <subt>{{value.1}} -{{key}}</subt>
             <div style="padding-bottom:30px"></div>
-            <div style="margin-left: 20px;">{{value|safe}}</div>
+            <div style="margin-left: 20px;">{{value.0|safe}}</div>
             <div style="padding-bottom:30px"></div>
         {% endfor %}
 
 {% endif %}
-
 <!--End Likelihood for Drug-->
 
 <!--Likelihood for Event-->
-{% if lreTest_png or dict_lre %}
+{% if dict_lreTest_png or dict_lre %}
         <div class="view_title" >Likelihood Rate Test</div>
         <br>
+                {% for img,fig  in dict_lreTest_png.items %}
                 <div style="padding-bottom:30px"></div>
-                {% for img in lreTest_png %}
-                <subt>-Simulation Results for Drug Based LRT</subt>
+                <subt>{{fig}}- Simulation Results for Drug Based LRT</subt>
                 <div style="padding-bottom:30px"></div>
                     <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
                 <div style="padding-bottom:30px"></div>
@@ -286,9 +305,9 @@ div{
             <div style="padding-bottom:30px"></div>
 
         {% for key,value in dict_lre.items %}
-            <subt> -{{key}}</subt>
+            <subt>{{value.1}} -{{key}}</subt>
             <div style="padding-bottom:30px"></div>
-            <div style="margin-left: 20px;">{{value|safe}}</div>
+            <div style="margin-left: 20px;">{{value.0|safe}}</div>
             <div style="padding-bottom:30px"></div>
         {% endfor %}
 
@@ -310,11 +329,12 @@ div{
 
                 {% if key1 == key2  %}
 
-{%if val1.0 != '' or val1.1 != '' or val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
+{%if val1.0 != '' or val1.2 != '' or val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
 
 {% for k,v in dict_hash_combination.items %}
 {% if k == key1 %}
-
+<br>
+<br>
 <div class="drug_event">{{v}}</div>
 <br>
 <br>
@@ -333,64 +353,89 @@ div{
 
 {% endif %}
 
-{% if val1.0 != '' or val1.1 != '' %}
+{% if val1.0 != '' or val1.2 != '' %}
                  <div class="view_title">Quick View</div>
                     <br>
                     <br>
                     {% if val1.0 != '' %}
-                    <subt>- Change in mean analysis</subt>
+                    <subt>{{val1.1}}- Change in mean analysis</subt>
                     <br>
+                    <br>
+                    <div class="details">Changepoint is an instance in time where the statistical properties before and after this time point differ.
+                    With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
+                    is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
+                        changepoints of data.</div>
+
                     <br>
                     <img width="70%" src='{{REPORT_ENDPOINT}}{{val1.0}}'>
                     {%endif%}
                     <br>
                     <br>
-                    {% if val1.1 != '' %}
-                    <subt>- PRR and ROR results </subt>
+                    {% if val1.2 != '' %}
+                    <subt>{{val1.3}}- PRR and ROR results </subt>
                     <br>
                     <br>
-                   <div style="margin-left: 20px;">{{ val1.1|safe }}</div>
+                   <div style="margin-left: 20px;">{{ val1.2|safe }}</div>
                     <br>
                     <br>
 
                     {% endif %}
 {%endif%}
 
-{% if val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
+{% if val2.0 != '' or val2.2 != '' or val2.5 != '' or val2.8 != '' %}
 
                     <div class="view_title">Dynamic PRR</div>
 
                     {% if val2.0 != '' %}
                     <br>
                     <br>
-                    <subt>- PRR over time </subt>
+                    <subt>{{val2.1}}- PRR over time </subt>
                     <br>
+                    <br>
+
+                    <div class="details">Changepoint is an instance in time where the statistical properties before and after this time point differ.
+                    With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
+                    is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
+                        changepoints of data.</div>
+
+                    <br>
+                    <br>
+
                     <img width="90%" src='{{REPORT_ENDPOINT}}{{val2.0}}'>
                     {% endif %}
-                    {% if val2.1 != '' %}
+                    {% if val2.2 != '' %}
                     <br>
                     <br>
-                    <subt>{{val2.1|safe}}</subt>
+                    <subt>{{val2.4}}{{val2.2|safe}}</subt>
                     <br>
                     <br>
-                    <div style="margin-left: 20px;">{{val2.2|safe}}</div>
-
-                    {% endif %}
-                    {% if val2.3 != '' %}
+                    <div class="details">Monthly and cumulative counts for drug-event combination.</div>
                     <br>
                     <br>
-                    <subt>{{val2.3|safe}}</subt>
-                    <br>
-                    <br>
-                    <div style="margin-left: 20px;">{{val2.4|safe}}</div>
+                    <div style="margin-left: 20px;">{{val2.3|safe}}</div>
                     {% endif %}
                     {% if val2.5 != '' %}
                     <br>
                     <br>
-                    <subt>{{val2.5|safe}}</subt>
+                    <subt>{{val2.7}}{{val2.5|safe}}</subt>
+                    <br>
+                    <br>
+                    <div class="details">Frequency table for drugs found in selected reports</div>
                     <br>
                     <br>
                     <div style="margin-left: 20px;">{{val2.6|safe}}</div>
+
+                    {% endif %}
+                    {% if val2.8 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val2.10}}{{val2.8|safe}}</subt>
+                    <br>
+                    <br>
+                    <div class="details">Frequency table for events found in selected reports</div>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val2.9|safe}}</div>
 
                     {% endif %}
 
@@ -402,11 +447,13 @@ div{
         {% for key3,val3 in dict3.items%}
 
                 {% if key1 == key3  %}
-{%if val1.0 == '' and val1.1 == '' and val2.0 == '' and val2.1 == '' and val2.2 == '' and val2.3 == '' and val2.4 == '' and val2.5 == '' and val2.6 == '' %}
-{%if val3.0 != '' or val3.1 != '' or val3.2 != '' or val3.3 != '' or val3.4 != '' or val3.5 != '' or val3.6 != '' or val3.7 != '' or val3.8 != '' or val3.9 != '' or val3.10 != '' or val3.11 != '' %}
+{%if val1.0 == '' and val1.2 == '' and val2.0 == '' and val2.2 == '' and val2.5 == '' and val2.8 == '' %}
+{%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
 
 {% for k,v in dict_hash_combination.items %}
 {% if k == key1 %}
+<br>
+<br>
 <div class="drug_event">{{v}} </div>
 <br>
 <br>
@@ -425,62 +472,88 @@ div{
 {% endif %}
 
 {% endif %}
-{%if val3.0 != '' or val3.1 != '' or val3.2 != '' or val3.3 != '' or val3.4 != '' or val3.5 != '' or val3.6 != '' or val3.7 != '' or val3.8 != '' or val3.9 != '' or val3.10 != '' or val3.11 != '' %}
+{%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
 
-
+                    <br>
+                    <br>
+                    <br>
                     <div class="view_title">Change Point Analysis</div>
                     {% if val3.0 != '' %}
                     <br>
                     <br>
-                    <subt>{{val3.0}}</subt>
+                    <subt>{{val3.2}}{{val3.0}}</subt>
+                    <br>
+                    <br>
+                    <div class="details">Changepoint is an instance in time where the statistical properties before and after this time point differ.
+                    With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
+                    is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
+                        changepoints of data.</div>
                     <br>
                     <br>
                     <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.1}}'>
 
                     {% endif %}
 
-                    {% if val3.2 != '' %}
+                    {% if val3.3 != '' %}
                     <br>
                     <br>
-                    <subt>{{val3.2}}</subt>
+                    <subt>{{val3.5}}{{val3.3}}</subt>
                     <br>
                     <br>
-                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.3}}'>
-                    {% endif %}
-
-                    {% if val3.4 != '' %}
+                    <div class="details">Change in variance analysis calculates change points for mean only changes.
                     <br>
                     <br>
-                    <subt>{{val3.4|safe}}</subt>
-                    <br>
-                    <br>
-                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.5}}'>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.4}}'>
                     {% endif %}
 
                     {% if val3.6 != '' %}
                     <br>
                     <br>
-                    <subt>{{val3.6|safe}}</subt>
+                    <subt>{{val3.8}}{{val3.6|safe}}</subt>
+                    <br>
+                    <br>
+                        <div class="details">Bayesian change point analysis it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant within each block.
+                        In the multivariate case, a common change point structure is assumed; means are constant within each block of each sequence, but may differ across sequences within a given block.
+                        <br> The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates will not be constant within regions, and no
+                        single partition is identified as best. Estimates of the probability of a change point at any given location are provided, however.</div>
                     <br>
                     <br>
                     <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.7}}'>
                     {% endif %}
-                    {% if val3.8 != '' %}
-                    <br>
-                    <br>
-                    <subt>{{val3.8|safe}}</subt>
-                    <br>
-                    <br>
-                    <div style="margin-left: 20px;">{{val3.9|safe}}</div>
-                    {% endif %}
-                    {% if val3.10 != '' %}
-                    <br>
-                    <br>
-                    <subt>{{val3.10|safe}}</subt>
-                    <br>
-                    <br>
-                    <div style="margin-left: 20px;"> {{val3.11|safe}}</div>
 
+                    {% if val3.9 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.11}}{{val3.9|safe}}</subt>
+                    <br>
+                    <br>
+                        <div class="details">Drug-event reports per date diagram.</div>
+                    <br>
+                    <br>
+                    <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.10}}'>
+
+                    {% endif %}
+                    {% if val3.12 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.14}}{{val3.12|safe}}</subt>
+                    <br>
+                    <br>
+                        <div class="details">Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.</div>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;">{{val3.13|safe}}</div>
+                    {% endif %}
+                    {% if val3.15 != '' %}
+                    <br>
+                    <br>
+                    <subt>{{val3.17}}{{val3.15|safe}}</subt>
+                    <br>
+                    <br>
+                        <div class="details">Frequency table for evetns found in selected reports. Event name is linked to PRR results for drug-event combinations.</div>
+                    <br>
+                    <br>
+                    <div style="margin-left: 20px;"> {{val3.16|safe}}</div>
                     {% endif %}
 
                 {% endif %}
@@ -491,6 +564,3 @@ div{
 
 
 <!--End for combination of drug-condition-->
-
-
-
