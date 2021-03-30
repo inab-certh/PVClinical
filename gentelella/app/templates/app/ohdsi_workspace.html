@@ -1,6 +1,6 @@
 {% extends 'app/base_site.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 
@@ -14,94 +14,163 @@
 {% endblock %}
 
 {% block content %}
-
     <div id="ohdsiMenu" class="col-xs-8 col-lg-9 col-xs-offset-3 col-lg-offset-2 mt-3">
+        <div id="exTab3" class="container">
+            <ul  class="nav nav-pills">
+                <li class="active">
+                    <a  href="#1b" data-toggle="tab">Quick View</a>
+                </li>
+                <li><a href="#2b" data-toggle="tab">Detailed View</a>
+                </li>
+            </ul>
+
+            <div class="tab-content clearfix mt-3">
+                <div class="tab-pane active" id="1b">
+        <!--        </div>-->
+
+        <!--        <div class="row">-->
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' sc_id=sc_id ir_id=ir_id %}"{% endif %}>
+                            <i class="fas fa-bolt fa-4x"></i>
+                            <h4>{% trans "Ρυθμός Επίπτωσης" %}</h4>
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">{% trans "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής περιόδου." %}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' sc_id=sc_id char_id=char_id %}"{% endif %}>
+                            <i class="fas fa-line-chart fa-4x"></i>
+                            <h4>{% trans "Χαρακτηρισμός Πληθυσμού" %}</h4>
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">{% trans "Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα συμμεταβλητότητας σε επίπεδο ατόμου." %}</p>
+            <!--                <p class="text-muted">{% trans "Ο Στατιστικός Χαρακτηρισμός Πληθυσμού ορίζεται ως η διαδικασία-->
+            <!--                     δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα-->
+            <!--                    συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών των συμμεταβλητών σε επίπεδο-->
+            <!--                    ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και-->
+            <!--                    μέγιστη τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου δεδομένων.-->
+            <!--                    Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να διαστρωματοποιηθούν σε-->
+            <!--                    χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών όπως σταθερά χρονικά διαστήματα σε σχέση με την-->
+            <!--                    ημερομηνία εκκίνησης (π.χ. κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε απόλυτα διαστήματα ημερολογίου-->
+            <!--                    όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό τρίμηνο, ημερολογιακό έτος." %}</p>-->
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not cp_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if cp_id %}href="{% url 'edit_cp' sc_id=sc_id cp_id=cp_id %}"{% endif %}>
+                            <i class="fas fa-sitemap fa-4x"></i>
+                            <h4>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</h4>
+
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">
+                                {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
+                                ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
+                                των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="tab-pane" id="2b">
+                    <div class="col-xs-10 col-sm-6 col-lg-6 portfolio-item {% if not de_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if de_id %}href="{% url 'drug_exposure' %}"{% endif %}>
+                            <i class="fas fa-prescription-bottle-alt fa-4x"></i>
+                            <h4>{% trans "Έκθεση σε Φάρμακα" %}</h4>
+
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">
+                                {% blocktrans trimmed %}Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό
+                                εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
+                                την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
+                                στο σύστημα, ως προς την έκθεση του στα διάφορα φάρμακα.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-10 col-sm-6 col-lg-6 portfolio-item {% if not co_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if co_id %}href="{% url 'condition_occurrence' %}"{% endif %}>
+                            <i class="fas fa-procedures fa-4x"></i>
+                            <h4>{% trans "Εκδήλωση Κατάστασης" %}</h4>
+
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">
+                                {% blocktrans trimmed %}Η λειτουργικότητα <strong>Εκδήλωση Κατάστασης</strong>, αποτελεί ένα βοηθητικό
+                                εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
+                                την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
+                                στο σύστημα, ως προς την εμφάνιση κάποιας από τις διάφορες πιθανές καταστάσεις
+                                υγείας (ασθένεια, ανεπιθύμητη δράση, παρενέργεια κ.ο.κ.).
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+        <!--        </div>-->
+
+        <!--        <div class="row">-->
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' sc_id=sc_id ir_id=ir_id %}"{% endif %}>
+                            <i class="fas fa-bolt fa-4x"></i>
+                            <h4>{% trans "Ρυθμός Επίπτωσης" %}</h4>
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">{% trans "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής περιόδου." %}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' sc_id=sc_id char_id=char_id %}"{% endif %}>
+                            <i class="fas fa-line-chart fa-4x"></i>
+                            <h4>{% trans "Χαρακτηρισμός Πληθυσμού" %}</h4>
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">{% trans "Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα συμμεταβλητότητας σε επίπεδο ατόμου." %}</p>
+            <!--                <p class="text-muted">{% trans "Ο Στατιστικός Χαρακτηρισμός Πληθυσμού ορίζεται ως η διαδικασία-->
+            <!--                     δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα-->
+            <!--                    συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών των συμμεταβλητών σε επίπεδο-->
+            <!--                    ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και-->
+            <!--                    μέγιστη τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου δεδομένων.-->
+            <!--                    Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να διαστρωματοποιηθούν σε-->
+            <!--                    χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών όπως σταθερά χρονικά διαστήματα σε σχέση με την-->
+            <!--                    ημερομηνία εκκίνησης (π.χ. κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε απόλυτα διαστήματα ημερολογίου-->
+            <!--                    όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό τρίμηνο, ημερολογιακό έτος." %}</p>-->
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not cp_id %}light-disabled{%endif %}" align="center">
+                        <a class="portfolio-link btn no-outline" {% if cp_id %}href="{% url 'edit_cp' sc_id=sc_id cp_id=cp_id %}"{% endif %}>
+                            <i class="fas fa-sitemap fa-4x"></i>
+                            <h4>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</h4>
+
+                        </a>
+                        <div class="portfolio-caption">
+                            <p class="text-muted">
+                                {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
+                                ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
+                                των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <!--        <div class="row">-->
-            <div class="col-xs-10 col-sm-6 col-lg-6 portfolio-item {% if not de_id %}light-disabled{%endif %}" align="center">
-                <a class="portfolio-link btn no-outline" {% if de_id %}href="{% url 'drug_exposure' %}"{% endif %}>
-                    <i class="fas fa-prescription-bottle-alt fa-4x"></i>
-                    <h4>{% trans "Έκθεση σε Φάρμακα" %}</h4>
 
-                </a>
-                <div class="portfolio-caption">
-                    <p class="text-muted">
-                        {% blocktrans trimmed %}Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό
-                        εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
-                        την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
-                        στο σύστημα, ως προς την έκθεση του στα διάφορα φάρμακα.
-                        {% endblocktrans %}
-                    </p>
-                </div>
-
-            </div>
-
-            <div class="col-xs-10 col-sm-6 col-lg-6 portfolio-item {% if not co_id %}light-disabled{%endif %}" align="center">
-                <a class="portfolio-link btn no-outline" {% if co_id %}href="{% url 'condition_occurrence' %}"{% endif %}>
-                    <i class="fas fa-procedures fa-4x"></i>
-                    <h4>{% trans "Εκδήλωση Κατάστασης" %}</h4>
-
-                </a>
-                <div class="portfolio-caption">
-                    <p class="text-muted">
-                        {% blocktrans trimmed %}Η λειτουργικότητα <strong>Εκδήλωση Κατάστασης</strong>, αποτελεί ένα βοηθητικό
-                        εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
-                        την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
-                        στο σύστημα, ως προς την εμφάνιση κάποιας από τις διάφορες πιθανές καταστάσεις
-                        υγείας (ασθένεια, ανεπιθύμητη δράση, παρενέργεια κ.ο.κ.).
-                        {% endblocktrans %}
-                    </p>
-                </div>
-            </div>
-<!--        </div>-->
-
-<!--        <div class="row">-->
-            <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
-                <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' sc_id=sc_id ir_id=ir_id %}"{% endif %}>
-                    <i class="fas fa-bolt fa-4x"></i>
-                    <h4>{% trans "Ρυθμός Επίπτωσης" %}</h4>
-                </a>
-                <div class="portfolio-caption">
-                    <p class="text-muted">{% trans "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής περιόδου." %}</p>
-                </div>
-
-            </div>
-
-            <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
-                <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' sc_id=sc_id char_id=char_id %}"{% endif %}>
-                    <i class="fas fa-line-chart fa-4x"></i>
-                    <h4>{% trans "Χαρακτηρισμός Πληθυσμού" %}</h4>
-                </a>
-                <div class="portfolio-caption">
-                    <p class="text-muted">{% trans "Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα συμμεταβλητότητας σε επίπεδο ατόμου." %}</p>
-    <!--                <p class="text-muted">{% trans "Ο Στατιστικός Χαρακτηρισμός Πληθυσμού ορίζεται ως η διαδικασία-->
-    <!--                     δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο πληθυσμού από δεδομένα-->
-    <!--                    συμμετοχής σε επίπεδο ατόμου. Συνοπτικά στατιστικά στοιχεία αυτών των συμμεταβλητών σε επίπεδο-->
-    <!--                    ατόμου, μπορεί να είναι το πλήθος, η μέση τιμή, η τυπική απόκλιση, η διασπορά, η ελάχιστη και-->
-    <!--                    μέγιστη τιμή, η διάμεσος, το εύρος και τα τεταρτημόρια του συνόλου δεδομένων.-->
-    <!--                    Επιπλέον, οι συμμεταβλητές κατά τη διάρκεια μιας περιόδου μπορεί να διαστρωματοποιηθούν σε-->
-    <!--                    χρονολογικές/χρονικές μονάδες για ανάλυση χρονοσειρών όπως σταθερά χρονικά διαστήματα σε σχέση με την-->
-    <!--                    ημερομηνία εκκίνησης (π.χ. κάθε 7 ημέρες, κάθε 30 ημέρες κ.λπ.) ή σε απόλυτα διαστήματα ημερολογίου-->
-    <!--                    όπως ημερολογιακή εβδομάδα, ημερολογιακός μήνας, ημερολογιακό τρίμηνο, ημερολογιακό έτος." %}</p>-->
-                </div>
-
-            </div>
-
-            <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not cp_id %}light-disabled{%endif %}" align="center">
-                <a class="portfolio-link btn no-outline" {% if cp_id %}href="{% url 'edit_cp' sc_id=sc_id cp_id=cp_id %}"{% endif %}>
-                    <i class="fas fa-sitemap fa-4x"></i>
-                    <h4>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</h4>
-
-                </a>
-                <div class="portfolio-caption">
-                    <p class="text-muted">
-                        {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
-                        ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
-                        των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
-                        {% endblocktrans %}
-                    </p>
-                </div>
-
-            </div>
 <!--        </div>-->
 
 

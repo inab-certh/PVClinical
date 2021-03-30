@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from decimal import Decimal
 
+from bs4 import BeautifulSoup
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -202,19 +203,7 @@ class Notes(models.Model):
     """ Notes for users for the various workspaces of a scenario
     """
     # content = HTMLField(blank=True, default="")
-    content = RichTextField(blank=True, default="",
-        # config_name='forum-post',
-
-        # CKEDITOR.config.extraPlugins:
-        # extra_plugins=['someplugin'],
-
-        # CKEDITOR.plugins.addExternal(...)
-        # external_plugin_resources=[(
-        #     'someplugin',
-        #     '/static/.../path-to-someplugin/',
-        #     'plugin.js',
-        # )],
-    )
+    content = RichTextField(blank=True, default="")
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
@@ -223,9 +212,20 @@ class Notes(models.Model):
     wsview = models.CharField(max_length=32, default='')  # Workspace specific view
     note_datetime = models.DateTimeField(auto_now_add=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if not BeautifulSoup(self.content, "lxml").text.strip():
+            if self.pk is None:
+                # creating a new instance - just don't save anything
+                return
+            else:
+                # updating an existing instance - delete self
+                self.delete()
+        else:
+            super().save(*args, **kwargs)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["user", "scenario", "workspace", "wsview"],
-                                    name="unique_condition")
+                                    name="unique_note")
         ]
 
