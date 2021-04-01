@@ -11,11 +11,30 @@
 {% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
+    <script>
+        $(document).ready( function() {
+            // Save last active tab to sessionStorage
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+                try {
+                    sessionStorage.setItem('lastTab', $(this).attr('href'));
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+
+            // Get last active tab from sesssionStorage and go there
+            var lastTab = sessionStorage.getItem('lastTab');
+            if (lastTab) {
+                $('[href="' + lastTab + '"]').tab('show');
+            }
+        });
+
+    </script>
 {% endblock %}
 
 {% block content %}
     <div id="ohdsiMenu" class="col-xs-8 col-lg-9 col-xs-offset-3 col-lg-offset-2 mt-3">
-        <div id="exTab3" class="container">
+        <div id="qdViews" class="container col-xs-offset-2 col-xs-10 col-md-offset-0 col-md-12">
             <ul  class="nav nav-pills">
                 <li class="active">
                     <a  href="#1b" data-toggle="tab">Quick View</a>
@@ -30,7 +49,7 @@
 
         <!--        <div class="row">-->
                     <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not ir_id %}light-disabled{%endif %}" align="center">
-                        <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' sc_id=sc_id ir_id=ir_id %}"{% endif %}>
+                        <a class="portfolio-link btn no-outline" {% if ir_id %}href="{% url 'edit_ir' view_type='quickview' sc_id=sc_id ir_id=ir_id %}"{% endif %}>
                             <i class="fas fa-bolt fa-4x"></i>
                             <h4>{% trans "Ρυθμός Επίπτωσης" %}</h4>
                         </a>
@@ -41,7 +60,7 @@
                     </div>
 
                     <div class="col-xs-10 col-sm-6 col-lg-4 portfolio-item {% if not char_id %}light-disabled{%endif %}" align="center">
-                        <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' sc_id=sc_id char_id=char_id %}"{% endif %}>
+                        <a class="portfolio-link btn no-outline" {% if char_id %}href="{% url 'edit_char' view_type='quickview' sc_id=sc_id char_id=char_id %}"{% endif %}>
                             <i class="fas fa-line-chart fa-4x"></i>
                             <h4>{% trans "Χαρακτηρισμός Πληθυσμού" %}</h4>
                         </a>
