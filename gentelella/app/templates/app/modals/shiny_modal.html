@@ -1,3 +1,9 @@
+<style>
+input{
+    border: 0px solid;
+
+    }
+</style>
 <!-- Modal -->
 <div class="modal fade bd-example-modal-xl"  id="shinyModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -8,6 +14,28 @@
       <div class="modal-body">
 
           <iframe id="iframe_shiny" src="" width="750px" height="550" frameborder="0" allowtransparency="true"></iframe>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!-- Modal -->
+<div class="modal fade report-note-modal"  id="shinyModal_notes" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title col-xs-11" id="myModalLabel">Notes</h4>
+           <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+      <div class="modal-body">
+            <input type="checkbox" id="shiny_note" class="note_chkb" value="">&nbsp<label for="shiny_note" id="label_shiny_note"></label>
 
       </div>
       <div class="modal-footer">

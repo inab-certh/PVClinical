@@ -50,6 +50,12 @@ from app.pubmed import PubmedAnalyzer
 
 from Bio import Entrez
 from mendeley import Mendeley
+import urllib
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import pdfkit
+import webbrowser
 
 
 @login_required()
@@ -1403,84 +1409,101 @@ def final_report(request, scenario_id=None):
                              [c.name for c in conditions] or [""]))
 
     scenario_open = sc.id
+    synolo = []
+    import hashlib
 
-    synolo=[]
-    from hashlib import blake2b
     for i in range(len(all_combs)):
         p = sc.title+str(sc.owner)+str(i)
         k = repr(p).encode('utf-8')
-        h = blake2b(key=k, digest_size=16)
+        h = hashlib.md5(k)
         hash = h.hexdigest()
         synolo.append(hash)
-    drug_condition_hash=[]
-    m=0
-    for i in all_combs:
-            k=list(i)
-            k.append(synolo[m])
-            p=tuple(k)
-            drug_condition_hash.append(p)
-            m=m+1
 
-    context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,'drug_condition_hash':drug_condition_hash}
+    drug_condition_hash = []
+    m = 0
+    for i in all_combs:
+            k = list(i)
+            k.append(synolo[m])
+            p = tuple(k)
+            drug_condition_hash.append(p)
+
+            m = m+1
+
+    user = sc.owner
+    notes_openfda1 = {}
+    if Notes.objects.filter(user=user) != "":
+        user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+        notes_wsview_openfda = list(map(lambda el: el.wsview, filter(lambda elm: elm.workspace == 2, user_notes)))
+        dict_openfda_notes = {}
+        for i in notes_wsview_openfda:
+            notes_content_openfda = list(map(lambda el: el.content, filter(lambda elm: elm.wsview == i, user_notes)))
+            dict_openfda_notes[i] = notes_content_openfda[0]
+        for i, j, k in drug_condition_hash:
+            for key in dict_openfda_notes:
+                if i + ' - ' + j == key:
+                    notes_openfda1[k] = dict_openfda_notes[key]
+                if i == key and j == "":
+                    notes_openfda1[k] = dict_openfda_notes[key]
+                if j == key and i == "":
+                    notes_openfda1[k] = dict_openfda_notes[key]
+
+    context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
+               'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1}
     return render(request, 'app/final_report.html', context)
 
-def report_pdf(request, scenario_id=None):
-    import requests
-    from bs4 import BeautifulSoup
-    import pandas as pd
-    import os
+def report_pdf(request, scenario_id=None, report_notes=None):
 
-    scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
+    scenario_id = scenario_id or request.GET.get("scenario_id", None)
+    report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
 
     sc = Scenario.objects.get(id=scenario_id)
     scenario = sc.title
-
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
     all_combs = list(product([d.name for d in drugs] or [""],
                              [c.name for c in conditions] or [""]))
 
-    synolo=[]
-    from hashlib import blake2b
+    synolo = []
+    import hashlib
     for i in range(len(all_combs)):
         p = sc.title+str(sc.owner)+str(i)
         k = repr(p).encode('utf-8')
-        h = blake2b(key=k, digest_size=16)
+        h = hashlib.md5(k)
         hash = h.hexdigest()
         synolo.append(hash)
-    drug_condition_hash=[]
-    m=0
+    drug_condition_hash = []
+    m = 0
     for i in all_combs:
-            k=list(i)
+            k = list(i)
             k.append(synolo[m])
-            p=tuple(k)
+            p = tuple(k)
             drug_condition_hash.append(p)
-            m=m+1
+            m = m+1
 
     r = requests.get(settings.REPORT_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
     dict_quickview = {}
-    dictpng={}
-    dictcsv={}
-    dict_dash_csv={}
-    dict_rr_d={}
-    dict_rr_e={}
-    dict_lr={}
-    dict_lre={}
-    dict_dashboard_png={}
-    dict_lrTest_png={}
-    dict_lreTest_png={}
-    dict1={}
-    dict2={}
-    dict3={}
-
-    dict_hash_combination={}
+    dictpng = {}
+    dictcsv = {}
+    dict_dash_csv = {}
+    dict_rr_d = {}
+    dict_rr_e = {}
+    dict_lr = {}
+    dict_lre = {}
+    dict_dashboard_png = {}
+    dict_lrTest_png = {}
+    dict_lreTest_png = {}
+    dict1 = {}
+    dict2 = {}
+    dict3 = {}
+    dict_hash_combination = {}
     kin = 0
     lin = 0
 
-    for i,j,k in drug_condition_hash:
+    for i, j, k in drug_condition_hash:
 
         if i != '' and j != '':
+            no_comb = 'combination'
 
             dict_hash_combination[k] = i + ' - ' + j
             files_png = list(
@@ -1504,7 +1527,7 @@ def report_pdf(request, scenario_id=None):
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict1.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
-                dict1.setdefault(k, []).append("Figure {}".format(kin))
+                dict1.setdefault(k, []).append("Table {}".format(kin))
             else:
                 dict1.setdefault(k, []).append('')
                 dict1.setdefault(k, []).append('')
@@ -1534,7 +1557,7 @@ def report_pdf(request, scenario_id=None):
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Figure {}".format(kin))
+                dict2.setdefault(k, []).append("Table {}".format(kin))
 
             else:
                 dict2.setdefault(k, []).append('')
@@ -1547,7 +1570,7 @@ def report_pdf(request, scenario_id=None):
                 styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler2.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Figure {}".format(kin))
+                dict2.setdefault(k, []).append("Table {}".format(kin))
             else:
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
@@ -1559,7 +1582,7 @@ def report_pdf(request, scenario_id=None):
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Figure {}".format(kin))
+                dict2.setdefault(k, []).append("Table {}".format(kin))
             else:
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
@@ -1631,7 +1654,7 @@ def report_pdf(request, scenario_id=None):
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("Table {}".format(kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
@@ -1643,13 +1666,14 @@ def report_pdf(request, scenario_id=None):
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("Table {}".format(kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
 
     if i == '' or j == '':
+        no_comb = ""
         files_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         files_csv = list(
@@ -1670,10 +1694,10 @@ def report_pdf(request, scenario_id=None):
             styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
             dict_quickview.setdefault(i, []).append(styler1.render())
             lin = lin + 1
-            dict_quickview.setdefault(i, []).append("Figure {}".format(lin))
+            dict_quickview.setdefault(i, []).append("Table {}".format(lin))
 
     #for drug only
-    if j== "":
+    if j == "":
         dash_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_primary".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         dash_png1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_serious".format(k) in elm,
@@ -1705,20 +1729,20 @@ def report_pdf(request, scenario_id=None):
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Events', []).append(styler1.render())
             lin=lin+1
-            dict_dash_csv.setdefault(' Events', []).append("Figure {}".format(lin))
+            dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
         if dash_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv1[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Concomitant Medications', []).append(styler1.render())
             lin = lin + 1
-            dict_dash_csv.setdefault(' Concomitant Medications', []).append("Figure {}".format(lin))
+            dict_dash_csv.setdefault(' Concomitant Medications', []).append("Table {}".format(lin))
 
         if dash_csv2:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
             lin = lin + 1
-            dict_dash_csv.setdefault(' Indications', []).append("Figure {}".format(lin))
+            dict_dash_csv.setdefault(' Indications', []).append("Table {}".format(lin))
 
 
         rr_d_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrug".format(k) in elm,
@@ -1738,40 +1762,40 @@ def report_pdf(request, scenario_id=None):
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' PRR and ROR Results', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_d_csv5:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv5[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Table {}".format(lin))
         if rr_d_csv2:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv1[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
 
         if rr_d_csv3:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv3[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Indications in scenario reports', []).append("Figure {}".format(lin))
+            dict_rr_d.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
 
         lr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_histogram".format(k) in elm,
@@ -1799,43 +1823,43 @@ def report_pdf(request, scenario_id=None):
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' LTR Results based on Total Events', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' LTR Results based on Total Events', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' LTR Results based on Total Events', []).append("Table {}".format(lin))
         if lr_csv2:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Table {}".format(lin))
         if lr_csv:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Table {}".format(lin))
         if lr_csv4:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv4[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Drugs in scenario reports', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
         if lr_csv5:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv5[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Event counts for drug', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Event counts for drug', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Event counts for drug', []).append("Table {}".format(lin))
         if lr_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv1[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Counts for all events', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Counts for all events', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Counts for all events', []).append("Table {}".format(lin))
         if lr_csv3:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv3[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Indications in scenario reports', []).append("Figure {}".format(lin))
+            dict_lr.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
     #for condition only
     if i == "":
@@ -1856,37 +1880,37 @@ def report_pdf(request, scenario_id=None):
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' PRR and ROR Results', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_e_csv5:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv5[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Table {}".format(lin))
         if rr_e_csv2:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Table {}".format(lin))
         if rr_e_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv1[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Table {}".format(lin))
         if rr_e_csv:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Events in scenario reports', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if rr_e_csv3:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv3[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Indications in scenario reports', []).append("Figure {}".format(lin))
+            dict_rr_e.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
         lre_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_Ehistogram".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -1913,67 +1937,49 @@ def report_pdf(request, scenario_id=None):
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' LTR Results based on Total Drugs', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Table {}".format(lin))
         if lre_csv2:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Table {}".format(lin))
         if lre_csv:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Table {}".format(lin))
         if lre_csv4:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv4[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Events in scenario reports', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if lre_csv5:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv5[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Drug counts for event', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Drug counts for event', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Drug counts for event', []).append("Table {}".format(lin))
         if lre_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv1[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Counts for all drugs', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Counts for all drugs', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Counts for all drugs', []).append("Table {}".format(lin))
         if lre_csv3:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv3[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Indications in scenario reports', []).append("Figure {}".format(lin))
+            dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
-    user = sc.owner
-
-    if Notes.objects.filter(user=user) != "":
-        user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
-        notes_wsview_openfda = list(map(lambda el: el.wsview, filter(lambda elm: elm.workspace == 2, user_notes)))
-        dict_openfda_notes={}
-        notes_openfda={}
-        for i in notes_wsview_openfda:
-            notes_content_openfda = list(map(lambda el: el.content, filter(lambda elm: elm.wsview == i, user_notes)))
-            dict_openfda_notes[i]=notes_content_openfda[0]
-        for i, j in all_combs:
-            for key in dict_openfda_notes:
-                if i + ' - ' + j == key:
-                    notes_openfda[key]=dict_openfda_notes[key]
-                if i == key:
-                    notes_openfda[key]=dict_openfda_notes[key]
-                if j == key:
-                    notes_openfda[key]=dict_openfda_notes[key]
-    empty_OpenFDA=''
+    empty_OpenFDA = ''
     for key in dict1:
         for j in dict1[key]:
             if j != '':
-               empty_OpenFDA='no'
+               empty_OpenFDA = 'no'
     for key in dict2:
         for j in dict2[key]:
             if j != '':
@@ -1984,24 +1990,34 @@ def report_pdf(request, scenario_id=None):
             if j != '':
                 empty_OpenFDA = 'no'
 
-    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,'all_combs':all_combs, 'scenario': scenario,'dict_quickview':dict_quickview,'dict_dashboard_png':dict_dashboard_png, 'dict_dash_csv':dict_dash_csv ,
-               'dict_rr_d':dict_rr_d, 'dict_lr': dict_lr, 'dict_lrTest_png':dict_lrTest_png, 'dict_rr_e':dict_rr_e,'dict_lre': dict_lre, 'dict_lreTest_png':dict_lreTest_png,
-               'notes_openfda':notes_openfda,'dict1':dict1, 'dict2':dict2, 'dict3':dict3, 'dict_hash_combination':dict_hash_combination, 'empty_OpenFDA':empty_OpenFDA}
-
-
+    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, 'all_combs': all_combs, 'scenario': scenario,
+               'dict_quickview': dict_quickview, 'dict_dashboard_png': dict_dashboard_png,
+               'dict_dash_csv': dict_dash_csv,'dict_rr_d':dict_rr_d, 'dict_lr': dict_lr,
+               'dict_lrTest_png': dict_lrTest_png, 'dict_rr_e': dict_rr_e,
+               'dict_lre': dict_lre, 'dict_lreTest_png': dict_lreTest_png, 'dict1': dict1,
+               'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
+               'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb}
 
     return render(request, 'app/report_pdf.html', context)
 
 def print_report(request,scenario_id=None):
 
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
-    sc=Scenario.objects.get(id=scenario_id)
+    report_notes = request.GET.get("all_notes", None)
+    report_notes = urllib.parse.urlencode(json.loads(report_notes))
 
-    import pdfkit
-    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}'.format(sc.id), '/tmp/report.pdf')
-
-    import webbrowser
+    options = {
+        'margin-top': '0.45in',
+        'margin-right': '0.45in',
+        'margin-bottom': '0.45in',
+        'margin-left': '0.45in',
+        'encoding': "UTF-8",
+        'footer-right': '[page]',
+    }
+    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}'.format(scenario_id, report_notes), '/tmp/report.pdf',
+                    options=options)
     webbrowser.open(r'file:///tmp/report.pdf')
 
     return render(request, 'app/print_report.html')
+
 
