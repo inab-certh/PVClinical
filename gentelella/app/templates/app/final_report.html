@@ -84,7 +84,7 @@
                             <!-- Tab panes -->
                             <div class="tab-content">
                             <div id="OHDSI" class="container tab-pane active"><br>
-                                <input type="checkbox" onclick="enablebutton()" id="allOHDSI">
+                                <input type="checkbox" id="allOHDSI">
                               <label for="ohdsi"  > Add every information that I had from OHDSI</label>
                                 <br></br>
                                 <div class="container">
@@ -100,24 +100,24 @@
                                               <br></br>
                                               <table class="table table-striped table-bordered" style="width:500px">
                                                 <tr>
-                                                <td><input type="checkbox"  onclick="enablebutton()" id="ir">  &nbsp Incidence Rate</td>
-                                                <td><input type="checkbox" onclick="enablebutton()" id="irnote">&nbsp Notes</td>
+                                                <td><input type="checkbox"  id="ir">  &nbsp Incidence Rate</td>
+                                                <td><input type="checkbox" id="irnote">&nbsp Notes</td>
                                                 </tr>
                                                 <tr>
-                                                <td><input type="checkbox" name="checkenable"onclick="enablebutton()" id="char">&nbsp Cohort Characterization</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="charnote">&nbsp Notes</td>
+                                                <td><input type="checkbox" name="checkenable" id="char">&nbsp Cohort Characterization</td>
+                                                <td><input type="checkbox"  value="yes"  id="charnote">&nbsp Notes</td>
                                                 </tr>
                                                   <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="pathways">&nbsp Cohort Pathways</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="pathwaysnote">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes"  id="pathways">&nbsp Cohort Pathways</td>
+                                                <td><input type="checkbox"  value="yes"  id="pathwaysnote">&nbsp Notes</td>
                                                 </tr>
                                                   <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="occur">&nbsp Condition Occurence</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="occurnote">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes"  id="occur">&nbsp Condition Occurence</td>
+                                                <td><input type="checkbox"  value="yes"  id="occurnote">&nbsp Notes</td>
                                                 </tr>
                                                     <tr>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="dr">&nbsp Drug Exposure</td>
-                                                <td><input type="checkbox"  value="yes" onclick="enablebutton()" id="drnote">&nbsp Notes</td>
+                                                <td><input type="checkbox"  value="yes"  id="dr">&nbsp Drug Exposure</td>
+                                                <td><input type="checkbox"  value="yes"  id="drnote">&nbsp Notes</td>
                                                 </tr>
 
                                                 </table>
@@ -171,13 +171,21 @@
 
                                           {%endif%}
 <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
-                                          <strong style="padding-right:80px"><button class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal"><i class="fas fa-search-plus"></i></button>Notes</strong>
+<!--                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ forloop.counter  }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="nai" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>Notes</strong>-->
 
-                                        </div>
+                                          {%for key1,value1 in notes_openfda1.items%}
+                                          {% if key1 == k %}
+                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>Notes</strong>
+
+                                          {% endif %}
+                                          {%endfor%}
+
+                                      </div>
                                     </div>
 
                                 </div>
                                         {% endfor %}
+
                                     </div>
                                 </div>
                             </div>
@@ -262,11 +270,10 @@
                     <i class="fas fa-spinner"></i> &nbsp Download your final report</button>
 
                 </div>
-
 <!--                </div>-->
             </div>
 
-{% include 'app/modals/shiny_modal.html'   %}
+{% include 'app/modals/shiny_modal.html'%}
 
         </div>
 
@@ -276,7 +283,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 {% endblock content %}
-
 
 
 {% block javascripts %}
@@ -308,7 +314,6 @@ $(document).ready(function(){
   });
 });
 </script>
-<!--modals until here-->
 
 <script>
 	$(document).ready(function(){
@@ -347,29 +352,78 @@ $(document).ready(function(){
         });
     });
 </script>
-<script>
-    $(document).ready(function() {
+
+    <script>
+$(document).ready(function(){
+    var all_notes={"empty":"empty"};
+    var note ;
+    var hash ;
+
+  $("[id*=NotesBtn]").click(function(){
+      hash= $(this).data('hash');
+      var drug= $(this).data('drug');
+      var con= $(this).data('con');
+      note= $(this).data('note');
+
+        $("#shinyModal_notes").val( note ) ;
+        $("#label_shiny_note").text(note);
+
+
+  });
+
+    $(".note_chkb").on("change", function(){
+        console.log(all_notes);
+
+        if($(this).is(':checked') && !(hash in all_notes)){
+            console.log(note)
+            console.log(hash)
+            all_notes[hash]=note;
+            console.log(all_notes);
+        }else if(!$(this).is(':checked') && (hash in all_notes)){
+            delete all_notes[hash];
+            console.log(all_notes);
+        }
+
+    });
+
+    $("#shinyModal_notes").on('show.bs.modal', function (){
+        if(hash in all_notes){
+            $(".note_chkb").prop("checked", true);
+
+        }else{
+            $(".note_chkb").prop("checked", false);
+
+        }
+    });
+
+    console.log(all_notes)
+
+
+
 
     $("#div2").hide();
-});
 
-$("#link1").click(function() {
+
+$("#link1").on("click", function() {
     $("#div1").show();
     $("#div2").hide();
 });
 
+
 $("#result1").click(function() {
     var scid={{scenario_open}};
+    var note_val="";
+
+
     console.log(scid);
+    console.log(all_notes)
 
     $.ajax({
             url: "/ajax/report_pdf",
-            data: {"scenario_id": scid },
+            data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes)},
             dataType: "html",
             success: function (res) {
-<!--                console.log(data)-->
                     $('#report_preview').html(res);
-
 
               },
               error: function (res) {
@@ -377,24 +431,20 @@ $("#result1").click(function() {
             }
         });
 
-<!--    $("#bakalia").trigger("click");-->
-
     $("#div2").show();
     $("#div1").hide();
 });
-</script>
 
-<script>
     $("#download").click(function() {
         var scid={{scenario_open}};
             console.log(scid);
 
     $.ajax({
             url: "/ajax/print_report",
-            data: {"scenario_id": scid },
+            data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes)},
             dataType: "html",
             success: function (res) {
-                   console.log("success "+res);
+                console.log('ok');
 
               },
               error: function (res) {
@@ -403,6 +453,7 @@ $("#result1").click(function() {
         });
 
 
+});
 });
 </script>
 

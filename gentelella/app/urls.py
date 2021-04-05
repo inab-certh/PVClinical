@@ -57,6 +57,7 @@ urlpatterns = [
     path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
     path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
     path("report_pdf/<int:scenario_id>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>", views.report_pdf, name='report_pdf'),
     path("ajax/print_report", views.print_report, name='ajax_print_report'),
 
     # Permission denied
