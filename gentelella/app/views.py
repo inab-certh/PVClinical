@@ -398,11 +398,12 @@ def ohdsi_workspace(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def incidence_rates(request, sc_id, ir_id, read_only=1):
+def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
     """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
     :param sc_id: the specific scenario's id
+    :param view_type: quickview for quick view or "" for detailed view
     :param read_only: 0 if False 1 if True
     :return: the form view
     """
@@ -434,9 +435,6 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         irform = IRForm(request.POST, label_suffix='', ir_options=ir_options, read_only=read_only)
 
         if irform.is_valid():
-            # ir_options = {}
-            # ir_options["targetIds"] =
-            # ir_options["outcomeIds"] =
 
             ir_options["age"] = irform.cleaned_data.get("age")
             ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
@@ -446,10 +444,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
             ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
 
-            # if ir_exists:
             rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
-            # else:
-            #     rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
 
             if rstatus == 200:
                 messages.success(
@@ -460,8 +455,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 messages.error(
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
-                results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
-                # ir_resp = requests.get(ir_url)
+                results_url = "{}/#/iranalysis/{}/{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
 
                 context = {
                     # "delete_switch": delete_switch,
@@ -479,8 +473,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             messages.error(
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
-            results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
-            # ir_resp = requests.get(ir_url)
+            results_url = "{}/#/iranalysis/{}?{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
 
             context = {
                 # "delete_switch": delete_switch,
@@ -506,7 +499,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         # irform["sc_id"].initial = sc_id
         # update_ir(ir_id)
 
-    results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+    results_url = "{}/#/iranalysis/{}?{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
     # ir_resp = requests.get(ir_url)
 
     additional_info = {}
@@ -549,12 +542,13 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def characterizations(request, sc_id, char_id, read_only=1):
+def characterizations(request, sc_id, char_id, view_type="", read_only=1):
     """ Add or edit characterizations view. Retrieve the specific characterization analysis
      that char_id refers to
     :param request: request
     :param char_id: the specific characterization record's id
     :param sc_id: the specific scenario's id
+    :param view_type: quickview for quick view or "" for detailed view
     :param read_only: 0 if False 1 if True
     :return: the form view
     """
@@ -578,6 +572,11 @@ def characterizations(request, sc_id, char_id, read_only=1):
             request,
             _("Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"))
 
+    if view_type == "quickview":
+        char_options["features"] = char_options.get("features", []) + list(map(lambda el: el.get("id"), filter(
+            lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
+    #     print(char_options)
+
     # delete_switch = "enabled" if ir_exists else "disabled"
 
 
@@ -600,53 +599,23 @@ def characterizations(request, sc_id, char_id, read_only=1):
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
                 status_code = 500
-                # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-                #
-                # context = {
-                #     # "delete_switch": delete_switch,
-                #     "sc_id": sc_id,
-                #     "char_id": char_id,
-                #     "results_url": results_url,
-                #     "read_only": read_only,
-                #     "form": char_form,
-                #     "title": _("Χαρακτηρισμός Πληθυσμού")
-                # }
-                # return render(request, 'app/characterizations.html', context, status=500)
+
 
         else:
             messages.error(
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
             status_code = 400
-            # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-            # # ir_resp = requests.get(ir_url)
-            #
-            # context = {
-            #     # "delete_switch": delete_switch,
-            #     "sc_id": sc_id,
-            #     "char_id": char_id,
-            #     "results_url": results_url,
-            #     "read_only": read_only,
-            #     "form": char_form,
-            #     "title": _("Χαρακτηρισμός Πληθυσμού")
-            # }
-            # return render(request, 'app/characterizations.html', context, status=400)
-
 
     # elif request.method == 'DELETE':
     #     return delete_db_rec(ohdsi_workspace)
 
     # GET request method
     else:
-        # if "ohdsi-workspace" in http_referer:
-        #     sc_id = http_referer.rsplit('/', 1)[-1]
         char_form = CharForm(label_suffix='', char_options=char_options, read_only=read_only)
         status_code = 200
-        # irform["sc_id"].initial = sc_id
-        # update_ir(ir_id)
 
-    results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-    # ir_resp = requests.get(ir_url)
+    results_url = "{}/#/cc/characterizations/{}?{}".format(settings.OHDSI_ATLAS, char_id, view_type)
 
     context = {
         # "delete_switch": delete_switch,
@@ -654,6 +623,7 @@ def characterizations(request, sc_id, char_id, read_only=1):
         "scenario": scenario,
         "char_id": char_id,
         "results_url": results_url,
+        "view_type": view_type,
         "read_only": read_only,
         "form": char_form,
         "title": _("Χαρακτηρισμός Πληθυσμού")
