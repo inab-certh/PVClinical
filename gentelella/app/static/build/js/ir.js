@@ -21,10 +21,28 @@ $(function() {
     function processMouseOver() {
         isOverIFrame = true;
     }
-    function processIFrameClick() {
+
+    function virtual_click(x,y) {
+        new MouseEvent(
+                "Click", // or "MouseDown" if the canvas listens for such an event
+                {
+                    clientX: x,
+                    clientY: y,
+                    bubbles: true
+                }
+            )
+    }
+
+    function processIFrameClick(e) {
         if(isOverIFrame) {
-            // replace with your function
-            $(".view-info-btn").css("display", "block");
+            var pageX, pageY; //Declare these globally
+            document.onmousemove = function(e) {
+                e = e || window.event;
+                pageX = e.pageX
+                pageY = e.pageY
+            }
+            virtual_click(pageX, pageY);
+            setTimeout(() => {  $(".view-info-btn").css("display", "block"); }, 700);
         }
     }
 
