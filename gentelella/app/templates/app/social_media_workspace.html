@@ -8,10 +8,22 @@
   {{ block.super }}
 {% endblock stylesheets %}
 
-{% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
     <script src="/static/build/js/social_media.js"></script>
+{% endblock %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block sliding_toolbar %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=sc_id ws_id='SocialMedia' wsview_id='sm' %}", data-id="notes_SM_{{ sc_id }}">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
 {% endblock %}
 
 {% block content %}
