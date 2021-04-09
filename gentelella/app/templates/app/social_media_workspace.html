@@ -36,7 +36,7 @@
                 </div>
                 <div class="x_content">
                     <div class="btn-group pull-left col-xs-12 mb-2 row">
-                        <button class="social-btn btn btn-dark pull-left" type="button" data-url="" data-toggle="tooltip" data-placement="right" data-html="true" title="<p>{% trans 'Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>">
+                        <button class="social-btn btn btn-dark pull-left" onclick="start_data_extraction('{{ sc_id }}', '{{ keywords }}')" type="button" data-url="" data-toggle="tooltip" data-placement="right" data-html="true" title="<p>{% trans 'Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>">
                             <i class="far fa-play-circle fa-2x"></i>
                             <span class="visible-lg">
                                 {% trans "Έναρξη εξόρυξης δεδομένων" %}
@@ -51,7 +51,8 @@
                     </div>
 
                     <div class="row iframe-container">
-                        <iframe src="http://83.212.101.89:3838/simpleRAnalyticswithRawData/" class="social-iframe" allowfullscreen></iframe>
+<!--                        <iframe src="http://83.212.101.89:3838/simpleRAnalyticswithRawData/" class="social-iframe" allowfullscreen></iframe>-->
+                        <iframe src="{{ sm_endpoint }}?dbName={{ sc_id }}&colName={{ col_name }}" class="social-iframe" allowfullscreen></iframe>
                     </div>
 
                 </div>
