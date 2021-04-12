@@ -9,6 +9,7 @@ from itertools import chain
 from itertools import product
 
 from django.conf import settings
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -1496,8 +1497,26 @@ def social_media(request, sc_id):
         "sc_id": sc_id,
         "keywords": keywords,
         "col_name": col_name,
-        "sm_endpoint": settings.SM_ENDPOINT,
+        "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
+        # "tethys_endpoint": settings.TETHYS_ENDPOINT,
         "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
 
     return render(request, 'app/social_media_workspace.html', context)
+
+
+@csrf_protect
+def start_sm_data_extraction(request):
+    """ Start social media data extraction
+    :param request: The request
+    :return: The resulting response from the creation process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}create".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)
