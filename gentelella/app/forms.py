@@ -319,3 +319,8 @@ class NotesForm(forms.ModelForm):
         model = Notes
         fields = ['content']
 
+class PatientForm(forms.ModelForm):
+
+    class Meta:
+        model = PatientCase
+        fields = ['patient_id',]

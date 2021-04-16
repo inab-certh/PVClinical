@@ -42,6 +42,8 @@ from app.helper_modules import mendeley_pdf
 from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
+from app.models import PatientCase
+
 # from app.ohdsi_wrappers import update_ir
 # from app.ohdsi_wrappers import create_ir
 from app.entrezpy.entrezpylib import conduit
@@ -1451,7 +1453,7 @@ def final_report(request, scenario_id=None):
                'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1}
     return render(request, 'app/final_report.html', context)
 
-def report_pdf(request, scenario_id=None, report_notes=None):
+def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
@@ -1996,7 +1998,9 @@ def report_pdf(request, scenario_id=None, report_notes=None):
                'dict_lrTest_png': dict_lrTest_png, 'dict_rr_e': dict_rr_e,
                'dict_lre': dict_lre, 'dict_lreTest_png': dict_lreTest_png, 'dict1': dict1,
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
-               'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb}
+               'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
+               "extra_notes":extra_notes}
+
 
     return render(request, 'app/report_pdf.html', context)
 
@@ -2005,6 +2009,10 @@ def print_report(request,scenario_id=None):
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
     report_notes = urllib.parse.urlencode(json.loads(report_notes))
+    extra_notes = json.loads(request.GET.get("extra_notes", None))
+    if not extra_notes:
+        extra_notes="empty"
+
 
     options = {
         'margin-top': '0.45in',
@@ -2014,10 +2022,43 @@ def print_report(request,scenario_id=None):
         'encoding': "UTF-8",
         'footer-right': '[page]',
     }
-    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}'.format(scenario_id, report_notes), '/tmp/report.pdf',
+    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}'.format(scenario_id, report_notes, extra_notes), '/tmp/report.pdf',
                     options=options)
     webbrowser.open(r'file:///tmp/report.pdf')
 
     return render(request, 'app/print_report.html')
 
+def questionnaire(request):
 
+    return render(request, 'app/questionnaire.html')
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def patient_management_workspace(request,scenario_id=None):
+
+    if request.method == "POST":
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            case = form.save(commit=False)
+            case.user = request.user
+            case.timestamp = timezone.now()
+            case.save()
+
+    else:
+        form = PatientForm()
+
+    return render(request, 'blog/post_new.html', {'form': form})
+
+    # cases = []
+    # for case in PatientCase.objects.order_by('-timestamp').all():
+    #     cases.append({
+    #         "id": case.id,
+    #         "patient_id": case.patient_id,
+    #         "scenario_id": case.scenario.id,
+    #         "user": case.user.username,
+    #         "timestamp": case.timestamp
+    #     })
+    #
+    # template = loader.get_template('app/patient_management_workspace.html')
+    #
+    # return HttpResponse(template.render({"cases": cases}, request))

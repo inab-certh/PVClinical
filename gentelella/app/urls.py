@@ -58,7 +58,10 @@ urlpatterns = [
     path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
     path("report_pdf/<int:scenario_id>", views.report_pdf, name='report_pdf'),
     path("report_pdf/<int:scenario_id>/<str:report_notes>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>", views.report_pdf, name='report_pdf'),
     path("ajax/print_report", views.print_report, name='ajax_print_report'),
+    path("questionnaire", views.questionnaire, name='questionnaire'),
+    path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

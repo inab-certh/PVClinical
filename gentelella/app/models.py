@@ -229,3 +229,22 @@ class Notes(models.Model):
                                     name="unique_note")
         ]
 
+class PatientCase(models.Model):
+    """ PatientCase for user's patients for Patient Management Workspace
+    """
+    patient_id = models.CharField(max_length=500, blank=False, default='')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
+    # questionnaire_id = models.ForeignKey(Questionnaire, null=True, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def save(self, *args, checks=True, **kwargs):
+        if checks and not self.patient_id and not self.scenario:
+            raise Exception(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
+        super(PatientCase, self).save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["patient_id", "timestamp"],
+                                    name="unique_patientcase")
+        ]

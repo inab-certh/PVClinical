@@ -1,0 +1,124 @@
+table       { margin-bottom: 1em; width:50%; }
+th          { font-weight: bold; }
+thead th    { background: #bcc8d4; }
+th,td,caption { padding: 4px 10px 4px 5px; }
+p    { font-weight: bold; }
+
+
+.view_title {
+   page-break-inside: avoid;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Arial;
+  padding-left:20px;
+<!--  color: #67798c;-->
+  }
+
+.info_title{
+  width:40%;
+  color:  #0d0d0d
+  font-size:16px;
+  text-align:center;
+  background-color: #bcc8d4;
+  padding: 20px;
+  color:  #0d0d0d
+  font-size:16px;
+  font-weight: bold;
+    font-family: Arial;
+
+}
+
+.drug_event{
+  padding-left:10px;
+  font-size: 26px;
+  font-weight: bold;
+  font-family: Arial;
+<!--  color:#67798c;-->
+  text-align:center;
+
+}
+
+.workspace{
+  width:100%;
+  color:  #0d0d0d;
+  font-size:20px;
+  text-align:center;
+  background-color: #bcc8d4;
+  padding: 25px;
+  font-weight: bold;
+  page-break-before: always;
+  font-family: Arial;
+}
+#review{
+text-align: center;
+color: #0d0d0d
+ font-weight: bold;
+ font-size:32px;
+   font-family: Arial;
+
+}
+subt {
+  color:  #0d0d0d
+  font-size:22px;
+  font-weight: bold;
+  font-style: bold;
+  margin-left:20px;
+  font-family: Arial;
+
+}
+info{
+  color: #0d0d0d
+  width: 100%
+  padding: 20px;
+  color:  #0d0d0d
+  font-size:20px;
+  font-weight: bold;
+  padding-left:20px;
+  font-family: Arial;
+
+}
+.tg{
+  page-break-inside: avoid;
+
+}
+
+.notes_title {
+  width:70%;
+  font-size:18px;
+  word-break: keep-all;
+  background: #bcc8d4;
+}
+.notes_content {
+  width: 100%;
+<!--  border: 1px solid #000000;-->
+  font-size:18px;
+  word-break: keep-all;
+  padding-left:20px;
+  padding-right:20px;
+
+}
+.details{
+   font-family: Arial;
+   padding-left:20px;
+}
+.fig{
+  color:  #0d0d0d
+  font-size:22px;
+  font-weight: bold;
+  font-style: bold;
+  padding-left:20px;
+  font-family: Arial;
+
+}
+.final-note{
+    word-wrap: break-word;
+    font-size:18px;
+    font-family: Arial;
+    padding-left:20px;
+    padding-left:20px;
+}
+textarea {
+  width: 100%;
+  height: 100px;
+}
+
