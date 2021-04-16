@@ -24,9 +24,7 @@
 </style>
 {% endblock stylesheets %}
 
-
 {% block content %}
-
 
 <div class="right_col" role="main">
     <div class="row tile_count">
@@ -50,11 +48,10 @@
                           <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step1">Step 1</button>
                                 <i class="fas fa-long-arrow-alt-right fa-2x"></i>
                         </li>
-
                         <li class="nav-item">
                             <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="result" disabled>Step 2</button>
                         </li>
-                        </ul>
+                    </ul>
                         <div class="tab-content" id="pills-tabContent">
                         <div class="collapse" id="step1" role="tabpanel" aria-labelledby="pills-home-tab">
                            <p> You can choose which of the following  information you want to be in the overall report of this scenario.</p>
@@ -121,7 +118,7 @@
                                                 </tr>
 
                                                 </table>
-                                              <br></br>
+                                              <br>
                                           </div>
                                         </div>
                                     </div>
@@ -135,7 +132,6 @@
                                 <br></br>
                                 <div class="container">
                                     <div class="panel-group" id="combsAccordion">
-
 
                                         {% for d,c,k in drug_condition_hash %}
 
@@ -171,7 +167,6 @@
 
                                           {%endif%}
 <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
-<!--                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ forloop.counter  }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="nai" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>Notes</strong>-->
 
                                           {%for key1,value1 in notes_openfda1.items%}
                                           {% if key1 == k %}
@@ -202,7 +197,7 @@
                                             </h4>
                                           </div>
                                           <div id="collapsepub" class="panel-collapse collapse in">
-                                              <br></br>
+                                              <br>
                                               <table class="table table-striped table-bordered" style="width:800px">
                                                 <tr>
                                                 <td><input type="checkbox"  value="yes">  &nbsp  Different elemental infant formulas show equivalent phosphorus and calcium bioavailability in healthy volunteers.</td>
@@ -214,7 +209,7 @@
                                                 </tr>
 
                                                 </table>
-                                              <br></br>
+                                              <br>
                                           </div>
                                         </div>
                                     </div>
@@ -231,7 +226,6 @@
                     <p class="text-muted font-13 m-b-30">
                         {% trans "Make your own review by following next steps:" %}
                     </p>
-
                     <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                         <li class="nav-item">
                           <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step11" id="link1">Step 1</button>
@@ -252,12 +246,9 @@
                         </div>
                         </div>
                      <div class="container">
-<!--                           <a id="bakalia" href={% url 'report_pdf' scenario_open %}>-->
-<!--                        </a>-->
                          <h2>Step 2: Edit and fill in your review with the last additions.</h2>
                         <div class="x_panel">
                             <div class="report">
-
 
                             <div style="color:black" id="report_preview" ></div>
                             </div>
@@ -270,7 +261,6 @@
                     <i class="fas fa-spinner"></i> &nbsp Download your final report</button>
 
                 </div>
-<!--                </div>-->
             </div>
 
 {% include 'app/modals/shiny_modal.html'%}
@@ -280,181 +270,61 @@
 </div>
 
 </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 {% endblock content %}
 
 
 {% block javascripts %}
 
-{{ block.super }}
+    {{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/static/build/js/final_report.js"></script>
 
-<!--    call modals for views via jquery-->
-<script>
-$(document).ready(function(){
+        <script>
+    $(document).ready(function(){
+        var all_notes={"empty":"empty"};
+        var note ;
+        var hash ;
 
-  $("[id*=ShinyBtn]").click(function(){
-      var drug= $(this).data('drug');
-      var con= $(this).data('con');
-      var hash= $(this).data('hash');
-      var urlquickview1= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-	  var urlquickview2= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
-      var urlquickview3= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-       console.log(urlquickview1);
-
-     if (con == ''){
-        document.getElementById('iframe_shiny').src = urlquickview2;
-        }else if (drug == ''){
-        document.getElementById('iframe_shiny').src = urlquickview3;
-        }else{
-        document.getElementById('iframe_shiny').src = urlquickview1;
-
-        };
-
-  });
-});
-</script>
-
-<script>
-	$(document).ready(function(){
-	var i=0;
-        $('input[type="checkbox"]').click(function(){
-            if($(this).prop("checked") == true){
-                i=i+1
-                document.getElementById("result1").disabled = false;
-            }
-            else if($(this).prop("checked") == false){
-                i=i-1
-                if(i==0){
-
-                document.getElementById("result1").disabled = true;
-            }
-            }
-        });
-    });
-</script>
-
-<script>
-	$(document).ready(function(){
-	var i=0;
-        $('input[type="checkbox"]').click(function(){
-            if($(this).prop("checked") == true){
-                i=i+1
-                document.getElementById("result").disabled = false;
-            }
-            else if($(this).prop("checked") == false){
-                i=i-1
-                if(i==0){
-
-                document.getElementById("result").disabled = true;
-            }
-            }
-        });
-    });
-</script>
-
-    <script>
-$(document).ready(function(){
-    var all_notes={"empty":"empty"};
-    var note ;
-    var hash ;
-
-  $("[id*=NotesBtn]").click(function(){
-      hash= $(this).data('hash');
-      var drug= $(this).data('drug');
-      var con= $(this).data('con');
-      note= $(this).data('note');
-
-        $("#shinyModal_notes").val( note ) ;
-        $("#label_shiny_note").text(note);
-
-
-  });
-
-    $(".note_chkb").on("change", function(){
-        console.log(all_notes);
-
-        if($(this).is(':checked') && !(hash in all_notes)){
-            console.log(note)
-            console.log(hash)
-            all_notes[hash]=note;
-            console.log(all_notes);
-        }else if(!$(this).is(':checked') && (hash in all_notes)){
-            delete all_notes[hash];
-            console.log(all_notes);
-        }
-
-    });
-
-    $("#shinyModal_notes").on('show.bs.modal', function (){
-        if(hash in all_notes){
-            $(".note_chkb").prop("checked", true);
-
-        }else{
-            $(".note_chkb").prop("checked", false);
-
-        }
-    });
-
-    console.log(all_notes)
-
-
-
-
-    $("#div2").hide();
-
-
-$("#link1").on("click", function() {
-    $("#div1").show();
-    $("#div2").hide();
-});
-
-
-$("#result1").click(function() {
-    var scid={{scenario_open}};
-    var note_val="";
-
-
-    console.log(scid);
-    console.log(all_notes)
-
-    $.ajax({
-            url: "/ajax/report_pdf",
-            data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes)},
-            dataType: "html",
-            success: function (res) {
-                    $('#report_preview').html(res);
-
-              },
-              error: function (res) {
-                console.log("error "+res);
-            }
-        });
-
-    $("#div2").show();
-    $("#div1").hide();
-});
-
-    $("#download").click(function() {
+    $("#result1").click(function() {
         var scid={{scenario_open}};
-            console.log(scid);
+        var note_val="";
 
-    $.ajax({
-            url: "/ajax/print_report",
-            data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes)},
-            dataType: "html",
-            success: function (res) {
-                console.log('ok');
+        $.ajax({
+                url: "/ajax/report_pdf",
+                data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes)},
+                dataType: "html",
+                success: function (res) {
+                        $('#report_preview').html(res);
 
-              },
-              error: function (res) {
-                console.log("error "+res);
-            }
-        });
+                  },
+                  error: function (res) {
+                    console.log("error "+res);
+                }
+            });
 
+        $("#div2").show();
+        $("#div1").hide();
+    });
 
-});
-});
-</script>
+        $("#download").click(function() {
+            var scid={{scenario_open}};
+
+            var extra_notes=$("#editFnote").val();
+
+        $.ajax({
+                url: "/ajax/print_report",
+                data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes), "extra_notes": JSON.stringify(extra_notes)},
+                dataType: "html",
+                success: function (res) {
+
+                  },
+                  error: function (res) {
+                    console.log("error "+res);
+                }
+            });
+    });
+    });
+    </script>
 
 {% endblock javascripts%}
