@@ -14,6 +14,7 @@ from app.models import Drug
 from app.models import Condition
 from app.models import Notes
 from app.models import Scenario
+from app.models import PatientCase
 from app.models import Status
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
@@ -320,7 +321,15 @@ class NotesForm(forms.ModelForm):
         fields = ['content']
 
 class PatientForm(forms.ModelForm):
-
+    scenarios = forms.ModelMultipleChoiceField(
+        queryset=Scenario.objects.all(),
+        widget=forms.CheckboxSelectMultiple, label=''
+    )
     class Meta:
         model = PatientCase
-        fields = ['patient_id',]
+        fields = ['patient_id', 'scenarios']
+
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+        scenarios = Scenario.objects.all()
+        self.fields['scenarios'].choices = [(sc.pk , sc.title) for sc in scenarios]

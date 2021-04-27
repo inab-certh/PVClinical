@@ -31,6 +31,8 @@ from app.forms import IRForm
 from app.forms import CharForm
 from app.forms import NotesForm
 from app.forms import PathwaysForm
+from app.forms import PatientForm
+
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
@@ -2034,31 +2036,53 @@ def questionnaire(request):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def patient_management_workspace(request,scenario_id=None):
+def patient_management_workspace(request, patient_id=None):
+
+    patient_cases=[]
+    # if PatientCase.objects.order_by('-timestamp').all() != []:
+
+    for case in PatientCase.objects.order_by('-timestamp').all():
+        for scs in case.scenarios.all():
+
+            patient_cases.append({
+                    "id": case.id,
+                    "patient_id": case.patient_id,
+                    "timestamp": case.timestamp,
+                    "scenario_id": scs.id,
+                    "scenario_title": scs.title,
+                    "drugs": scs.drugs.all(),
+                    "conditions": scs.conditions.all()
+                })
+
+    if request.method == 'DELETE':
+        patient_id = QueryDict(request.body).get("patient_id")
+        patient = None
+        if patient_id:
+            try:
+                patient = PatientCase.objects.get(id=patient_id)
+            except:
+                pass
+        return delete_db_rec(patient)
+
+    context={"patient_cases":patient_cases}
+
+    return render(request, 'app/patient_management_workspace.html',context)
+
+def new_case(request):
+    tmp_user = User.objects.get(username=request.user)
 
     if request.method == "POST":
         form = PatientForm(request.POST)
+
         if form.is_valid():
             case = form.save(commit=False)
-            case.user = request.user
-            case.timestamp = timezone.now()
+            case.user= tmp_user
+            case = form.save(commit=False)
             case.save()
+            form.save_m2m()
 
+            return redirect('patient_management_workspace')
     else:
         form = PatientForm()
 
-    return render(request, 'blog/post_new.html', {'form': form})
-
-    # cases = []
-    # for case in PatientCase.objects.order_by('-timestamp').all():
-    #     cases.append({
-    #         "id": case.id,
-    #         "patient_id": case.patient_id,
-    #         "scenario_id": case.scenario.id,
-    #         "user": case.user.username,
-    #         "timestamp": case.timestamp
-    #     })
-    #
-    # template = loader.get_template('app/patient_management_workspace.html')
-    #
-    # return HttpResponse(template.render({"cases": cases}, request))
+    return render(request, 'app/new_case.html', {'form': form })

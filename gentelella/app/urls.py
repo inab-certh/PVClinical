@@ -62,6 +62,7 @@ urlpatterns = [
     path("ajax/print_report", views.print_report, name='ajax_print_report'),
     path("questionnaire", views.questionnaire, name='questionnaire'),
     path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
+    path("patient_management_workspace/new_case", views.new_case, name='new_case'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

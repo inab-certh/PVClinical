@@ -234,17 +234,43 @@ class PatientCase(models.Model):
     """
     patient_id = models.CharField(max_length=500, blank=False, default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
-    # questionnaire_id = models.ForeignKey(Questionnaire, null=True, on_delete=models.CASCADE)
+    scenarios = models.ManyToManyField(Scenario, through= "CaseToScenario", default=None,
+                                        verbose_name="scenarios", related_name="scenarios")
+    # questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
 
-    def save(self, *args, checks=True, **kwargs):
-        if checks and not self.patient_id and not self.scenario:
-            raise Exception(_('Δεν μπορούν και τα δύο πεδία να είναι κενά'))
-        super(PatientCase, self).save(*args, **kwargs)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["patient_id", "timestamp"],
                                     name="unique_patientcase")
         ]
+
+class CaseToScenario(models.Model):
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
+    pcase = models.ForeignKey(PatientCase, on_delete=models.CASCADE)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["scenario", "pcase"],
+                                    name="unique_casetogether")
+        ]
+
+# class Questionnaire(models.Model):
+#
+#     q1=
+#
+#
+#     result=
+#
+#
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
+#                                             "q6", "q7", "q8", "q9", "q10"],
+#                                     name="unique_patientcase")
+#         ]
+
+
+
+
+
