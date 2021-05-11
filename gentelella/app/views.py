@@ -32,6 +32,8 @@ from app.forms import CharForm
 from app.forms import NotesForm
 from app.forms import PathwaysForm
 from app.forms import PatientForm
+from app.forms import QuestionnaireForm
+
 
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
@@ -45,6 +47,8 @@ from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
 from app.models import PatientCase
+from app.models import Questionnaire
+
 
 # from app.ohdsi_wrappers import update_ir
 # from app.ohdsi_wrappers import create_ir
@@ -2030,9 +2034,9 @@ def print_report(request,scenario_id=None):
 
     return render(request, 'app/print_report.html')
 
-def questionnaire(request):
+def questionnaire1(request):
 
-    return render(request, 'app/questionnaire.html')
+    return render(request, 'app/questionnaire1.html')
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
@@ -2086,3 +2090,33 @@ def new_case(request):
         form = PatientForm()
 
     return render(request, 'app/new_case.html', {'form': form })
+
+def questionnaire(request):
+    if request.method == "POST":
+        form = QuestionnaireForm(request.POST)
+        if form.is_valid():
+            answers = form.save(commit=False)
+
+            if Questionnaire.objects.filter(q1=answers.q1,q2=answers.q2,q3= answers.q3,q4=answers.q4,
+                                                q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
+                                                q10=answers.q10).exists():
+                existing_quest = Questionnaire.objects.get(q1=answers.q1,q2=answers.q2,q3= answers.q3,q4=answers.q4,
+                                                q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
+                                                q10=answers.q10)
+                existing_pk=existing_quest.pk
+                print(existing_pk)
+
+                return redirect('answers_detail', pk=existing_pk)
+            else:
+                answers.save()
+                return redirect('answers_detail', pk=answers.pk)
+
+    else:
+        form = QuestionnaireForm()
+
+    return render(request, 'app/questionnaire.html', {'form': form})
+
+
+def answers_detail(request, pk):
+        quest= Questionnaire.objects.get(id=pk)
+        return render(request, 'app/answers_detail.html', {'quest':quest})
