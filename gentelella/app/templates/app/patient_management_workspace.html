@@ -50,43 +50,43 @@
                           {{ case.timestamp }}
                       </td>
                       <td>
-                          <a class="has-popover"  data-html="true" data-content="
-                          <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
-                                  <thead>
-                                    <tr>
+<!--                          <a class="has-popover"  data-html="true" data-content="-->
+<!--                          <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>-->
+<!--                                  <thead>-->
+<!--                                    <tr>-->
 
-                                      <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>
-                                      <th>{% trans 'Πάθηση/Παθήσεις' %}</th>
+<!--                                      <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>-->
+<!--                                      <th>{% trans 'Πάθηση/Παθήσεις' %}</th>-->
 
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td>
-                                        <table>
-                                          {% for d in case.drugs %}
-                                            <tr>
-                                              <td>{% firstof d.name d.code %}</td>
-                                            </tr>
-                                          {% endfor %}
-                                        </table>
-                                      </td>
+<!--                                    </tr>-->
+<!--                                  </thead>-->
+<!--                                  <tbody>-->
+<!--                                    <tr>-->
+<!--                                      <td>-->
+<!--                                        <table>-->
+<!--                                          {% for d in case.drugs %}-->
+<!--                                            <tr>-->
+<!--                                              <td>{% firstof d.name d.code %}</td>-->
+<!--                                            </tr>-->
+<!--                                          {% endfor %}-->
+<!--                                        </table>-->
+<!--                                      </td>-->
 
-                                      <td>
-                                        <table>
-                                          {% for c in scenario.conditions %}
-                                            <tr>
-                                              <td>{% firstof c.name c.code %}</td>
-                                            </tr>
-                                          {% endfor %}
-                                        </table>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                          </table>
-                        " data-placement="right" data-container="body" data-width="100%">
+<!--                                      <td>-->
+<!--                                        <table>-->
+<!--                                          {% for c in scenario.conditions %}-->
+<!--                                            <tr>-->
+<!--                                              <td>{% firstof c.name c.code %}</td>-->
+<!--                                            </tr>-->
+<!--                                          {% endfor %}-->
+<!--                                        </table>-->
+<!--                                      </td>-->
+<!--                                    </tr>-->
+<!--                                  </tbody>-->
+<!--                          </table>-->
+<!--                        " data-placement="right" data-container="body" data-width="100%">-->
                         {{ case.scenario_title }}
-                          </a>
+<!--                          </a>-->
                       </td>
                       <td>
                          <table>

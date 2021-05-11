@@ -1,0 +1,65 @@
+{% load i18n %}
+{% load staticfiles %}
+
+{% block stylesheets %}
+<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+</style>
+{% endblock stylesheets %}
+
+
+{% block content %}
+1. Do you suspect an adverse drug reaction?
+<br>
+<h2>{{ quest.q1 }}</h2>
+<br>
+2. Did the event appear after the drug was administered or dose increased ?
+<br>
+<h2>{{ quest.q2 }}</h2>
+<br>
+3. Were pre-existing symptoms exacerbated by the drug ?
+<br>
+<h2>{{ quest.q3 }}</h2>
+<br>
+4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced ?
+<br>
+<h2>{{ quest.q4 }}</h2>
+<br>
+5. Was the event associated with long-lasting disability or impairment ?
+<br>
+<h2>{{ quest.q5 }}</h2>
+<br>
+6. What is the probability that the event was due to an underlying disease ?
+<br>
+<h2>{{ quest.q6 }}</h2>
+<br>
+7. Is there any objective evidence supportive of the casual ADR mechanism ?
+<br>
+<h2>{{ quest.q7 }}</h2>
+<br>
+8. Was there a positive rechallenge?
+<br>
+<h2>{{ quest.q8 }}</h2>
+<br>
+9. Is there a past history of the same event with this drug in this patient?
+<br>
+<h2>{{ quest.q9 }}</h2>
+<br>
+10. Has the event previously been reported with this drug?
+<br>
+<h2>{{ quest.q10 }}</h2>
+<br>
+<br>
+
+<h2>&nbsp Result:</h2>
+
+
+
+{% endblock content %}
