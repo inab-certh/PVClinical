@@ -1,7 +1,12 @@
 $(function(){
     $(".social-iframe").load(function () {
-        $(this).style.height = $(this).contentWindow.document.body.scrollHeight + 'px';
-    })
+        try {
+            $(this).style.height = $(this).contentWindow.document.body.scrollHeight + 'px';
+        }
+        catch(typeError) {
+            console.log("Not found");
+        }
+    });
 });
 
 function start_data_extraction(sc_id, keywords) {
