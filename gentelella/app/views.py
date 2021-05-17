@@ -1485,16 +1485,16 @@ def social_media(request, sc_id):
 
         keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
         # Collection name which is a hash of the search expression for twitter (or other social media)
-        col_name = hashlib.sha256(keywords.encode()).hexdigest()
+        col_name = hashlib.md5(keywords.encode()).hexdigest()
 
-        print(keywords)
-        print(col_name)
+        # print(keywords)
+        # print(col_name)
 
     except Scenario.DoesNotExist:
         sc = None
 
     context = {
-        "sc_id": sc_id,
+        "scenario": sc,
         "keywords": keywords,
         "col_name": col_name,
         "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
