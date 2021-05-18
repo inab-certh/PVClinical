@@ -60,11 +60,16 @@ urlpatterns = [
     path("report_pdf/<int:scenario_id>/<str:report_notes>", views.report_pdf, name='report_pdf'),
     path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>", views.report_pdf, name='report_pdf'),
     path("ajax/print_report", views.print_report, name='ajax_print_report'),
-    path("questionnaire1", views.questionnaire1, name='questionnaire1'),
     path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
     path("patient_management_workspace/new_case", views.new_case, name='new_case'),
+    path("patient_management_workspace/new_case/<int:quest_id>/<str:patient_id>/<int:sc_id>/", views.new_case, name='new_case'),
     path("patient_management_workspace/new_case/questionnaire", views.questionnaire, name='questionnaire'),
-    path("patient_management_workspace/new_case/questionnaire/<int:pk>/", views.answers_detail, name='answers_detail'),
+    path("patient_management_workspace/new_case/questionnaire/<str:patient_id>/<int:sc_id>/", views.questionnaire, name='questionnaire'),
+
+    path("patient_management_workspace/new_case/questionnaire/<int:pk>/<int:scen_id>/<str:pat_id>/", views.answers_detail, name='answers_detail'),
+    path("ajax/new_case", views.new_case, name='ajax_new_case'),
+    path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
+    path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history, name='patient_history'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
