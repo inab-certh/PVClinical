@@ -326,14 +326,23 @@ class PatientForm(forms.ModelForm):
         queryset=Scenario.objects.all(),
         widget=forms.CheckboxSelectMultiple, label=''
     )
+
+    questionnaires = forms.ModelMultipleChoiceField(
+        queryset=Questionnaire.objects.all(),
+        widget=forms.CheckboxSelectMultiple, label=''
+    )
     class Meta:
         model = PatientCase
-        fields = ['patient_id', 'scenarios']
+        fields = ['patient_id', 'scenarios','questionnaires']
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         scenarios = Scenario.objects.all()
         self.fields['scenarios'].choices = [(sc.pk , sc.title) for sc in scenarios]
+        questionnaires = Questionnaire.objects.all()
+        self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
+
+
 
 
 class QuestionnaireForm(forms.ModelForm):
@@ -387,10 +396,19 @@ class QuestionnaireForm(forms.ModelForm):
         widget=forms.RadioSelect(), required=False,
         label="10. Has the event previously been reported with this drug?"
     )
+    patient_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    sc_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
 
     class Meta:
         model = Questionnaire
 
         fields = ('q1','q2','q3', 'q4','q5','q6','q7','q8','q9','q10')
+
+
+    def save(self, commit=True):
+        print(self.cleaned_data)
+        # self.cleaned_data['patient_id']=""
+        return super(QuestionnaireForm, self).save(commit=commit)
+
 

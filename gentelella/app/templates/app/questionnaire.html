@@ -93,6 +93,8 @@ th, td {
                                 to the drug rather than the result of other factors.
     </div>
 <br>
+    {{patient_id}}
+    {{sc_id}}
 
     <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp Questions:</div>
     <form method="POST" class="post-form">
@@ -107,7 +109,7 @@ th, td {
       <div class="column">
         <table>
           <tr>
-            <th class="result" id="resultDef"><i class="fas fa-check"></i>&nbsp  Definite </th>
+            <th class="result" id="resultDef"><i class="fas fa-check"></i>Definite</th>
             <th class="result" id="resultPro"><i class="fas fa-check"></i>&nbsp  Probable </th>
             <th class="result" id="resultPo"><i class="fas fa-check"></i>&nbsp  Possible</th>
             <th class="result" id="resultUn"><i class="fas fa-check"></i>&nbsp  Unlikely</th>
@@ -116,11 +118,9 @@ th, td {
         </table></div></div>
     <br>
     <br>
-        <button type="submit" class="save btn btn-primary">Save</button>
+        <button  id="save_questionnaire" type="submit" class="save btn btn-primary">Save</button>
     </form>
     <br>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 
 </div>
@@ -134,9 +134,13 @@ th, td {
 <!--        $("label[for=id_title_2]").hide();-->
 <!--});-->
 <!--</script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
 $(document).ready(function(){
+
+var result="";
+
     $("[type='radio']").prop("disabled", true);
     $("#id_q1_0").prop("disabled", false);
     $("#id_q1_1").prop("disabled", false);
@@ -164,6 +168,8 @@ $(document).ready(function(){
         $("label[for=id_q2_1]").css("color", "#C8C8C8");
         $(document).scrollTop($(document).height());
         $("#resultUn").css("color", "#535353");
+        result=$("#resultUn").text();
+
 
     });
 
@@ -178,8 +184,8 @@ $(document).ready(function(){
         $("label[for=id_q4_1]").css("color", "#535353");
         $("label[for=id_q3_0]").css("color", "#C8C8C8");
         $("label[for=id_q3_1]").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
     });
 
     $("#id_q2_1").change(function () {
@@ -192,8 +198,8 @@ $(document).ready(function(){
         $("label[for=id_q4_1]").css("color", "#C8C8C8");
         $("label[for=id_q3_0]").css("color", "#535353");
         $("label[for=id_q3_1]").css("color", "#535353");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
     });
 
 
@@ -205,10 +211,12 @@ $(document).ready(function(){
         $("label[for=id_q4_0]").css("color", "#C8C8C8");
         $("label[for=id_q4_1]").css("color", "#C8C8C8");
         $(document).scrollTop($(document).height());
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
+        result=$("#resultUn").text();
+
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
 
     });
 
@@ -219,10 +227,10 @@ $(document).ready(function(){
         $("label[for=id_q4_0]").css("color", "#535353");
         $("label[for=id_q4_1]").css("color", "#535353");
         $("#resultUn").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
 
     });
 
@@ -236,12 +244,12 @@ $(document).ready(function(){
         $("#id_q5_1").prop("disabled", true);
         $("label[for=id_q5_0]").css("color", "#C8C8C8");
         $("label[for=id_q5_1]").css("color", "#C8C8C8");
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
     });
 
     $("#id_q4_1").change(function () {
@@ -254,12 +262,12 @@ $(document).ready(function(){
         $("#id_q6_1").prop("disabled", true);
         $("label[for=id_q6_0]").css("color", "#C8C8C8");
         $("label[for=id_q6_1]").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
 
     });
 
@@ -271,14 +279,14 @@ $(document).ready(function(){
         $("label[for=id_q6_0]").css("color", "#535353");
         $("label[for=id_q6_1]").css("color", "#535353");
         $("#resultPo").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
     });
 
     $("#id_q5_1").change(function () {
@@ -289,14 +297,16 @@ $(document).ready(function(){
         $("label[for=id_q6_1]").css("color", "#C8C8C8");
         $("#resultPo").css("color", "#535353");
         $(document).scrollTop($(document).height());
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
+        result=$("#resultPo").text();
+
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
     });
 
     $("#id_q6_0").change(function () {
@@ -309,16 +319,16 @@ $(document).ready(function(){
         $("#id_q7_1").prop("disabled", true);
         $("label[for=id_q7_0]").css("color", "#C8C8C8");
         $("label[for=id_q7_1]").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
     });
 
     $("#id_q6_1").change(function () {
@@ -331,16 +341,16 @@ $(document).ready(function(){
         $("#id_q8_1").prop("disabled", true);
         $("label[for=id_q8_0]").css("color", "#C8C8C8");
         $("label[for=id_q8_1]").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
     });
 
  $("#id_q7_0").change(function () {
@@ -350,18 +360,18 @@ $(document).ready(function(){
         $("label[for=id_q9_0]").css("color", "#535353");
         $("label[for=id_q9_1]").css("color", "#535353");
         $("#resultPo").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
     });
 
  $("#id_q7_1").change(function () {
@@ -372,18 +382,20 @@ $(document).ready(function(){
         $("label[for=id_q9_1]").css("color", "#C8C8C8");
         $("#resultPo").css("color", "#535353");
         $(document).scrollTop($(document).height());
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
+        result=$("#resultPo").text();
+
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
     });
 
  $("#id_q8_0").change(function () {
@@ -394,20 +406,22 @@ $(document).ready(function(){
         $("label[for=id_q9_1]").css("color", "#C8C8C8");
         $("#resultDef").css("color", "#535353");
         $(document).scrollTop($(document).height());
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
+        result=$("#resultDef").text();
+
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
     });
 
 $("#id_q8_1").change(function () {
@@ -417,20 +431,20 @@ $("#id_q8_1").change(function () {
     $("label[for=id_q9_0]").css("color", "#535353");
     $("label[for=id_q9_1]").css("color", "#535353");
     $("#resultDef").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
 });
 
  $("#id_q9_0").change(function () {
@@ -441,22 +455,24 @@ $("#id_q8_1").change(function () {
         $("label[for=id_q10_1]").css("color", "#C8C8C8");
         $("#resultDef").css("color", "#535353");
         $(document).scrollTop($(document).height());
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
-<!--        $("#id_q8_0").prop("disabled", true);-->
-<!--        $("#id_q8_1").prop("disabled", true);-->
+        result=$("#resultDef").text();
+
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
+        $("#id_q8_0").prop("disabled", true);
+        $("#id_q8_1").prop("disabled", true);
     });
 
  $("#id_q9_1").change(function () {
@@ -466,79 +482,81 @@ $("#id_q8_1").change(function () {
         $("label[for=id_q10_0]").css("color", "#535353");
         $("label[for=id_q10_1]").css("color", "#535353");
         $("#resultDef").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
-<!--        $("#id_q8_0").prop("disabled", true);-->
-<!--        $("#id_q8_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
+        $("#id_q8_0").prop("disabled", true);
+        $("#id_q8_1").prop("disabled", true);
     });
 
  $("#id_q10_0").change(function () {
 
         $("#resultPro").css("color", "#535353");
         $("#resultPo").css("color", "#C8C8C8");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
-<!--        $("#id_q8_0").prop("disabled", true);-->
-<!--        $("#id_q8_1").prop("disabled", true);-->
-<!--        $("#id_q9_0").prop("disabled", true);-->
-<!--        $("#id_q9_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
+        $("#id_q8_0").prop("disabled", true);
+        $("#id_q8_1").prop("disabled", true);
+        $("#id_q9_0").prop("disabled", true);
+        $("#id_q9_1").prop("disabled", true);
+
     });
 
  $("#id_q10_1").change(function () {
 
         $("#resultPro").css("color", "#C8C8C8");
         $("#resultPo").css("color", "#535353");
-<!--        $("#id_q1_0").prop("disabled", true);-->
-<!--        $("#id_q1_1").prop("disabled", true);-->
-<!--        $("#id_q2_0").prop("disabled", true);-->
-<!--        $("#id_q2_1").prop("disabled", true);-->
-<!--        $("#id_q3_0").prop("disabled", true);-->
-<!--        $("#id_q3_1").prop("disabled", true);-->
-<!--        $("#id_q4_0").prop("disabled", true);-->
-<!--        $("#id_q4_1").prop("disabled", true);-->
-<!--        $("#id_q5_0").prop("disabled", true);-->
-<!--        $("#id_q5_1").prop("disabled", true);-->
-<!--        $("#id_q6_0").prop("disabled", true);-->
-<!--        $("#id_q6_1").prop("disabled", true);-->
-<!--        $("#id_q7_0").prop("disabled", true);-->
-<!--        $("#id_q7_1").prop("disabled", true);-->
-<!--        $("#id_q8_0").prop("disabled", true);-->
-<!--        $("#id_q8_1").prop("disabled", true);-->
-<!--        $("#id_q9_0").prop("disabled", true);-->
-<!--        $("#id_q9_1").prop("disabled", true);-->
+        $("#id_q1_0").prop("disabled", true);
+        $("#id_q1_1").prop("disabled", true);
+        $("#id_q2_0").prop("disabled", true);
+        $("#id_q2_1").prop("disabled", true);
+        $("#id_q3_0").prop("disabled", true);
+        $("#id_q3_1").prop("disabled", true);
+        $("#id_q4_0").prop("disabled", true);
+        $("#id_q4_1").prop("disabled", true);
+        $("#id_q5_0").prop("disabled", true);
+        $("#id_q5_1").prop("disabled", true);
+        $("#id_q6_0").prop("disabled", true);
+        $("#id_q6_1").prop("disabled", true);
+        $("#id_q7_0").prop("disabled", true);
+        $("#id_q7_1").prop("disabled", true);
+        $("#id_q8_0").prop("disabled", true);
+        $("#id_q8_1").prop("disabled", true);
+        $("#id_q9_0").prop("disabled", true);
+        $("#id_q9_1").prop("disabled", true);
 
     });
 
-<!-- $("button").click(function () {-->
-<!--     $("[type='radio']").prop("disabled", true);-->
+    $("#save_questionnaire").click(function() {
+            $("input").prop("disabled", false);
 
-<!-- -->
-<!-- });-->
+    });
+
             });
+
 
 </script>
 

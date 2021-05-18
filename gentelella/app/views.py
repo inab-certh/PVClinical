@@ -48,6 +48,9 @@ from app.models import PubMed
 from app.models import Scenario
 from app.models import PatientCase
 from app.models import Questionnaire
+from app.models import CaseToScenario
+from app.models import CaseToQuestionnaire
+
 
 
 # from app.ohdsi_wrappers import update_ir
@@ -2034,29 +2037,29 @@ def print_report(request,scenario_id=None):
 
     return render(request, 'app/print_report.html')
 
-def questionnaire1(request):
-
-    return render(request, 'app/questionnaire1.html')
-
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def patient_management_workspace(request, patient_id=None):
+def patient_management_workspace(request):
+    request.session['quest_id'] = None
+    request.session['scen_id'] = None
+    request.session['pat_id'] = None
 
     patient_cases=[]
-    # if PatientCase.objects.order_by('-timestamp').all() != []:
 
     for case in PatientCase.objects.order_by('-timestamp').all():
         for scs in case.scenarios.all():
+            for quests in case.questionnaires.all():
 
-            patient_cases.append({
-                    "id": case.id,
-                    "patient_id": case.patient_id,
-                    "timestamp": case.timestamp,
-                    "scenario_id": scs.id,
-                    "scenario_title": scs.title,
-                    "drugs": scs.drugs.all(),
-                    "conditions": scs.conditions.all()
-                })
+                patient_cases.append({
+                        "id": case.id,
+                        "patient_id": case.patient_id,
+                        "timestamp": case.timestamp,
+                        "scenario_id": scs.id,
+                        "scenario_title": scs.title,
+                        "drugs": scs.drugs.all(),
+                        "conditions": scs.conditions.all(),
+                        "questionnaire_id":quests.id
+                    })
 
     if request.method == 'DELETE':
         patient_id = QueryDict(request.body).get("patient_id")
@@ -2072,7 +2075,12 @@ def patient_management_workspace(request, patient_id=None):
 
     return render(request, 'app/patient_management_workspace.html',context)
 
-def new_case(request):
+
+def new_case(request, quest_id=None, patient_id=None, sc_id=None):
+    quest_id =  request.session.get('quest_id')
+    patient_id = request.session.get('pat_id')
+    sc_id = request.session.get('scen_id')
+
     tmp_user = User.objects.get(username=request.user)
 
     if request.method == "POST":
@@ -2083,17 +2091,29 @@ def new_case(request):
             case.user= tmp_user
             case = form.save(commit=False)
             case.save()
+            print(case.patient_id)
             form.save_m2m()
+
 
             return redirect('patient_management_workspace')
     else:
-        form = PatientForm()
+
+        form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
+                                    "questionnaires": Questionnaire.objects.filter(id=quest_id).first()})
+
+
 
     return render(request, 'app/new_case.html', {'form': form })
 
-def questionnaire(request):
+def questionnaire(request, patient_id=None, sc_id=None):
+
+
     if request.method == "POST":
+
         form = QuestionnaireForm(request.POST)
+        pat_id = form.data["patient_id"]
+        scen_id = form.data["sc_id"]
+
         if form.is_valid():
             answers = form.save(commit=False)
 
@@ -2104,19 +2124,66 @@ def questionnaire(request):
                                                 q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
                                                 q10=answers.q10)
                 existing_pk=existing_quest.pk
-                print(existing_pk)
 
-                return redirect('answers_detail', pk=existing_pk)
+                return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
             else:
+
                 answers.save()
-                return redirect('answers_detail', pk=answers.pk)
+                Questionnaire.objects.filter(q1=False, q2=None, q3=None, q4=None, q5=None, q6=None, q7=None,
+                                             q8=None, q9=None, q10=None).update(result="Unlikely")
+                Questionnaire.objects.filter(q3=False, q4=None, q5=None, q6=None, q7=None,
+                                             q8=None, q9=None, q10=None).update(result="Unlikely")
+                Questionnaire.objects.filter(q5=False, q6=None, q7=None, q8=None, q9=None,
+                                             q10=None).update(result="Possible")
+                Questionnaire.objects.filter(q7=False, q8=None, q9=None,
+                                             q10=None).update(result="Possible")
+                Questionnaire.objects.filter(q10=False).update(result="Possible")
+                Questionnaire.objects.filter(q8=True, q9=None, q10=None).update(result="Definite")
+                Questionnaire.objects.filter(q9=True, q10=None).update(result="Definite")
+                Questionnaire.objects.filter(q10=True).update(result="Probable")
+
+                existing_pk=answers.pk
+
+                return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
 
     else:
-        form = QuestionnaireForm()
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
 
-    return render(request, 'app/questionnaire.html', {'form': form})
+    return render(request, 'app/questionnaire.html', {'form': form,'patient_id':patient_id, "sc_id":sc_id})
 
 
-def answers_detail(request, pk):
-        quest= Questionnaire.objects.get(id=pk)
-        return render(request, 'app/answers_detail.html', {'quest':quest})
+def answers_detail(request, pk, scen_id, pat_id):
+
+    scen_title=Scenario.objects.get(id=scen_id).title
+
+    quest= Questionnaire.objects.get(id=pk)
+    request.session['quest_id'] = pk
+    request.session['scen_id'] = scen_id
+    request.session['pat_id'] = pat_id
+
+    return render(request, 'app/answers_detail.html', {'quest':quest, 'scen_id':scen_id, 'pat_id':pat_id, 'scen_title':scen_title})
+
+
+def patient_history(request,patient_pk=None):
+
+    patient_cases=[]
+
+    for case in PatientCase.objects.order_by('-timestamp').all():
+        if case.patient_id == patient_pk:
+            for scs in case.scenarios.all():
+                for quests in case.questionnaires.all():
+
+                    patient_cases.append({
+                            "id": case.id,
+                            "patient_id": case.patient_id,
+                            "timestamp": case.timestamp,
+                            "scenario_id": scs.id,
+                            "scenario_title": scs.title,
+                            "drugs": scs.drugs.all(),
+                            "conditions": scs.conditions.all(),
+                            "questionnaire_id":quests.id
+                        })
+
+    context={"patient_cases":patient_cases, "patient_pk":patient_pk}
+
+    return render(request, 'app/patient_history.html',context)
