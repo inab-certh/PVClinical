@@ -8,12 +8,17 @@
 <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome 5.15.1 -->
-        <link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
-        <!-- Font Awesome -->
-        <link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
+<link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
+<!-- Font Awesome -->
+<link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 
 <style>
@@ -84,7 +89,9 @@ a:hover {
 {% block content %}
 
 <div class="header">
- <div  style="padding-right:1750px"> <a href="{% url 'patient_management_workspace' %}" class="previous round pull-left"><i class="fas fa-arrow-left"></i></a></div>
+    <div  style="padding-right:1750px"><a class="previous round pull-left" type="button" onclick="history.back();"><i class="fas fa-arrow-left"></i></a></div>
+
+<!-- <div  style="padding-right:1750px"> <a href="{% url 'patient_management_workspace' %}" class="previous round pull-left"><i class="fas fa-arrow-left"></i></a></div>-->
   <h1>Answers of Liverpool Algorithm for " {{pat_id}} "</h1>
   <p>The following questions based on liverpool algorithm for determining the likelihood of whether an ADR (adverse drug reaction) is actually due to the drug rather than the result of other factors.</p>
 </div>
@@ -210,8 +217,64 @@ a:hover {
 
 <h2>Result:</h2>
 <h3>&nbsp {{quest.result}}</h3>
+      <br>
+      <br>
+
+     <i> *Click to see the flowchart of Liverpool Algorithm </i>
+      <br>
+      <br>
+      <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">Fowchart</button>
+
+<!-- Modal -->
+<div class="modal fade right" id="liverpoolimg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-full-width modal-dialog momodel modal-fluid" role="document">
+        <div class="modal-content-full-width modal-content ">
+            <div class="modal-header">
+                Liverpool ADR causality assessment tool
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" >&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <h1 class="section-heading text-center wow fadeIn my-5 pt-3">
+                    <img  class="patient-work-img" src="{% static 'images/liverpool_img.png' %}" id="liverpollimg"  style="width:100%;">
+
+                </h1>
+            </div>
+            <div class="modal-footer-full-width  modal-footer">
+                <button type="button" class="btn  btn-md btn-rounded" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--&lt;!&ndash;      Modal&ndash;&gt;-->
+<!--      <div class="modal"  id="liverpoolimg" tabindex="-1" role="dialog"  aria-hidden="true">-->
+<!--          <div class="modal-dialog modal-lg">-->
+<!--            <div class="modal-content">-->
+<!--              <div class="modal-header">-->
+<!--                <h2>Liverpoll Algorithm</h2>-->
+<!--                   <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--                    </div>-->
+<!--              <div class="modal-body" >-->
+<!--                    <img  class="patient-work-img" src="{% static 'images/liverpool_img.png' %}" id="liverpollimg"  style="width:100%;max-width:300px">-->
+<!--                  <div class="1"></div>-->
+<!--                    <div class="2"></div>-->
+
+<!--              </div>-->
+<!--              <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; /.modal-content &ndash;&gt;-->
+<!--          </div>-->
+<!--  &lt;!&ndash; /.modal-dialog &ndash;&gt;-->
+<!--</div>-->
+
 
   </div>
+
 </div>
 
 

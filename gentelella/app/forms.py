@@ -407,7 +407,7 @@ class QuestionnaireForm(forms.ModelForm):
 
 
     def save(self, commit=True):
-        print(self.cleaned_data)
+        # print(self.cleaned_data)
         # self.cleaned_data['patient_id']=""
         return super(QuestionnaireForm, self).save(commit=commit)
 
