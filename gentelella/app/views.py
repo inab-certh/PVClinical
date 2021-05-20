@@ -2061,12 +2061,14 @@ def patient_management_workspace(request):
                         "questionnaire_id":quests.id
                     })
 
+
     if request.method == 'DELETE':
         patient_id = QueryDict(request.body).get("patient_id")
         patient = None
+        print(patient_id)
         if patient_id:
             try:
-                patient = PatientCase.objects.get(id=patient_id)
+                patient = PatientCase.objects.get(id=int(patient_id))
             except:
                 pass
         return delete_db_rec(patient)
@@ -2091,9 +2093,7 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
             case.user= tmp_user
             case = form.save(commit=False)
             case.save()
-            print(case.patient_id)
             form.save_m2m()
-
 
             return redirect('patient_management_workspace')
     else:
