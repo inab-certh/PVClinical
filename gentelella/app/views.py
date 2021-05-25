@@ -243,6 +243,7 @@ def add_edit_scenario(request, scenario_id=None):
     :param scenario_id: the specific scenario, None for new scenario
     :return: the form view
     """
+
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
@@ -262,6 +263,10 @@ def add_edit_scenario(request, scenario_id=None):
 
         if scform.is_valid():
             sc=scform.save()
+            #aprosthiki apo nadia gia to patient_management_workspace
+            request.session['new_scen_id'] = sc.id
+
+
             messages.success(
                 request,
                 _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
@@ -2079,9 +2084,26 @@ def patient_management_workspace(request):
 
 
 def new_case(request, quest_id=None, patient_id=None, sc_id=None):
+
     quest_id =  request.session.get('quest_id')
     patient_id = request.session.get('pat_id')
     sc_id = request.session.get('scen_id')
+    print(request.session.get('new_scen_id'))
+
+    new_scen_id = request.session.get('new_scen_id') \
+        if request.build_absolute_uri(request.get_full_path())==request.META.get('HTTP_REFERER')\
+        else None
+    request.session['new_scen_id']=new_scen_id
+
+    print(request.build_absolute_uri(request.get_full_path()))
+    print(request.META.get('HTTP_REFERER'))
+
+    print(new_scen_id)
+    new_scen_id_no='None'
+
+    if new_scen_id != None:
+        sc_id=new_scen_id
+        new_scen_id_no=new_scen_id
 
     tmp_user = User.objects.get(username=request.user)
 
@@ -2103,7 +2125,7 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
 
 
 
-    return render(request, 'app/new_case.html', {'form': form })
+    return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no':new_scen_id_no })
 
 def questionnaire(request, patient_id=None, sc_id=None):
 

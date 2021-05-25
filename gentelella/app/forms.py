@@ -181,8 +181,8 @@ class IRForm(forms.Form):
                                  widget=forms.Select)
 
 
-    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
-    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
                                         initial=[],
@@ -326,6 +326,10 @@ class PatientForm(forms.ModelForm):
         queryset=Scenario.objects.all(),
         widget=forms.CheckboxSelectMultiple, label=''
     )
+    # scenarios = forms.ChoiceField(widget=forms.RadioSelect,
+    #                               choices=Scenario.objects.all(),
+    #                               label=''
+    #                               )
 
     questionnaires = forms.ModelMultipleChoiceField(
         queryset=Questionnaire.objects.all(),
@@ -333,11 +337,13 @@ class PatientForm(forms.ModelForm):
     )
     class Meta:
         model = PatientCase
-        fields = ['patient_id', 'scenarios','questionnaires']
+        fields = ['patient_id', 'scenarios', 'questionnaires']
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         scenarios = Scenario.objects.all()
+        self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς')
+
         self.fields['scenarios'].choices = [(sc.pk , sc.title) for sc in scenarios]
         questionnaires = Questionnaire.objects.all()
         self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
