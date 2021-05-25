@@ -11,6 +11,7 @@
   <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
   <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
   <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
 {% endblock stylesheets %}
 
 {% block content %}
@@ -21,26 +22,25 @@
       <div class="col-4 col-offset-6">
           <div class="x_panel">
             <div class="x_title">
-              <h2 id="scTblTitle">{% trans "Patient Management Workspace" %}
+              <h2 id="scTblTitle">{% trans "Περιβάλλον Διαχείρισης Ασθενών" %}
               </h2>
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
               <p class="text-muted font-13 m-b-30">
-                 "Στον ακόλουθο πίνακα μπορείτε να δείτε τις αναφορές ασθενών σχετικά με την πιθανότητα
-                  ανεπιθύμιτης ενέργειας φαρμάκου και τη συσχέτιση της κάθε μιας από αυτές με πιθανά
-                 σενάρια διερεύνησης."             </p>
+                  {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τις αναφορές ασθενών σχετικά με την πιθανότητα ανεπιθύμιτης ενέργειας φαρμάκου και τη συσχέτιση της κάθε μιας από αυτές με πιθανά  σενάρια διερεύνησης." %}
+              </p>
               <table id="scenariosTbl" class="table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
                 <thead>
                   <tr>
-                    <th>{% trans "Patient" %}</th>
-                    <th>{% trans "Creation Date" %}</th>
-                    <th>{% trans "Scenario Title" %}</th>
-                    <th>{% trans "Drug" %}</th>
-                    <th>{% trans "Condition" %}</th>
-                    <th>{% trans "Questionnaire Results" %}</th>
-                    <th>{% trans "Patient's History" %}</th>
-                    <th>{% trans "Delete" %}</th>
+                    <th>{% trans "Ασθενής" %}</th>
+                    <th>{% trans "Ημ/νία καταχώρισης" %}</th>
+                    <th>{% trans "Τίτλος Σεναρίου" %}</th>
+                    <th>{% trans "Φάρμακο/Φάρμακα" %}</th>
+                    <th>{% trans "Πάθηση/Παθήσεις" %}</th>
+                    <th>{% trans "Αποτελέσματα Ερωτηματολογίου" %}</th>
+                    <th>{% trans "Ιστορικό Ασθενή" %}</th>
+                    <th>{% trans "Διαγραφή" %}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,7 +94,7 @@
                          <table>
                             {% for d in case.drugs %}
                               <tr>
-                                <td>{% firstof d.name d.code %}</td>
+                                <td style="text-align: left;">{% firstof d.name d.code %}</td>
                               </tr>
                             {% endfor %}
                           </table>
@@ -103,7 +103,7 @@
                           <table>
                             {% for c in case.conditions %}
                               <tr>
-                                <td>{% firstof c.name c.code %}</td>
+                                <td style="text-align: left;">{% firstof c.name c.code %}</td>
                               </tr>
                             {% endfor %}
                           </table>
@@ -118,14 +118,9 @@
                         </td>
 
                       <td>
-<!--                        {{case.id}}-->
-<!--                     <button class="btn btn-outline delete-sc-btn" data-toggle="modal" id="case-modal" data-target="#caseDeleteConfirmModal" data-caseid="{{ case.id }}" type="button">-->
-<!--                          <i class="fa fa-trash"></i>-->
-<!--                        </button>-->
                           <button class="btn btn-outline delete-sc-btn patient" data-toggle="modal" data-target="#caseDeleteConfirmModal" id="case-modal{{forloop.counter}}" data-caseid="{{ case.id }}" type="button">
                           <i class="fa fa-trash"></i>
                         </button>
-
                       </td>
 
                     </tr>
@@ -135,7 +130,8 @@
 
             </div>
           </div>
-<a href="{% url 'new_case' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp Add new case</span></a>        </div>
+        <a href="{% url 'new_case' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp Add new case</span></a>
+      </div>
 
     </div>
   </div>
