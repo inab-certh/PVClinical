@@ -2085,6 +2085,8 @@ def patient_management_workspace(request):
 
 def new_case(request, quest_id=None, patient_id=None, sc_id=None):
 
+
+
     quest_id =  request.session.get('quest_id')
     patient_id = request.session.get('pat_id')
     sc_id = request.session.get('scen_id')
@@ -2109,10 +2111,11 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
 
     if request.method == "POST":
         form = PatientForm(request.POST)
+        print(form.data)
 
         if form.is_valid():
             case = form.save(commit=False)
-            case.user= tmp_user
+            case.user = tmp_user
             case = form.save(commit=False)
             case.save()
             form.save_m2m()
@@ -2123,9 +2126,21 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
         form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
                                     "questionnaires": Questionnaire.objects.filter(id=quest_id).first()})
 
+    scenarios = []
+    for sc in Scenario.objects.order_by('-timestamp').all():
+        scenarios.append({
+            "id": sc.id,
+            "title": sc.title,
+            "drugs": sc.drugs.all(),
+            "conditions": sc.conditions.all(),
+            "owner": sc.owner.username,
+            "status": dict(sc.status.status_choices).get(sc.status.status),
+            "timestamp": sc.timestamp
+        })
 
 
-    return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no':new_scen_id_no })
+
+    return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no':new_scen_id_no,'scenarios':scenarios })
 
 def questionnaire(request, patient_id=None, sc_id=None):
 

@@ -27,3 +27,11 @@ def get_item(dictionary, key):
 @register.filter
 def remove_char(string, char):
     return string.replace(char, "")
+
+@register.filter
+def get_elmnt_by_val(lst, val):
+    return (list(filter(lambda el: el.get("id") == val, lst)) + [None])[0]
+
+@register.filter
+def get_elmnt_by_index(lst, indx):
+    return lst[indx]
