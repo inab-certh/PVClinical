@@ -1469,6 +1469,7 @@ def social_media(request, sc_id):
         return forbidden_redirect(request)
 
     tmp_user = User.objects.get(username=request.user)
+
     try:
         sc = Scenario.objects.get(id=sc_id)
 
@@ -1487,17 +1488,28 @@ def social_media(request, sc_id):
         # Collection name which is a hash of the search expression for twitter (or other social media)
         col_name = hashlib.md5(keywords.encode()).hexdigest()
 
-        # print(keywords)
-        # print(col_name)
+        data = {"keywords": keywords, "scenarioID": sc_id}
+
+        resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
+        resp_json = resp.json()
+
+        start_switch = resp.status_code == 200 and resp_json.get(
+            "processStatus") == "Stopped" or resp.status_code == 404
+
+        # content_switch = resp.status_code == 404
 
     except Scenario.DoesNotExist:
         sc = None
+        col_name = None
+        keywords = None
+        start_switch = False
 
     context = {
         "scenario": sc,
         "keywords": keywords,
         "col_name": col_name,
         "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
+        "start_switch": start_switch,
         # "tethys_endpoint": settings.TETHYS_ENDPOINT,
         "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
@@ -1516,7 +1528,24 @@ def start_sm_data_extraction(request):
     sc_id = request.POST.get("scenarioID", None)
 
     data = {"keywords": keywords, "scenarioID": sc_id}
-    data.update(settings.TWITTER_CREDENTIALS)
+    # data.update(settings.TWITTER_CREDENTIALS)
 
     resp = requests.post(url="{}create".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)
+
+
+@csrf_protect
+def stop_sm_data_extraction(request):
+    """ Stop social media data extraction
+    :param request: The request
+    :return: The resulting response from the stopping process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    # data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}stop".format(settings.TETHYS_ENDPOINT), json=data)
     return JsonResponse(resp.json(), status=resp.status_code)
