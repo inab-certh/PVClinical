@@ -2,6 +2,10 @@ import json
 import os
 import re
 import requests
+import tempfile
+import uuid
+import hashlib
+import glob
 
 from math import ceil
 from itertools import chain
@@ -25,6 +29,8 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from app import ohdsi_wrappers
+from app import ohdsi_shot
+
 from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 from app.forms import IRForm
@@ -50,6 +56,7 @@ from app.models import PatientCase
 from app.models import Questionnaire
 from app.models import CaseToScenario
 from app.models import CaseToQuestionnaire
+
 
 
 
@@ -1418,7 +1425,13 @@ def allnotes(request):
 
 
 def final_report(request, scenario_id=None):
-    sc = Scenario.objects.get(id=scenario_id)
+
+    try:
+        sc = Scenario.objects.get(id=scenario_id)
+    except Exception as e:
+        error_response = HttpResponse(content=str(e), status=500)
+        return error_response
+
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
     all_combs = list(product([d.name for d in drugs] or [""],
@@ -1426,7 +1439,6 @@ def final_report(request, scenario_id=None):
 
     scenario_open = sc.id
     synolo = []
-    import hashlib
 
     for i in range(len(all_combs)):
         p = sc.title+str(sc.owner)+str(i)
@@ -1446,6 +1458,7 @@ def final_report(request, scenario_id=None):
             m = m+1
 
     user = sc.owner
+
     notes_openfda1 = {}
     if Notes.objects.filter(user=user) != "":
         user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
@@ -1462,17 +1475,261 @@ def final_report(request, scenario_id=None):
                     notes_openfda1[k] = dict_openfda_notes[key]
                 if j == key and i == "":
                     notes_openfda1[k] = dict_openfda_notes[key]
+    # ir table and heatmap
+
+    drugs_cohort_name = None
+    conditions_cohort_name = None
+    sc_drugs = sc.drugs.all()
+    sc_conditions = sc.conditions.all()
+
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
+        sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+
+    ir_id = ir_ent.get("id")
+
+    drugs_cohort_name = None
+    conditions_cohort_name = None
+    sc_drugs = sc.drugs.all()
+    sc_conditions = sc.conditions.all()
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
+                                                   "char")
+    char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
+    char_id = char_ent.get("id")
+
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
+    cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
+                                                 "cp")
+    cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
+    cp_id = cp_ent.get("id")
+
+
+    try:
+        files = glob.glob('app/static/images/ohdsi_img/*.png')
+        for f in files:
+            os.remove(f)
+    except:
+        pass
 
     context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
-               'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1}
+               'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1, 'ir_id': ir_id,
+               'char_id': char_id, 'cp_id': cp_id}
     return render(request, 'app/final_report.html', context)
+
 
 def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
+    sc = Scenario.objects.get(id=scenario_id)
+
+    drugs_cohort_name = None
+    conditions_cohort_name = None
+    sc_drugs = sc.drugs.all()
+    sc_conditions = sc.conditions.all()
+
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
+        sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+    ir_id = ir_ent.get("id")
+
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
+                                                   "char")
+    char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
+    char_id = char_ent.get("id")
+
+    kin = 0
+    lin = 0
+
+    img_path = "app/static/images/ohdsi_img"
+
+    ir_id_report = request.session.get('ir_id_report')
+    char_id_report = request.session.get('char_id_report')
+    # ir_table_rep=0 if not selected or 1 if user selected
+    ir_table_rep = request.GET.get("ir_table_rep", None)
+    ir_all_rep = request.GET.get("ir_all_rep", None)
+    pre_table_rep = request.GET.get("pre_table_rep", None)
+    pre_chart_rep = request.GET.get("pre_chart_rep", None)
+    drug_table_rep = request.GET.get("drug_table_rep", None)
+    drug_chart_rep = request.GET.get("drug_chart_rep", None)
+    demograph_chart_rep = request.GET.get("demograph_chart_rep", None)
+    demograph_table_rep = request.GET.get("demograph_table_rep", None)
+    charlson_table_rep = request.GET.get("charlson_table_rep", None)
+    charlson_chart_rep = request.GET.get("charlson_chart_rep", None)
+    gen_table_rep = request.GET.get("gen_table_rep", None)
+    gen_chart_rep = request.GET.get("gen_chart_rep", None)
+
+    response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
+    resp_number = response.json()
+    resp_num_id = resp_number[0]['id']
+
+    ohdsi_sh = ohdsi_shot.OHDSIShot()
+
+    if ir_table_rep == "1":
+        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id_report), "irtable.png", shoot_element="table", store_path=img_path)
+
+    if ir_all_rep == "1":
+        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id_report), "irall.png", shoot_element="all", store_path=img_path)
+
+    if pre_table_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["pre_table.png"],
+                         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
+
+    if pre_chart_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["pre_chart.png"],
+                         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
+
+    if drug_table_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["drug_table.png"],
+                         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10, store_path=img_path)
+
+    if drug_chart_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["drug_chart.png"],
+                         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10, store_path=img_path)
+
+    if demograph_table_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["demograph_table.png"],
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10, store_path=img_path)
+
+    if demograph_chart_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["demograph_chart.png"],
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10, store_path=img_path)
+
+    if charlson_table_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["charlson_table.png"],
+                         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
+
+    if charlson_chart_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["charlson_chart.png"],
+                         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
+
+    if gen_table_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["gen_table.png"],
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10, store_path=img_path)
+
+    if gen_chart_rep == "1":
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
+                          fnames=["gen_chart.png"],
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10, store_path=img_path)
+
+    entries = os.listdir('app/static/images/ohdsi_img')
+
+    ir_dict_t = {}
+    ir_dict_a = {}
+    coh_dict = {}
+    ind = 0
+    intro = "/static/images/ohdsi_img/"
+
+    for i in entries:
+        if i == "charlson_table.png":
+            ind = ind + 1
+            kin = kin+1
+            lin = lin+1
+            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = intro + i
+        if i == "charlson_chart.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = intro + i
+
+        if i == "demograph_table.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = intro + i
+        if i == "demograph_chart.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = intro + i
+
+        if i == "drug_table.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = intro + i
+        if i == "drug_chart.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = intro + i
+
+        if i == "gen_table.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = intro + i
+        if i == "gen_chart.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = intro + i
+
+        if i == "pre_table.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Table {} - All prevalence covariates table".format(ind)] = intro + i
+        if i == "pre_chart.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = intro + i
+
+    for i in entries:
+
+        if i == "irtable.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = intro+i
+        if i == "irall.png":
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = intro + i
+
+    # scenario_id = scenario_id or request.GET.get("scenario_id", None)
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
 
-    sc = Scenario.objects.get(id=scenario_id)
+    # sc = Scenario.objects.get(id=scenario_id)
     scenario = sc.title
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
@@ -1498,6 +1755,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     r = requests.get(settings.REPORT_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
+
     dict_quickview = {}
     dictpng = {}
     dictcsv = {}
@@ -1513,8 +1771,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
     dict2 = {}
     dict3 = {}
     dict_hash_combination = {}
-    kin = 0
-    lin = 0
 
     for i, j, k in drug_condition_hash:
 
@@ -1525,6 +1781,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             files_png = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
+
 
             files_csv = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_timeseries_prr".format(k) in elm,
@@ -1550,6 +1807,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
             dynprr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_prrplot".format(k) in elm,
                                      map(lambda el: el.get_text(), soup.find_all('a'))))
+            # dynprr_png1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "prrplot" in elm,
+            #                          map(lambda el: el.get_text(), soup.find_all('a'))))
             dynprr_csv = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrcounts".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -1992,6 +2251,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
     empty_OpenFDA = ''
+
     for key in dict1:
         for j in dict1[key]:
             if j != '':
@@ -2008,25 +2268,25 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, 'all_combs': all_combs, 'scenario': scenario,
                'dict_quickview': dict_quickview, 'dict_dashboard_png': dict_dashboard_png,
-               'dict_dash_csv': dict_dash_csv,'dict_rr_d':dict_rr_d, 'dict_lr': dict_lr,
+               'dict_dash_csv': dict_dash_csv, 'dict_rr_d': dict_rr_d, 'dict_lr': dict_lr,
                'dict_lrTest_png': dict_lrTest_png, 'dict_rr_e': dict_rr_e,
                'dict_lre': dict_lre, 'dict_lreTest_png': dict_lreTest_png, 'dict1': dict1,
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
                'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
-               "extra_notes":extra_notes}
-
+               "extra_notes": extra_notes, "entries": entries, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
+               "coh_dict": coh_dict}
 
     return render(request, 'app/report_pdf.html', context)
 
-def print_report(request,scenario_id=None):
+
+def print_report(request, scenario_id=None):
 
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
     report_notes = urllib.parse.urlencode(json.loads(report_notes))
     extra_notes = json.loads(request.GET.get("extra_notes", None))
     if not extra_notes:
-        extra_notes="empty"
-
+        extra_notes = "empty"
 
     options = {
         'margin-top': '0.45in',
@@ -2036,9 +2296,13 @@ def print_report(request,scenario_id=None):
         'encoding': "UTF-8",
         'footer-right': '[page]',
     }
-    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}'.format(scenario_id, report_notes, extra_notes), '/tmp/report.pdf',
-                    options=options)
-    webbrowser.open(r'file:///tmp/report.pdf')
+
+    fname = "{}.pdf".format(str(uuid.uuid4()))
+    file_path = os.path.join(tempfile.gettempdir(), fname)
+
+    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}'.format(scenario_id, report_notes, extra_notes),
+                    file_path, options=options)
+    webbrowser.open(r"{}".format(file_path))
 
     return render(request, 'app/print_report.html')
 
@@ -2049,7 +2313,7 @@ def patient_management_workspace(request):
     request.session['scen_id'] = None
     request.session['pat_id'] = None
 
-    patient_cases=[]
+    patient_cases = []
 
     for case in PatientCase.objects.order_by('-timestamp').all():
         for scs in case.scenarios.all():
@@ -2063,14 +2327,12 @@ def patient_management_workspace(request):
                         "scenario_title": scs.title,
                         "drugs": scs.drugs.all(),
                         "conditions": scs.conditions.all(),
-                        "questionnaire_id":quests.id
+                        "questionnaire_id": quests.id
                     })
-
 
     if request.method == 'DELETE':
         patient_id = QueryDict(request.body).get("patient_id")
         patient = None
-        print(patient_id)
         if patient_id:
             try:
                 patient = PatientCase.objects.get(id=int(patient_id))
@@ -2078,40 +2340,36 @@ def patient_management_workspace(request):
                 pass
         return delete_db_rec(patient)
 
-    context={"patient_cases":patient_cases}
+    context = {"patient_cases": patient_cases}
 
-    return render(request, 'app/patient_management_workspace.html',context)
+    return render(request, 'app/patient_management_workspace.html', context)
 
 
 def new_case(request, quest_id=None, patient_id=None, sc_id=None):
 
-
-
-    quest_id =  request.session.get('quest_id')
+    quest_id = request.session.get('quest_id')
     patient_id = request.session.get('pat_id')
     sc_id = request.session.get('scen_id')
     print(request.session.get('new_scen_id'))
 
     new_scen_id = request.session.get('new_scen_id') \
-        if request.build_absolute_uri(request.get_full_path())==request.META.get('HTTP_REFERER')\
+        if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
         else None
-    request.session['new_scen_id']=new_scen_id
+    request.session['new_scen_id'] = new_scen_id
 
-    print(request.build_absolute_uri(request.get_full_path()))
-    print(request.META.get('HTTP_REFERER'))
+    # print(request.build_absolute_uri(request.get_full_path()))
+    # print(request.META.get('HTTP_REFERER'))
 
-    print(new_scen_id)
-    new_scen_id_no='None'
+    new_scen_id_no = 'None'
 
     if new_scen_id != None:
-        sc_id=new_scen_id
-        new_scen_id_no=new_scen_id
+        sc_id = new_scen_id
+        new_scen_id_no = new_scen_id
 
     tmp_user = User.objects.get(username=request.user)
 
     if request.method == "POST":
         form = PatientForm(request.POST)
-        print(form.data)
 
         if form.is_valid():
             case = form.save(commit=False)
@@ -2144,7 +2402,6 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
 
 def questionnaire(request, patient_id=None, sc_id=None):
 
-
     if request.method == "POST":
 
         form = QuestionnaireForm(request.POST)
@@ -2160,9 +2417,9 @@ def questionnaire(request, patient_id=None, sc_id=None):
                 existing_quest = Questionnaire.objects.get(q1=answers.q1,q2=answers.q2,q3= answers.q3,q4=answers.q4,
                                                 q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
                                                 q10=answers.q10)
-                existing_pk=existing_quest.pk
+                existing_pk = existing_quest.pk
 
-                return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
+                return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
             else:
 
                 answers.save()
@@ -2179,31 +2436,32 @@ def questionnaire(request, patient_id=None, sc_id=None):
                 Questionnaire.objects.filter(q9=True, q10=None).update(result="Definite")
                 Questionnaire.objects.filter(q10=True).update(result="Probable")
 
-                existing_pk=answers.pk
+                existing_pk = answers.pk
 
                 return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
 
     else:
         form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
 
-    return render(request, 'app/questionnaire.html', {'form': form,'patient_id':patient_id, "sc_id":sc_id})
+    return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
 
 
 def answers_detail(request, pk, scen_id, pat_id):
 
-    scen_title=Scenario.objects.get(id=scen_id).title
+    scen_title = Scenario.objects.get(id=scen_id).title
 
-    quest= Questionnaire.objects.get(id=pk)
+    quest = Questionnaire.objects.get(id=pk)
     request.session['quest_id'] = pk
     request.session['scen_id'] = scen_id
     request.session['pat_id'] = pat_id
 
-    return render(request, 'app/answers_detail.html', {'quest':quest, 'scen_id':scen_id, 'pat_id':pat_id, 'scen_title':scen_title})
+    return render(request, 'app/answers_detail.html', {'quest': quest, 'scen_id': scen_id, 'pat_id': pat_id,
+                                                       'scen_title': scen_title})
 
 
-def patient_history(request,patient_pk=None):
+def patient_history(request, patient_pk=None):
 
-    patient_cases=[]
+    patient_cases = []
 
     for case in PatientCase.objects.order_by('-timestamp').all():
         if case.patient_id == patient_pk:
@@ -2221,6 +2479,6 @@ def patient_history(request,patient_pk=None):
                             "questionnaire_id":quests.id
                         })
 
-    context={"patient_cases":patient_cases, "patient_pk":patient_pk}
+    context={"patient_cases": patient_cases, "patient_pk": patient_pk}
 
-    return render(request, 'app/patient_history.html',context)
+    return render(request, 'app/patient_history.html', context)

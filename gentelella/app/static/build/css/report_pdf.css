@@ -122,3 +122,7 @@ textarea {
   height: 100px;
 }
 
+.crop_img {
+  position: absolute;
+  clip: rect(0px,60px,200px,0px);
+}
