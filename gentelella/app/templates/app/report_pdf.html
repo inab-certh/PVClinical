@@ -2,6 +2,12 @@
 {% load staticfiles %}
 {% block stylesheets %}
     <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
+<style>
+    .crop_img {
+  position: absolute;
+  clip: rect(0px,500px,220px,0px);
+}
+</style>
 {% endblock stylesheets %}
 
     <img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="35%">
@@ -11,7 +17,6 @@
 
 <div align="center"><img src="/static/images/pvclinical.png" width="35%"></div>
     <div style="padding-top:200px"></div>
-
 
 <div id="review">Review of {{scenario}}</div>
     <br>
@@ -25,12 +30,68 @@
         <info>Date Issued:</info>
     <div style="padding-top:100px"></div>
 
+
+<!--OHDSI WORKSPACE-->
+
+{% if entries %}
+    <div class="workspace"> OHDSI Workspace</div>
+{% endif %}
+
+{% if coh_dict %}
+    <br>
+    <br>
+    <div class="view_title" >- Cohort Characterization </div>
+    {% for k,l in coh_dict.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}"></div>
+                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
+
+{% endif %}
+
+{% if ir_dict_t or ir_dict_a %}
+    <br>
+    <br>
+    <br>
+<div class="view_title" >- Incidence Rate </div>
+    <br>
+    <br>
+    {% for k,l in ir_dict_a.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}" width="97%"></div>
+                <div style="padding-top:30px"><subt>{{ k }}</subt></div>
+        </div>
+        <br>
+        <br>
+    {% endfor %}
+
+    {% for k,l in ir_dict_t.items %}
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}" class="crop_img"></div>
+                <div style="padding-top:220px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
+
+{% endif %}
+<!--OHDSI WORKSPACE END-->
+
+
 <!--For drug or condition only-->
     {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
-    <br>
+    <div style="padding-top:30px"></div>
     <div class="workspace"> OpenFDA Workspace</div>
     <br>
     <br>
+
     {% for drug, con in all_combs%}
         <div class="drug_event">{%if drug != '' %}{{drug}}{% else %}{{con}}{% endif %}</div>
         <div style="padding-bottom:20px"></div>
@@ -62,9 +123,8 @@
 
             {% if value.0 != '' %}
                 <div class="tg">
-                <br>
-                <br>
                 <img width="80%" src='{{REPORT_ENDPOINT}}{{ value.0 }}'>
+                <br>
                 <br>
                 <subt>{{value.1}}- Change in mean analysis</subt>
                 </div>
@@ -93,6 +153,8 @@
         {% for img,fig in dict_dashboard_png.items %}
           <div class="tg">
           <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
+              <br>
+              <br>
         <div class="fig"><br>{{fig}}</div>
           <div style="padding-bottom:30px"></div>
 
@@ -153,6 +215,7 @@
     <div style="padding-bottom:30px"></div>
     <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
     <br>
+    <br>
     <subt>{{fig}}- Simulation Results for Event Based LRT</subt>
     <div style="padding-bottom:30px"></div>
     </div>
@@ -180,6 +243,7 @@
         <div style="padding-bottom:30px"></div>
         <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
         <br>
+        <br>
         <subt>{{fig}}- Simulation Results for Drug Based LRT</subt>
         <div style="padding-bottom:30px"></div>
         </div>
@@ -201,6 +265,8 @@
 
 <!--for combination of drug-condition-->
 {% if empty_OpenFDA != '' %}
+<div style="padding-top:30px"></div>
+
 <div class="workspace">OpenFDA Workspace</div>
 <br>
 {% endif %}
@@ -242,6 +308,7 @@
             <div class="tg">
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val1.0}}'>
             <br>
+            <br>
             <subt>{{val1.1}}- Change in mean analysis</subt>
             <br>
             <div class="details">&#9432; Changepoint is an instance in time where the statistical properties before and after this time point differ.
@@ -249,13 +316,13 @@
             is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
             changepoints of data.</div>
             </div>
+                <br>
+                <br>
         {%endif%}
-    <br>
-    <br>
+
+
         {% if val1.2 != '' %}
             <div class="tg">
-            <br>
-            <br>
             <div style="margin-left: 20px;">{{ val1.2|safe }}</div>
             <subt>{{val1.3}}- PRR and ROR results </subt>
             <br>
@@ -273,6 +340,7 @@
         {% if val2.0 != '' %}
             <div class="tg">
             <img width="90%" src='{{REPORT_ENDPOINT}}{{val2.0}}'>
+            <br>
             <br>
             <subt>{{val2.1}}- PRR over time </subt>
             <br>
@@ -364,6 +432,7 @@
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.1}}'>
             <br>
+            <br>
             <subt>{{val3.2}}{{val3.0}}</subt>
             <br>
             <div class="details">&#9432; Changepoint is an instance in time where the statistical properties before and after this time point differ.
@@ -380,6 +449,7 @@
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.4}}'>
             <br>
+            <br>
             <subt>{{val3.5}}{{val3.3}}</subt>
             <br>
             <div class="details">&#9432; Change in variance analysis calculates change points for mean only changes.</div>
@@ -392,6 +462,7 @@
             <br>
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.7}}'>
+            <br>
             <br>
             <subt>{{val3.8}}{{val3.6|safe}}</subt>
             <br>
@@ -408,6 +479,7 @@
             <br>
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.10}}'>
+            <br>
             <br>
             <subt>{{val3.11}}{{val3.9|safe}}</subt>
             <br>

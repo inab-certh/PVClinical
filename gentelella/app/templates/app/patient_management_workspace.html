@@ -52,43 +52,7 @@
                           {{ case.timestamp }}
                       </td>
                       <td>
-<!--                          <a class="has-popover"  data-html="true" data-content="-->
-<!--                          <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>-->
-<!--                                  <thead>-->
-<!--                                    <tr>-->
-
-<!--                                      <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>-->
-<!--                                      <th>{% trans 'Πάθηση/Παθήσεις' %}</th>-->
-
-<!--                                    </tr>-->
-<!--                                  </thead>-->
-<!--                                  <tbody>-->
-<!--                                    <tr>-->
-<!--                                      <td>-->
-<!--                                        <table>-->
-<!--                                          {% for d in case.drugs %}-->
-<!--                                            <tr>-->
-<!--                                              <td>{% firstof d.name d.code %}</td>-->
-<!--                                            </tr>-->
-<!--                                          {% endfor %}-->
-<!--                                        </table>-->
-<!--                                      </td>-->
-
-<!--                                      <td>-->
-<!--                                        <table>-->
-<!--                                          {% for c in scenario.conditions %}-->
-<!--                                            <tr>-->
-<!--                                              <td>{% firstof c.name c.code %}</td>-->
-<!--                                            </tr>-->
-<!--                                          {% endfor %}-->
-<!--                                        </table>-->
-<!--                                      </td>-->
-<!--                                    </tr>-->
-<!--                                  </tbody>-->
-<!--                          </table>-->
-<!--                        " data-placement="right" data-container="body" data-width="100%">-->
                         {{ case.scenario_title }}
-<!--                          </a>-->
                       </td>
                       <td>
                          <table>
@@ -109,12 +73,12 @@
                           </table>
                       </td>
                         <td>
-                             <a href="{% url 'answers_detail' case.questionnaire_id case.scenario_id case.patient_id %}">
+                             <a id="answersDetails" href="{% url 'answers_detail' case.questionnaire_id case.scenario_id case.patient_id %}">
                           <i class="fas fa-notes-medical fa-1x"></i>
                         </a>
                         </td>
                         <td>
-                            <a href="{% url 'patient_history' case.patient_id %}">  <i class="fas fa-history"></i></a>
+                            <a id="returnPatientWorkspace" href="{% url 'patient_history' case.patient_id %}">  <i class="fas fa-history"></i></a>
                         </td>
 
                       <td>
@@ -130,7 +94,7 @@
 
             </div>
           </div>
-        <a href="{% url 'new_case' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp Add new case</span></a>
+        <a id="newCaseButton" href="{% url 'new_case' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp Add new case</span></a>
       </div>
 
     </div>

@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
   $("[id*=ShinyBtn]").click(function(){
+  console.log("ok")
       var drug= $(this).data('drug');
       var con= $(this).data('con');
       var hash= $(this).data('hash');
@@ -95,3 +96,4 @@ $("#link1").on("click", function() {
 });
 
    });
+
