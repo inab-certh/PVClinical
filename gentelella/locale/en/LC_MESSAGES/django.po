@@ -940,6 +940,14 @@ msgstr "Workspace views"
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
+#: app/templates/app/ohdsi_workspace.html:40
+msgid "Σύντομη Προβολή"
+msgstr "Quick View"
+
+#: app/templates/app/ohdsi_workspace.html:42
+msgid "Λεπτομερής Προβολή"
+msgstr "Detailed View"
+
 #: app/templates/app/ohdsi_workspace.html:65
 #: app/templates/app/ohdsi_workspace.html:138 app/views.py:631
 #: app/views.py:1242
@@ -1264,9 +1272,6 @@ msgstr "English"
 
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
-
-#~ msgid "Προβολή"
-#~ msgstr "View"
 
 #~ msgid "Χρήστη"
 #~ msgstr "User"
