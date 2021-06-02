@@ -86,7 +86,7 @@
                                 {% trans "Έναρξη εξόρυξης δεδομένων" %}
                             </span>
                         </button>
-                        <button id="stopSMDEBtn" class="social-btn btn btn-danger pull-right" type="button" data-url="" data-toggle="tooltip" data-placement="left" data-html="true" title="<p>{% trans 'Λήξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>" {% if start_switch %}disabled{% endif %}>
+                        <button id="stopSMDEBtn" class="social-btn btn btn-danger pull-right" onclick="stop_data_extraction('{{ scenario.id }}', '{{ keywords }}')" type="button" data-url="" data-toggle="tooltip" data-placement="left" data-html="true" title="<p>{% trans 'Λήξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>" {% if start_switch %}disabled{% endif %}>
                             <i class="far fa-stop-circle fa-2x"></i>
                             <span class="visible-lg">
                                 {% trans "Λήξη εξόρυξης δεδομένων" %}
