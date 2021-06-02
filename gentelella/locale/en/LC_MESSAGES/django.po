@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-12 14:41+0300\n"
+"POT-Creation-Date: 2021-06-02 10:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -510,7 +510,8 @@ msgstr ""
 
 #: app/templates/app/all_notes.html:36 app/templates/app/form_base.html:47
 #: app/templates/app/index.html:56
-#: app/templates/app/modals/parametric_modal.html:12 app/views.py:272
+#: app/templates/app/modals/parametric_modal.html:12
+#: app/templates/app/social_media_workspace.html:41 app/views.py:272
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -567,7 +568,7 @@ msgid "Ακύρωση"
 msgstr "Cancel"
 
 #: app/templates/app/base_site.html:153
-#: app/templates/app/social_media_workspace.html:64
+#: app/templates/app/social_media_workspace.html:107
 msgid "Εντάξει"
 msgstr "OK"
 
@@ -719,11 +720,13 @@ msgstr ""
 
 #: app/templates/app/form_base.html:53 app/templates/app/index.html:75
 #: app/templates/app/modals/parametric_modal.html:18
+#: app/templates/app/social_media_workspace.html:47
 msgid "Φάρμακο/Φάρμακα"
 msgstr "Drug/Drugs"
 
 #: app/templates/app/form_base.html:54 app/templates/app/index.html:76
 #: app/templates/app/modals/parametric_modal.html:19
+#: app/templates/app/social_media_workspace.html:48
 msgid "Πάθηση/Παθήσεις"
 msgstr "Disease/Diseases"
 
@@ -986,23 +989,23 @@ msgstr "OPTIONS"
 msgid "Σενάρια Διερεύνησης"
 msgstr "Investigation Scenarios"
 
-#: app/templates/app/social_media_workspace.html:39
+#: app/templates/app/social_media_workspace.html:83
 msgid ""
 "Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση "
 "σενάριο"
 msgstr "Start data extraction from twitter for the investigation scenario"
 
-#: app/templates/app/social_media_workspace.html:42
+#: app/templates/app/social_media_workspace.html:86
 msgid "Έναρξη εξόρυξης δεδομένων"
 msgstr "Start data extraction"
 
-#: app/templates/app/social_media_workspace.html:45
+#: app/templates/app/social_media_workspace.html:89
 msgid ""
 "Λήξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση "
 "σενάριο"
 msgstr "Stop data extraction from twitter for the investigation scenario"
 
-#: app/templates/app/social_media_workspace.html:48
+#: app/templates/app/social_media_workspace.html:92
 msgid "Λήξη εξόρυξης δεδομένων"
 msgstr "Stop data extraction"
 
@@ -1220,7 +1223,7 @@ msgstr "No cohort pathways analysis with the specific id found!"
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
 
-#: app/views.py:1502
+#: app/views.py:1514
 msgid "Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"
 msgstr "Social Media Workspace"
 
