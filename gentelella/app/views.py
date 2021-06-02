@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -8,6 +9,7 @@ from itertools import chain
 from itertools import product
 
 from django.conf import settings
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -1467,25 +1469,83 @@ def social_media(request, sc_id):
         return forbidden_redirect(request)
 
     tmp_user = User.objects.get(username=request.user)
+
     try:
         sc = Scenario.objects.get(id=sc_id)
 
         # Retrieve scenario drugs
-        drugs = [d for d in sc.drugs.all()]
+        drugs = sc.drugs.all()
 
         # Retrieve scenario conditions
-        conditions = [c for c in sc.conditions.all()]
+        conditions = sc.conditions.all()
 
-        keywords = drugs + conditions
-        print(keywords)
+        all_combs = list(product(sorted([d.name for d in drugs]) or [""],
+                                 sorted([c.name for c in conditions]) or [""]))
+
+        all_combs = list(map(lambda el: " && ".join(filter(None, el)), all_combs))
+
+        keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
+        # Collection name which is a hash of the search expression for twitter (or other social media)
+        col_name = hashlib.md5(keywords.encode()).hexdigest()
+
+        data = {"keywords": keywords, "scenarioID": sc_id}
+
+        resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
+        resp_json = resp.json()
+
+        start_switch = resp.status_code == 200 and resp_json.get(
+            "processStatus") == "Stopped" or resp.status_code == 404
+
+        # content_switch = resp.status_code == 404
 
     except Scenario.DoesNotExist:
         sc = None
+        col_name = None
+        keywords = None
+        start_switch = False
 
     context = {
-        "sc_id": sc_id,
+        "scenario": sc,
         "keywords": keywords,
+        "col_name": col_name,
+        "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
+        "start_switch": start_switch,
+        # "tethys_endpoint": settings.TETHYS_ENDPOINT,
         "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
 
     return render(request, 'app/social_media_workspace.html', context)
+
+
+@csrf_protect
+def start_sm_data_extraction(request):
+    """ Start social media data extraction
+    :param request: The request
+    :return: The resulting response from the creation process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    # data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}create".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)
+
+
+@csrf_protect
+def stop_sm_data_extraction(request):
+    """ Stop social media data extraction
+    :param request: The request
+    :return: The resulting response from the stopping process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    # data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}stop".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)
