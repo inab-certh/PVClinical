@@ -95,18 +95,33 @@
                                               <br></br>
                                               <table class="table table-striped table-bordered" style="width:500px">
                                                 <tr>
-                                                <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
-                                                    <i class="fas fa-search-plus"></i></button> &nbsp Incidence Rate</td>
+                                                    {% if ir_id %}
+                                                        <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp Incidence Rate</td>
+                                                    {% else %}
+                                                        <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp Incidence Rate</td>
+                                                    {% endif %}
                                                 <td><input type="checkbox" id="irnote">&nbsp Notes</td>
                                                 </tr>
                                                 <tr>
+                                                    {% if char_id %}
                                                 <td><button id="CharOHDSIBtn" data-target="#charModal" class="btn btn-secondary" data-toggle="modal" data-charid="{{ char_id }}" data-scenario="{{ scenario_open }}">
                                                 <i class="fas fa-search-plus"></i></button>&nbsp Cohort Characterization</td>
+                                                    {% else %}
+                                                        <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp Cohort Characterization</td>
+                                                    {% endif %}
                                                 <td><input type="checkbox"  value="yes"  id="charnote">&nbsp Notes</td>
                                                 </tr>
                                                   <tr>
-                                                  <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario_open }}">
-                                                <i class="fas fa-search-plus"></i></button>&nbsp  Cohort Pathways</td>
+                                                      {% if cp_id %}
+                                                        <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario_open }}">
+                                                        <i class="fas fa-search-plus"></i></button>&nbsp  Cohort Pathways</td>
+                                                      {% else %}
+                                                        <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp Cohort Pathways</td>
+                                                      {% endif %}
                                                 <td><input type="checkbox"  value="yes"  id="pathwaysnote">&nbsp Notes</td>
                                                 </tr>
 <!--                                                  <tr>-->
@@ -299,6 +314,7 @@
         var charlson_chart_rep=0 ;
         var gen_table_rep=0 ;
         var gen_chart_rep=0 ;
+        var cp_all_rep=0 ;
 
         $("#ir_table").on("change", function(){
 
@@ -438,6 +454,17 @@
             }
         });
 
+        $("#cp_all").on("change", function(){
+
+            if ($(this).is(':checked')) {
+                cp_all_rep = 1 ;
+
+            }else{
+                cp_all_rep = 0 ;
+
+            }
+        });
+
 
         $("#IrOHDSIBtn").click(function(){
 
@@ -478,7 +505,7 @@
 
         $.ajax({
                 url: "/ajax/report_pdf",
-                data: {"scenario_id": scid ,"charlson_table_rep": charlson_table_rep,
+                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
                 "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
                 "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
                 "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,

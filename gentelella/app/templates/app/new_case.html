@@ -186,25 +186,7 @@
 
 {% block javascripts %}
   {{ block.super }}
-<!--<script>-->
-<!-- $(document).ready(function() {-->
 
-
-<!--	$('input[name="scenarios_moufa"]').on("change", function() {-->
-<!--	var i;-->
-<!--	var count={{counter}}-->
-<!--for (i = 0; i <count; i++) {-->
-<!--var sum= i+1-->
-<!--var scen ="scen_"+ sum-->
-<!--              if($('input[id="scen_1"]:checked').length == 1) {-->
-<!--                $( "#id_scenarios_0" ).prop( "checked", true );-->
-<!--                console.log(sum)-->
-
-<!--              }-->
-<!--              }-->
-<!--   	});-->
-<!--});-->
-<!--</script>-->
 <script>
 
  $(document).ready(function() {
@@ -243,13 +225,15 @@
 	$('#quest_modal').on("click", function(){
 		var patient_id = $("#id_patient_id").val();
 		new_scen_id= '{{ new_scen_id_no }}'
+		console.log(patient_id)
+		console.log(sc_id)
 		if( new_scen_id != 'None'){
 			sc_id = new_scen_id;
 		};
 
 
-		if( patient_id && sc_id != 'None' && new_scen_id != 'None'){
-			var url='http://127.0.0.1:8000/patient_management_workspace/new_case/questionnaire/'+patient_id+'/'+new_scen_id+'/'
+		if( patient_id && sc_id != 'None'){
+			var url='http://127.0.0.1:8000/patient_management_workspace/new_case/questionnaire/'+patient_id+'/'+sc_id+'/'
 
 			$('#iframe_quest').attr('src', url);
 
