@@ -1425,7 +1425,11 @@ def allnotes(request):
 
 
 def final_report(request, scenario_id=None):
-
+    """ Create a final report that contains every information that you
+    select from OHDSI and OpedFDA workspace
+    :param scenario_id: the specific scenario, None for new scenario
+    :return: the form view
+    """
     try:
         sc = Scenario.objects.get(id=scenario_id)
     except Exception as e:
@@ -1450,12 +1454,12 @@ def final_report(request, scenario_id=None):
     drug_condition_hash = []
     m = 0
     for i in all_combs:
-            k = list(i)
-            k.append(synolo[m])
-            p = tuple(k)
-            drug_condition_hash.append(p)
+        k = list(i)
+        k.append(synolo[m])
+        p = tuple(k)
+        drug_condition_hash.append(p)
 
-            m = m+1
+        m = m+1
 
     user = sc.owner
 
@@ -1491,35 +1495,27 @@ def final_report(request, scenario_id=None):
 
     ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
-
-    ir_id = ir_ent.get("id")
-
-    drugs_cohort_name = None
-    conditions_cohort_name = None
-    sc_drugs = sc.drugs.all()
-    sc_conditions = sc.conditions.all()
-    # Get drugs concept set id
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
-        else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
-        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    else:
+        ir_id = None
 
     char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
                                                    "char")
     char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
-    char_id = char_ent.get("id")
-
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
-        else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
-        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+    if char_ent:
+        char_id = char_ent.get("id")
+    else:
+        char_id = None
 
     conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
     cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
                                                  "cp")
     cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
-    cp_id = cp_ent.get("id")
-
+    if cp_ent:
+        cp_id = cp_ent.get("id")
+    else:
+        cp_id = None
 
     try:
         files = glob.glob('app/static/images/ohdsi_img/*.png')
@@ -1553,26 +1549,33 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
-    ir_id = ir_ent.get("id")
-
-    # Get drugs concept set id
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(sc_drugs) != 1 \
-        else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
-        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    else:
+        ir_id = None
 
     char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
                                                    "char")
     char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
-    char_id = char_ent.get("id")
+    if char_ent:
+        char_id = char_ent.get("id")
+    else:
+        char_id = None
+
+    conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
+    cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
+                                                 "cp")
+    cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
+    if cp_ent:
+        cp_id = cp_ent.get("id")
+    else:
+        cp_id = None
 
     kin = 0
     lin = 0
 
     img_path = "app/static/images/ohdsi_img"
 
-    ir_id_report = request.session.get('ir_id_report')
-    char_id_report = request.session.get('char_id_report')
     # ir_table_rep=0 if not selected or 1 if user selected
     ir_table_rep = request.GET.get("ir_table_rep", None)
     ir_all_rep = request.GET.get("ir_all_rep", None)
@@ -1586,67 +1589,81 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
     charlson_chart_rep = request.GET.get("charlson_chart_rep", None)
     gen_table_rep = request.GET.get("gen_table_rep", None)
     gen_chart_rep = request.GET.get("gen_chart_rep", None)
+    cp_all_rep = request.GET.get("cp_all_rep", None)
 
-    response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
-    resp_number = response.json()
-    resp_num_id = resp_number[0]['id']
+    if char_id != None:
+        response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
+        resp_number = response.json()
+        if resp_number != []:
+            resp_num_id = resp_number[0]['id']
+    if cp_id != None:
+        response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
+        resp_number_cp = response.json()
+        if resp_number_cp != []:
+            resp_num_id_cp = resp_number_cp[0]['id']
+
 
     ohdsi_sh = ohdsi_shot.OHDSIShot()
 
+    if cp_all_rep == "1":
+        ohdsi_sh.pathways_shot("{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
+                               "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+
     if ir_table_rep == "1":
-        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id_report), "irtable.png", shoot_element="table", store_path=img_path)
+        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+                         "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
 
     if ir_all_rep == "1":
-        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id_report), "irall.png", shoot_element="all", store_path=img_path)
-
+        ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+                         "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
     if pre_table_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["pre_table.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
 
     if pre_chart_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["pre_chart.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
 
     if drug_table_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["drug_table.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10, store_path=img_path)
 
     if drug_chart_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["drug_chart.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10, store_path=img_path)
 
     if demograph_table_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["demograph_table.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10, store_path=img_path)
 
     if demograph_chart_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["demograph_chart.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10, store_path=img_path)
 
     if charlson_table_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["charlson_table.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
 
     if charlson_chart_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["charlson_chart.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
 
     if gen_table_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["gen_table.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10, store_path=img_path)
 
     if gen_chart_rep == "1":
-        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id_report, resp_num_id),
-                          fnames=["gen_chart.png"],
+        ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10, store_path=img_path)
 
     entries = os.listdir('app/static/images/ohdsi_img')
@@ -1654,60 +1671,61 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
     ir_dict_t = {}
     ir_dict_a = {}
     coh_dict = {}
+    cp_dict = {}
     ind = 0
     intro = "/static/images/ohdsi_img/"
 
     for i in entries:
-        if i == "charlson_table.png":
+        if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin+1
             lin = lin+1
             coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = intro + i
-        if i == "charlson_chart.png":
+        if i == "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = intro + i
 
-        if i == "demograph_table.png":
+        if i == "demograph_table_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = intro + i
-        if i == "demograph_chart.png":
+        if i == "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = intro + i
 
-        if i == "drug_table.png":
+        if i == "drug_table_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = intro + i
-        if i == "drug_chart.png":
+        if i == "drug_chart_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = intro + i
 
-        if i == "gen_table.png":
+        if i == "gen_table_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = intro + i
-        if i == "gen_chart.png":
+        if i == "gen_chart_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = intro + i
 
-        if i == "pre_table.png":
+        if i == "pre_table_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             coh_dict["Table {} - All prevalence covariates table".format(ind)] = intro + i
-        if i == "pre_chart.png":
+        if i == "pre_chart_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
@@ -1715,16 +1733,23 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     for i in entries:
 
-        if i == "irtable.png":
+        if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             ir_dict_t["Table {} -Incidence Rates table".format(ind)] = intro+i
-        if i == "irall.png":
+        if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
             ind = ind + 1
             kin = kin + 1
             lin = lin + 1
             ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = intro + i
+
+    for i in entries:
+        if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
+            ind = ind + 1
+            kin = kin + 1
+            lin = lin + 1
+            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = intro + i
 
     # scenario_id = scenario_id or request.GET.get("scenario_id", None)
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
@@ -1782,7 +1807,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
                 filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
 
-
             files_csv = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_timeseries_prr".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -1807,8 +1831,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
             dynprr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_prrplot".format(k) in elm,
                                      map(lambda el: el.get_text(), soup.find_all('a'))))
-            # dynprr_png1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "prrplot" in elm,
-            #                          map(lambda el: el.get_text(), soup.find_all('a'))))
             dynprr_csv = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrcounts".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -1991,7 +2013,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             lin = lin + 1
             dict_dashboard_png[dash_png2[0]] = "Figure {}".format(lin)
 
-
         dash_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_event".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         dash_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_concomitant".format(k) in elm,
@@ -2003,7 +2024,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Events', []).append(styler1.render())
-            lin=lin+1
+            lin = lin+1
             dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
         if dash_csv1:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv1[0]))
@@ -2072,7 +2093,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             lin = lin + 1
             dict_rr_d.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
-
         lr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_histogram".format(k) in elm,
                              map(lambda el: el.get_text(), soup.find_all('a'))))
         if lr_png:
@@ -2080,17 +2100,17 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             dict_lrTest_png[lr_png[0]] = "Figure {}".format(lin)
 
         lr_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_allindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                             map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coqadata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coqevdata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_inqprr".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_resindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
         lr_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prres".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
         if lr_csv6:
@@ -2194,19 +2214,19 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             dict_lreTest_png[lre_png[0]] = "Figure {}".format(lin)
 
         lre_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eallindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqadata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqevdata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Einqprr".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprrindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eresindata".format(k) in elm,
-                            map(lambda el: el.get_text(), soup.find_all('a'))))
-        lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqadata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqevdata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Einqprr".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprrindata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eresindata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
         if lre_csv6:
             df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv6[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
@@ -2274,7 +2294,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
                'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "entries": entries, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
-               "coh_dict": coh_dict}
+               "coh_dict": coh_dict, "cp_dict": cp_dict}
 
     return render(request, 'app/report_pdf.html', context)
 

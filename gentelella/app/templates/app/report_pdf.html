@@ -80,7 +80,21 @@
                 <div style="padding-top:220px"><subt>{{ k }}</subt></div>
         </div>
     {% endfor %}
+{% endif %}
 
+{% if cp_dict %}
+    <div class="tg">
+    <br>
+    <br>
+    <div class="view_title" >- Pathway Analysis </div>
+    {% for k,l in cp_dict.items %}
+        <br>
+        <br>
+        <br>
+                <div style="margin-left: 20px;"><img src="{{ l }}" width="97%"></div>
+                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
 {% endif %}
 <!--OHDSI WORKSPACE END-->
 
