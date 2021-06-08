@@ -30,8 +30,8 @@
         <info>Date Issued:</info>
     <div style="padding-top:100px"></div>
 
-
 <!--OHDSI WORKSPACE-->
+
 
 {% if entries %}
     <div class="workspace"> OHDSI Workspace</div>
@@ -50,6 +50,18 @@
                 <div style="padding-top:20px"><subt>{{ k }}</subt></div>
         </div>
     {% endfor %}
+
+    {% for hash,note in report_notes.items %}
+            {%if hash == 'char' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >-Notes for Cohort Characterization</div>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
 
 {% endif %}
 
@@ -80,7 +92,21 @@
                 <div style="padding-top:220px"><subt>{{ k }}</subt></div>
         </div>
     {% endfor %}
+
+    {% for hash,note in report_notes.items %}
+            {%if hash == 'ir' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >-Notes for Incidence Rate</div>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
 {% endif %}
+
 
 {% if cp_dict %}
     <div class="tg">
@@ -95,9 +121,21 @@
                 <div style="padding-top:20px"><subt>{{ k }}</subt></div>
         </div>
     {% endfor %}
+
+{% for hash,note in report_notes.items %}
+            {%if hash == 'pathways' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >-Notes for Pathway Analysis</div>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
 {% endif %}
 <!--OHDSI WORKSPACE END-->
-
 
 <!--For drug or condition only-->
     {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
