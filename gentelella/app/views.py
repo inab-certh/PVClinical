@@ -1524,9 +1524,30 @@ def final_report(request, scenario_id=None):
     except:
         pass
 
+    ir_notes = ""
+    try:
+        ir_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='ir')
+        ir_notes = ir_notes.content
+    except:
+        pass
+    char_notes = ""
+    try:
+        char_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='char')
+        char_notes = char_notes.content
+    except:
+        pass
+    pathways_notes = ""
+    try:
+        pathways_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='pathways')
+        pathways_notes = pathways_notes.content
+    except:
+        pass
+
     context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
                'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1, 'ir_id': ir_id,
-               'char_id': char_id, 'cp_id': cp_id}
+               'char_id': char_id, 'cp_id': cp_id, 'ir_notes': ir_notes, 'char_notes': char_notes,
+               'pathways_notes': pathways_notes}
+
     return render(request, 'app/final_report.html', context)
 
 
@@ -1534,7 +1555,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
-
     drugs_cohort_name = None
     conditions_cohort_name = None
     sc_drugs = sc.drugs.all()
@@ -1601,7 +1621,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
         resp_number_cp = response.json()
         if resp_number_cp != []:
             resp_num_id_cp = resp_number_cp[0]['id']
-
 
     ohdsi_sh = ohdsi_shot.OHDSIShot()
 
@@ -2294,7 +2313,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
                'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "entries": entries, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
-               "coh_dict": coh_dict, "cp_dict": cp_dict}
+               "coh_dict": coh_dict, "cp_dict": cp_dict }
 
     return render(request, 'app/report_pdf.html', context)
 
@@ -2381,6 +2400,7 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
     # print(request.META.get('HTTP_REFERER'))
 
     new_scen_id_no = 'None'
+    print(new_scen_id)
 
     if new_scen_id != None:
         sc_id = new_scen_id
