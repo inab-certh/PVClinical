@@ -1322,6 +1322,10 @@ def aggregated_notes(request, lang):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def allnotes(request):
+    """ Add, edit or view aggregated the notes kept for user's scenarios
+    :param request: request
+    :return: the form view
+    """
 
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
@@ -1427,7 +1431,7 @@ def allnotes(request):
 def final_report(request, scenario_id=None):
     """ Create a final report that contains every information that you
     select from OHDSI and OpedFDA workspace
-    :param scenario_id: the specific scenario, None for new scenario
+    :param scenario_id: the specific scenario, new scenario or None
     :return: the form view
     """
     try:
@@ -1552,6 +1556,16 @@ def final_report(request, scenario_id=None):
 
 
 def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
+    """ Generate the preview of final report that contains every information that you
+    have chosen from OHDSI and OpedFDA workspace and give you the opportunity to
+    return to the final report and change your options and add some extra notes
+    to your final report
+        :param scenario_id: the specific scenario, new scenario or None
+        :param report_notes: notes for every view
+        :param extra_notes: last notes in final report
+
+     :return: the form view
+     """
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
@@ -1623,67 +1637,113 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             resp_num_id_cp = resp_number_cp[0]['id']
 
     ohdsi_sh = ohdsi_shot.OHDSIShot()
+    entries = os.listdir('app/static/images/ohdsi_img')
 
     if cp_all_rep == "1":
         ohdsi_sh.pathways_shot("{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
                                "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+    elif cp_all_rep == "0" and "pw_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*pw_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if ir_table_rep == "1":
         ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
                          "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
+    elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*irtable_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if ir_all_rep == "1":
         ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
                          "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+    elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*irall_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
     if pre_table_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
+    elif pre_table_rep == "0" and "pre_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*pre_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if pre_chart_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
+    elif pre_chart_rep == "0" and "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*pre_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if drug_table_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
+                         store_path=img_path)
+    elif drug_table_rep == "0" and "drug_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*drug_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if drug_chart_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
+                         store_path=img_path)
+    elif drug_chart_rep == "0" and "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*drug_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if demograph_table_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
+                         store_path=img_path)
+    elif demograph_table_rep == "0" and "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*demograph_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if demograph_chart_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
+                         store_path=img_path)
+    elif demograph_chart_rep == "0" and "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*demograph_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if charlson_table_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
+    elif charlson_table_rep == "0" and "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*charlson_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if charlson_chart_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                          shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
+    elif charlson_chart_rep == "0" and "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*charlson_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if gen_table_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
+                         store_path=img_path)
+    elif gen_table_rep == "0" and "gen_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*gen_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     if gen_chart_rep == "1":
         ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                          fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10, store_path=img_path)
+                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
+                         store_path=img_path)
+    elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
+        dok = glob.glob('app/static/images/ohdsi_img/*gen_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        os.remove(dok[0])
 
     entries = os.listdir('app/static/images/ohdsi_img')
 
@@ -1770,10 +1830,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             lin = lin + 1
             cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = intro + i
 
-    # scenario_id = scenario_id or request.GET.get("scenario_id", None)
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
-
-    # sc = Scenario.objects.get(id=scenario_id)
     scenario = sc.title
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
@@ -2026,7 +2083,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
         if dash_png1:
             lin = lin + 1
-            dict_dashboard_png[dash_png1[0]]= "Figure {}".format(lin)
+            dict_dashboard_png[dash_png1[0]] = "Figure {}".format(lin)
 
         if dash_png2:
             lin = lin + 1
@@ -2313,12 +2370,17 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
                'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "entries": entries, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
-               "coh_dict": coh_dict, "cp_dict": cp_dict }
+               "coh_dict": coh_dict, "cp_dict": cp_dict}
 
     return render(request, 'app/report_pdf.html', context)
 
 
 def print_report(request, scenario_id=None):
+    """ Generate and open in a browser the final report
+    :param request: request
+    :param scenario_id: the specific scenario, new scenario or None
+    :return: the form view
+    """
 
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
@@ -2348,6 +2410,12 @@ def print_report(request, scenario_id=None):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def patient_management_workspace(request):
+    """ Table of patients cases for scenarios selected on the possibility of adverse drug reactions
+    Contains patient_id,creation date,scenario title, drugs, diseases, questionnaire's result,
+    patient's history and delete options
+    :param request: request
+    :return: the form view
+    """
     request.session['quest_id'] = None
     request.session['scen_id'] = None
     request.session['pat_id'] = None
@@ -2384,7 +2452,12 @@ def patient_management_workspace(request):
     return render(request, 'app/patient_management_workspace.html', context)
 
 
-def new_case(request, quest_id=None, patient_id=None, sc_id=None):
+def new_case(request):
+    """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
+    complete the questionnaire.
+    :param request: request
+    :return: the form view
+    """
 
     quest_id = request.session.get('quest_id')
     patient_id = request.session.get('pat_id')
@@ -2396,11 +2469,7 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
         else None
     request.session['new_scen_id'] = new_scen_id
 
-    # print(request.build_absolute_uri(request.get_full_path()))
-    # print(request.META.get('HTTP_REFERER'))
-
     new_scen_id_no = 'None'
-    print(new_scen_id)
 
     if new_scen_id != None:
         sc_id = new_scen_id
@@ -2436,11 +2505,17 @@ def new_case(request, quest_id=None, patient_id=None, sc_id=None):
             "timestamp": sc.timestamp
         })
 
-
-
     return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no':new_scen_id_no,'scenarios':scenarios })
 
+
 def questionnaire(request, patient_id=None, sc_id=None):
+    """ Questionnaire based on liverpool algorithm for determining the likelihood of whether an ADR
+    is actually due to the drug rather than the result of other factors.
+    :param request: request
+    :param patient_id: the specific patient's id or None
+    :param sc_id: scenario's id that is correlated with this patient's case or None
+    :return: the form view
+    """
 
     if request.method == "POST":
 
@@ -2451,12 +2526,12 @@ def questionnaire(request, patient_id=None, sc_id=None):
         if form.is_valid():
             answers = form.save(commit=False)
 
-            if Questionnaire.objects.filter(q1=answers.q1,q2=answers.q2,q3= answers.q3,q4=answers.q4,
-                                                q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
-                                                q10=answers.q10).exists():
-                existing_quest = Questionnaire.objects.get(q1=answers.q1,q2=answers.q2,q3= answers.q3,q4=answers.q4,
-                                                q5=answers.q5,q6=answers.q6,q7=answers.q7,q8=answers.q8,q9=answers.q9,
-                                                q10=answers.q10)
+            if Questionnaire.objects.filter(q1=answers.q1, q2=answers.q2, q3=answers.q3, q4=answers.q4,
+                                            q5=answers.q5, q6=answers.q6, q7=answers.q7, q8=answers.q8, q9=answers.q9,
+                                            q10=answers.q10).exists():
+                existing_quest = Questionnaire.objects.get(q1=answers.q1, q2=answers.q2, q3=answers.q3, q4=answers.q4,
+                                                           q5=answers.q5, q6=answers.q6, q7=answers.q7, q8=answers.q8,
+                                                           q9=answers.q9, q10=answers.q10)
                 existing_pk = existing_quest.pk
 
                 return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
@@ -2487,9 +2562,15 @@ def questionnaire(request, patient_id=None, sc_id=None):
 
 
 def answers_detail(request, pk, scen_id, pat_id):
+    """ Questionnaire's answers for a specific patient case(unique pk)
+    :param request: request
+    :param pk: unique questionnaire's id
+    :param scen_id: scenario's id that is correlated with this patient case
+    :param pat_id: patient's id for this patient case
+    :return: the form view
+    """
 
     scen_title = Scenario.objects.get(id=scen_id).title
-
     quest = Questionnaire.objects.get(id=pk)
     request.session['quest_id'] = pk
     request.session['scen_id'] = scen_id
@@ -2500,7 +2581,11 @@ def answers_detail(request, pk, scen_id, pat_id):
 
 
 def patient_history(request, patient_pk=None):
-
+    """ Keep the history(answers of questionnaires) for every patient case that you create for "patient_pk"
+    :param request: request
+    :param patient_pk: patient's id
+    :return: the form view
+    """
     patient_cases = []
 
     for case in PatientCase.objects.order_by('-timestamp').all():
@@ -2516,9 +2601,9 @@ def patient_history(request, patient_pk=None):
                             "scenario_title": scs.title,
                             "drugs": scs.drugs.all(),
                             "conditions": scs.conditions.all(),
-                            "questionnaire_id":quests.id
+                            "questionnaire_id": quests.id
                         })
 
-    context={"patient_cases": patient_cases, "patient_pk": patient_pk}
+    context = {"patient_cases": patient_cases, "patient_pk": patient_pk}
 
     return render(request, 'app/patient_history.html', context)

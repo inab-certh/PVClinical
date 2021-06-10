@@ -5,22 +5,26 @@ input{
 .checkbox_choices{
   display: inline-block;
 }
+ .sizing {
+    max-width: 790px;
+    margin: auto;
+        }
 </style>
 <!-- Modal -->
-<div class="modal fade bd-example-modal-xl"  id="shinyModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg"  id="shinyModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
+    <div class="sizing">
+        <div class="modal-content">
+        <div class="modal-header">
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-      <div class="modal-body">
-
-          <iframe id="iframe_shiny" src="" width="750px" height="550" frameborder="0" allowtransparency="true"></iframe>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+        </div>
+        <div class="modal-body">
+            <iframe id="iframe_shiny" src="" width="750px" height="550" frameborder="0" allowtransparency="true"></iframe>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
     </div>
     <!-- /.modal-content -->
   </div>
@@ -36,10 +40,9 @@ input{
         <h4 class="modal-title col-xs-11" id="myModalLabel">Notes</h4>
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-      <div class="modal-body">
-            <input type="checkbox" id="shiny_note" class="note_chkb" value="">&nbsp<label for="shiny_note" id="label_shiny_note"></label>
-
-      </div>
+          <div class="modal-body">
+                <input type="checkbox" id="shiny_note" class="note_chkb" value="">&nbsp<label for="shiny_note" id="label_shiny_note"></label>
+          </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
@@ -67,11 +70,9 @@ input{
                    <input type="checkbox" id="ir_all" value="">&nbsp Choose table with a heatmap
                  </label>
             </div>
-
           <br>
           <br>
           <iframe id="Ir_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -123,11 +124,9 @@ input{
                    <input type="checkbox" id="gen_chart" value="">&nbsp "Demographics Gender" chart
                  </label>
             </div>
-
           <br>
           <br>
           <iframe id="Char_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -152,11 +151,9 @@ input{
                    <input type="checkbox" id="cp_all" value="">&nbsp Choose tables and charts
                  </label>
             </div>
-
           <br>
           <br>
           <iframe id="Path_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -176,7 +173,7 @@ input{
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-          <b style="padding-left:170px;">There is no data to select here!</b>
+          <b>There is no data to select here!</b>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -191,7 +188,7 @@ input{
 
 <!--  Ir Modal -->
 <div class="modal fade report-note-modal"  id="ohdsi_ir_notes" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title col-xs-11" id="ohdsi_ir_Label">Notes</h4>
@@ -203,7 +200,6 @@ input{
         {% else %}
            <b>There are no notes in this field yet.</b>
         {% endif %}
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -217,7 +213,7 @@ input{
 
 <!--  Char Modal -->
 <div class="modal fade report-note-modal"  id="ohdsi_char_notes" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title col-xs-11" id="ohdsi_char_Label">Notes</h4>
@@ -242,7 +238,7 @@ input{
 
 <!--  Pathways Modal -->
 <div class="modal fade report-note-modal"  id="ohdsi_pathways_notes" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title col-xs-11" id="ohdsi_pathways_Label">Notes</h4>
