@@ -3,10 +3,14 @@
 {% block stylesheets %}
     <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
 <style>
-    .crop_img {
-  position: absolute;
-  clip: rect(0px,500px,220px,0px);
+.crop_img {
+    position: absolute;
+    clip: rect(0px,500px,220px,0px);
 }
+div{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
 </style>
 {% endblock stylesheets %}
 
@@ -85,6 +89,7 @@
     {% endfor %}
 
     {% for k,l in ir_dict_t.items %}
+        <br>
         <br>
         <br>
         <div class="tg">

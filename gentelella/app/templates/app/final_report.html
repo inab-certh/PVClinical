@@ -15,10 +15,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     .report{
-    width:793.700787px;
+    max-width:793.700787px;
+     width: 50%;
+    height: 50%;
     border-style: solid;
     border-width: thin;
     padding: 3px;
+    margin:auto;
+
 
     }
 </style>
@@ -31,36 +35,40 @@
         <div class="col-4 col-offset-6">
             <div class="x_panel">
                 <div class="x_title">
-                    <h2>{% trans "My Review" %}</h2>
+                    <h2>{% trans "Ανασκόπηση" %}</h2>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
                 <div id="div1">
                     <p class="text-muted font-13 m-b-30">
-                        {% trans "Make your own review by following next steps:" %}
+                        {% trans "Κάνε τη δική σου ανασκόπηση ακολουθώντας τα παρακάτω βήματα:" %}
                     </p>
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item">
-                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step1">Step 1</button>
+                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step1">{% trans "Βήμα 1" %}</button>
                                 <i class="fas fa-long-arrow-alt-right fa-2x"></i>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="result" disabled>Step 2</button>
+                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="result" disabled>{% trans "Βήμα 2" %}</button>
                         </li>
                     </ul>
                         <div class="tab-content" id="pills-tabContent">
                         <div class="collapse" id="step1" role="tabpanel" aria-labelledby="pills-home-tab">
-                            <p> You can choose which of the following  information you want to be in the overall report of this scenario.</p>
-                            <p> -If you want all information from one workspace to be a part of your report, press the buttom in the left side of workspace's name.</p>
-                            <p> -if you wat to choose witch information of every workspace you want to take part on your report press the buttom in the right side to see in detail what you will include. </p>
+                            <p> {% trans "Μπορείτε να επιλέξετε ποιες από τις παρακάτω πληροφορίες θέλετε να περιλαμβάνονται στη συνολική" %}
+                                {% trans "αναφορά αυτού του σεναρίου." %}</p>
+                            <p> {% trans "Κάντε κλικ στο κουμπί δίπλα από κάθε προβολή για να δείτε το περιεχόμενό της και ελέγξτε" %}
+                                {% trans "ποιες πληροφορίες θέλετε για την τελική σας αναφορά ,επιλέγοντας το αντίστοιχο πλαίσιο ελέγχου." %}</p>
                         </div>
                         <div class="collapse" id="step2" role="tabpanel" aria-labelledby="pills-profile-tab">
-                            <p>You can edit your report and include some additions that you think will be helpful to complete your review.</p>
-                            <p>Click the button bellow to see your preview until now.</p>
+                            <p>{% trans "Τώρα μπορείτε να επεξεργαστείτε την αναφορά σας και να συμπεριλάβετε" %}
+                                {% trans "ορισμένες προσθήκες που  πιστεύετε ότι θα σας βοηθήσουν να ολοκληρώσετε" %}
+                                {% trans "την προεπισκόπηση σας." %}</p>
+                            <p>{% trans "Κάντε κλικ στο παρακάτω πλαίσιο για να γράψετε τα σχόλιά σας και να" %}
+                                {% trans "αποθηκεύσετε επιπλέον κείμενο στην τελική σας έκθεση." %}</p>
                         </div>
                         </div>
                     <div class="container">
-                            <h2>Step 1: Choose your options for every workspace</h2>
+                            <h2>{% trans "Βήμα 1: Κάντε τις επιλογές σας για κάθε χώρο εργασίας." %}</h2>
                             <br>
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs " role="tablist">
@@ -83,7 +91,7 @@
                                         <div class="panel panel-default">
                                           <div class="panel-heading">
                                             <h4 class="panel-title">
-                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapseohdsi" style="color:#5A738E;">Choose which of the OHDSI views information you want to include</a>
+                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapseohdsi" style="color:#5A738E;">{% trans "Επιλέξτε ποιες απο τις πληροφορίες του περιβάλλοντος εργασίας OHDSI θέλετε να συμπεριλάβετε." %}</a>
                                             </h4>
 
                                           </div>
@@ -93,43 +101,43 @@
                                                 <tr>
                                                     {% if ir_id %}
                                                         <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp Incidence Rate</td>
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Ρυθμός Επίπτωσης" %}</td>
                                                     {% else %}
                                                         <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp Incidence Rate</td>
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Ρυθμός Επίπτωσης" %}</td>
                                                     {% endif %}
                                                     <td>
                                                         <button class="btn btn-secondary" id="IrNotes" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}">
                                                             <i class="fas fa-search-plus"></i>
-                                                        </button>&nbsp; Notes
+                                                        </button>&nbsp; {% trans "Σημειώσεις" %}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     {% if char_id %}
                                                 <td><button id="CharOHDSIBtn" data-target="#charModal" class="btn btn-secondary" data-toggle="modal" data-charid="{{ char_id }}" data-scenario="{{ scenario_open }}">
-                                                <i class="fas fa-search-plus"></i></button>&nbsp; Cohort Characterization</td>
+                                                <i class="fas fa-search-plus"></i></button>&nbsp; {% trans "Χαρακτηρισμός Πληθυσμού" %}</td>
                                                     {% else %}
                                                         <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp; Cohort Characterization</td>
+                                                        <i class="fas fa-search-plus"></i></button> &nbsp; {% trans "Χαρακτηρισμός Πληθυσμού" %}</td>
                                                     {% endif %}
                                                     <td>
                                                         <button class="btn btn-secondary" id="CharNotes" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}">
                                                             <i class="fas fa-search-plus"></i>
-                                                        </button>&nbsp; Notes
+                                                        </button>&nbsp; {% trans "Σημειώσεις" %}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                   {% if cp_id %}
                                                     <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario_open }}">
-                                                    <i class="fas fa-search-plus"></i></button>&nbsp;  Cohort Pathways</td>
+                                                    <i class="fas fa-search-plus"></i></button>&nbsp; {% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</td>
                                                   {% else %}
                                                     <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                    <i class="fas fa-search-plus"></i></button> &nbsp; Cohort Pathways</td>
+                                                    <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Μονοπάτι Ακολοουθίς Συμβάντων" %}</td>
                                                   {% endif %}
                                                   <td>
                                                      <button class="btn btn-secondary" id="PathwaysNotes" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}">
                                                         <i class="fas fa-search-plus"></i>
-                                                    </button>&nbsp; Notes
+                                                    </button>&nbsp; {% trans "Σημειώσεις" %}
                                                   </td>
                                                 </tr>
                                                 </table>
@@ -141,10 +149,12 @@
                             </div>
 
                             <div id="OpenFDA" class="container tab-pane fade"><br>
-                                <div style="padding-left:30px;">
-                             <input type="checkbox" id="opendfa"> <label for="openfda">&nbsp<i> If you want to include something from OpenFDA in your
-                                  report, check the checkbox in the right side and open the folder button in every case
-                                  to select which information you want from this workspace in your final report.</i></label></div>
+                                <div style="padding-left:30px; padding-right:30px;">
+                                    <input type="checkbox" id="opendfa"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
+                                    {% trans "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί" %}
+                                    {% trans "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες" %}
+                                    {% trans "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά." %}</i><label for="openfda"></label>
+                                </div>
                                 <br>
                                 <div class="container">
                                     <div class="panel-group" id="combsAccordion">
@@ -160,31 +170,31 @@
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
                                       <div class="panel-body">
 
-                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Quick View &nbsp</strong>
+                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Γρήγορη Επισκόπηση" %} &nbsp</strong>
 
                                           {% if d and c %}
 
-                                         <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button> Dynamic PRR</strong>
+                                         <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button> {% trans "Δυναμικό PRR" %}</strong>
 
-                                         <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Change Points Analysis</strong>
+                                         <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Ανάλυση Αλλαγής Σημείου" %}</strong>
 
                                           {% elif d %}
 
-                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Dashboard &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Πίνακας" %} &nbsp &nbsp</strong>
 
-                                         <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Λόγος Αναφορών" %} &nbsp &nbsp</strong>
 
-                                         <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %} &nbsp &nbsp</strong>
 
                                           {% elif c %}
-                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Reporting Rates &nbsp &nbsp</strong>
-                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Likelihood Rate Test &nbsp &nbsp</strong>
+                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Λόγος Αναφορών" %} &nbsp &nbsp</strong>
+                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %} &nbsp &nbsp</strong>
                                           {%endif%}
 <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
 
                                           {%for key1,value1 in notes_openfda1.items%}
                                           {% if key1 == k %}
-                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>Notes</strong>
+                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>{% trans "Σημειώσεις" %}</strong>
 
                                           {% endif %}
                                           {%endfor%}
@@ -233,20 +243,20 @@
                             </div>
                             </div>
                     <button type="button" class="btn btn-primary active" name="checkenable" id="result1"  disabled>
-                    <i class="fas fa-spinner"></i> &nbsp Proceed to step 2 to see the review's status until now</button></a>
+                    <i class="fas fa-spinner"></i> &nbsp {% trans "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα." %}</button></a>
                 </div>
 
                 <div id="div2">
                     <p class="text-muted font-13 m-b-30">
-                        {% trans "Make your own review by following next steps:" %}
+                        {% trans "Κάνε τη δική σου ανασκόπηση ακολουθώντας τα παρακάτω βήματα:" %}
                     </p>
                     <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                         <li class="nav-item">
-                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step11" id="link1">Step 1</button>
+                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step11" id="link1">{% trans "Βήμα 1" %}</button>
                                 <i class="fas fa-long-arrow-alt-left fa-2x"></i>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step21" name="checkenable" >Step 2</button>
+                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step21" name="checkenable" >{% trans "Βήμα 2" %}</button>
                         </li>
                     </ul>
                         <div class="tab-content" id="pills-tabContent1">
@@ -254,12 +264,15 @@
                            <p></p>
                         </div>
                         <div class="collapse" id="step21" role="tabpanel" aria-labelledby="pills-profile-tab">
-                            <p>Now you can edit your report and include some additions that you think will be helpfull to complete your review.</p>
-                            <p>Click in frames bellow to write your comments and save some extra text in your final report.</p>
+                            <p>{% trans "Τώρα μπορείτε να επεξεργαστείτε την αναφορά σας και να συμπεριλάβετε" %}
+                                {% trans "ορισμένες προσθήκες που  πιστεύετε ότι θα σας βοηθήσουν να ολοκληρώσετε" %}
+                                {% trans "την προεπισκόπηση σας." %}</p>
+                            <p>{% trans "Κάντε κλικ στο παρακάτω πλαίσιο για να γράψετε τα σχόλιά σας και να" %}
+                                {% trans "αποθηκεύσετε επιπλέον κείμενο στην τελική σας έκθεση." %}</p>
                         </div>
                         </div>
                      <div class="container">
-                         <h2>Step 2: Edit and fill in your review with the last additions.</h2>
+                         <h2>{% trans "Βήμα 2: Επεξεργαστείτε και συμπληρώστε την προεπισκόπησή σας με τις τελευταίες προσθήκες" %}</h2>
                         <div class="x_panel">
                             <div class="report">
 
@@ -269,7 +282,7 @@
                      </div>
                     <br>
                     <button type="button" class="btn btn-primary active" id="download">
-                    <i class="fas fa-spinner"></i> &nbsp Download your final report</button>
+                    <i class="fas fa-spinner"></i> &nbsp {% trans "Λήψη της τελικής αναφοράς" %}</button>
 
                 </div>
             </div>
@@ -288,7 +301,6 @@
 {% block javascripts %}
 
     {{ block.super }}
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     <script src="/static/build/js/final_report.js"></script>
 
     <script>
