@@ -3,14 +3,15 @@
 {% block stylesheets %}
     <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
 <style>
-.crop_img {
-    position: absolute;
-    clip: rect(0px,500px,220px,0px);
-}
+
 div{
     overflow: hidden;
     text-overflow: ellipsis;
     }
+.crop_img_pr {
+    margin: 0 -75px -300px 0;
+
+}
 </style>
 {% endblock stylesheets %}
 
@@ -36,8 +37,7 @@ div{
 
 <!--OHDSI WORKSPACE-->
 
-
-{% if entries %}
+{% if coh_dict or ir_dict_t or ir_dict_a or cp_dict %}
     <div class="workspace"> OHDSI Workspace</div>
 {% endif %}
 
@@ -82,6 +82,7 @@ div{
         <br>
         <div class="tg">
                 <div style="margin-left: 20px;"><img src="{{ l }}" width="97%"></div>
+
                 <div style="padding-top:30px"><subt>{{ k }}</subt></div>
         </div>
         <br>
@@ -93,8 +94,10 @@ div{
         <br>
         <br>
         <div class="tg">
-                <div style="margin-left: 20px;"><img src="{{ l }}" class="crop_img"></div>
-                <div style="padding-top:220px"><subt>{{ k }}</subt></div>
+                <div style="margin-left: 20px;"><img src="{{ l }}" class="crop_img_pr"></div>
+            <br>
+            <br>
+                <subt>{{ k }}</subt>
         </div>
     {% endfor %}
 

@@ -275,7 +275,6 @@
                          <h2>{% trans "Βήμα 2: Επεξεργαστείτε και συμπληρώστε την προεπισκόπησή σας με τις τελευταίες προσθήκες" %}</h2>
                         <div class="x_panel">
                             <div class="report">
-
                             <div style="color:black" id="report_preview" ></div>
                             </div>
                         </div>
@@ -321,7 +320,6 @@
         var gen_table_rep=0 ;
         var gen_chart_rep=0 ;
         var cp_all_rep=0 ;
-
 
         $("#irnote").on("change", function(){
 
@@ -496,31 +494,87 @@
             }
         });
 
-        $("#IrOHDSIBtn").click(function(){
+<!--        $("#CharOHDSIBtn").click(function(){-->
 
-          var scenario= $(this).data('scenario');
-          var ir_id= $(this).data('irid');
-          var src_ir= "http://127.0.0.1:8000/ir/" + scenario+ "/" + ir_id ;
+<!--          var scenario= $(this).data('scenario');-->
+<!--          var char_id= $(this).data('charid');-->
+<!--          var src_char= "http://127.0.0.1:8000/char/" + scenario+ "/" + char_id ;-->
 
-            document.getElementById('Ir_frame').src = src_ir;
+<!--            document.getElementById('Char_frame').src = src_char;-->
+<!--        });-->
+
+
+    $("#closeIr").click(function() {
+        var scid={{scenario_open}};
+        var note_val="";
+
+
+        $.ajax({
+                url: "/ajax/report_pdf",
+                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                dataType: "html",
+                success: function (res) {
+                        $('#report_preview').html(res);
+
+                  },
+                  error: function (res) {
+                    console.log("error "+res);
+                }
+            });
+
         });
+    $("#closeChar").click(function() {
+        var scid={{scenario_open}};
+        var note_val="";
 
-        $("#CharOHDSIBtn").click(function(){
 
-          var scenario= $(this).data('scenario');
-          var char_id= $(this).data('charid');
-          var src_char= "http://127.0.0.1:8000/char/" + scenario+ "/" + char_id ;
+        $.ajax({
+                url: "/ajax/report_pdf",
+                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                dataType: "html",
+                success: function (res) {
+                        $('#report_preview').html(res);
 
-            document.getElementById('Char_frame').src = src_char;
+                  },
+                  error: function (res) {
+                    console.log("error "+res);
+                }
+            });
+
         });
+    $("#closePath").click(function() {
+        var scid={{scenario_open}};
+        var note_val="";
 
-        $("#PathOHDSIBtn").click(function(){
 
-          var scenario= $(this).data('scenario');
-          var path_id= $(this).data('pathid');
-          var src_path= "http://127.0.0.1:8000/cp/" + scenario+ "/" + path_id ;
+        $.ajax({
+                url: "/ajax/report_pdf",
+                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                dataType: "html",
+                success: function (res) {
+                        $('#report_preview').html(res);
 
-            document.getElementById('Path_frame').src = src_path;
+                  },
+                  error: function (res) {
+                    console.log("error "+res);
+                }
+            });
+
         });
 
     $("#result1").click(function() {
@@ -546,9 +600,11 @@
                 }
             });
 
-        $("#div2").show();
-        $("#div1").hide();
+            $("#div1").hide();
+            $("#div2").show();
+
     });
+
 
         $("#download").click(function() {
             var scid={{scenario_open}};
@@ -567,6 +623,28 @@
                 }
             });
     });
+
+
+$('input[class^="class"]').click(function() {
+    var $this = $(this);
+    if ($this.is(".class_ir_table")) {
+        if ($(".class_ir_table:checked").length > 0) {
+            $(".class_ir_all").prop({ disabled: true});
+        } else{
+         $(".class_ir_all").prop({ disabled: false});
+        }
+    }
+    if ($this.is(".class_ir_all")) {
+        if ($(".class_ir_all:checked").length > 0) {
+            $(".class_ir_table").prop({ disabled: true});
+        } else{
+         $(".class_ir_table").prop({ disabled: false});
+
+        }
+
+    }
+});
+
     });
     </script>
 
