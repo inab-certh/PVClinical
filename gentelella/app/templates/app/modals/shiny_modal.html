@@ -9,6 +9,66 @@ input{
     max-width: 790px;
     margin: auto;
         }
+.crop_img_mod {
+    margin: 0 -75px -300px 0;
+
+}
+
+
+* {box-sizing: border-box}
+.mySlides1, .mySlides2 {display: none}
+img {
+    vertical-align: middle;
+    padding-right: 30px;
+}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  background-color: #f1f1f1;
+  color: #2A3F54;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a grey background color */
+.prev:hover, .next:hover {
+    color: black;
+    background-color: #cbcbcb;
+
+}
+.center {
+  margin: auto;
+  width: 60%;
+}
+.numbertext {
+  color: #73879C;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+}
+
 </style>
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg"  id="shinyModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
@@ -62,20 +122,29 @@ input{
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-          <div class="checkbox_choices">
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="ir_table" value="">&nbsp Choose table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="ir_all" value="">&nbsp Choose table with a heatmap
-                 </label>
-            </div>
+        {% if ir_generate == 'no' %}
+            <b>There is no data to select here!</b>
+        {% endif %}
+
+    {% if ir_generate == 'yes' %}
+
+       <input type="checkbox" class="class_ir_table" id="ir_table" value=""> <label for="ir_table">&nbsp Include table</label>
           <br>
           <br>
-          <iframe id="Ir_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
+          <br>
+        <img src="{{ ir_table }}" class="crop_img_mod">
+          <br>
+          <br>
+      <input type="checkbox" class="class_ir_all" id="ir_all" value=""> <label for="ir_all">&nbsp Include table with heatmap</label>
+          <br>
+          <br>
+          <br>
+        <img src="{{ ir_all }}" width="97%">
+    {% endif %}
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closeIr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -92,44 +161,128 @@ input{
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-          <div class="checkbox_choices">
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="pre_table" value="">&nbsp "All prevalence covariates" table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="pre_chart" value="">&nbsp "All prevalence covariates" chart
-                 </label>
-              <label class="checkbox-inline">
-                   <input type="checkbox" id="drug_table" value="">&nbsp "Drug Group Era Long Term" table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="drug_chart" value="">&nbsp "Drug Group Era Long Term" chart
-                 </label>
-              <label class="checkbox-inline">
-                   <input type="checkbox" id="demograph_table" value="">&nbsp "Demographics Age Group" table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="demograph_chart" value="">&nbsp "Demographics Age Group" chart
-                 </label>
-              <label class="checkbox-inline">
-                   <input type="checkbox" id="charlson_table" value="">&nbsp "Charlson Index" table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="charlson_chart" value="">&nbsp "Charlson Index" chart
-                 </label>
-              <label class="checkbox-inline">
-                   <input type="checkbox" id="gen_table" value=""> &nbsp "Demographics Gender" table
-                 </label>
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="gen_chart" value="">&nbsp "Demographics Gender" chart
-                 </label>
-            </div>
+
+{% if char_generate == 'no' %}
+    <b>There is no data to select here!</b>
+  {% endif %}
+
+{% if char_generate == 'yes' %}
+<div class="slideshow-container">
+    <div class="center">
+  <div class="mySlides1">
+        <input type="checkbox" id="pre_table" value=""><label for="pre_table">&nbsp "All prevalence covariates" table</label>
+            <br>
+            <img src="{{ pre_table }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 1 / 10</div>
+  </div>
+
+  <div class="mySlides1">
+        <input type="checkbox" id="pre_chart" value=""><label for="pre_chart">&nbsp "All prevalence covariates" chart</label>
+            <br>
+            <img src="{{ pre_chart }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 2 / 10</div>
+  </div>
+
+  <div class="mySlides1">
+
+  <input type="checkbox" id="drug_table" value=""><label for="drug_table">&nbsp "Drug Group Era Long Term" table</label>
+            <br>
+            <img src="{{ drug_table }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 3 / 10</div>
+  </div>
+  <div class="mySlides1">
+
+  <input type="checkbox" id="drug_chart" value=""><label for="drug_chart">&nbsp "Drug Group Era Long Term" chart</label>
+            <br>
+            <img src="{{ drug_chart }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 4 / 10</div>
+  </div>
+
+<div class="mySlides1">
+
+  <input type="checkbox" id="demograph_table" value=""><label for="demograph_table">
+    &nbsp "Demographics Age Group" table</label>
+            <br>
+            <img src="{{ demograph_table }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 5 / 10</div>
+  </div>
+
+<div class="mySlides1">
+
+  <input type="checkbox" id="demograph_chart" value=""><label for="demograph_chart">
+    &nbsp "Demographics Age Group" chart</label>
+            <br>
+            <img src="{{ demograph_chart }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 6 / 10</div>
+  </div>
+
+<div class="mySlides1">
+
+  <input type="checkbox" id="charlson_table" value=""><label for="charlson_table">&nbsp "Charlson Index" table</label>
+            <br>
+            <img src="{{ charlson_table }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 7 / 10</div>
+  </div>
+
+<div class="mySlides1">
+
+  <input type="checkbox" id="charlson_chart" value=""><label for="charlson_chart">&nbsp "Charlson Index" chart</label>
+            <br>
+            <img src="{{ charlson_chart }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 8 / 10</div>
+  </div>
+
+<div class="mySlides1">
+
+  <input type="checkbox" id="gen_table" value=""><label for="gen_table">&nbsp "Demographics Gender" table</label>
+            <br>
+            <img src="{{ gen_table }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 9 / 10</div>
+  </div>
+<div class="mySlides1">
+
+  <input type="checkbox" id="gen_chart" value=""><label for="gen_chart">&nbsp "Demographics Gender" chart</label>
+            <br>
+            <img src="{{ gen_chart }}">
+      <br>
+      <br>
+            <div class="numbertext">Choice: 10 / 10</div>
+  </div>
+
+
+
+</div>
+  <a class="prev" onclick="plusSlides(-1, 0)">&#10094;</a>
+  <a class="next" onclick="plusSlides(1, 0)">&#10095;</a>
+
+
+</div>
+          {% endif %}
+
           <br>
           <br>
-          <iframe id="Char_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closeChar" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -146,17 +299,23 @@ input{
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-          <div class="checkbox_choices">
-                 <label class="checkbox-inline">
-                   <input type="checkbox" id="cp_all" value="">&nbsp Choose tables and charts
-                 </label>
+        {% if cp_generate == 'no' %}
+            <b>There is no data to select here!</b>
+        {% endif %}
+
+        {% if cp_generate == 'yes' %}
+            <div class="checkbox_choices">
+                <label class="checkbox-inline">
+                <input type="checkbox" id="cp_all" value="">&nbsp Include tables and charts
+                </label>
             </div>
-          <br>
-          <br>
-          <iframe id="Path_frame" src="" width="100%" height="700" frameborder="0" allowtransparency="true"></iframe>
+            <br>
+            <br>
+            <img src="{{ path_all }}" width="97%">
+        {% endif %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closePath" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -166,7 +325,7 @@ input{
 <!-- /.modal -->
 
 <!--  None Modal -->
-<div class="modal" id="noneModal">
+<div class="modal fade bd-example-modal-xl"  id="noneModal" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -261,3 +420,24 @@ input{
 </div>
 <!-- /.modal -->
 
+<script>
+var slideIndex = [1,1];
+var slideId = ["mySlides1", "mySlides2"]
+showSlides(1, 0);
+showSlides(1, 1);
+
+function plusSlides(n, no) {
+  showSlides(slideIndex[no] += n, no);
+}
+
+function showSlides(n, no) {
+  var i;
+  var x = document.getElementsByClassName(slideId[no]);
+  if (n > x.length) {slideIndex[no] = 1}
+  if (n < 1) {slideIndex[no] = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";
+  }
+  x[slideIndex[no]-1].style.display = "block";
+}
+</script>
