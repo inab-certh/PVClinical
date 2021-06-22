@@ -2,7 +2,6 @@
 {% load i18n %}
 {% load staticfiles %}
 
-
 {% block title %} Final Report {% endblock title %}
 
 {% block stylesheets %}
@@ -15,12 +14,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     .report{
-    max-width:793.700787px;
-     width: 50%;
+    max-width:795px;
+     width: 60%;
     height: 50%;
     border-style: solid;
     border-width: thin;
-    padding: 3px;
+    padding: 30px;
     margin:auto;
 
 
@@ -39,7 +38,8 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                <div id="div1">
+
+                    <div id="div1">
                     <p class="text-muted font-13 m-b-30">
                         {% trans "Κάνε τη δική σου ανασκόπηση ακολουθώντας τα παρακάτω βήματα:" %}
                     </p>
@@ -286,18 +286,23 @@
                 </div>
             </div>
 
-{% include 'app/modals/shiny_modal.html'%}
+
 
         </div>
 
+
+
+            </div>
+        </div>
+    </div>
 </div>
 
-</div>
+
+
+{% include 'app/modals/shiny_modal.html'%}
 
 {% endblock content %}
-
-
-{% block javascripts %}
+    {% block javascripts %}
 
     {{ block.super }}
     <script src="/static/build/js/final_report.js"></script>
@@ -493,16 +498,6 @@
 
             }
         });
-
-<!--        $("#CharOHDSIBtn").click(function(){-->
-
-<!--          var scenario= $(this).data('scenario');-->
-<!--          var char_id= $(this).data('charid');-->
-<!--          var src_char= "http://127.0.0.1:8000/char/" + scenario+ "/" + char_id ;-->
-
-<!--            document.getElementById('Char_frame').src = src_char;-->
-<!--        });-->
-
 
     $("#closeIr").click(function() {
         var scid={{scenario_open}};
