@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -232,6 +232,6 @@
 
 {% endblocktrans %}
 
-{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=add_info help_info_title=expl_info_title help_info=expl_info %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=add_info help_info_title=expl_info_title help_info=expl_info scenario=scenario %}
 
 {% endblock %}

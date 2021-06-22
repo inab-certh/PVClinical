@@ -198,7 +198,7 @@ def get_entity_by_name(entity_type, entity_name):
             # "api-key": "{}".format(settings.OHDSI_APIKEY),
         }
 
-        response = requests.get(entity_url, headers=headers)
+        response = requests.get(entity_url, headers=headers, params=urlencode({"size": 100000}))
         entities = response.json()
         entities = entities.get("content") if isinstance(entities, dict) else entities
         match = list(filter(lambda el: el.get("name") == entity_name, entities))

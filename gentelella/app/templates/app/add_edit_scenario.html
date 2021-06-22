@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -60,6 +60,15 @@
                     <span class="text-center">
                         <!--OpenFDA <i class="fa fa-angle-right"></i>-->
                         <img class="img-icon dropdown-item" name="pubmed_image_{{ scenario_id }}" src="{% static 'images/PubMed.png' %}">
+                    </span>
+                </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'social_media_workspace' scenario_id %}" class="dropdown-item" name = "twitterBtn">
+                    <span class="text-center">
+                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                        <img class="img-icon" src="{% static 'images/twitter.png' %}" alt="twitter">
                     </span>
                 </a>
                 </li>

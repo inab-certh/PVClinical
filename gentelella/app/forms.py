@@ -181,8 +181,8 @@ class IRForm(forms.Form):
                                  widget=forms.Select)
 
 
-    age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
-    ext_age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
+    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
                                         initial=[],
@@ -259,6 +259,18 @@ class CharForm(forms.Form):
         self.features_descriptions = dict([(el.get("name"), el.get("description")) for el in analysis_features])
         avail_features = ["Drug Group Era Long Term", "Charlson Index",
                           "Demographics Age Group", "Demographics Gender"]
+
+        self.features_descriptions.update({
+            "Charlson Index": _("Ο δείκτης συννοσηρότητας Charlson προβλέπει τη θνησιμότητα ενός έτους για "
+                                "κάποιον ασθενή που μπορεί να έχει μια σειρά από συννοσηρές καταστάσεις, όπως "
+                                "καρδιακές παθήσεις, AIDS ή καρκίνο (συνολικά 22 καταστάσεις). Σε κάθε "
+                                "κατάσταση έχει βαθμολογία 1, 2, 3 ή 6, με τα υψηλότερα βάρη να δείχνουν "
+                                "μεγαλύτερη σοβαρότητα κατάστασης και κίνδυνο θανάτου. Ο δείκτης Charlson "
+                                "ενός ατόμου είναι το άθροισμα αυτών των βαρών. Στην παρούσα πλατφόρμα, "
+                                "χρησιμοποιούμε την προσαρμογή Romano για τον δείκτη Charlson."),
+            "Drug Group Era Long Term": _("Ομάδα ασθενών που έχουν εκτεθεί σε φάρμακα, τα οποία ανήκουν στην ίδια "
+                                          "κατηγορία δραστικής ουσίας (ATC), για χρονικό παράθυρο μελέτης που εκκινεί "
+                                          "365 ημέρες πριν, και φτάνει μέχρι και την ημέρα έναρξης της κοόρτης.")})
 
         self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
                                                   if f.get("name") in avail_features], key=lambda x: x[1])

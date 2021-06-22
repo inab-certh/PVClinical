@@ -1,6 +1,8 @@
 settings.py
 .idea/
 .Rproj.user
+.pvenv/
+.gitignore
 pvclinical/
 RShinyApps/QuickView/rsconnect/shinyapps.io/
 gentelella/users/migrations/__pycache__/__init__.cpython-36.pyc
