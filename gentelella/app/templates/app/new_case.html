@@ -33,6 +33,7 @@
 						<b>{% trans "Βήμα 4:" %}</b> {% trans "Πατήστε 'Αποθήκευση' για να αποθηκεύσετε τη νέα Υπόθεση Ασθενούς." %}</div>
 					<br>
 					<br>
+
                     <form method="POST" class="post-form">
         				{% csrf_token %}
 
@@ -178,7 +179,7 @@
 
 	 $("#myInput").on("keyup", function() {
 		var value = $(this).val().toLowerCase();
-		$("#div_id_scenarios label").filter(function() {
+		$("#collapseScen label").filter(function() {
 		  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 		});
 	  });
@@ -216,7 +217,7 @@
 
 		if( patient_id && sc_id != 'None'){
 			var url='http://127.0.0.1:8000/patient_management_workspace/new_case/questionnaire/'+patient_id+'/'+sc_id+'/'
-
+			console.log(new_scen_id)
 			$('#iframe_quest').attr('src', url);
 
 		}else{

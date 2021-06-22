@@ -6,6 +6,7 @@ import tempfile
 import uuid
 import hashlib
 import glob
+import shutil
 
 from math import ceil
 from itertools import chain
@@ -1569,9 +1570,6 @@ def final_report(request, scenario_id=None):
     intro = "/static/images/ohdsi_img/"
     entries = os.listdir('app/static/images/ohdsi_img')
 
-    print(char_id)
-    print(cp_id)
-    print(ir_id)
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
         resp_number = response.json()
@@ -1669,6 +1667,8 @@ def final_report(request, scenario_id=None):
                 cp_generate = 'no'
             else:
                 cp_generate = 'yes'
+                print(cp_id)
+                print(resp_num_id_cp)
                 if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.pathways_shot(
                         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
@@ -1689,12 +1689,6 @@ def final_report(request, scenario_id=None):
             ir_all = intro + "irall_{}_{}.png".format(sc.owner_id, sc.id)
     except:
         ir_generate = 'no'
-
-
-
-    # elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*gen_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
 
     context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
                'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1, 'ir_id': ir_id,
@@ -1802,7 +1796,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
 
     image_print = os.listdir('app/static/images/ohdsi_img_print')
 
-    import shutil
     if cp_all_rep == "1":
         printPath = shutil.copy("app/static/images/ohdsi_img/pw_{}_{}.png".format(sc.owner_id, sc.id),
                                 'app/static/images/ohdsi_img_print')
@@ -1970,128 +1963,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             kin = kin + 1
             lin = lin + 1
             cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = print_intro + i
-
-
-    # for i in entries:
-    #     if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
-    #         ind = ind + 1
-    #         kin = kin + 1
-    #         lin = lin + 1
-    #         cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = intro + i
-
-    # ohdsi_sh = ohdsi_shot.OHDSIShot()
-    # entries = os.listdir('app/static/images/ohdsi_img')
-
-
-    # if cp_all_rep == "1":
-    #     ohdsi_sh.pathways_shot("{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
-    #                            "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-    # elif cp_all_rep == "0" and "pw_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*pw_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if ir_table_rep == "1" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-    #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-    #                      "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
-    # elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*irtable_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if ir_all_rep == "1" and "irtall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-    #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-    #                      "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-    # elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*irall_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    #
-    # if pre_table_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
-    # elif pre_table_rep == "0" and "pre_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*pre_table_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if pre_chart_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
-    # elif pre_chart_rep == "0" and "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*pre_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if drug_table_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif drug_table_rep == "0" and "drug_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*drug_table_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if drug_chart_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif drug_chart_rep == "0" and "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*drug_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if demograph_table_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif demograph_table_rep == "0" and "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*demograph_table_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if demograph_chart_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif demograph_chart_rep == "0" and "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*demograph_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if charlson_table_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
-    # elif charlson_table_rep == "0" and "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*charlson_table_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if charlson_chart_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
-    # elif charlson_chart_rep == "0" and "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*charlson_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if gen_table_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif gen_table_rep == "0" and "gen_table_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*gen_table_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-    #
-    # if gen_chart_rep == "1":
-    #     ohdsi_sh.cc_shot("{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-    #                      fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-    #                      shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
-    #                      store_path=img_path)
-    # elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in entries:
-    #     dok = glob.glob('app/static/images/ohdsi_img/*gen_chart_{}_{}.png'.format(sc.owner_id, sc.id))
-    #     os.remove(dok[0])
-
-
 
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
     scenario = sc.title
@@ -2378,7 +2249,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
             dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
             lin = lin + 1
             dict_dash_csv.setdefault(' Indications', []).append("Table {}".format(lin))
-
 
         rr_d_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2728,7 +2598,6 @@ def new_case(request):
     new_scen_id = request.session.get('new_scen_id') \
         if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
         else None
-    # request.session['new_scen_id'] = new_scen_id
 
     new_scen_id_no = 'None'
 
@@ -2752,7 +2621,6 @@ def new_case(request):
     else:
         form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
                                     "questionnaires": Questionnaire.objects.filter(id=quest_id).first()})
-        # new_scen_id = None
 
     scenarios = []
     for sc in Scenario.objects.order_by('-timestamp').all():

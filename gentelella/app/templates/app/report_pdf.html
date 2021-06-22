@@ -12,6 +12,22 @@ div{
     margin: 0 -75px -300px 0;
 
 }
+
+.view_title{
+    color:#515254;
+    margin-left:10px;
+    background-color:#F6F8FB;
+    box-shadow: 5px 5px 3px #91A1B2;
+     -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 1.5px;
+    width:40%;
+    padding: 4px 4px 4px 4px;
+    padding-top:5px;
+    padding-bottom:5px;
+    text-align: center;
+
+}
 </style>
 {% endblock stylesheets %}
 
@@ -24,6 +40,7 @@ div{
     <div style="padding-top:200px"></div>
 
 <div id="review">Review of {{scenario}}</div>
+
     <br>
     <div style="padding-top:300px"></div>
         <div class="info_title">Personal Informations</div>
@@ -44,7 +61,7 @@ div{
 {% if coh_dict %}
     <br>
     <br>
-    <div class="view_title" >- Cohort Characterization </div>
+    <div class="view_title" >&nbsp Cohort Characterization </div>
     {% for k,l in coh_dict.items %}
         <br>
         <br>
@@ -58,7 +75,8 @@ div{
     {% for hash,note in report_notes.items %}
             {%if hash == 'char' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >-Notes for Cohort Characterization</div>
+                <div class="view_title" >&nbsp Notes for Cohort Characterization</div>
+                <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
                 <br>
@@ -72,10 +90,7 @@ div{
 {% if ir_dict_t or ir_dict_a %}
     <br>
     <br>
-    <br>
-<div class="view_title" >- Incidence Rate </div>
-    <br>
-    <br>
+<div class="view_title" >&nbsp Incidence Rate </div>
     {% for k,l in ir_dict_a.items %}
         <br>
         <br>
@@ -85,8 +100,7 @@ div{
 
                 <div style="padding-top:30px"><subt>{{ k }}</subt></div>
         </div>
-        <br>
-        <br>
+
     {% endfor %}
 
     {% for k,l in ir_dict_t.items %}
@@ -104,7 +118,8 @@ div{
     {% for hash,note in report_notes.items %}
             {%if hash == 'ir' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >-Notes for Incidence Rate</div>
+                <div class="view_title" >&nbsp Notes for Incidence Rate</div>
+                <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
                 <br>
@@ -117,10 +132,10 @@ div{
 
 
 {% if cp_dict %}
+    <br>
+    <br>
     <div class="tg">
-    <br>
-    <br>
-    <div class="view_title" >- Pathway Analysis </div>
+    <div class="view_title" >&nbsp Pathway Analysis </div>
     {% for k,l in cp_dict.items %}
         <br>
         <br>
@@ -133,7 +148,8 @@ div{
 {% for hash,note in report_notes.items %}
             {%if hash == 'pathways' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >-Notes for Pathway Analysis</div>
+                <div class="view_title" >&nbsp Notes for Pathway Analysis</div>
+                <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
                 <br>
@@ -163,7 +179,8 @@ div{
 {% if no_comb == "" %}
     {% for hash,note in report_notes.items %}
         {%if hash != 'empty' %}
-            <div class="view_title" >-Notes</div>
+            <div class="view_title" >&nbsp Notes</div>
+            <br>
             <br>
             <div class="notes_content">{{note}}</div>
             <br>
@@ -178,7 +195,11 @@ div{
     {% if dict_quickview.items%}
         {% for key,value in dict_quickview.items %}
             {% if value.2 or value.0 != '' %}
-                <div class="view_title">-Quick View</div>
+                <div class="view_title">&nbsp Quick View</div>
+                <br>
+                <br>
+                <br>
+                <br>
             {% endif %}
 
             {% if value.0 != '' %}
@@ -207,7 +228,8 @@ div{
         <!--Dashboard-->
     {% if dict_dashboard_png or dict_dash_csv %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >-Dashboard</div>
+        <div class="view_title" >&nbsp Dashboard</div>
+        <br>
         <br>
         <div style="padding-bottom:30px"></div>
         {% for img,fig in dict_dashboard_png.items %}
@@ -234,7 +256,8 @@ div{
 <!--Reporting Rates for Drug-->
     {% if dict_rr_d %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >-Reporting Rates</div>
+        <div class="view_title" >&nbsp Reporting Rates</div>
+    <br>
     <br>
     <br>
         {% for key,value in dict_rr_d.items %}
@@ -250,7 +273,8 @@ div{
 <!--Reporting Rates for Event-->
     {% if dict_rr_e %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >Reporting Rates</div>
+        <div class="view_title" >&nbsp Reporting Rates</div>
+        <br>
         <br>
         <br>
         <br>
@@ -268,7 +292,8 @@ div{
 <!--Likelihood for Drug-->
 {% if dict_lrTest_png or dict_lr %}
     <div style="padding-bottom:30px"></div>
-    <div class="view_title" >-Likelihood Rate Test</div>
+    <div class="view_title" >&nbsp Likelihood Rate Test</div>
+    <br>
     <br>
     {% for img, fig in dict_lrTest_png.items %}
     <div class="tg">
@@ -296,7 +321,8 @@ div{
 <!--Likelihood for Event-->
 {% if dict_lreTest_png or dict_lre %}
     <div style="padding-bottom:30px"></div>
-    <div class="view_title" >Likelihood Rate Test</div>
+    <div class="view_title" >&nbsp Likelihood Rate Test</div>
+    <br>
     <br>
         {% for img,fig  in dict_lreTest_png.items %}
         <div class="tg">
@@ -347,7 +373,8 @@ div{
 <br>
 {% for hash,note in report_notes.items %}
     {% if hash == k %}
-    <div class="view_title" >-Notes</div>
+    <div class="view_title" >&nbsp Notes</div>
+    <br>
     <br>
     <div class="notes_content">{{note}}</div>
     <br>
@@ -361,7 +388,9 @@ div{
 {% endif %}
 
 {% if val1.0 != '' or val1.2 != '' %}
-    <div class="view_title">-Quick View</div>
+    <div class="view_title">&nbsp Quick View</div>
+    <br>
+    <br>
     <br>
     <br>
         {% if val1.0 != '' %}
@@ -395,7 +424,8 @@ div{
 
 {% if val2.0 != '' or val2.2 != '' or val2.5 != '' or val2.8 != '' %}
 
-    <div class="view_title">-Dynamic PRR</div>
+    <div class="view_title">&nbsp Dynamic PRR</div>
+        <br>
 
         {% if val2.0 != '' %}
             <div class="tg">
@@ -469,7 +499,8 @@ div{
         <br>
         {% for hash,note in report_notes.items %}
             {% if hash == k %}
-                <div class="view_title" >-Notes</div>
+                <div class="view_title" >&nbsp Notes</div>
+                <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
                 <br>
@@ -485,9 +516,11 @@ div{
 {%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
     <br>
     <br>
-    <div class="view_title">-Change Point Analysis</div>
+    <div class="view_title">&nbsp Change Point Analysis</div>
         {% if val3.0 != '' %}
             <div class="tg">
+            <br>
+            <br>
             <br>
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.1}}'>
@@ -507,6 +540,7 @@ div{
             <div class="tg">
             <br>
             <br>
+            <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.4}}'>
             <br>
             <br>
@@ -519,6 +553,7 @@ div{
         {% endif %}
         {% if val3.6 != '' %}
             <div class="tg">
+            <br>
             <br>
             <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.7}}'>
@@ -538,6 +573,7 @@ div{
             <div class="tg">
             <br>
             <br>
+            <br>
             <img width="80%" src='{{REPORT_ENDPOINT}}{{val3.10}}'>
             <br>
             <br>
@@ -552,6 +588,7 @@ div{
             <div class="tg">
             <br>
             <br>
+            <br>
             <div style="margin-left: 20px;">{{val3.13|safe}}</div>
             <subt>{{val3.14}}{{val3.12|safe}}</subt>
             <br>
@@ -562,6 +599,7 @@ div{
         {% endif %}
         {% if val3.15 != '' %}
             <div class="tg">
+            <br>
             <br>
             <br>
             <div style="margin-left: 20px;"> {{val3.16|safe}}</div>
