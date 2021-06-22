@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -13,6 +14,7 @@ from itertools import chain
 from itertools import product
 
 from django.conf import settings
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -251,7 +253,6 @@ def add_edit_scenario(request, scenario_id=None):
     :param scenario_id: the specific scenario, None for new scenario
     :return: the form view
     """
-
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
@@ -427,17 +428,23 @@ def ohdsi_workspace(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def incidence_rates(request, sc_id, ir_id, read_only=1):
+def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
     """ Add or edit incidence rates (ir) view. Retrieve the specific ir that ir_id refers to
     :param request: request
     :param ir_id: the specific ir record's id
     :param sc_id: the specific scenario's id
+    :param view_type: quickview for quick view or "" for detailed view
     :param read_only: 0 if False 1 if True
     :return: the form view
     """
 
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
+
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
 
     ir_url = "{}/ir/{}".format(settings.OHDSI_ENDPOINT, ir_id)
 
@@ -458,9 +465,6 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         irform = IRForm(request.POST, label_suffix='', ir_options=ir_options, read_only=read_only)
 
         if irform.is_valid():
-            # ir_options = {}
-            # ir_options["targetIds"] =
-            # ir_options["outcomeIds"] =
 
             ir_options["age"] = irform.cleaned_data.get("age")
             ir_options["ext_age"] = irform.cleaned_data.get("ext_age")
@@ -470,10 +474,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             ir_options["study_start_date"] = str(irform.cleaned_data.get("study_start_date"))
             ir_options["study_end_date"] = str(irform.cleaned_data.get("study_end_date"))
 
-            # if ir_exists:
             rstatus, rjson = ohdsi_wrappers.update_ir(ir_id, **ir_options)
-            # else:
-            #     rstatus, rjson = ohdsi_wrappers.create_ir(ir_id, **ir_options)
 
             if rstatus == 200:
                 messages.success(
@@ -484,12 +485,12 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
                 messages.error(
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
-                results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
-                # ir_resp = requests.get(ir_url)
+                results_url = "{}/#/iranalysis/{}/{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
 
                 context = {
                     # "delete_switch": delete_switch,
                     "sc_id": sc_id,
+                    "scenario": scenario,
                     "ir_id": ir_id,
                     "results_url": results_url,
                     "read_only": read_only,
@@ -502,12 +503,12 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
             messages.error(
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
-            results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
-            # ir_resp = requests.get(ir_url)
+            results_url = "{}/#/iranalysis/{}?{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
 
             context = {
                 # "delete_switch": delete_switch,
                 "sc_id": sc_id,
+                "scenario": scenario,
                 "ir_id": ir_id,
                 "results_url": results_url,
                 "read_only": read_only,
@@ -528,7 +529,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
         # irform["sc_id"].initial = sc_id
         # update_ir(ir_id)
 
-    results_url = "{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id)
+    results_url = "{}/#/iranalysis/{}?{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
     # ir_resp = requests.get(ir_url)
 
     additional_info = {}
@@ -557,6 +558,7 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "ir_id": ir_id,
         "results_url": results_url,
         "read_only": read_only,
@@ -570,18 +572,24 @@ def incidence_rates(request, sc_id, ir_id, read_only=1):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
-def characterizations(request, sc_id, char_id, read_only=1):
+def characterizations(request, sc_id, char_id, view_type="", read_only=1):
     """ Add or edit characterizations view. Retrieve the specific characterization analysis
      that char_id refers to
     :param request: request
     :param char_id: the specific characterization record's id
     :param sc_id: the specific scenario's id
+    :param view_type: quickview for quick view or "" for detailed view
     :param read_only: 0 if False 1 if True
     :return: the form view
     """
 
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
+
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
 
     char_url = "{}/cohort-characterization/{}".format(settings.OHDSI_ENDPOINT, char_id)
 
@@ -593,6 +601,11 @@ def characterizations(request, sc_id, char_id, read_only=1):
         messages.error(
             request,
             _("Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"))
+
+    if view_type == "quickview":
+        char_options["features"] = char_options.get("features", []) + list(map(lambda el: el.get("id"), filter(
+            lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
+    #     print(char_options)
 
     # delete_switch = "enabled" if ir_exists else "disabled"
 
@@ -616,59 +629,31 @@ def characterizations(request, sc_id, char_id, read_only=1):
                     request,
                     _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
                 status_code = 500
-                # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-                #
-                # context = {
-                #     # "delete_switch": delete_switch,
-                #     "sc_id": sc_id,
-                #     "char_id": char_id,
-                #     "results_url": results_url,
-                #     "read_only": read_only,
-                #     "form": char_form,
-                #     "title": _("Χαρακτηρισμός Πληθυσμού")
-                # }
-                # return render(request, 'app/characterizations.html', context, status=500)
+
 
         else:
             messages.error(
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
             status_code = 400
-            # results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-            # # ir_resp = requests.get(ir_url)
-            #
-            # context = {
-            #     # "delete_switch": delete_switch,
-            #     "sc_id": sc_id,
-            #     "char_id": char_id,
-            #     "results_url": results_url,
-            #     "read_only": read_only,
-            #     "form": char_form,
-            #     "title": _("Χαρακτηρισμός Πληθυσμού")
-            # }
-            # return render(request, 'app/characterizations.html', context, status=400)
-
 
     # elif request.method == 'DELETE':
     #     return delete_db_rec(ohdsi_workspace)
 
     # GET request method
     else:
-        # if "ohdsi-workspace" in http_referer:
-        #     sc_id = http_referer.rsplit('/', 1)[-1]
         char_form = CharForm(label_suffix='', char_options=char_options, read_only=read_only)
         status_code = 200
-        # irform["sc_id"].initial = sc_id
-        # update_ir(ir_id)
 
-    results_url = "{}/#/cc/characterizations/{}".format(settings.OHDSI_ATLAS, char_id)
-    # ir_resp = requests.get(ir_url)
+    results_url = "{}/#/cc/characterizations/{}?{}".format(settings.OHDSI_ATLAS, char_id, view_type)
 
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "char_id": char_id,
         "results_url": results_url,
+        "view_type": view_type,
         "read_only": read_only,
         "form": char_form,
         "title": _("Χαρακτηρισμός Πληθυσμού")
@@ -734,6 +719,11 @@ def pathways(request, sc_id, cp_id, read_only=1):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
+    try:
+        scenario = Scenario.objects.get(id=sc_id)
+    except Scenario.DoesNotExist:
+        scenario = None
+
     cp_url = "{}/pathway-analysis/{}".format(settings.OHDSI_ENDPOINT, cp_id)
 
     cp_exists = ohdsi_wrappers.url_exists(cp_url)
@@ -785,6 +775,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
     context = {
         # "delete_switch": delete_switch,
         "sc_id": sc_id,
+        "scenario": scenario,
         "cp_id": cp_id,
         "results_url": results_url,
         "read_only": read_only,
@@ -1323,7 +1314,7 @@ def aggregated_notes(request, lang):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def allnotes(request):
-    """ Add, edit or view aggregated the notes kept for user's scenarios
+    """ Add, edit or view aggregated the notes kept for user's scenarios (version in use)
     :param request: request
     :return: the form view
     """
@@ -2737,3 +2728,99 @@ def patient_history(request, patient_pk=None):
     context = {"patient_cases": patient_cases, "patient_pk": patient_pk}
 
     return render(request, 'app/patient_history.html', context)
+
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def social_media(request, sc_id):
+    """ Social media view for a scenario (and specific user)
+    :param request: request
+    :param sc_id: the specific scenario's id.
+    :return: the social media form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    tmp_user = User.objects.get(username=request.user)
+
+    try:
+        sc = Scenario.objects.get(id=sc_id)
+
+        # Retrieve scenario drugs
+        drugs = sc.drugs.all()
+
+        # Retrieve scenario conditions
+        conditions = sc.conditions.all()
+
+        all_combs = list(product(sorted([d.name for d in drugs]) or [""],
+                                 sorted([c.name for c in conditions]) or [""]))
+
+        all_combs = list(map(lambda el: " && ".join(filter(None, el)), all_combs))
+
+        keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
+        # Collection name which is a hash of the search expression for twitter (or other social media)
+        col_name = hashlib.md5(keywords.encode()).hexdigest()
+
+        data = {"keywords": keywords, "scenarioID": sc_id}
+
+        resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
+        resp_json = resp.json()
+
+        start_switch = resp.status_code == 200 and resp_json.get(
+            "processStatus") == "Stopped" or resp.status_code == 404
+
+        # content_switch = resp.status_code == 404
+
+    except Scenario.DoesNotExist:
+        sc = None
+        col_name = None
+        keywords = None
+        start_switch = False
+
+    context = {
+        "scenario": sc,
+        "keywords": keywords,
+        "col_name": col_name,
+        "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
+        "start_switch": start_switch,
+        # "tethys_endpoint": settings.TETHYS_ENDPOINT,
+        "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
+    }
+
+    return render(request, 'app/social_media_workspace.html', context)
+
+
+@csrf_protect
+def start_sm_data_extraction(request):
+    """ Start social media data extraction
+    :param request: The request
+    :return: The resulting response from the creation process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    # data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}create".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)
+
+
+@csrf_protect
+def stop_sm_data_extraction(request):
+    """ Stop social media data extraction
+    :param request: The request
+    :return: The resulting response from the stopping process attempt
+    """
+
+    keywords = request.POST.get("keywords", None)
+    sc_id = request.POST.get("scenarioID", None)
+
+    data = {"keywords": keywords, "scenarioID": sc_id}
+    # data.update(settings.TWITTER_CREDENTIALS)
+
+    resp = requests.post(url="{}stop".format(settings.TETHYS_ENDPOINT), json=data)
+    return JsonResponse(resp.json(), status=resp.status_code)

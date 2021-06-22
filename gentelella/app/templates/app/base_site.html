@@ -1,6 +1,6 @@
 {% load flags %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load custom_tags %}
 
 <!DOCTYPE html>
@@ -111,6 +111,13 @@
     {% block body %}
         <div class="container body">
           <div class="main_container">
+
+            {% block geninfo_box %}
+                <div class="alert alert-warning alert-geninfo" role="alert">
+<!--                  <button type="button" class="close" data-dismiss="alert">×</button>-->
+                  {% trans "Το σύστημα αυτό δεν έχει επαληθευθεί μέσω κλινικών δοκιμών και τα όποια δεδομένα του δεν μπορούν να αξιοποιηθούν ως κομμάτι κλινικής πράξης, παρά μόνο συμβουλευτικά" %}
+                </div>
+            {% endblock geninfo_box%}
 
             {% block sidebar %}
               <div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">

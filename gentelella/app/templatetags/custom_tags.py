@@ -35,3 +35,8 @@ def get_elmnt_by_val(lst, val):
 @register.filter
 def get_elmnt_by_index(lst, indx):
     return lst[indx]
+
+
+@register.filter
+def underscore_char(string, char):
+    return string.replace(char, "_")

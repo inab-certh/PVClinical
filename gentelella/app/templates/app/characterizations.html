@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -63,14 +63,16 @@
         {{ form.features.label_tag }}
         {% for checkbox in form.features %}
 <!--            <label class="btn btn-primary">-->
+        {% if view_type == "quickview" and checkbox.choice_label == "Drug Group Era Long Term" or view_type == "" %}
         <div>
             {{ checkbox.tag }} {% trans checkbox.choice_label %}
             {% with form.features_descriptions|get_item:checkbox.choice_label as description %}
-            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans checkbox.choice_label %}" data-content="{% trans description%}">
+            <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans checkbox.choice_label %}" data-content="{% trans description %}">
                 <i class="fa fa-question-circle-o"></i>
             </a>
             {% endwith %}
         </div>
+        {% endif %}
 <!--            </label>-->
         {% endfor %}
 <!--        <div class="row">-->
@@ -89,7 +91,7 @@
 {% block toolbarbuttons %}
         {% if read_only == 1 %}
         <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
-            <button id="editFormBtn" class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editCharModal" type="button">
+            <button id="editFormBtn" class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editCharModal" type="button" {% if view_type == "quickview" %}disabled{% endif %}>
                 <i class="fa fa-edit"></i>
                 <span class="visible-lg">
                     {% trans "Επεξεργασία" %}
@@ -136,7 +138,7 @@
 
 
 {% trans "Ανάλυση Χαρακτηρισμού Πληθυσμού" as analysis_char_mod_title %}
-{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCharModal" modal_title=analysis_char_mod_title modal_iframe_url=results_url %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCharModal" modal_title=analysis_char_mod_title modal_iframe_url=results_url scenario=scenario %}
 
 {% endblock %}
 
