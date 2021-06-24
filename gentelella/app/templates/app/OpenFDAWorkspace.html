@@ -31,7 +31,7 @@
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="drugCheckBox" value="{{ drug.name }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-code = "{{ drug.code }}" name="drugCheckBox" value="{{ drug.name }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ drug.name }}</label>
                                                 </div>
@@ -53,7 +53,7 @@
                                             {% for condition in scenario.conditions %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="eventCheckBox" value="{{ condition.name }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="eventCheckBox" data-code = "{{ condition.code }}" value="{{ condition.name }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ condition.name }}</label>
                                                 </div>
@@ -261,6 +261,7 @@
         var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
         var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
         var scenarioDrugs = '{{ scenario.drugs }}';
+        // console.log(scenarioDrugs);
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
         var shinnyAppsUrl = '{{ shiny_endpoint }}';
@@ -579,6 +580,7 @@
         $('.drugSelectionCol input').click(function (e) {
             var checkbox=e.target;
             var drug = checkbox.value;
+            // var drug = checkbox.attr("data-code");
             if(checkbox.checked)
             {
                 drugsChecked.push(drug);
@@ -595,6 +597,7 @@
 
             var checkbox=e.target;
             var event = checkbox.value;
+            // var event = checkbox.attr("data-code");
             if(checkbox.checked)
             {
                 eventsChecked.push(event);
@@ -702,8 +705,18 @@
 
         function buildUrlComb(app, indx) {
             var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
-            var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
-            var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
+
+            if (scenarioDrugsLength>0){
+                var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
+            }
+            if (scenarioConditionsLength>0){
+                var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
+            }
+
+
+            console.log(condition)
+            // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
+            // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
             var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (drug && condition) {
                 tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt';
