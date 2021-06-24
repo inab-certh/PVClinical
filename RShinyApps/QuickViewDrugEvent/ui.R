@@ -70,11 +70,14 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                   dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
                                   uiOutput("dtlocator"),
                                   fluidRow( bsAlert("nodata_qvde"),
+                                            uiOutput("sourcePlotReport", style = "position:absolute;margin-top:10px;left:30px;z-index:10"),
                                             wellPanel(
                                               style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                                             ),
+                                            
                                             # withSpinner(plotOutput( 'cpmeanplot' ))
                                             withSpinner(plotlyOutput( 'cpmeanplot'))
+                                            
                                   )
                                   
                                   
@@ -154,7 +157,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                tt('limit2'),
                                placement = 'bottom'
                              ),
-                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, ,  step=1,
+                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1,   step=1,
                                             HTML( tt('cplimit1') ), tt('cplimit2'),
                                             placement='left')
                              
@@ -170,9 +173,11 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   
                   tabsetPanel(
                     tabPanel(uiOutput("PRRRORResults"),
+                             uiOutput("sourceDataframe", style = "position:absolute;margin-top:10px;left:30px;z-index:10"),
                              wellPanel(
                                style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
                              ),
+                             
                              DTOutput( 'prr2' )
                     ),
                     # tabPanel(uiOutput("ChangeinVarianceAnalysis"), 

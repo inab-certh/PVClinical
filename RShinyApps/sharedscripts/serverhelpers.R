@@ -208,6 +208,7 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   if ( !is.data.frame(mydf1) )  {
     return(data.frame(Term=paste( 'No events for', type,  getterm1( session ) ), Count=0 , Count=0,Count2=0, PRR='prr'))
   }
+  # browser()
   comb <- merge(mydf1, mydf2[, c('term', 'count')], by.x='term', by.y='term')
   if (type=='Drug')
   {
@@ -242,7 +243,6 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   }
 #  ror <- num2/denom2
 #  comb <- data.frame(comb, prr=num/denom, num, denom)
-  
   prr <- prre( n.., ni., n.j, nij ) 
   rrr <- prrd( n.., ni., n.j, nij ) 
   ror <- ror( n.., ni., n.j, nij )
@@ -524,7 +524,7 @@ numcoltohyper <- function( dispcol, valcol, names, values, type='R', mybaseurl=N
 
 buildURL <- function (v, t, count='' ,limit=NULL, skip=0,  usekey=TRUE, 
                       type='event', db= '/drug/', addplus=TRUE, whichkey=1){
-#  browser()
+ # browser()
   if(whichkey == 1)
     { 
     mykey <- getkey()
@@ -556,6 +556,7 @@ buildURL <- function (v, t, count='' ,limit=NULL, skip=0,  usekey=TRUE,
           fda_filter(v[i], paste0(t[i], collapse='+') )
       }
     }
+   
   if (count!=''){ 
     qq <- qq %>% 
       fda_count(count)
