@@ -66,7 +66,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                  uiOutput("dtlocator"),
                           
                  tabsetPanel(
-                   tabPanel(uiOutput('PRROverTime'),  
+                   tabPanel(uiOutput('PRROverTime'),
+                            uiOutput("sourcePlotReport"),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
@@ -74,7 +75,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             withSpinner(plotOutput_p( 'prrplot'))
                             
                    ),
-                   tabPanel(uiOutput('ReportCountsandPRR'), 
+                   tabPanel(uiOutput('ReportCountsandPRR'),
+                            uiOutput("sourceInDataReport"),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
@@ -82,6 +84,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             withSpinner(makeDataTableOutput( 'query_counts2' ))
                    ),
                    tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
+                            uiOutput('sourceConcomReport'),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
@@ -91,6 +94,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             
                    ),
                    tabPanel(uiOutput('CountsForEventsInSelectedReports'),
+                            uiOutput('sourceEventDataReport'),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")

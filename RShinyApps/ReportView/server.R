@@ -7,6 +7,8 @@ if (!require('openfda') ) {
 
 library(shiny)
 library(shiny.i18n)
+library(tidyverse)
+library(xlsx)
 
 source('sourcedir.R')
 
@@ -17,6 +19,13 @@ translator$set_translation_language('en')
 
 #**************************************
 shinyServer(function(input, output, session) {
+  
+  cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
+  
+  
+  values<-reactiveValues(urlQuery=NULL)
+  
   
   i18n <- reactive({
     selected <- input$selected_language
@@ -45,7 +54,6 @@ shinyServer(function(input, output, session) {
     langs = list(gr="el", en="en")
     
     translator$set_translation_language(selectedLang)
-    
     updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous')), icon = NULL, value = NULL,
                  style = NULL, size = NULL, block = NULL, disabled = NULL)
     updateButton(session, 'nextrow', label = paste(i18n()$t('Next'), '>'), icon = NULL, value = NULL,
@@ -63,7 +71,7 @@ shinyServer(function(input, output, session) {
     # updateRadioButtons(session, 'useexactE',
     #                    selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
-    
+    # updateTextInput(session, "safetyreportid", value = getreportid())
     
     t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
     t1 <- gsub(']"', ']', t1, fixed=TRUE)
@@ -148,15 +156,16 @@ shinyServer(function(input, output, session) {
   # })
   
   output$patreactiontxt <- renderText({
-    i18n()$t("Patient.Reaction")
+    i18n()$t("Reactions")
   })
   
   output$patdrugtxt <- renderText({
-    i18n()$t("Patient.Drug")
+    i18n()$t("Drugs")
   })
   
   output$patdrugopenfdatxt <- renderText({
-    i18n()$t("Patient.Drug.OpenFDA")
+    i18n()$t("Medication")
+    # i18n()$t("Patient.Drug.OpenFDA")
   })
   
   # output$closebtnlbl <- renderText({
@@ -384,6 +393,184 @@ output$t3 <- renderText({
   return(out)
 })
 
+#Patient***********************
+
+
+
+output$patientreportid <- renderText({  
+  s  <- paste('<h4>Safety Report ID=', getreportid(), '<h4>' )
+  return( s )
+})
+
+output$reportinput <- renderText({  
+  s  <- paste('<h4>', getreportid(), '<h4>' )
+  return( s )
+})
+
+output$reporttable <- renderTable({ 
+  
+  myalldf <- getquery()
+  
+  if ( is.null( nrow(myalldf$df$results) )  )
+  {
+    #   print( myalldf$df$results )
+    return(data.frame(Drug= 'No results for query', Count=0))
+  }
+  if ( is.data.frame(myalldf$df$results) )
+  {
+    tmp <- myalldf$df$results
+    types <- (sapply(tmp, class))
+    typesval <- types[types!='data.frame']
+    mydf <- tmp[ , names(typesval) ]
+    myvars <-  c('safetyreportid', 'receivedate', 'receiptdate', 'companynumb')
+    availnames <-  myvars %in% names(mydf)
+    mydfheader <- mydf[, myvars[availnames] ]
+    mynames <- names(mydfheader)
+    #       mynames <- gsub('safetyreportid', 'Case_ID', mynames, fixed=TRUE )
+    #       mynames <- gsub('receivedate', 'First_Received', mynames, fixed=TRUE )
+    #       mynames <- gsub('receiptdate', 'Most_Recent', mynames, fixed=TRUE )
+    #       mynames <- gsub('companynumb', 'Company_Number', mynames, fixed=TRUE )
+    names(mydfheader) <- mynames
+    
+    if ('receiptdate' %in% names(mydfheader))
+    { 
+      mydfheader[ , 'receiptdate'] <- ymd(mydfheader[ , 'receiptdate']) 
+      mydfheader[ , 'receiptdate'] <- format(mydfheader[ , 'receiptdate'], "%m/%d/%y") 
+    }
+    if ('receivedate' %in% names(mydfheader))
+    { 
+      mydfheader[ , 'receivedate'] <- ymd(mydfheader[ , 'receivedate']) 
+      mydfheader[ , 'receivedate'] <- format(mydfheader[ , 'receivedate'], "%m/%d/%y") 
+    }
+    
+    Report <- c( 'First_Received', 'Most_Recent')
+    Dates <- c( mydfheader$receivedate, mydfheader$receiptdate)
+    mydf_p <- data.frame(Report, Dates)
+    mydf <- mydf_p
+    
+  }
+    
+    return(mydf) 
+  })
+
+output$patienttable <- renderTable({  
+  # if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+  myalldf <- getquery()
+  
+  if ( is.null( nrow(myalldf$df$results) )  )
+  {
+    #   print( myalldf$df$results )
+    return(data.frame(Drug= 'No results for query', Count=0))
+  }
+  if ( is.data.frame(myalldf$df$results) )
+  {
+    tmp <- myalldf$df$results
+    types <- (sapply(tmp, class))
+    typesval <- types[types!='data.frame']
+    mydf <- tmp[ , names(typesval) ]
+    myvars <-  c('safetyreportid', 'receivedate', 'receiptdate', 'companynumb')
+    availnames <-  myvars %in% names(mydf)
+    mydfheader <- mydf[, myvars[availnames] ]
+    mynames <- names(mydfheader)
+    #       mynames <- gsub('safetyreportid', 'Case_ID', mynames, fixed=TRUE )
+    #       mynames <- gsub('receivedate', 'First_Received', mynames, fixed=TRUE )
+    #       mynames <- gsub('receiptdate', 'Most_Recent', mynames, fixed=TRUE )
+    #       mynames <- gsub('companynumb', 'Company_Number', mynames, fixed=TRUE )
+    names(mydfheader) <- mynames
+    
+    if ('receiptdate' %in% names(mydfheader))
+    { 
+      mydfheader[ , 'receiptdate'] <- ymd(mydfheader[ , 'receiptdate']) 
+      mydfheader[ , 'receiptdate'] <- format(mydfheader[ , 'receiptdate'], "%m/%d/%y") 
+    }
+    if ('receivedate' %in% names(mydfheader))
+    { 
+      mydfheader[ , 'receivedate'] <- ymd(mydfheader[ , 'receivedate']) 
+      mydfheader[ , 'receivedate'] <- format(mydfheader[ , 'receivedate'], "%m/%d/%y") 
+    }
+    myvars <-  c("seriousnesscongenitalanomali",
+                 "seriousnessdeath",
+                 "seriousnessdisabling",
+                 "seriousnesshospitalization",
+                 "seriousnesslifethreatening",
+                 "seriousnessother")
+    availnames <-  names(mydf) %in% myvars 
+    myserious <- names( mydf)[availnames]
+    myserious <- paste(myserious, collapse=', ')
+    myserious <- gsub('seriousnesscongenitalanomali', 'Congenital Anomali', myserious, fixed=TRUE )
+    myserious <- gsub('seriousnessdeath', 'Death', myserious, fixed=TRUE )
+    myserious <- gsub('seriousnessdisabling', 'Disabling', myserious, fixed=TRUE )
+    myserious <- gsub('seriousnesshospitalization', 'Hospitalization', myserious, fixed=TRUE )
+    myserious <- gsub('seriousnesslifethreatening', 'Life Threatening', myserious, fixed=TRUE )
+    myserious <- gsub('seriousnessother', 'Other', myserious, fixed=TRUE )
+  } 
+  if ( is.data.frame(myalldf$df$results$patient) )
+  {
+    mydf <- (myalldf$df$results$patient)    
+    types <- (sapply(mydf, class))
+    typesval <- types[types!='data.frame' & types!='list']
+    mydfpatient <- mydf[ , names(typesval) ]
+    myvars <- c( 'patientonsetage', 'patientweight','patientsex' )
+    availnames <-  myvars %in% names(mydfpatient)
+    mydfpatient <- mydf[ , myvars[availnames] ]
+    mynames <- names(mydfpatient)
+    mynames <- gsub('patientonsetage', 'Age', mynames, fixed=TRUE )
+    mynames <- gsub('patientweight', 'Weight', mynames, fixed=TRUE )
+    mynames <- gsub('patientsex', 'Gender', mynames, fixed=TRUE )
+    names(mydfpatient) <- mynames
+  }
+  
+  if ('Gender' %in% names(mydfpatient))
+  { 
+    mydfpatient[ mydfpatient[,'Gender']==2 , 'Gender'] <- 'Female' 
+    mydfpatient[ mydfpatient[,'Gender']==1 , 'Gender'] <- 'Male' 
+    mydfpatient[ mydfpatient[,'Gender']==0 , 'Gender'] <- 'Unknown' 
+  }
+ 
+  # browser()
+  
+  Patient <- c('Gender', 'Age', 'Weight', 'Outcome')
+  if ( is.null(mydfpatient$Weight)){
+    mydfpatient$Weight <- "UNKNOWN"
+  }
+  if ( is.null(mydfpatient$Age)){
+    mydfpatient$Age <- "UNKNOWN"
+  }
+  if ( is.null(mydfpatient$Gender)){
+    mydfpatient$Gender <- "UNKNOWN"
+  }
+  if ( is.null(myserious)){
+    myserious <- "UNKNOWN"
+  }
+  Description <- c(mydfpatient$Gender, mydfpatient$Age, mydfpatient$Weight, myserious)
+  mydf_p <- data.frame(Patient, Description)
+  
+  
+  
+  #   browser()
+  #   mydrugs2 <- listtostring( (myalldf$df$results$patient$drug)[[1]]$activesubstance$activesubstancename )
+  #   print(mydrugs2)
+  #   print( typeof(mydrugs2) )
+ 
+  mydf <- data.frame(mydfheader, mydfpatient, 
+                     Outcome=myserious,
+                     stringsAsFactors = FALSE)
+  mydf <- mydf_p
+
+  # if (nrow(mydf) > 1)
+  # {
+  #   mydf[2:nrow(mydf), !chopvars ] <- " "
+  # }
+  if (!is.null(input$sourceReportframeUI)){
+    if (input$sourceReportframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_report.csv"))
+      
+    }
+  }
+  return(mydf) 
+})
+
+
 #Overview**********************
 output$overviewtitle <- renderText({  
   s  <- paste('<h4>Safety Report ID=', getreportid(), '<h4><br>Header' )
@@ -461,6 +648,7 @@ output$overviewtable <- renderTable({
     mydfpatient[ mydfpatient[,'Gender']==1 , 'Gender'] <- 'Male' 
     mydfpatient[ mydfpatient[,'Gender']==0 , 'Gender'] <- 'Unknown' 
   }
+  # browser()
   myevents <- listtostring( (myalldf$df$results$patient$reaction)[[1]][1] )
   mydrugs <- (myalldf$df$results$patient$drug)[[1]]$medicinalproduct
   mydrugs2 <- ( (myalldf$df$results$patient$drug)[[1]]$activesubstance$activesubstancename )
@@ -474,9 +662,9 @@ output$overviewtable <- renderTable({
 #   print( typeof(mydrugs2) )
   myindications <- (myalldf$df$results$patient$drug)[[1]]$drugindication 
   mycharacterization <- (myalldf$df$results$patient$drug)[[1]]$drugcharacterization
-  mycharacterization <- gsub(1, 'Suspect drug', mycharacterization, fixed=TRUE )
-  mycharacterization <- gsub(2, 'Concomitant drug', mycharacterization, fixed=TRUE )
-  mycharacterization <- gsub(3, 'Interacting drug', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(1, 'SUSPECT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(2, 'CONCOMITANT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(3, 'INTERACTING DRUG', mycharacterization, fixed=TRUE )
   mydf <- data.frame(mydfheader, mydfpatient, Events=myevents, 
                      Outcome=myserious,
                      Product_Role=mycharacterization,  
@@ -493,6 +681,12 @@ output$overviewtable <- renderTable({
     {
     mydf[2:nrow(mydf), !chopvars ] <- " "
   }
+  if (!is.null(input$sourceReportframeUI)){
+    if (input$sourceReportframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_report.csv"))
+      
+    }
+  }
   return(mydf) 
 })
 
@@ -500,6 +694,14 @@ output$overviewtable <- renderTable({
 output$headertabletitle <- renderText({  
   s  <- paste('<h4>Safety Report ID=', getreportid(), '<h4><br>Header' )
       return( s )
+  })
+
+output$reportId <- renderText({ getreportid()
+   # if (input$safetyreportid != getreportid()){
+   #   myurl <- buildURL(v= 'safetyreportid', t=paste(input$safetyreportid, collapse=', ' ) )
+   #   result <-  fda_fetch_p(session, myurl)$result
+   # }
+  
   })
   
 output$headertable <- renderTable({  
@@ -569,14 +771,38 @@ output$primarysource <- renderTable({
 #PATIENTREACTION********************************
 
 output$patientreactiontabletitle <- renderText({  
-  s  <- paste('<h4>Safety Report ID=', getreportid(), '<br> <br>Patient.Reaction</h4>' )
-  return( s )
+  # s  <- paste('<h4>Safety Report ID=', getreportid(), '<br> <br>Reactions</h4>' )
+  updateTextInput(session, "safetyreportid", value = getreportid())
+  return(  )
 })
 
 output$patientreaction <- renderTable({  
   mydf <- getquery()
   mydf <- getdf( mydf=mydf$patientdf, 'reaction', message='No primary source data')
- # browser()
+  
+  drop<-c("reactionmeddraversionpt")
+  mydf <- mydf[,!(names(mydf) %in% drop)]
+  if (!is.atomic(mydf)){
+    if ( !is.null(mydf$reactionoutcome) ) {
+      myreactionout <- mydf$reactionoutcome
+      myreactionout <- gsub(1, 'Recovered/Resolved', myreactionout, fixed=TRUE )
+      myreactionout <- gsub(2, 'Recovering/Resolving', myreactionout, fixed=TRUE )
+      myreactionout <- gsub(3, 'Not recovered/Not resolved', myreactionout, fixed=TRUE )
+      myreactionout <- gsub(4, 'Recovered/Resolved with sequelae', myreactionout, fixed=TRUE )
+      myreactionout <- gsub(5, 'Fatal', myreactionout, fixed=TRUE )
+      myreactionout <- gsub(6, 'Unknown', myreactionout, fixed=TRUE )
+      drop<-c("reactionoutcome")
+      mydf <- mydf[,!(names(mydf) %in% drop)]
+      mydf <- data.frame(Reaction=mydf, Reaction_outcome=myreactionout)
+      
+    }
+}
+  if (!is.null(input$sourcePatientDataframeUI)){
+    if (input$sourcePatientDataframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_patientreaction.csv"))
+      
+    }
+  }
   return(mydf) 
 })
 
@@ -591,6 +817,12 @@ output$openfda <- renderTable({
    mydf <- getquery()
   openfdadf <- mydf$openfdadf
 #  browser()
+  # if (!is.null(input$sourceFdaDataframeUI)){
+  #   if (input$sourceFdaDataframeUI){
+  #     write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda.csv"))
+  #     
+  #   }
+  # }
   if (is.null( names(openfdadf ) ) ) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
@@ -599,6 +831,7 @@ output$openfda <- renderTable({
     } else {
       return( data.frame(note='No OpenFDA variables'))
     }
+ 
 })
 
 #OpenFDA2****************************
@@ -611,6 +844,12 @@ output$openfda2 <- renderTable({
   mynames <- getallvars( allvars(), mytype = 'text', section= c('o2'))
   mydf <- getquery()
   openfdadf <- mydf$openfdadf
+  if (!is.null(input$sourceFdaSDataframeUI)){
+    if (input$sourceFdaSDataframeUI){
+      write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda2.csv"))
+      
+    }
+  }
   if (is.null( names(openfdadf ))) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
@@ -648,13 +887,14 @@ output$patient <- renderTable({
 
 #DRUG*********************************************
 output$patientdrugtabletitle <- renderText({  
-  s  <- paste('<h4>Safety Report ID=', getreportid(), '<h4><br>Patient.Drug' )
+  s  <- paste('<h4>Safety Report ID=', getreportid(), '<h4><br>Drugs' )
   return( s )
 })
 
 output$drug <- renderTable({  
   mydf <- getquery()
   tmp <- mydf$drugdf
+  openfdadf <- mydf$openfdadf
   types <- (sapply(tmp, class))
   typesval <- types[types!='data.frame' & types!='list']
   mydf <- tmp[ , names(typesval) ]
@@ -663,10 +903,327 @@ output$drug <- renderTable({
   {
     mydrugs2 <- vector('character', length=nrow(mydf))
   }
-  mydf <- data.frame(activesubstance=mydrugs2, mydf)
+  # browser()
+  
+ 
+  
+  drop<-c("drugenddateformat","drugstartdateformat",
+          "drugauthorizationnumb","drugbatchnumb")
+  mydf <- mydf[,!(names(mydf) %in% drop)]
+  
+  
+ 
+  
+  mycharacterization <- mydf$drugcharacterization
+  mycharacterization <- gsub(1, 'SUSPECT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(2, 'CONCOMITANT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(3, 'INTERACTING DRUG', mycharacterization, fixed=TRUE )
+  
+  if ( !is.null(mydf$actiondrug) ) {
+  myactiondrug <- mydf$actiondrug
+  myactiondrug <- gsub(1, 'DRUG WITHDRAWN', myactiondrug, fixed=TRUE )
+  myactiondrug <- gsub(2, 'DOSE REDUCED', myactiondrug, fixed=TRUE )
+  myactiondrug <- gsub(3, 'DOSE INCREASED', myactiondrug, fixed=TRUE )
+  myactiondrug <- gsub(4, 'DOSE NOT CHANGED', myactiondrug, fixed=TRUE )
+  myactiondrug <- gsub(5, 'UNKNOWN', myactiondrug, fixed=TRUE )
+  myactiondrug <- gsub(6, 'NOT APPLICABLE', myactiondrug, fixed=TRUE )
+  drop<-c("drugcharacterization", "actiondrug")
+  mydf <- mydf[,!(names(mydf) %in% drop)]
+  mydf <- data.frame(activesubstance=mydrugs2, Product_Role=mycharacterization,
+                     Medication = myactiondrug,mydf)
+  
+  } else {
+    drop<-c("drugcharacterization")
+    mydf <- mydf[,!(names(mydf) %in% drop)]
+    mydf <- data.frame(activesubstance=mydrugs2, Product_Role=mycharacterization,
+                     mydf)
+  }
+  if ( !is.null(mydf$drugintervaldosagedefinition) ) {
+    mydosagedefinition <- mydf$drugintervaldosagedefinition
+    mydosagedefinition <- gsub(801, 'YEAR', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(802, 'MONTH', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(803, 'WEEK', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(804, 'DAY', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(805, 'HOUR', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(806, 'MINUTE', mydosagedefinition, fixed=TRUE )
+    
+    drop<-c("drugintervaldosagedefinition")
+    mydf <- mydf[,!(names(mydf) %in% drop)]
+    mydf <- data.frame(mydf, Dosage_Definition = mydosagedefinition)
+  } 
+  
+  
+  mynames <- names(mydf)
+  mynames <- gsub('medicinalproduct', 'Product_name', mynames, fixed=TRUE )
+  mynames <- gsub('activesubstance', 'Active_Substance', mynames, fixed=TRUE )
+  mynames <- gsub('drugdosageform', 'Pharmaceutical_Form', mynames, fixed=TRUE )
+  mynames <- gsub('drugindication', 'Indication', mynames, fixed=TRUE )
+  mynames <- gsub('drugadministrationroute', 'Route', mynames, fixed=TRUE )
+  mynames <- gsub('drugdosagetext', 'Dosage-Frequency', mynames, fixed=TRUE )
+  mynames <- gsub('drugstartdate', 'Start_Date', mynames, fixed=TRUE )
+  mynames <- gsub('drugenddate', 'End_Date', mynames, fixed=TRUE )
+  mynames <- gsub('drugstructuredosagenumb', 'Dosage_MG', mynames, fixed=TRUE )
+  names(mydf) <- mynames
+  
+  if (!is.null(openfdadf)){
+    mydf[ , 'Route'] <- openfdadf$route
+  }
+  
+
+  mydf <- mydf %>% select(any_of(c('Active_Substance', 'Product_Role', 'Product_name', 
+                                   'Dosage_MG', 'Route', 'Pharmaceutical_Form')))
+  
+  mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
+  
+  
+  
+  if (!is.null(input$sourceDrugDataframeUI)){
+    if (input$sourceDrugDataframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_patdrug.csv"))
+      
+    }
+  }
+  
+  
+  mydf[is.na(mydf)] <- ""
+  # browser()
+  # tmydf <- t(mydf)
+  # rownames(tmydf) <- names(mydf)
   return(mydf) 
 })
 
+output$medication <- renderTable({  
+  mydf <- getquery()
+  tmp <- mydf$drugdf
+  openfdadf <- mydf$openfdadf
+  types <- (sapply(tmp, class))
+  typesval <- types[types!='data.frame' & types!='list']
+  mydf <- tmp[ , names(typesval) ]
+  mydrugs2 <- ( tmp$activesubstance$activesubstancename )
+  if( length(mydrugs2) < nrow(mydf) )
+  {
+    mydrugs2 <- vector('character', length=nrow(mydf))
+  }
+  
+  
+  if ('drugstartdate' %in% names(mydf))
+  {
+    startDateInd<-which(names(mydf)%in% 'drugstartdate' )
+    startDateTypeInd<-which(names(mydf)%in% 'drugstartdateformat' )
+    mydf[ , 'drugstartdate']<-apply(mydf,1,function(x) fixDate(x[startDateInd],x[startDateTypeInd]))
+  }
+  if ('drugenddate' %in% names(mydf))
+  {
+    endDateInd<-which(names(mydf)%in% 'drugenddate' ) 
+    endDateTypeInd<-which(names(mydf)%in% 'drugenddateformat' )
+    mydf[ , 'drugenddate']<-apply(mydf,1,function(x) fixDate(x[endDateInd],x[endDateTypeInd]))
+  }
+  
+  
+  drop<-c("drugenddateformat","drugstartdateformat",
+          "drugauthorizationnumb","drugbatchnumb")
+  mydf <- mydf[,!(names(mydf) %in% drop)]
+  
+  
+  
+  
+  mycharacterization <- mydf$drugcharacterization
+  mycharacterization <- gsub(1, 'SUSPECT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(2, 'CONCOMITANT DRUG', mycharacterization, fixed=TRUE )
+  mycharacterization <- gsub(3, 'INTERACTING DRUG', mycharacterization, fixed=TRUE )
+  
+  if ( !is.null(mydf$actiondrug) ) {
+    myactiondrug <- mydf$actiondrug
+    myactiondrug <- gsub(1, 'DRUG WITHDRAWN', myactiondrug, fixed=TRUE )
+    myactiondrug <- gsub(2, 'DOSE REDUCED', myactiondrug, fixed=TRUE )
+    myactiondrug <- gsub(3, 'DOSE INCREASED', myactiondrug, fixed=TRUE )
+    myactiondrug <- gsub(4, 'DOSE NOT CHANGED', myactiondrug, fixed=TRUE )
+    myactiondrug <- gsub(5, 'UNKNOWN', myactiondrug, fixed=TRUE )
+    myactiondrug <- gsub(6, 'NOT APPLICABLE', myactiondrug, fixed=TRUE )
+    drop<-c("drugcharacterization", "actiondrug")
+    mydf <- mydf[,!(names(mydf) %in% drop)]
+    mydf <- data.frame(activesubstance=mydrugs2, Product_Role=mycharacterization,
+                       Medication = myactiondrug,mydf)
+    
+  } else {
+    drop<-c("drugcharacterization")
+    mydf <- mydf[,!(names(mydf) %in% drop)]
+    mydf <- data.frame(activesubstance=mydrugs2, Product_Role=mycharacterization,
+                       mydf)
+  }
+  if ( !is.null(mydf$drugintervaldosagedefinition) ) {
+    mydosagedefinition <- mydf$drugintervaldosagedefinition
+    mydosagedefinition <- gsub(801, 'YEAR', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(802, 'MONTH', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(803, 'WEEK', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(804, 'DAY', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(805, 'HOUR', mydosagedefinition, fixed=TRUE )
+    mydosagedefinition <- gsub(806, 'MINUTE', mydosagedefinition, fixed=TRUE )
+    
+    drop<-c("drugintervaldosagedefinition")
+    mydf <- mydf[,!(names(mydf) %in% drop)]
+    mydf <- data.frame(mydf, Dosage_Definition = mydosagedefinition)
+  } 
+  
+  
+  mynames <- names(mydf)
+  mynames <- gsub('medicinalproduct', 'Product_name', mynames, fixed=TRUE )
+  mynames <- gsub('drugindication', 'Indication', mynames, fixed=TRUE )
+  mynames <- gsub('drugdosagetext', 'Dosage-Frequency', mynames, fixed=TRUE )
+  mynames <- gsub('drugstartdate', 'Start_Date', mynames, fixed=TRUE )
+  mynames <- gsub('drugenddate', 'End_Date', mynames, fixed=TRUE )
+
+  names(mydf) <- mynames
+  
+  mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
+  
+  mydf <- mydf %>% select(any_of(c('Product_name', 'Medication', 'Indication', 
+                          'Start_Date', 'End_Date', 'Dosage-Frequency', 
+                          'Dosage_Definition')))
+  
+  # 'drugstructuredosageunit',
+  # 'drugseparatedosagenumb', 'drugintervaldosageunitnumb',
+  # 'drugadditional'
+  
+  if (!is.null(input$sourceDrugDataframeUI)){
+    if (input$sourceDrugDataframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_patdrug.csv"))
+      
+    }
+  }
+  mydf[is.na(mydf)] <- ""
+  # browser()
+  if (ncol(mydf)==0){
+    empty_message <- "There is not medication information in the report"
+    mydf <-  data.frame(Message=empty_message)
+  }
+  
+  if (!is.null(input$sourceFdaDataframeUI)){
+    if (input$sourceFdaDataframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_medication.csv"))
+      
+    }
+  }
+  # browser()
+  # tmydf <- t(mydf)
+  # rownames(tmydf) <- names(mydf)
+  return(mydf) 
+})
+
+output$downloadData <- downloadHandler(
+  filename = function() {
+    paste(getreportid(), ".xlsx", sep = "")
+  },
+  content = function(file) {
+    
+    mydf <- getquery()
+    tmp <- mydf$drugdf
+    openfdadf <- mydf$openfdadf
+    types <- (sapply(tmp, class))
+    typesval <- types[types!='data.frame' & types!='list']
+    mydf_drug <- tmp[ , names(typesval) ]
+    mydf_reaction <- getdf( mydf=mydf$patientdf, 'reaction', message='No primary source data')
+    
+    
+    # browser()
+    # write_csv(getquery()$df$result, file)
+    # filename = paste(getreportid(), ".xlsx", sep = "")
+    write.xlsx(getquery()$df$result, file=file, sheetName="general")
+    write.xlsx(mydf_drug, file=file, sheetName="drug", append=TRUE)
+    write.xlsx(mydf_reaction, file=file, sheetName="reaction", append=TRUE)
+    write.xlsx(getquery()$openfdadf, file=file, sheetName="openfda", append=TRUE, row.names=FALSE)
+    }
+  
+)
+
+
+output$sourceFdaDataframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceFdaDataframeUI", "Save data values")
+})
+
+observeEvent(input$sourceFdaDataframeUI,{
+  
+  if (!is.null(input$sourceFdaDataframeUI))
+    if (!input$sourceFdaDataframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_medication.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+# output$sourceFdaSDataframe<-renderUI({
+#   if (!is.null(values$urlQuery$hash))
+#     checkboxInput("sourceFdaSDataframeUI", "Save OpenFDA_2 values")
+# })
+# 
+# observeEvent(input$sourceFdaSDataframeUI,{
+#   
+#   if (!is.null(input$sourceFdaSDataframeUI))
+#     if (!input$sourceFdaSDataframeUI){
+#       fileName<-paste0(cacheFolder,values$urlQuery$hash,"_openfda2.csv")
+#       if (file.exists(fileName)) {
+#         #Delete file if it exists
+#         file.remove(fileName)
+#       }
+#     }
+# })
+
+
+output$sourceDrugDataframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceDrugDataframeUI", "Save data values")
+})
+
+observeEvent(input$sourceDrugDataframeUI,{
+  
+  if (!is.null(input$sourceDrugDataframeUI))
+    if (!input$sourceDrugDataframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_patdrug.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+
+output$sourceReportframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceReportframeUI", "Save data values")
+})
+
+observeEvent(input$sourceReportframeUI,{
+  
+  if (!is.null(input$sourceReportframeUI))
+    if (!input$sourceReportframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_report.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+
+output$sourcePatientDataframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourcePatientDataframeUI", "Save data values")
+})
+
+observeEvent(input$sourcePatientDataframeUI,{
+  
+  if (!is.null(input$sourcePatientDataframeUI))
+    if (!input$sourcePatientDataframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_patientreaction.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
 
 #META**************************
 output$querytitle <- renderText({ 
@@ -745,6 +1302,12 @@ output$applinks <- renderText({
 
 geturlquery <- observe({
    q <- parseQueryString(session$clientData$url_search)
+   q<-NULL
+   q$v1<-"patient.drug.openfda.generic_name"
+   q$v2<-"patient.reaction.reactionmeddrapt"
+   q$t1<-"Omeprazole"
+   q$t2<-"Hypokalaemia"
+   q$hash <- "ksjdhfksdhfhsk"
    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
    
@@ -791,7 +1354,22 @@ if(!is.null(q$v3) )
 #   
 #   updateNumericInput(session, "skip", value = q$skip)
 #   return(q)
+  values$urlQuery<-q
 })
 
 
 })
+
+fixDate<-function(dd,type){
+  tempDD<-dd
+  if (!is.na(type))
+    if (type=="102"){
+      tempDD <- format(ymd(dd), "%y/%m/%d")
+    }
+  else if (type== '610'){
+    tempDD <- format(ym(dd), "%y/%m")
+  }
+  
+  return(tempDD)
+}
+

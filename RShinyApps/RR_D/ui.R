@@ -1,6 +1,7 @@
 library(rsconnect)
 library(shinyjs)
 library(shinycssloaders)
+library(tidyverse)
 
 source('sourcedir.R')
 
@@ -87,6 +88,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                              ),
                     tabsetPanel(
                       tabPanel(uiOutput("PRRRORResults"),
+                               uiOutput("sourcePRRDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", textOutput("downloadBtnLbl1"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
@@ -94,6 +96,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                withSpinner(dataTableOutput( 'prr2' ))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforSpecifiedDrug")   ,
+                               uiOutput("sourceDrugDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlspecifieddrug2", textOutput("downloadBtnLbl2"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infospecdrug",style = "position:absolute;right:40px;z-index:10")
@@ -101,6 +104,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                withSpinner(dataTableOutput( 'specifieddrug2' ))
                       ),
                       tabPanel(uiOutput("AnalyzedEventCountsforAllDrugs"),
+                               uiOutput("sourceEventDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlall2", textOutput("downloadBtnLbl3"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoeventcountsalldrugs",style = "position:absolute;right:40px;z-index:10")
@@ -108,6 +112,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                withSpinner(dataTableOutput( 'all2' ))
                       ),
                       tabPanel(uiOutput("RankedEventCountsforDrug"),
+                               uiOutput("sourceCoeventsDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoRankedEventCounts",style = "position:absolute;right:40px;z-index:10")
@@ -115,6 +120,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                withSpinner(dataTableOutput( 'coqueryE2' ))
                       ),
                       tabPanel(uiOutput("CountsForDrugsInSelectedReports"),
+                               uiOutput("sourceCodrugDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl5"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl5"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoCountsForDrugsInSelectedReports",style = "position:absolute;right:40px;z-index:10")
@@ -122,6 +128,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                withSpinner(dataTableOutput( 'coquery2' ))
                       ),
                       tabPanel(uiOutput("CountsForIndicationsInSelectedReports"),
+                               uiOutput("sourceIndrugDataframe", style = "display:inline-block; margin-left:20px;"),
                                wellPanel(
                                  column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl6"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlindquery2", textOutput("downloadBtnLbl6"))))),
                                  style="background-color:white;height:60px;border:none",uiOutput("infoindquery2",style = "position:absolute;right:40px;z-index:10")
