@@ -152,7 +152,7 @@ class KnowledgeGraphWrapper:
         if drugs:
             drugs = list(map(lambda d: d.lower(), drugs))
             drugs_union = "UNION".join(["{{?drugbank_drug dc:title ?drugbank_drug_name.\n"
-                                        "?drugbank_drug_name bif:contains \"'{}'\"}}".format(d) for d in drugs])
+                                        "?drugbank_drug_name bif:contains \"'{}'\"}}".format(d.replace("'", "''")) for d in drugs])
 
             # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
             # whole_query = """

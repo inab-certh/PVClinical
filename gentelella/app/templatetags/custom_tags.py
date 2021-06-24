@@ -27,3 +27,7 @@ def get_item(dictionary, key):
 @register.filter
 def remove_char(string, char):
     return string.replace(char, "")
+
+@register.filter
+def underscore_char(string, char):
+    return string.replace(char, "_")

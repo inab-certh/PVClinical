@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-04 17:22+0200\n"
+"POT-Creation-Date: 2021-06-02 10:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,31 +61,31 @@ msgstr ""
 "At least one of the fields concerning scenario's drugs and conditions should "
 "be filled in"
 
-#: app/forms.py:172 app/views.py:511
+#: app/forms.py:172 app/views.py:514
 msgid "Μικρότερη από"
 msgstr "Less Than"
 
-#: app/forms.py:172 app/views.py:511
+#: app/forms.py:172 app/views.py:514
 msgid "Μικρότερη ή ίση με"
 msgstr "Less or Equal To"
 
-#: app/forms.py:173 app/views.py:512
+#: app/forms.py:173 app/views.py:515
 msgid "Ίση με"
 msgstr "Equal To"
 
-#: app/forms.py:173 app/views.py:512
+#: app/forms.py:173 app/views.py:515
 msgid "Μεγαλύτερη από"
 msgstr "Greater Than"
 
-#: app/forms.py:174 app/views.py:513
+#: app/forms.py:174 app/views.py:516
 msgid "Μεγαλύτερη ή ίση με"
 msgstr "Greater or Equal To"
 
-#: app/forms.py:174 app/views.py:513
+#: app/forms.py:174 app/views.py:516
 msgid "Ανάμεσα σε"
 msgstr "Between"
 
-#: app/forms.py:175 app/views.py:514
+#: app/forms.py:175 app/views.py:517
 msgid "Όχι ανάμεσα σε"
 msgstr "Not Between"
 
@@ -97,11 +97,11 @@ msgstr "With age"
 msgid "Φύλο:"
 msgstr "Gender"
 
-#: app/forms.py:189 app/views.py:520
+#: app/forms.py:189 app/views.py:523
 msgid "Άρρεν"
 msgstr "Male"
 
-#: app/forms.py:189 app/views.py:520
+#: app/forms.py:189 app/views.py:523
 msgid "Θήλυ"
 msgstr "Female"
 
@@ -125,19 +125,45 @@ msgstr "YYYY-MM-DD"
 msgid "Χαρακτηριστικά ανάλυσης:"
 msgstr "Cohort characterization features:"
 
-#: app/forms.py:270
+#: app/forms.py:262
+msgid ""
+"Ο δείκτης συννοσηρότητας Charlson προβλέπει τη θνησιμότητα ενός έτους για "
+"κάποιον ασθενή που μπορεί να έχει μια σειρά από συννοσηρές καταστάσεις, όπως "
+"καρδιακές παθήσεις, AIDS ή καρκίνο (συνολικά 22 καταστάσεις). Σε κάθε "
+"κατάσταση έχει βαθμολογία 1, 2, 3 ή 6, με τα υψηλότερα βάρη να δείχνουν "
+"μεγαλύτερη σοβαρότητα κατάστασης και κίνδυνο θανάτου. Ο δείκτης Charlson "
+"ενός ατόμου είναι το άθροισμα αυτών των βαρών. Στην παρούσα πλατφόρμα, "
+"χρησιμοποιούμε την προσαρμογή Romano για τον δείκτη Charlson."
+msgstr ""
+"The Charlson comorbidity index predicts the one-year mortality for a patient "
+"who may have a range of comorbid conditions, such as heart disease, AIDS, or "
+"cancer (a total of 22 conditions). Each condition is assigned a score of 1, "
+"2, 3, or 6, with higher weights indicating greater severity and risk of "
+"dying. A person's Charlson Index is the sum of these weights. In the current "
+"platform, we are using Romano's adaptation of the Charlson Index"
+
+#: app/forms.py:269
+msgid ""
+"Ομάδα ασθενών που έχουν εκτεθεί σε φάρμακα, τα οποία ανήκουν στην ίδια "
+"κατηγορία δραστικής ουσίας (ATC), για χρονικό παράθυρο μελέτης που εκκινεί "
+"365 ημέρες πριν, και φτάνει μέχρι και την ημέρα έναρξης της κοόρτης."
+msgstr ""
+"Group of patients having been exposed to drugs with the same ingredient "
+"class (ATC), looking 365 days prior (and including) the cohort entry."
+
+#: app/forms.py:282
 msgid "Χρονικό παράθυρο σύμπτωσης:"
 msgstr "Combination Window:"
 
-#: app/forms.py:273
+#: app/forms.py:285
 msgid "Πλήθος ελάχιστων κελιών:"
 msgstr "Minimum cell count:"
 
-#: app/forms.py:276
+#: app/forms.py:288
 msgid "Μέγιστο μήκος μονοπατιού:"
 msgstr "Maximum path length:"
 
-#: app/forms.py:283
+#: app/forms.py:295
 msgid ""
 "Χρονικό παράθυρο κατά το οποίο πρέπει δύο πληθυσμοί συμβάντων να συμπέσουν, "
 "προκειμένου να θεωρηθεί ότι υπάρχει συνδυασμός συμβάντων."
@@ -145,7 +171,7 @@ msgstr ""
 "Window of time when two event cohorts need to overlap to be considered a "
 "combination."
 
-#: app/forms.py:286
+#: app/forms.py:298
 msgid ""
 "Ελάχιστος αριθμός υποκειμένων του στοχευμένου πληθυσμού της ανάλυσης για "
 "κάθε δεδομένο συμβάν, προκειμένου να προσμετρηθεί στην ανάλυση μονοπατιού."
@@ -153,7 +179,7 @@ msgstr ""
 "Minimum number of subjects in the target cohort for a given event in order "
 "to be counted in the pathway."
 
-#: app/forms.py:289
+#: app/forms.py:301
 msgid ""
 "Μέγιστος αριθμός βημάτων σε ένα δεδομένο μονοπάτι, που θα συμπεριληφθεί στο "
 "σχετικό γράφημα δακτυλίου."
@@ -177,44 +203,44 @@ msgstr "Deletion has been completed successfully!"
 msgid "Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!"
 msgstr "Unfortunately this deletion, could not be completed!"
 
-#: app/models.py:24
+#: app/models.py:25
 msgid "Υπό δημιουργία"
 msgstr "Creating"
 
-#: app/models.py:25
+#: app/models.py:26
 msgid "Σε εξέλιξη"
 msgstr "Running"
 
-#: app/models.py:26
+#: app/models.py:27
 msgid "Ολοκληρώθηκε"
 msgstr "Completed"
 
-#: app/models.py:29
+#: app/models.py:30
 msgid "Κατάσταση: "
 msgstr "Status:"
 
-#: app/models.py:52
+#: app/models.py:53
 msgid "Όνομα φαρμάκου"
 msgstr "Drug name"
 
-#: app/models.py:63
+#: app/models.py:64
 msgid "Κωδικοποίηση φαρμάκου"
 msgstr "Drug code"
 
-#: app/models.py:73 app/models.py:77 app/models.py:118 app/models.py:122
-#: app/models.py:166
+#: app/models.py:74 app/models.py:78 app/models.py:119 app/models.py:123
+#: app/models.py:167
 msgid "Δεν μπορούν και τα δύο πεδία να είναι κενά"
 msgstr "At least one of the two fields should be filled in"
 
-#: app/models.py:99
+#: app/models.py:100
 msgid "Όνομα πάθησης"
 msgstr "Disease name"
 
-#: app/models.py:110
+#: app/models.py:111
 msgid "Κωδικοποίηση πάθησης"
 msgstr "Disease code"
 
-#: app/models.py:142
+#: app/models.py:143
 msgid "Τίτλος Σεναρίου"
 msgstr "Scenario title"
 
@@ -255,16 +281,16 @@ msgstr ""
 
 #: app/templates/app/LiteratureWorkspace.html:34
 #: app/templates/app/LiteratureWorkspace.html:79
-#: app/templates/app/OpenFDAWorkspace.html:28
-#: app/templates/app/OpenFDAWorkspace.html:73 app/templates/app/test.html:34
+#: app/templates/app/OpenFDAWorkspace.html:29
+#: app/templates/app/OpenFDAWorkspace.html:74 app/templates/app/test.html:34
 #: app/templates/app/test.html:79
 msgid "Φάρμακα"
 msgstr "Drugs"
 
 #: app/templates/app/LiteratureWorkspace.html:56
 #: app/templates/app/LiteratureWorkspace.html:102
-#: app/templates/app/OpenFDAWorkspace.html:50
-#: app/templates/app/OpenFDAWorkspace.html:96 app/templates/app/test.html:56
+#: app/templates/app/OpenFDAWorkspace.html:51
+#: app/templates/app/OpenFDAWorkspace.html:97 app/templates/app/test.html:56
 #: app/templates/app/test.html:102
 msgid "Ανεπιθύμητες ενέργειες"
 msgstr "Adverse Events"
@@ -280,22 +306,23 @@ msgstr "Relevance"
 
 #: app/templates/app/LiteratureWorkspace.html:148
 #: app/templates/app/LiteratureWorkspace.html:279
-#: app/templates/app/OpenFDAWorkspace.html:181
-#: app/templates/app/OpenFDAWorkspace.html:183
-#: app/templates/app/OpenFDAWorkspace.html:188
-#: app/templates/app/all_notes.html:118 app/templates/app/base_site.html:158
+#: app/templates/app/OpenFDAWorkspace.html:182
+#: app/templates/app/OpenFDAWorkspace.html:184
+#: app/templates/app/OpenFDAWorkspace.html:189
+#: app/templates/app/all_notes.html:118 app/templates/app/base_site.html:165
 #: app/templates/app/characterizations.html:35
 #: app/templates/app/condition_occurrence.html:24
 #: app/templates/app/drug_exposure.html:23 app/templates/app/index.html:26
 #: app/templates/app/ir.html:35 app/templates/app/pathways.html:35
-#: app/templates/app/sidebar.html:61 app/views.py:1221
+#: app/templates/app/sidebar.html:61
+#: app/templates/app/social_media_workspace.html:23 app/views.py:1214
 msgid "Σημειώσεις"
 msgstr "Notes"
 
 #: app/templates/app/LiteratureWorkspace.html:149
 #: app/templates/app/all_notes.html:130
-#: app/templates/app/characterizations.html:120
-#: app/templates/app/form_base.html:53 app/templates/app/ir.html:162
+#: app/templates/app/characterizations.html:122
+#: app/templates/app/form_base.html:96 app/templates/app/ir.html:162
 #: app/templates/app/notes.html:48 app/templates/app/notes_aggregated.html:137
 #: app/templates/app/pathways.html:114
 msgid "Αποθήκευση"
@@ -350,69 +377,69 @@ msgstr "Next"
 msgid "Δεν υπάρχουν αποτελέσματα"
 msgstr "No results"
 
-#: app/templates/app/OpenFDAWorkspace.html:119
+#: app/templates/app/OpenFDAWorkspace.html:120
 msgid "Aggregated"
 msgstr "Συγκεντρωτικά"
 
-#: app/templates/app/OpenFDAWorkspace.html:120
+#: app/templates/app/OpenFDAWorkspace.html:121
 msgid "Analytic"
 msgstr "Αναλυτικά"
 
-#: app/templates/app/OpenFDAWorkspace.html:125
-#: app/templates/app/OpenFDAWorkspace.html:127
-#: app/templates/app/OpenFDAWorkspace.html:129
-#: app/templates/app/OpenFDAWorkspace.html:193
-#: app/templates/app/OpenFDAWorkspace.html:195
-#: app/templates/app/OpenFDAWorkspace.html:197
+#: app/templates/app/OpenFDAWorkspace.html:126
+#: app/templates/app/OpenFDAWorkspace.html:128
+#: app/templates/app/OpenFDAWorkspace.html:130
+#: app/templates/app/OpenFDAWorkspace.html:194
+#: app/templates/app/OpenFDAWorkspace.html:196
+#: app/templates/app/OpenFDAWorkspace.html:198
 msgid "Γρήγορη επισκόπηση"
 msgstr "Quick view"
 
-#: app/templates/app/OpenFDAWorkspace.html:131
-#: app/templates/app/OpenFDAWorkspace.html:199
+#: app/templates/app/OpenFDAWorkspace.html:132
+#: app/templates/app/OpenFDAWorkspace.html:200
 msgid "Πίνακας"
 msgstr "Dashboard"
 
-#: app/templates/app/OpenFDAWorkspace.html:133
-#: app/templates/app/OpenFDAWorkspace.html:135
-#: app/templates/app/OpenFDAWorkspace.html:201
-#: app/templates/app/OpenFDAWorkspace.html:203
+#: app/templates/app/OpenFDAWorkspace.html:134
+#: app/templates/app/OpenFDAWorkspace.html:136
+#: app/templates/app/OpenFDAWorkspace.html:202
+#: app/templates/app/OpenFDAWorkspace.html:204
 msgid "Λόγος αναφορών"
 msgstr "Reporting Rates"
 
-#: app/templates/app/OpenFDAWorkspace.html:138
-#: app/templates/app/OpenFDAWorkspace.html:146
-#: app/templates/app/OpenFDAWorkspace.html:206
-#: app/templates/app/OpenFDAWorkspace.html:214
+#: app/templates/app/OpenFDAWorkspace.html:139
+#: app/templates/app/OpenFDAWorkspace.html:147
+#: app/templates/app/OpenFDAWorkspace.html:207
+#: app/templates/app/OpenFDAWorkspace.html:215
 msgid "λαμπελβιου"
 msgstr "LabelView"
 
-#: app/templates/app/OpenFDAWorkspace.html:139
-#: app/templates/app/OpenFDAWorkspace.html:207
+#: app/templates/app/OpenFDAWorkspace.html:140
+#: app/templates/app/OpenFDAWorkspace.html:208
 msgid "Δυναμικό PRR"
 msgstr "Dynamic PRR"
 
-#: app/templates/app/OpenFDAWorkspace.html:142
-#: app/templates/app/OpenFDAWorkspace.html:210
+#: app/templates/app/OpenFDAWorkspace.html:143
+#: app/templates/app/OpenFDAWorkspace.html:211
 msgid "Ανάλυση Αλλαγής Σημείου"
 msgstr "Change Point Analysis"
 
-#: app/templates/app/OpenFDAWorkspace.html:144
-#: app/templates/app/OpenFDAWorkspace.html:212
+#: app/templates/app/OpenFDAWorkspace.html:145
+#: app/templates/app/OpenFDAWorkspace.html:213
 msgid "Αναφορές"
 msgstr "Report view"
 
-#: app/templates/app/OpenFDAWorkspace.html:147
+#: app/templates/app/OpenFDAWorkspace.html:148
 msgid "Έλεγχος Πιθανοτήτων"
 msgstr "Likelihood Rate Test"
 
-#: app/templates/app/OpenFDAWorkspace.html:150
-#: app/templates/app/OpenFDAWorkspace.html:215
-#: app/templates/app/OpenFDAWorkspace.html:218
+#: app/templates/app/OpenFDAWorkspace.html:151
+#: app/templates/app/OpenFDAWorkspace.html:216
+#: app/templates/app/OpenFDAWorkspace.html:219
 msgid "Έλεγχος λόγου πιθανοφανειών"
 msgstr "Likelihood Rate Test"
 
-#: app/templates/app/OpenFDAWorkspace.html:152
-#: app/templates/app/OpenFDAWorkspace.html:220
+#: app/templates/app/OpenFDAWorkspace.html:153
+#: app/templates/app/OpenFDAWorkspace.html:221
 msgid "ντραγκενφορσβιοθ"
 msgstr "DrugEnforceView"
 
@@ -421,49 +448,49 @@ msgstr "DrugEnforceView"
 msgid "Περιβάλλοντα Εργασίας"
 msgstr "Workspaces"
 
-#: app/templates/app/add_edit_scenario.html:84
+#: app/templates/app/add_edit_scenario.html:93
 msgid "Φαρμακα"
 msgstr "Drugs"
 
-#: app/templates/app/add_edit_scenario.html:90
+#: app/templates/app/add_edit_scenario.html:99
 msgid "Επιλεγμένα Φάρμακα:"
 msgstr "Selected Drugs:"
 
-#: app/templates/app/add_edit_scenario.html:92
+#: app/templates/app/add_edit_scenario.html:101
 msgid "Εισαγωγή φαρμάκων"
 msgstr "Enter Drugs"
 
-#: app/templates/app/add_edit_scenario.html:107
+#: app/templates/app/add_edit_scenario.html:116
 msgid "Συνώνυμα φαρμάκων:"
 msgstr "Drugs' Synonyms"
 
-#: app/templates/app/add_edit_scenario.html:117
-#: app/templates/app/add_edit_scenario.html:155
+#: app/templates/app/add_edit_scenario.html:126
+#: app/templates/app/add_edit_scenario.html:164
 msgid "Μεταφορά"
 msgstr "Transfer"
 
-#: app/templates/app/add_edit_scenario.html:119
+#: app/templates/app/add_edit_scenario.html:128
 msgid "ATC Κωδικοί:"
 msgstr "ATC Codes"
 
-#: app/templates/app/add_edit_scenario.html:129
-#: app/templates/app/add_edit_scenario.html:166
+#: app/templates/app/add_edit_scenario.html:138
+#: app/templates/app/add_edit_scenario.html:175
 msgid "Βάσει κωδικού"
 msgstr "By code"
 
-#: app/templates/app/add_edit_scenario.html:139
+#: app/templates/app/add_edit_scenario.html:148
 msgid "Παθήσεις"
 msgstr "Diseases"
 
-#: app/templates/app/add_edit_scenario.html:145
+#: app/templates/app/add_edit_scenario.html:154
 msgid "Επιλεγμένες Παθήσεις:"
 msgstr "Selected Conditions:"
 
-#: app/templates/app/add_edit_scenario.html:147
+#: app/templates/app/add_edit_scenario.html:156
 msgid "Εισαγωγή παθήσεων"
 msgstr "Enter conditions"
 
-#: app/templates/app/add_edit_scenario.html:157
+#: app/templates/app/add_edit_scenario.html:166
 msgid "Ιεραρχική απεικόνιση κατά MedDRA:"
 msgstr "MedDRA hierarchy view"
 
@@ -481,8 +508,10 @@ msgstr ""
 "also edit a note, by selecting the 'Edit' button at the last column in each "
 "row of this table."
 
-#: app/templates/app/all_notes.html:36 app/templates/app/index.html:56
-#: app/views.py:270
+#: app/templates/app/all_notes.html:36 app/templates/app/form_base.html:47
+#: app/templates/app/index.html:56
+#: app/templates/app/modals/parametric_modal.html:12
+#: app/templates/app/social_media_workspace.html:41 app/views.py:272
 msgid "Σενάριο"
 msgstr "Scenario"
 
@@ -503,40 +532,51 @@ msgid "Περιεχομενο"
 msgstr "Content"
 
 #: app/templates/app/all_notes.html:41
-#: app/templates/app/characterizations.html:95 app/templates/app/index.html:61
+#: app/templates/app/characterizations.html:97 app/templates/app/index.html:61
 #: app/templates/app/ir.html:137 app/templates/app/pathways.html:89
 msgid "Επεξεργασία"
 msgstr "Edit"
 
-#: app/templates/app/base_site.html:142
+#: app/templates/app/base_site.html:118
+msgid ""
+"Το σύστημα αυτό δεν έχει επαληθευθεί μέσω κλινικών δοκιμών και τα όποια "
+"δεδομένα του δεν μπορούν να αξιοποιηθούν ως κομμάτι κλινικής πράξης, παρά "
+"μόνο συμβουλευτικά"
+msgstr ""
+"This system has not been verified through clinical trials and any of its "
+"data can not be used as part of clinical practice. They can be used for "
+"consultation purposes only."
+
+#: app/templates/app/base_site.html:149
 msgid "Επιβεβαίωση διαγραφής"
 msgstr "Deletion confirmation"
 
-#: app/templates/app/base_site.html:143
+#: app/templates/app/base_site.html:150
 msgid ""
 "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το "
 "σύστημα;"
 msgstr "Are you sure you want to delete this record from the system?"
 
-#: app/templates/app/base_site.html:144
+#: app/templates/app/base_site.html:151
 msgid "Επιβεβαίωση"
 msgstr "Confirm"
 
-#: app/templates/app/base_site.html:145
-#: app/templates/app/characterizations.html:127 app/templates/app/ir.html:169
+#: app/templates/app/base_site.html:152
+#: app/templates/app/characterizations.html:129 app/templates/app/ir.html:169
 #: app/templates/app/pathways.html:121
 msgid "Ακύρωση"
 msgstr "Cancel"
 
-#: app/templates/app/base_site.html:146
+#: app/templates/app/base_site.html:153
+#: app/templates/app/social_media_workspace.html:107
 msgid "Εντάξει"
 msgstr "OK"
 
-#: app/templates/app/base_site.html:147
+#: app/templates/app/base_site.html:154
 msgid "Πληροφορίες"
 msgstr "Info"
 
-#: app/templates/app/base_site.html:150
+#: app/templates/app/base_site.html:157
 msgid ""
 "Συνδεθείτε στο Mendeley <a target=\"_blank\" href=\"https://www.mendeley.com/"
 "reference-manager/library/all-references\"><strong>εδώ</strong> και "
@@ -546,19 +586,19 @@ msgstr ""
 "reference-manager/library/all-references\"><strong>here</strong> and refresh "
 "the page.</a>"
 
-#: app/templates/app/base_site.html:151
+#: app/templates/app/base_site.html:158
 msgid "Οκ"
 msgstr "Ok"
 
-#: app/templates/app/base_site.html:160
+#: app/templates/app/base_site.html:167
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: app/templates/app/base_site.html:259
+#: app/templates/app/base_site.html:266
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
-#: app/templates/app/base_site.html:274
+#: app/templates/app/base_site.html:281
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -587,29 +627,29 @@ msgstr ""
 "calendar intervals such as calendar-week, calendar-month, calendar-quarter, "
 "calendar-year."
 
-#: app/templates/app/characterizations.html:102 app/templates/app/ir.html:144
+#: app/templates/app/characterizations.html:104 app/templates/app/ir.html:144
 #: app/templates/app/pathways.html:96
 msgid "Ανάλυση"
 msgstr "Analysis"
 
-#: app/templates/app/characterizations.html:111
+#: app/templates/app/characterizations.html:113
 #: app/templates/app/data_source_views.html:51 app/templates/app/ir.html:153
 #: app/templates/app/pathways.html:105
 msgid "Επιστροφή"
 msgstr "Return"
 
-#: app/templates/app/characterizations.html:134 app/templates/app/ir.html:176
+#: app/templates/app/characterizations.html:136 app/templates/app/ir.html:176
 #: app/templates/app/pathways.html:127
 msgid "Επεξεργασία παραμέτρων ανάλυσης"
 msgstr "Edit analysis parameters"
 
-#: app/templates/app/characterizations.html:138
+#: app/templates/app/characterizations.html:140
 #: app/templates/app/pathways.html:130
 msgid "Ανάλυση Χαρακτηρισμού Πληθυσμού"
 msgstr "Cohort characterization"
 
 #: app/templates/app/condition_occurrence.html:30
-#: app/templates/app/ohdsi_workspace.html:46
+#: app/templates/app/ohdsi_workspace.html:112
 msgid ""
 "Η λειτουργικότητα <strong>Εκδήλωση Κατάστασης</strong>, αποτελεί ένα "
 "βοηθητικό εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά την "
@@ -623,7 +663,7 @@ msgstr ""
 "possible health conditions (illness, side effects, side effects, etc.)."
 
 #: app/templates/app/condition_occurrence.html:43
-#: app/templates/app/ohdsi_workspace.html:41 app/views.py:1251
+#: app/templates/app/ohdsi_workspace.html:107 app/views.py:1244
 msgid "Εκδήλωση Κατάστασης"
 msgstr "Condition Occurrence"
 
@@ -632,7 +672,7 @@ msgid "Μεγένθυση"
 msgstr "Magnify"
 
 #: app/templates/app/data_source_views.html:58
-#: app/templates/app/modals/parametric_modal.html:29
+#: app/templates/app/modals/parametric_modal.html:72
 msgid ""
 "Ο περιηγητής σας δεν υποστηρίζει πλαίσια (iframes). Για να δείτε αυτήν τη "
 "σελίδα, χρησιμοποιήστε κάποιο κατάλληλο πρόγραμμα περιήγησης."
@@ -641,7 +681,7 @@ msgstr ""
 "supporting browsers."
 
 #: app/templates/app/drug_exposure.html:31
-#: app/templates/app/ohdsi_workspace.html:28
+#: app/templates/app/ohdsi_workspace.html:94
 msgid ""
 "Η λειτουργικότητα <strong>Έκθεση σε Φάρμακα</strong>, αποτελεί ένα βοηθητικό "
 "εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά την κατανομή του "
@@ -654,7 +694,7 @@ msgstr ""
 "drugs."
 
 #: app/templates/app/drug_exposure.html:43
-#: app/templates/app/ohdsi_workspace.html:23 app/views.py:1250
+#: app/templates/app/ohdsi_workspace.html:89 app/views.py:1243
 msgid "Έκθεση σε Φάρμακα"
 msgstr "Drug Exposure"
 
@@ -678,11 +718,23 @@ msgstr ""
 "Entrepreneurship and Innovation, under the call RESEARCH – CREATE - INNOVATE "
 "(project code: Τ1EDK-03789)"
 
-#: app/templates/app/form_base.html:62 app/templates/app/index.html:62
+#: app/templates/app/form_base.html:53 app/templates/app/index.html:75
+#: app/templates/app/modals/parametric_modal.html:18
+#: app/templates/app/social_media_workspace.html:47
+msgid "Φάρμακο/Φάρμακα"
+msgstr "Drug/Drugs"
+
+#: app/templates/app/form_base.html:54 app/templates/app/index.html:76
+#: app/templates/app/modals/parametric_modal.html:19
+#: app/templates/app/social_media_workspace.html:48
+msgid "Πάθηση/Παθήσεις"
+msgstr "Disease/Diseases"
+
+#: app/templates/app/form_base.html:105 app/templates/app/index.html:62
 msgid "Διαγραφή"
 msgstr "Delete"
 
-#: app/templates/app/form_base.html:71
+#: app/templates/app/form_base.html:114
 msgid "Σενάρια"
 msgstr "Scenarios"
 
@@ -704,19 +756,12 @@ msgstr ""
 msgid "Κατάσταση"
 msgstr "Status"
 
-#: app/templates/app/index.html:75
-msgid "Φάρμακο/Φάρμακα"
-msgstr "Drug/Drugs"
-
-#: app/templates/app/index.html:76
-msgid "Πάθηση/Παθήσεις"
-msgstr "Disease/Diseases"
-
-#: app/templates/app/index.html:173
+#: app/templates/app/index.html:184
 msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
-#: app/templates/app/ir.html:50 app/templates/app/ohdsi_workspace.html:64
+#: app/templates/app/ir.html:50 app/templates/app/ohdsi_workspace.html:57
+#: app/templates/app/ohdsi_workspace.html:130
 msgid ""
 "Ο <strong>Ρυθμός Επίπτωσης</strong> είναι ένα μέτρο της συχνότητας εμφάνισης "
 "μιας ασθένειας ή άλλου περιστατικού κατά τη διάρκεια συγκεκριμένης χρονικής "
@@ -726,12 +771,12 @@ msgstr ""
 "some event, such as a disease or other incidence, occurs over a specified "
 "time period."
 
-#: app/templates/app/ir.html:69 app/views.py:517 app/views.py:522
+#: app/templates/app/ir.html:69 app/views.py:520 app/views.py:525
 msgid "και"
 msgstr "and"
 
-#: app/templates/app/ir.html:180 app/views.py:467 app/views.py:485
-#: app/views.py:535
+#: app/templates/app/ir.html:180 app/views.py:470 app/views.py:488
+#: app/views.py:539
 msgid "Ανάλυση Ρυθμού Επίπτωσης"
 msgstr "Incidence Rate Analysis"
 
@@ -890,15 +935,27 @@ msgstr "Common for all scenarios"
 msgid "Επιμέρους στοιχεία περιβάλλοντος εργασίας"
 msgstr "Workspace views"
 
-#: app/templates/app/ohdsi_workspace.html:61 app/views.py:1249
+#: app/templates/app/ohdsi_workspace.html:54
+#: app/templates/app/ohdsi_workspace.html:127 app/views.py:1242
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
-#: app/templates/app/ohdsi_workspace.html:72 app/views.py:644 app/views.py:1249
+#: app/templates/app/ohdsi_workspace.html:40
+msgid "Σύντομη Προβολή"
+msgstr "Quick View"
+
+#: app/templates/app/ohdsi_workspace.html:42
+msgid "Λεπτομερής Προβολή"
+msgstr "Detailed View"
+
+#: app/templates/app/ohdsi_workspace.html:65
+#: app/templates/app/ohdsi_workspace.html:138 app/views.py:631
+#: app/views.py:1242
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort Characterization"
 
-#: app/templates/app/ohdsi_workspace.html:75
+#: app/templates/app/ohdsi_workspace.html:68
+#: app/templates/app/ohdsi_workspace.html:141
 msgid ""
 "Ο <strong>Χαρακτηρισμός Πληθυσμού</strong> ορίζεται ως η διαδικασία "
 "δημιουργίας περιγραφικών περιληπτικών στατιστικών στοιχείων σε επίπεδο "
@@ -908,11 +965,12 @@ msgstr ""
 "generating cohort level descriptive summary statistics from person level "
 "covariate data."
 
-#: app/templates/app/ohdsi_workspace.html:92 app/views.py:1250
+#: app/templates/app/ohdsi_workspace.html:158 app/views.py:1243
 msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
 
-#: app/templates/app/ohdsi_workspace.html:97 app/templates/app/pathways.html:48
+#: app/templates/app/ohdsi_workspace.html:163
+#: app/templates/app/pathways.html:48
 msgid ""
 "Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>, ορίζεται "
 "ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων "
@@ -938,6 +996,26 @@ msgstr "OPTIONS"
 #: app/templates/app/sidebar.html:47
 msgid "Σενάρια Διερεύνησης"
 msgstr "Investigation Scenarios"
+
+#: app/templates/app/social_media_workspace.html:83
+msgid ""
+"Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση "
+"σενάριο"
+msgstr "Start data extraction from twitter for the investigation scenario"
+
+#: app/templates/app/social_media_workspace.html:86
+msgid "Έναρξη εξόρυξης δεδομένων"
+msgstr "Start data extraction"
+
+#: app/templates/app/social_media_workspace.html:89
+msgid ""
+"Λήξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση "
+"σενάριο"
+msgstr "Stop data extraction from twitter for the investigation scenario"
+
+#: app/templates/app/social_media_workspace.html:92
+msgid "Λήξη εξόρυξης δεδομένων"
+msgstr "Stop data extraction"
 
 #: app/templates/app/top_navigation.html:24
 msgid "Αποσύνδεση"
@@ -1064,26 +1142,26 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/views.py:250 app/views.py:451 app/views.py:582 app/views.py:735
-#: app/views.py:1201
+#: app/views.py:252 app/views.py:454 app/views.py:597 app/views.py:727
+#: app/views.py:1194
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
-#: app/views.py:257 app/views.py:474 app/views.py:605 app/views.py:745
-#: app/views.py:1207
+#: app/views.py:259 app/views.py:477 app/views.py:609 app/views.py:737
+#: app/views.py:1200
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
 msgstr "System update failed due to insertion errors. Please try again!"
 
-#: app/views.py:323
+#: app/views.py:325
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που λαμβάνουν τα συγκεκριμένα φάρμακα"
 msgstr ""
 "Error occured while generating the cohort concerning the patients that are "
 "getting the specific drugs"
 
-#: app/views.py:324
+#: app/views.py:326
 msgid ""
 "Σφάλμα τροφοδότησης πληθυσμού ασθενών που παρουσιάζουν τις επιλεγμένες "
 "ανεπιθύμητες ενέργειες"
@@ -1091,67 +1169,71 @@ msgstr ""
 "Error occured while generating the cohort of patients with the specific "
 "conditions"
 
-#: app/views.py:386
+#: app/views.py:389
 msgid "Περιβάλλον εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/views.py:421
+#: app/views.py:430
 msgid "Δεν βρέθηκε ανάλυση ρυθμού επίπτωσης με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No incidence rate analysis with the specific id found!"
 
-#: app/views.py:456 app/views.py:587 app/views.py:740
+#: app/views.py:459 app/views.py:602 app/views.py:732
 msgid "Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"
 msgstr "Error occured. Please try again!"
 
-#: app/views.py:506
+#: app/views.py:509
 msgid "Χρονικό παράθυρο μελέτης: "
 msgstr "Study Time Window: "
 
-#: app/views.py:506
+#: app/views.py:509
 msgid "έως"
 msgstr " to "
 
-#: app/views.py:508
+#: app/views.py:511
 msgid "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!"
 msgstr "No specific study time window has been appointed!"
 
-#: app/views.py:516
+#: app/views.py:519
 msgid "Κριτήριο ηλικίας:"
 msgstr "Age criterion:"
 
-#: app/views.py:518
+#: app/views.py:521
 msgid "Δεν έχει οριστεί συγκεκριμένο ηλικιακό κριτήριο!"
 msgstr "No specific age criterion has been appointed!"
 
-#: app/views.py:522
+#: app/views.py:525
 msgid "Κριτήριο φύλου:"
 msgstr "Gender criterion:"
 
-#: app/views.py:523
+#: app/views.py:526
 msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
 msgstr "No specific gender criterion has been appointed!"
 
-#: app/views.py:565
+#: app/views.py:575
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
 
-#: app/views.py:665
+#: app/views.py:652
 msgid "Έκθεση σε φάρμακα"
 msgstr "Drug exposure"
 
-#: app/views.py:686
+#: app/views.py:673
 msgid "Εκδήλωση κατάστασης"
 msgstr "Condition occurrence"
 
-#: app/views.py:716
+#: app/views.py:708
 msgid ""
 "Δεν βρέθηκε ανάλυση Μονοπατιού Ακολουθίας Εκδήλωσης Συμβάντων στον υπό "
 "εξέταση πληθυσμό με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No cohort pathways analysis with the specific id found!"
 
-#: app/views.py:762
+#: app/views.py:755
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
+
+#: app/views.py:1514
+msgid "Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"
+msgstr "Social Media Workspace"
 
 #: gentelella/settings.py:167
 msgid "Ελληνικά"
@@ -1160,6 +1242,14 @@ msgstr "Greek"
 #: gentelella/settings.py:168
 msgid "Αγγλικά"
 msgstr "English"
+
+#~ msgid ""
+#~ "Looking 365 days prior (and including) the cohort entry, for patients "
+#~ "having been exposed to drugs with the same ingredient (ATC) class."
+#~ msgstr ""
+#~ "Ομάδα ασθενών που έχουν εκτεθεί σε φάρμακα με την ίδια κατηγορία "
+#~ "δραστικής ουσίας (ATC),για χρονικό διάστημα που εκκινεί 365 ημέρες πριν "
+#~ "και μέχρι (συμπεριλαμβανομένης) της ημέρας έναρξης της κοόρτης."
 
 #, fuzzy
 #~| msgid "Αναφορές"
@@ -1182,9 +1272,6 @@ msgstr "English"
 
 #~ msgid "Παθήσεις:"
 #~ msgstr "Diseases"
-
-#~ msgid "Προβολή"
-#~ msgstr "View"
 
 #~ msgid "Χρήστη"
 #~ msgstr "User"
