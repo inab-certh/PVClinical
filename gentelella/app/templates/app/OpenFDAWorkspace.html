@@ -1,6 +1,7 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 {% block title %} Fixed Sidebar {% endblock title %}
 
 {% block stylesheets %}
@@ -178,9 +179,9 @@
                                       <div class="panel-body">
                                           <div class="pull-right">
                                               {% if d and c %}
-                                                    <button class="btn notes-btn btn-no-bg" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=d|add:" - "|add:c %}", data-id="notesOpenFDA{{ d|cut:' ' }}{{ c|cut:' ' }}" data-toggle="tooltip" data-placement="left" title={% trans "Σημειώσεις" %}>
+                                                    <button class="btn notes-btn btn-no-bg" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=d|underscore_char:'/'|add:" - "|add:c|underscore_char:'/' %}", data-id="notesOpenFDA{{ d|underscore_char:'/'|cut:' ' }}{{ c|underscore_char:'/'|cut:' ' }}" data-toggle="tooltip" data-placement="left" title={% trans "Σημειώσεις" %}>
                                               {% else %}
-                                                    <button class="btn notes-btn btn-no-bg" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=d|add:c %}", data-id="notesOpenFDA{{ d|cut:' ' }}{{ c|cut:' ' }}" data-toggle="tooltip" data-placement="left" title={% trans "Σημειώσεις" %}>
+                                                    <button class="btn notes-btn btn-no-bg" type="button" data-url="{% url 'keep_notes' sc_id=scenario.sc_id ws_id='OpenFDA' wsview_id=d|underscore_char:'/'|add:c|underscore_char:'/' %}", data-id="notesOpenFDA{{ d|underscore_char:'/'|cut:' ' }}{{ c|underscore_char:'/'|cut:' ' }}" data-toggle="tooltip" data-placement="left" title={% trans "Σημειώσεις" %}>
                                               {% endif %}
 
                                                     <i class="fas fa-notes-medical fa-2x"></i>
