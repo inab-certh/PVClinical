@@ -8,7 +8,9 @@
     {{ block.super }}
     <!-- jQuery custom content scroller -->
     <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+    <link href="/static/build/css/openfda.css" rel="stylesheet">
 {% endblock stylesheets %}
+
 
 {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
 
@@ -27,7 +29,15 @@
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>
                                                 <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
+
+                                                <label class="switch">
+                                                  <input type="checkbox" checked>
+                                                  <span class="slider round"></span>
+                                                </label>
+                                                <span class="DrugEventParameter" id="concomitant">Concomitant</span>
+
                                             </legend>
+
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
