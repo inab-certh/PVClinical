@@ -250,7 +250,7 @@ observeEvent( input$searchID, {
     mydf <- getfullquery()
     numrecs <- mydf$df.meta$results$total 
   }
-  browser()
+  # browser()
   maxlim <- min(getopenfdamaxrecords(), numrecs)
   updateSliderInput( session, 'skip', value= min(myskip+2, maxlim), min=1, step= 1, max=maxlim)
   
@@ -258,40 +258,48 @@ observeEvent( input$searchID, {
 
 
 gett1 <- function(){
+
   anychanged()
-  s <- input$t1
+  q <- geturlquery()
+  s <- q$t1
   if (getv1() != '_exists_')
     {
-    s <- toupper( input$t1 )
+    s <- toupper( q$t1 )
     }
   return( s )
 }
 gett2 <- function(){
-  s <- input$t2
+  q <- geturlquery()
+  s <- q$t2
   if (getv2() != '_exists_')
   {
-  s <- toupper( input$t2 )
+  s <- toupper( q$t2 )
   }
   return( s )
 }
 gett3 <- function(){
-  s <- input$t3
+  q <- geturlquery()
+  s <- q$t3
+
   if (getv3() != '_exists_')
   {
-  s <- toupper( input$t3 )
+  s <- toupper( q$t3 )
   }
   return( s )
 }
 getv1 <- function(){
-  s <- ( input$v1 )
+  q <- geturlquery()
+  s <- ( q$v1 )
   return( s )
 }
 getv2 <- function(){
-  s <- ( input$v2)
+  q <- geturlquery()
+  s <- ( q$v2)
   return( s )
 }
 getv3 <- function(){
-  s <- ( input$v3 )
+  q <- geturlquery()
+  s <- ( q$v3 )
   return( s )
 }
 
@@ -305,13 +313,14 @@ updatevars <- reactive({
 
 
 anychanged <- reactive({
-  a <- input$t1
-  b <- input$v1
-  c <- input$t2
-  d <- input$v2
-  c <- input$t3
-  d <- input$v3
-  
+  q <- geturlquery()
+  a <- q$t1
+  b <- q$v1
+  c <- q$t2
+  d <- q$v2
+  c <- q$t3
+  d <- q$v3
+ 
   closeAlert(session, 'erroralert')
 })
 
@@ -333,6 +342,7 @@ output$ntext <- renderText( {
 ptext <- eventReactive( input$prevrow, {
   search_val$id <- FALSE
   q <- geturlquery()
+
   myskip <- getskip() -2 
   mydf <- getfullquery()
   if (q$concomitant == FALSE){
@@ -349,9 +359,9 @@ output$ptext <- renderText( {
   return('')
 })
 getquery <- reactive({
-  
+  q <- geturlquery()
 
-  if (  input$t1 == '' & input$t2 == '' & input$t3 == ''){
+  if (  q$t1 == '' & q$t2 == '' & q$t3 == ''){
     v1 = '_exists_'
     t1 = 'safetyreportid'
     v2 <- ''
@@ -359,10 +369,10 @@ getquery <- reactive({
     v3 <- ''
     t3 <- ''
   } else {
-    v1 <- c(input$v1, input$v2, input$v3)
+    v1 <- c(q$v1, q$v2, q$v3)
     t1 <- c(gett1(), gett2(), gett3() ) 
   }
-  q <- geturlquery()
+
   if (v1[1] != ""){
     t1[1] = q$dename
   }
@@ -429,8 +439,8 @@ getreportid <- reactive({
 })
 
 getfullquery <- reactive({
-
-  if ( input$t1==''  & input$t2 == '' & input$t3 == '' ){
+  q <- geturlquery()
+  if ( q$t1==''  & q$t2 == '' & q$t3 == '' ){
     v1 = '_exists_'
     t1 = 'safetyreportid'
     v2 <- ''
@@ -438,10 +448,10 @@ getfullquery <- reactive({
     v3 <- ''
     t3 <- ''
   } else {
-    v1 <- c(input$v1, input$v2, input$v3)
+    v1 <- c(q$v1, q$v2, q$v3)
     t1 <- c(gett1(), gett2(), gett3() ) 
   }
-  q <- geturlquery()
+  
   if (v1[1] != ""){
     t1[1] = q$dename
   }
@@ -1528,26 +1538,34 @@ geturlquery <- reactive({
    # q<-NULL
    # q$v1<-"patient.drug.openfda.generic_name"
    # q$v2<-"patient.reaction.reactionmeddrapt"
-   # q$t1<-"Omeprazole"
-   # q$t2<-"Hypokalaemia"
+   # # q$t1<-"Omeprazole"
+   # # q$t2<-"Hypokalaemia"
    # q$t1<-"D10AD04"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"
-   # q$concomitant <- TRUE
+   q$concomitant <- TRUE
    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
-   
+   if (!is.null(q$t1)) {
     t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
     t1 <- gsub(']"', ']', t1, fixed=TRUE)
     t1 <- gsub('""', '"', t1, fixed=TRUE)
     updateTextInput(session, "t1", value = t1)
     updateTextInput(session, "t1_2", value = t1)
+   } else {
+     q$t1 = ""
+   }
   
-  t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
-  t2 <- gsub(']"', ']', t2, fixed=TRUE)
-  t2 <- gsub('""', '"', t2, fixed=TRUE)
-  updateTextInput(session, "t2", value = t2)
-  updateTextInput(session, "t2_2", value = t2)
+  if (!is.null(q$t2)) {
+    t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
+    t2 <- gsub(']"', ']', t2, fixed=TRUE)
+    t2 <- gsub('""', '"', t2, fixed=TRUE)
+    updateTextInput(session, "t2", value = t2)
+    updateTextInput(session, "t2_2", value = t2)
+  } else {
+    q$t2 = ""
+  }
+  
   
   if(!is.null(q$t3) )
   {  
@@ -1556,6 +1574,8 @@ geturlquery <- reactive({
   t3 <- gsub('""', '"', t3, fixed=TRUE)
   updateTextInput(session, "t3", value = t3)
   updateTextInput(session, "t3_2", value = t3)
+  } else {
+    q$t3 = ""
   }
   
 
@@ -1564,44 +1584,47 @@ if(!is.null(q$v1) )
   v1 <- gsub('"', '', q$v1, fixed=TRUE)
   updateSelectizeInput(session, inputId = "v1", selected = v1)
   updateSelectizeInput(session, inputId = "v1_2", selected = v1)
-} 
+} else {q$v1=''}
 if(!is.null(q$v2) )
   {
   v2 <- gsub('"', '', q$v2, fixed=TRUE)
   updateSelectizeInput(session, inputId = "v2", selected = v2)
   updateSelectizeInput(session, inputId = "v2_2", selected = v2)
-  }
+  } else {q$v2=''}
 if(!is.null(q$v3) )
   { 
   v3 <- gsub('"', '', q$v3, fixed=TRUE)
   updateSelectizeInput(session, inputId = "v3", selected = v3)
   updateSelectizeInput(session, inputId = "v3_2", selected = v3)
-  }
+  } else {q$v3=''}
 #   
 #   updateNumericInput(session, "skip", value = q$skip)
 #   return(q)
-  if (q$v1=="patient.drug.openfda.generic_name"){
-    con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
-    con_atc$disconnect()
-    
-    q$dename <- drug$names[[1]][1]
-    if (!is.null(q$v2)){
+  if (!is.null(q$v1)){
+    if (q$v1=="patient.drug.openfda.generic_name"){
+      con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
+      con_atc$disconnect()
       
+      q$dename <- drug$names[[1]][1]
+      if (!is.null(q$v2)){
+        
+        con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
+        con_medra$disconnect()
+        
+        q$ename <- event$names[[1]][1]
+        
+      }
+    } else {
       con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
+      event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
       con_medra$disconnect()
       
-      q$ename <- event$names[[1]][1]
-      
+      q$dename <- event$names[[1]][1]
     }
-  } else {
-    con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
-    con_medra$disconnect()
-    
-    q$dename <- event$names[[1]][1]
   }
+   
   values$urlQuery<-q
 })
 

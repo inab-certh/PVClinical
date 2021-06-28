@@ -59,7 +59,8 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-#concomitant {
+#ctitle {
     float: right;
-
+    margin-right:13px;
+    margin-bottom:3px;
 }

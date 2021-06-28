@@ -31,10 +31,10 @@
                                                 <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
 
                                                 <label class="switch">
-                                                  <input type="checkbox" checked>
+                                                  <input type="checkbox" id="concomitant" checked>
                                                   <span class="slider round"></span>
                                                 </label>
-                                                <span class="DrugEventParameter" id="concomitant">Concomitant</span>
+                                                <span class="DrugEventParameter" id="ctitle">Concomitant</span>
 
                                             </legend>
 
@@ -701,6 +701,33 @@
             document.getElementById("eventBtn").innerText = event;
         }
 
+        // function buildUrl(app) {
+        //
+        //
+        //     if (document.getElementById('concomitant').checked) {
+        //         shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+        //         if (activeParameters.length == 2) {
+        //         shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' +  drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name&' + 't2=' + eventsChecked.join("+") + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+        //         } else if (activeParameters.includes('Drug')) {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name' + '&concomitant=TRUE';
+        //         } else {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + eventsChecked.join("+") + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+        //         }
+        //         document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
+        //     } else {
+        //         shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+        //         if (activeParameters.length == 2) {
+        //         shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' +  drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name&' + 't2=' + eventsChecked.join("+") + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+        //         } else if (activeParameters.includes('Drug')) {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name' + '&concomitant=FALSE';
+        //         } else {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + eventsChecked.join("+") + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+        //         }
+        //         document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
+        //     }
+        //
+        // }
+
         function buildUrl(app) {
             shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (activeParameters.length == 2) {
@@ -713,30 +740,58 @@
             document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }
 
+
         function buildUrlComb(app, indx) {
-            var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
+            if (document.getElementById('concomitant').checked){
+                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
-            if (scenarioDrugsLength>0){
-                var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
-            }
-            if (scenarioConditionsLength>0){
-                var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
-            }
+                if (scenarioDrugsLength>0){
+                    var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
+                }
+                if (scenarioConditionsLength>0){
+                    var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
+                }
 
 
-            console.log(condition)
-            // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
-            // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
-            var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
-            if (drug && condition) {
-                tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt';
-            } else if (drug) {
-                tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name';
+                console.log(condition)
+                // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
+                // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
+                var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+                if (drug && condition) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+                } else if (drug) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name' + '&concomitant=TRUE';
+                } else {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+                }
+                console.log(tmpQueryUrl);
+                document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
             } else {
-                tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt';
+                var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
+
+                if (scenarioDrugsLength>0){
+                    var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
+                }
+                if (scenarioConditionsLength>0){
+                    var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
+                }
+
+
+                console.log(condition)
+                // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
+                // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
+                var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+                if (drug && condition) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+                } else if (drug) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name' + '&concomitant=FALSE';
+                } else {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+                }
+                console.log(tmpQueryUrl);
+                document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
             }
-            console.log(tmpQueryUrl);
-            document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
+
         }
 
         function keepAppropriateAppsBasedOnParameters() {
