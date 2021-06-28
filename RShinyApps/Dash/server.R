@@ -1359,13 +1359,13 @@ output$indcloud <- renderPlot({
 
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
-  q <-NULL
-  q$v1<-"patient.drug.openfda.generic_name"
+  # q <-NULL
+  # q$v1<-"patient.drug.openfda.generic_name"
   # q$v2<-"patient.reaction.reactionmeddrapt"
-  q$t1<-"N05BA12"
+  # q$t1<-"N05BA12"
   # q$t2<-"Anaemia"
-  q$hash<-"d38ghr"
-  q$concomitant<- TRUE
+  # q$hash<-"d38ghr"
+  # q$concomitant<- TRUE
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateNumericInput(session, "limit", value = q$limit)
   updateSelectizeInput(session, 't1', selected= q$drug) 
