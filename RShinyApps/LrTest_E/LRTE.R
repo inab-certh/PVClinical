@@ -2122,18 +2122,18 @@ output$date1 <- renderText({
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
   
-  q<-NULL
+  # q<-NULL
   # q$v1<-"patient.drug.openfda.generic_name"
   # q$v2<-"patient.reaction.reactionmeddrapt"
   # q$t1<-"Omeprazole"
   # q$drug<-toupper(q$t1)
   # q$t2<-"Anaemia"
   # q$v1<-"patient.drug.openfda.generic_name"
-  q$v1<-"patient.reaction.reactionmeddrapt"
+  # q$v1<-"patient.reaction.reactionmeddrapt"
   # q$t1<-"D10AD04"
-  q$t1<-"10019211"
-  q$hash <- "ksjdhfksdhfhsk"
-  q$concomitant <- TRUE
+  # q$t1<-"10019211"
+  # q$hash <- "ksjdhfksdhfhsk"
+  # q$concomitant <- TRUE
   # browser()
   updateNumericInput(session, "limit", value = q$limit)
   updateNumericInput(session, "limit2", value = q$limit)

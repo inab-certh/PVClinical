@@ -1303,13 +1303,13 @@ output$date1 <- renderText({
 })
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
-  q<-NULL
-  q$v1<-"patient.drug.openfda.generic_name"
-  q$v2<-"patient.reaction.reactionmeddrapt"
-  q$t1<-"L04AB02"
-  q$t2<-"10003239"
-  q$hash <- "ksjdhfksdhfhsk"
-  q$concomitant<- FALSE
+  # q<-NULL
+  # q$v1<-"patient.drug.openfda.generic_name"
+  # q$v2<-"patient.reaction.reactionmeddrapt"
+  # q$t1<-"L04AB02"
+  # q$t2<-"10003239"
+  # q$hash <- "ksjdhfksdhfhsk"
+  # q$concomitant<- FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2) 

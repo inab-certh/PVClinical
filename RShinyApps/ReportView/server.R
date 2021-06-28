@@ -9,7 +9,8 @@ library(shiny)
 library(shiny.i18n)
 library(tidyverse)
 library(xlsx)
-
+library(stringr)
+library(plyr)
 source('sourcedir.R')
 
 
@@ -25,6 +26,7 @@ shinyServer(function(input, output, session) {
   
   
   values<-reactiveValues(urlQuery=NULL)
+  search_val<-reactiveValues(id = FALSE, skip = NULL)
   
   
   i18n <- reactive({
@@ -35,89 +37,89 @@ shinyServer(function(input, output, session) {
     translator
   })
   
-  geturlquery <- observe({
-    addClass("panel_title", "custom-title")
-    # removeClass("panel_title", "shiny-text-output")
-    # removeClass("panel_title", "shiny-bound-output")
-    q <- parseQueryString(session$clientData$url_search)
-    
-    selectedLang = tail(q[['lang']], 1)
-    if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
-    {
-      selectedLang='en'
-    }
-    
-    selectInput('selected_language',
-                i18n()$t("Change language"),
-                choices = c("en","gr"),
-                selected = selectedLang)
-    langs = list(gr="el", en="en")
-    
-    translator$set_translation_language(selectedLang)
-    updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous')), icon = NULL, value = NULL,
-                 style = NULL, size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'nextrow', label = paste(i18n()$t('Next'), '>'), icon = NULL, value = NULL,
-                 style = NULL, size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'tabBut', label = paste(i18n()$t('Filter by'), '...'), icon = NULL, value = NULL,
-                 style = NULL, size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'update', label = i18n()$t('Update Variables'), icon = NULL, value = NULL,
-                 style = 'primary', size = NULL, block = NULL, disabled = NULL)
-    updateButton(session, 'modalCloseBtn', label = i18n()$t('Close'), icon = NULL, value = NULL)
-    updateSliderInput(session, 'skip', paste(i18n()$t('Report'),' #'), value=1, min=1, step= 1, max=100)
-    # updateRadioButtons(session, 'useexact',
-    #                    selected = if(length(q$useexact)==0) "exact" else q$useexact)
-    # updateRadioButtons(session, 'useexactD',
-    #                    selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
-    # updateRadioButtons(session, 'useexactE',
-    #                    selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
-    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
-    # updateTextInput(session, "safetyreportid", value = getreportid())
-    
-    t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
-    t1 <- gsub(']"', ']', t1, fixed=TRUE)
-    t1 <- gsub('""', '"', t1, fixed=TRUE)
-    updateTextInput(session, "t1", value = t1)
-    updateTextInput(session, "t1_2", value = t1)
-    
-    t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
-    t2 <- gsub(']"', ']', t2, fixed=TRUE)
-    t2 <- gsub('""', '"', t2, fixed=TRUE)
-    updateTextInput(session, "t2", value = t2)
-    updateTextInput(session, "t2_2", value = t2)
-    
-    if(!is.null(q$t3) )
-    {  
-      t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
-      t3 <- gsub(']"', ']', t3, fixed=TRUE)
-      t3 <- gsub('""', '"', t3, fixed=TRUE)
-      updateTextInput(session, "t3", value = t3)
-      updateTextInput(session, "t3_2", value = t3)
-    }
-    
-    
-    if(!is.null(q$v1) )
-    {
-      v1 <- gsub('"', '', q$v1, fixed=TRUE)
-      updateSelectizeInput(session, inputId = "v1", selected = v1)
-      updateSelectizeInput(session, inputId = "v1_2", selected = v1)
-    } 
-    if(!is.null(q$v2) )
-    {
-      v2 <- gsub('"', '', q$v2, fixed=TRUE)
-      updateSelectizeInput(session, inputId = "v2", selected = v2)
-      updateSelectizeInput(session, inputId = "v2_2", selected = v2)
-    }
-    if(!is.null(q$v3) )
-    { 
-      v3 <- gsub('"', '', q$v3, fixed=TRUE)
-      updateSelectizeInput(session, inputId = "v3", selected = v3)
-      updateSelectizeInput(session, inputId = "v3_2", selected = v3)
-    }
-    #   
-    #   updateNumericInput(session, "skip", value = q$skip)
-    #   return(q)
-    
-  })
+  # geturlquery <- observe({
+  #   addClass("panel_title", "custom-title")
+  #   # removeClass("panel_title", "shiny-text-output")
+  #   # removeClass("panel_title", "shiny-bound-output")
+  #   q <- parseQueryString(session$clientData$url_search)
+  #   
+  #   selectedLang = tail(q[['lang']], 1)
+  #   if(is.null(selectedLang) || (selectedLang!='en' && selectedLang!='gr'))
+  #   {
+  #     selectedLang='en'
+  #   }
+  #   
+  #   selectInput('selected_language',
+  #               i18n()$t("Change language"),
+  #               choices = c("en","gr"),
+  #               selected = selectedLang)
+  #   langs = list(gr="el", en="en")
+  #   
+  #   translator$set_translation_language(selectedLang)
+  #   updateButton(session, 'prevrow', label = paste('<', i18n()$t('Previous')), icon = NULL, value = NULL,
+  #                style = NULL, size = NULL, block = NULL, disabled = NULL)
+  #   updateButton(session, 'nextrow', label = paste(i18n()$t('Next'), '>'), icon = NULL, value = NULL,
+  #                style = NULL, size = NULL, block = NULL, disabled = NULL)
+  #   updateButton(session, 'tabBut', label = paste(i18n()$t('Filter by'), '...'), icon = NULL, value = NULL,
+  #                style = NULL, size = NULL, block = NULL, disabled = NULL)
+  #   updateButton(session, 'update', label = i18n()$t('Update Variables'), icon = NULL, value = NULL,
+  #                style = 'primary', size = NULL, block = NULL, disabled = NULL)
+  #   updateButton(session, 'modalCloseBtn', label = i18n()$t('Close'), icon = NULL, value = NULL)
+  #   updateSliderInput(session, 'skip', paste(i18n()$t('Report'),' #'), value=1, min=1, step= 1, max=100)
+  #   # updateRadioButtons(session, 'useexact',
+  #   #                    selected = if(length(q$useexact)==0) "exact" else q$useexact)
+  #   # updateRadioButtons(session, 'useexactD',
+  #   #                    selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
+  #   # updateRadioButtons(session, 'useexactE',
+  #   #                    selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
+  #   updateTabsetPanel(session, 'maintabs', selected=q$curtab)
+  #   # updateTextInput(session, "safetyreportid", value = getreportid())
+  #   
+  #   t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
+  #   t1 <- gsub(']"', ']', t1, fixed=TRUE)
+  #   t1 <- gsub('""', '"', t1, fixed=TRUE)
+  #   updateTextInput(session, "t1", value = t1)
+  #   updateTextInput(session, "t1_2", value = t1)
+  #   
+  #   t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
+  #   t2 <- gsub(']"', ']', t2, fixed=TRUE)
+  #   t2 <- gsub('""', '"', t2, fixed=TRUE)
+  #   updateTextInput(session, "t2", value = t2)
+  #   updateTextInput(session, "t2_2", value = t2)
+  #   
+  #   if(!is.null(q$t3) )
+  #   {  
+  #     t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
+  #     t3 <- gsub(']"', ']', t3, fixed=TRUE)
+  #     t3 <- gsub('""', '"', t3, fixed=TRUE)
+  #     updateTextInput(session, "t3", value = t3)
+  #     updateTextInput(session, "t3_2", value = t3)
+  #   }
+  #   
+  #   
+  #   if(!is.null(q$v1) )
+  #   {
+  #     v1 <- gsub('"', '', q$v1, fixed=TRUE)
+  #     updateSelectizeInput(session, inputId = "v1", selected = v1)
+  #     updateSelectizeInput(session, inputId = "v1_2", selected = v1)
+  #   } 
+  #   if(!is.null(q$v2) )
+  #   {
+  #     v2 <- gsub('"', '', q$v2, fixed=TRUE)
+  #     updateSelectizeInput(session, inputId = "v2", selected = v2)
+  #     updateSelectizeInput(session, inputId = "v2_2", selected = v2)
+  #   }
+  #   if(!is.null(q$v3) )
+  #   { 
+  #     v3 <- gsub('"', '', q$v3, fixed=TRUE)
+  #     updateSelectizeInput(session, inputId = "v3", selected = v3)
+  #     updateSelectizeInput(session, inputId = "v3_2", selected = v3)
+  #   }
+  #   #   
+  #   #   updateNumericInput(session, "skip", value = q$skip)
+  #   #   return(q)
+  #   
+  # })
   
   output$paneltitle <- renderText({
     i18n()$t("Drug Adverse Event Report Browser")
@@ -177,17 +179,84 @@ shinyServer(function(input, output, session) {
   # output$title_panel <- renderText({
   #   paste("<h2>", i18n()$t("Drug Adverse Event Report Browser"), "</h2>")
   # })  
-   
+  
+  
 getskip <- reactive({
-  return( input$skip-1 )
+  # browser()
+  if (search_val$id == TRUE) {
+    return( search_val$skip-1 )
+    
+  } else {
+    return( input$skip-1 )
+  }
+  
 })
 ntext <- eventReactive( input$nextrow, {
+  search_val$id <- FALSE
+  q <- geturlquery()
   myskip <- getskip()
   mydf <- getfullquery()
-  numrecs <- mydf$df.meta$results$total
+
+  if (q$concomitant == FALSE){
+    numrecs <- mydf$df.total
+  } else {
+    numrecs <- mydf$df.meta$results$total
+  }
   maxlim <- min(getopenfdamaxrecords(), numrecs)
   updateSliderInput( session, 'skip', value= min(myskip+2, maxlim), min=1, step= 1, max=maxlim)
 })
+
+observeEvent( input$searchID, {
+  search_val$id <- TRUE
+  q <- geturlquery()
+  if (q$concomitant == FALSE){
+    if (q$v1 == 'patient.reaction.reactionmeddrapt') {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      eventQuery <- SearchEventReports(q$t1)
+      ids <- con$aggregate(eventQuery)
+      con$disconnect()
+    } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      ids <- con$aggregate(drugeventQuery)
+      con$disconnect()
+    } else {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugQuery <- SearchDrugReports(q$t1)
+      ids <- con$aggregate(drugQuery)
+      con$disconnect()
+    }
+    
+    id_vector <- unlist(list(ids$safetyreportid))
+    search_val$skip <- match(input$searchID, id_vector) + 1
+
+    myskip <- getskip()
+    mydf <- getfullquery()
+    numrecs <- mydf$df.total
+  } else {
+    v1 <- c(input$v1, input$v2, input$v3)
+    t1 <- c(gett1(), gett2(), gett3() ) 
+    if (v1[1] != ""){
+      t1[1] = q$dename
+    }
+    if (v1[2] == "patient.reaction.reactionmeddrapt"){
+      t1[2] = q$ename
+    }
+    myurl <- buildURL(v1, t1, limit = 1000, count = 'safetyreportid.exact')
+    ids <-  fda_fetch_p(session, myurl)
+    id_vector <- unlist(list(ids$results$term))
+    search_val$skip <- match(input$safetyreportid, id_vector) - 2
+    myskip <- getskip()
+    mydf <- getfullquery()
+    numrecs <- mydf$df.meta$results$total 
+  }
+  browser()
+  maxlim <- min(getopenfdamaxrecords(), numrecs)
+  updateSliderInput( session, 'skip', value= min(myskip+2, maxlim), min=1, step= 1, max=maxlim)
+  
+  })
+
+
 gett1 <- function(){
   anychanged()
   s <- input$t1
@@ -262,11 +331,17 @@ output$ntext <- renderText( {
 })
 
 ptext <- eventReactive( input$prevrow, {
-  myskip <- getskip()
+  search_val$id <- FALSE
+  q <- geturlquery()
+  myskip <- getskip() -2 
   mydf <- getfullquery()
-  numrecs <- mydf$df.meta$results$total
+  if (q$concomitant == FALSE){
+    numrecs <- mydf$df.total
+  } else {
+    numrecs <- mydf$df.meta$results$total
+  }
   maxlim <- getopenfdamaxrecords( numrecs )
-  updateSliderInput( session, 'skip', value= max(myskip, 1), min=1, step= 1, max=maxlim)
+  updateSliderInput( session, 'skip', value= max(myskip+2, 1), min=1, step= 1, max=maxlim)
 })
 
 output$ptext <- renderText( {
@@ -286,10 +361,41 @@ getquery <- reactive({
   } else {
     v1 <- c(input$v1, input$v2, input$v3)
     t1 <- c(gett1(), gett2(), gett3() ) 
-    }
+  }
+  q <- geturlquery()
+  if (v1[1] != ""){
+    t1[1] = q$dename
+  }
+  if (v1[2] == "patient.reaction.reactionmeddrapt"){
+    t1[2] = q$ename
+  }
   myurl <- buildURL(v1, t1,  limit=1, skip=getskip())
+  # browser()
+  
+  if (q$concomitant == FALSE){
+    if (q$v1 == 'patient.reaction.reactionmeddrapt') {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      eventQuery <- SearchEventReports(q$t1)
+      ids <- con$aggregate(eventQuery)
+      con$disconnect()
+    } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      ids <- con$aggregate(drugeventQuery)
+      con$disconnect()
+    } else {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugQuery <- SearchDrugReports(q$t1)
+      ids <- con$aggregate(drugQuery)
+      con$disconnect()
+    }
+    myurl <- buildURL(v= 'safetyreportid', t=ids$safetyreportid[[getskip()+1]])
+    mydf <- fda_fetch_p(session, myurl)
+  } else {
+    mydf <- fda_fetch_p(session, myurl)
+  }
 
-  mydf <- fda_fetch_p(session, myurl)
+  
   openfdalist <- (mydf$results$patient$drug[[1]])$openfda
   openfdadf <- listtodf(openfdalist, delim='; ', trunc=400)
   patientdf <- mydf$results$patient
@@ -335,8 +441,43 @@ getfullquery <- reactive({
     v1 <- c(input$v1, input$v2, input$v3)
     t1 <- c(gett1(), gett2(), gett3() ) 
   }
+  q <- geturlquery()
+  if (v1[1] != ""){
+    t1[1] = q$dename
+  }
+  if (v1[2] == "patient.reaction.reactionmeddrapt"){
+    t1[2] = q$ename
+  }
   myurl <- buildURL(v1, t1, limit=1)
-  mydf <- fda_fetch_p(session, myurl)
+ 
+ 
+  if (q$concomitant == FALSE){
+    if (q$v1 == 'patient.reaction.reactionmeddrapt') {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      eventQuery <- SearchEventReports(q$t1)
+      ids <- con$aggregate(eventQuery)
+      con$disconnect()
+    } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      ids <- con$aggregate(drugeventQuery)
+      con$disconnect()
+    } else {
+      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      drugQuery <- SearchDrugReports(q$t1)
+      ids <- con$aggregate(drugQuery)
+      con$disconnect()
+    }
+    myurl <- buildURL(v= 'safetyreportid', t=ids$safetyreportid[[1]])
+    mydf <- fda_fetch_p(session, myurl)
+    mydf$total <- length(ids$safetyreportid)
+
+  } else {
+    mydf <- fda_fetch_p(session, myurl)
+  }
+  
+  # mydf <- fda_fetch_p(session, myurl)
+
   out <- c(df=mydf, url=myurl)
 #  print(typeof(mydf$results[[1]]))
   #browser()
@@ -796,7 +937,12 @@ output$patientreaction <- renderTable({
       mydf <- data.frame(Reaction=mydf, Reaction_outcome=myreactionout)
       
     }
-}
+  }
+  
+  if (is.null(colnames(mydf)))
+    return (NULL)
+  colnames(mydf) = gsub("_", " ",colnames(mydf))
+  
   if (!is.null(input$sourcePatientDataframeUI)){
     if (input$sourcePatientDataframeUI){
       write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_patientreaction.csv"))
@@ -817,12 +963,12 @@ output$openfda <- renderTable({
    mydf <- getquery()
   openfdadf <- mydf$openfdadf
 #  browser()
-  # if (!is.null(input$sourceFdaDataframeUI)){
-  #   if (input$sourceFdaDataframeUI){
-  #     write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda.csv"))
-  #     
-  #   }
-  # }
+  if (!is.null(input$sourceFdaDataframeUI)){
+    if (input$sourceFdaDataframeUI){
+      write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda.csv"))
+      
+    }
+  }
   if (is.null( names(openfdadf ) ) ) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
@@ -844,12 +990,12 @@ output$openfda2 <- renderTable({
   mynames <- getallvars( allvars(), mytype = 'text', section= c('o2'))
   mydf <- getquery()
   openfdadf <- mydf$openfdadf
-  if (!is.null(input$sourceFdaSDataframeUI)){
-    if (input$sourceFdaSDataframeUI){
-      write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda2.csv"))
-      
-    }
-  }
+  # if (!is.null(input$sourceFdaSDataframeUI)){
+  #   if (input$sourceFdaSDataframeUI){
+  #     write.csv(openfdadf,paste0(cacheFolder,values$urlQuery$hash,"_openfda2.csv"))
+  #     
+  #   }
+  # }
   if (is.null( names(openfdadf ))) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
@@ -906,7 +1052,7 @@ output$drug <- renderTable({
   # browser()
   
  
-  
+
   drop<-c("drugenddateformat","drugstartdateformat",
           "drugauthorizationnumb","drugbatchnumb")
   mydf <- mydf[,!(names(mydf) %in% drop)]
@@ -973,9 +1119,14 @@ output$drug <- renderTable({
   mydf <- mydf %>% select(any_of(c('Active_Substance', 'Product_Role', 'Product_name', 
                                    'Dosage_MG', 'Route', 'Pharmaceutical_Form')))
   
-  mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
+  # mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
   
+  mydf<- data.frame(lapply(mydf, function(v) {
+    if (is.character(v)) return(str_to_title(v))
+    else return(v)
+  }))
   
+  colnames(mydf) = gsub("_", " ",colnames(mydf))
   
   if (!is.null(input$sourceDrugDataframeUI)){
     if (input$sourceDrugDataframeUI){
@@ -1005,19 +1156,45 @@ output$medication <- renderTable({
     mydrugs2 <- vector('character', length=nrow(mydf))
   }
   
+
+  # if ('drugstartdate' %in% names(mydf))
+  # {
+  #   if (any(mydf$drugstartdateformat== '102')){
+  #     mydf[ , 'drugstartdate'] <- ymd(mydf[ , 'drugstartdate'])
+  #     mydf[ , 'drugstartdate'] <- format(mydf[ , 'drugstartdate'], "%y/%m/%d")
+  #   } else if (any(mydf$drugstartdateformat== '610')){
+  #     mydf[ , 'drugstartdate'] <- ymd(mydf[ , 'drugstartdate'])
+  #     mydf[ , 'drugstartdate'] <- format(mydf[ , 'drugstartdate'], "%y/%m")
+  #   }
+  # }
+  # 
+  # if ('drugenddate' %in% names(mydf))
+  # {
+  # 
+  #   if (any(mydf$drugenddateformat == '102')){
+  #     mydf[ , 'drugenddate'] <- ymd(mydf[ , 'drugenddate'])
+  #     mydf[ , 'drugenddate'] <- format(mydf[ , 'drugenddate'], "%y/%m/%d")
+  #   } else if (any(mydf$drugenddateformat == '610')){
+  #     mydf[ , 'drugenddate'] <- ymd(mydf[ , 'drugenddate'])
+  #     mydf[ , 'drugenddate'] <- format(mydf[ , 'drugenddate'], "%y/%m")
+  #   }
+  # 
+  # }
   
-  if ('drugstartdate' %in% names(mydf))
-  {
-    startDateInd<-which(names(mydf)%in% 'drugstartdate' )
-    startDateTypeInd<-which(names(mydf)%in% 'drugstartdateformat' )
-    mydf[ , 'drugstartdate']<-apply(mydf,1,function(x) fixDate(x[startDateInd],x[startDateTypeInd]))
-  }
-  if ('drugenddate' %in% names(mydf))
-  {
-    endDateInd<-which(names(mydf)%in% 'drugenddate' ) 
-    endDateTypeInd<-which(names(mydf)%in% 'drugenddateformat' )
-    mydf[ , 'drugenddate']<-apply(mydf,1,function(x) fixDate(x[endDateInd],x[endDateTypeInd]))
-  }
+
+if ('drugstartdate' %in% names(mydf))
+{
+  startDateInd<-which(names(mydf)%in% 'drugstartdate' )
+  startDateTypeInd<-which(names(mydf)%in% 'drugstartdateformat' )
+  mydf[ , 'drugstartdate']<-apply(mydf,1,function(x) fixDate(x[startDateInd],x[startDateTypeInd]))
+}
+if ('drugenddate' %in% names(mydf))
+{
+  endDateInd<-which(names(mydf)%in% 'drugenddate' ) 
+  endDateTypeInd<-which(names(mydf)%in% 'drugenddateformat' )
+  mydf[ , 'drugenddate']<-apply(mydf,1,function(x) fixDate(x[endDateInd],x[endDateTypeInd]))
+}
+  
   
   
   drop<-c("drugenddateformat","drugstartdateformat",
@@ -1069,25 +1246,32 @@ output$medication <- renderTable({
   mynames <- names(mydf)
   mynames <- gsub('medicinalproduct', 'Product_name', mynames, fixed=TRUE )
   mynames <- gsub('drugindication', 'Indication', mynames, fixed=TRUE )
-  mynames <- gsub('drugdosagetext', 'Dosage-Frequency', mynames, fixed=TRUE )
+  mynames <- gsub('drugdosagetext', 'Dosage_Frequency', mynames, fixed=TRUE )
   mynames <- gsub('drugstartdate', 'Start_Date', mynames, fixed=TRUE )
   mynames <- gsub('drugenddate', 'End_Date', mynames, fixed=TRUE )
 
   names(mydf) <- mynames
   
-  mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
+  # mydf<-mydf[!(mydf$Product_Role=="CONCOMITANT DRUG" | mydf$Product_Role=="INTERACTING DRUG"),]
   
   mydf <- mydf %>% select(any_of(c('Product_name', 'Medication', 'Indication', 
-                          'Start_Date', 'End_Date', 'Dosage-Frequency', 
+                          'Start_Date', 'End_Date', 'Dosage_Frequency', 
                           'Dosage_Definition')))
   
   # 'drugstructuredosageunit',
   # 'drugseparatedosagenumb', 'drugintervaldosageunitnumb',
   # 'drugadditional'
   
-  if (!is.null(input$sourceDrugDataframeUI)){
-    if (input$sourceDrugDataframeUI){
-      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_patdrug.csv"))
+  mydf<- data.frame(lapply(mydf, function(v) {
+    if (is.character(v)) return(str_to_title(v))
+    else return(v)
+  }))
+  
+  colnames(mydf) = gsub("_", " ",colnames(mydf))
+  
+  if (!is.null(input$sourceFdaDataframeUI)){
+    if (input$sourceFdaDataframeUI){
+      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_medication.csv"))
       
     }
   }
@@ -1098,12 +1282,7 @@ output$medication <- renderTable({
     mydf <-  data.frame(Message=empty_message)
   }
   
-  if (!is.null(input$sourceFdaDataframeUI)){
-    if (input$sourceFdaDataframeUI){
-      write.csv(mydf,paste0(cacheFolder,values$urlQuery$hash,"_medication.csv"))
-      
-    }
-  }
+  
   # browser()
   # tmydf <- t(mydf)
   # rownames(tmydf) <- names(mydf)
@@ -1124,11 +1303,50 @@ output$downloadData <- downloadHandler(
     mydf_drug <- tmp[ , names(typesval) ]
     mydf_reaction <- getdf( mydf=mydf$patientdf, 'reaction', message='No primary source data')
     
+    # browser()
+    if ( is.data.frame(mydf$df$results$patient) )
+    {
+      mydf <- (mydf$df$results$patient)    
+      types <- (sapply(mydf, class))
+      typesval <- types[types!='data.frame' & types!='list']
+      mydfpatient <- mydf[ , names(typesval) ]
+      myvars <- c( 'patientonsetage', 'patientweight','patientsex' )
+      availnames <-  myvars %in% names(mydfpatient)
+      mydfpatient <- mydf[ , myvars[availnames] ]
+      mynames <- names(mydfpatient)
+      mynames <- gsub('patientonsetage', 'Age', mynames, fixed=TRUE )
+      mynames <- gsub('patientweight', 'Weight', mynames, fixed=TRUE )
+      mynames <- gsub('patientsex', 'Gender', mynames, fixed=TRUE )
+      names(mydfpatient) <- mynames
+    }
+    
+    if ('Gender' %in% names(mydfpatient))
+    { 
+      mydfpatient[ mydfpatient[,'Gender']==2 , 'Gender'] <- 'Female' 
+      mydfpatient[ mydfpatient[,'Gender']==1 , 'Gender'] <- 'Male' 
+      mydfpatient[ mydfpatient[,'Gender']==0 , 'Gender'] <- 'Unknown' 
+    }
+
+    
+    Patient <- c('Gender', 'Age', 'Weight')
+    if ( is.null(mydfpatient$Weight)){
+      mydfpatient$Weight <- "UNKNOWN"
+    }
+    if ( is.null(mydfpatient$Age)){
+      mydfpatient$Age <- "UNKNOWN"
+    }
+    if ( is.null(mydfpatient$Gender)){
+      mydfpatient$Gender <- "UNKNOWN"
+    }
+    
+    Description <- c(mydfpatient$Gender, mydfpatient$Age, mydfpatient$Weight)
+    mydf_p <- data.frame(Patient, Description)
     
     # browser()
     # write_csv(getquery()$df$result, file)
     # filename = paste(getreportid(), ".xlsx", sep = "")
     write.xlsx(getquery()$df$result, file=file, sheetName="general")
+    write.xlsx(mydf_p, file=file, sheetName="patient", append=TRUE)
     write.xlsx(mydf_drug, file=file, sheetName="drug", append=TRUE)
     write.xlsx(mydf_reaction, file=file, sheetName="reaction", append=TRUE)
     write.xlsx(getquery()$openfdadf, file=file, sheetName="openfda", append=TRUE, row.names=FALSE)
@@ -1278,7 +1496,12 @@ output$reportid <- renderUI({
 
 output$currec <- renderUI({ 
   mydf <- getfullquery()
-  numrecs <- mydf$df.meta$results$total
+  q <- geturlquery()
+  if (q$concomitant == FALSE){
+    numrecs <- mydf$df.total
+  } else {
+    numrecs <- mydf$df.meta$results$total 
+  }
   maxlim <- getopenfdamaxrecords( numrecs )
   updateSliderInput( session, 'skip', value=getskip()+1, min=1, step= 1, max=maxlim)
   out <- paste( i18n()$t('Viewing #'), getskip()+1, i18n()$t('of'), numrecs, i18n()$t('selected reports'))
@@ -1300,14 +1523,17 @@ output$applinks <- renderText({
 })
 
 
-geturlquery <- observe({
+geturlquery <- reactive({
    q <- parseQueryString(session$clientData$url_search)
-   q<-NULL
-   q$v1<-"patient.drug.openfda.generic_name"
-   q$v2<-"patient.reaction.reactionmeddrapt"
-   q$t1<-"Omeprazole"
-   q$t2<-"Hypokalaemia"
-   q$hash <- "ksjdhfksdhfhsk"
+   # q<-NULL
+   # q$v1<-"patient.drug.openfda.generic_name"
+   # q$v2<-"patient.reaction.reactionmeddrapt"
+   # q$t1<-"Omeprazole"
+   # q$t2<-"Hypokalaemia"
+   # q$t1<-"D10AD04"
+   # q$t2<-"10012378"
+   # q$hash <- "ksjdhfksdhfhsk"
+   # q$concomitant <- TRUE
    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
    
@@ -1354,11 +1580,35 @@ if(!is.null(q$v3) )
 #   
 #   updateNumericInput(session, "skip", value = q$skip)
 #   return(q)
+  if (q$v1=="patient.drug.openfda.generic_name"){
+    con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
+    con_atc$disconnect()
+    
+    q$dename <- drug$names[[1]][1]
+    if (!is.null(q$v2)){
+      
+      con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
+      con_medra$disconnect()
+      
+      q$ename <- event$names[[1]][1]
+      
+    }
+  } else {
+    con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
+    con_medra$disconnect()
+    
+    q$dename <- event$names[[1]][1]
+  }
   values$urlQuery<-q
 })
 
 
 })
+
+
 
 fixDate<-function(dd,type){
   tempDD<-dd
@@ -1366,10 +1616,19 @@ fixDate<-function(dd,type){
     if (type=="102"){
       tempDD <- format(ymd(dd), "%y/%m/%d")
     }
-  else if (type== '610'){
-    tempDD <- format(ym(dd), "%y/%m")
-  }
+    else if (type== '610'){
+      tempDD <- format(ym(dd), "%y/%m")
+    }
   
-  return(tempDD)
+return(tempDD)
 }
+
+
+
+
+
+
+
+
+
 

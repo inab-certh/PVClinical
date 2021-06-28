@@ -120,12 +120,12 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
 #     )
 #   ),
   fluidRow(useShinyjs(), style="margin-bottom: 0.3rem",
-    column(width=2, bsButton( 'prevrow', '< Previous Report', block=TRUE, style = 'primary') ),
+    column(width=2, bsButton( 'prevrow', '< Previous', block=TRUE, style = 'primary') ),
     column(width=2, htmlOutput("ptext") ),
     column(width=4, 
            strong( rendercurrec() ) ),
     column(width=2, htmlOutput("ntext") ),
-    column(width=2, bsButton( 'nextrow', 'Next Report>', block=TRUE, style = 'primary') )
+    column(width=2, bsButton( 'nextrow', 'Next >', block=TRUE, style = 'primary') )
     , id='navrow'),
   fluidRow(useShinyjs(),
     column(width=12, 
@@ -133,7 +133,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
              fluidRow(column(width=8, tableOutput( 'patienttable' ),),
              # htmlOutput( 'overviewtitle' ), 
              column(width=4, 
-                    textInput("safetyreportid", "Safety Report Id", ""),
+                    fluidRow(column(width=6,textInput("safetyreportid", "Safety Report Id", "")),
+                             column(width=5,bsButton( 'searchID', 'Search ID', block=TRUE, style = 'primary'),
+                                    style="margin-top: 2.45rem;"),),
                     tableOutput('reporttable'),),
              style = "max-height: 600px;",
              
@@ -285,9 +287,9 @@ fluidRow(useShinyjs(),
                                   uiOutput("sourceFdaDataframe", style = "display:inline-block; margin-left:20px;"),
                                   
                            ),
-                           # column(width=4,
-                           #        uiOutput("sourceFdaSDataframe", style = "display:inline-block; margin-left:20px;"),
-                           # ),
+                           column(width=4,
+                                  uiOutput("sourceFdaSDataframe", style = "display:inline-block; margin-left:20px;"),
+                           ),
                          ),
                         
                          wellPanel(  
