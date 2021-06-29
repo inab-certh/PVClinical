@@ -89,7 +89,7 @@ a:hover {
 {% block content %}
 
 <div class="header">
-    <div  style="padding-right:1750px"><a class="previous round pull-left" type="button" onclick="history.back();"><i class="fas fa-arrow-left"></i></a></div>
+    <div  style="padding-right:1750px"><a class="previous round pull-left" href="{% url 'patient_management_workspace' %}"><i class="fas fa-arrow-left"></i></a></div>
 
   <h1>Answers of Liverpool Algorithm for " {{pat_id}} "</h1>
   <p>The following questions based on liverpool algorithm for determining the likelihood of whether an ADR (adverse drug reaction) is actually due to the drug rather than the result of other factors.</p>
@@ -101,7 +101,7 @@ a:hover {
     <h3>Related with scenario:&nbsp {{scen_title}}</h3>
 
   <div class="main">
-    {% if quest.q1 == False %}
+{% if quest.q1 == False %}
 1. Do you suspect an adverse drug reaction?
 <h3>No</h3>
 <br>
@@ -117,7 +117,7 @@ a:hover {
 <h3>No</h3>
 <br>
 {% endif %}
-{% if quest.q1 == True %}
+{% if quest.q2 == True %}
 2. Did the event appear after the drug was administered or dose increased ?
 <h3>Yes</h3>
 <br>
@@ -242,35 +242,12 @@ a:hover {
                 </h1>
             </div>
             <div class="modal-footer-full-width  modal-footer">
+                <div style="text-align: left;"><b>doi:</b>10.1371/journal.pone.0028096.g002</div>
                 <button type="button" class="btn  btn-md btn-rounded" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-<!--&lt;!&ndash;      Modal&ndash;&gt;-->
-<!--      <div class="modal"  id="liverpoolimg" tabindex="-1" role="dialog"  aria-hidden="true">-->
-<!--          <div class="modal-dialog modal-lg">-->
-<!--            <div class="modal-content">-->
-<!--              <div class="modal-header">-->
-<!--                <h2>Liverpoll Algorithm</h2>-->
-<!--                   <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-<!--                    </div>-->
-<!--              <div class="modal-body" >-->
-<!--                    <img  class="patient-work-img" src="{% static 'images/liverpool_img.png' %}" id="liverpollimg"  style="width:100%;max-width:300px">-->
-<!--                  <div class="1"></div>-->
-<!--                    <div class="2"></div>-->
-
-<!--              </div>-->
-<!--              <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; /.modal-content &ndash;&gt;-->
-<!--          </div>-->
-<!--  &lt;!&ndash; /.modal-dialog &ndash;&gt;-->
-<!--</div>-->
-
 
   </div>
 

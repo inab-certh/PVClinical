@@ -2,33 +2,6 @@
 {% load staticfiles %}
 {% block stylesheets %}
     <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
-<style>
-
-div{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    }
-.crop_img_pr {
-    margin: 0 -75px -300px 0;
-
-}
-
-.view_title{
-    color:#515254;
-    margin-left:10px;
-    background-color:#F6F8FB;
-    box-shadow: 5px 5px 3px #91A1B2;
-     -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 1.5px;
-    width:40%;
-    padding: 4px 4px 4px 4px;
-    padding-top:5px;
-    padding-bottom:5px;
-    text-align: center;
-
-}
-</style>
 {% endblock stylesheets %}
 
     <img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="35%">
@@ -179,6 +152,8 @@ div{
 {% if no_comb == "" %}
     {% for hash,note in report_notes.items %}
         {%if hash != 'empty' %}
+        <div style="padding-bottom:30px"></div>
+
             <div class="view_title" >&nbsp Notes</div>
             <br>
             <br>
@@ -191,12 +166,11 @@ div{
 
 <!--End Notes-->
 <!--    Quickview-->
-
-    {% if dict_quickview.items%}
+    {% if dict_quickview %}
         {% for key,value in dict_quickview.items %}
             {% if value.2 or value.0 != '' %}
+        <div style="padding-bottom:30px"></div>
                 <div class="view_title">&nbsp Quick View</div>
-                <br>
                 <br>
                 <br>
                 <br>
@@ -209,30 +183,28 @@ div{
                 <br>
                 <subt>{{value.1}}- Change in mean analysis</subt>
                 </div>
-    <br>
-    <br>
+            <br>
+            <br>
             {% endif %}
-    <br>
             {% if value.2 %}
                 <div class="tg">
                 <div style="margin-left: 20px;">{{value.2|safe}}</div>
                 <subt>{{value.3}}- PRR and ROR results </subt>
-                <br>
-                <br>
                 </div>
+                <br>
+                <br>
             {% endif %}
-
         {% endfor %}
     {% endif %}
-    <br>
+
         <!--Dashboard-->
     {% if dict_dashboard_png or dict_dash_csv %}
         <div style="padding-bottom:30px"></div>
         <div class="view_title" >&nbsp Dashboard</div>
         <br>
         <br>
-        <div style="padding-bottom:30px"></div>
-        {% for img,fig in dict_dashboard_png.items %}
+        <br>
+    {% for img,fig in dict_dashboard_png.items %}
           <div class="tg">
           <img width="80%" src='{{REPORT_ENDPOINT}}{{ img }}'>
               <br>
@@ -242,7 +214,7 @@ div{
 
           </div>
         {% endfor %}
-        <div style="padding-bottom:30px"></div>
+<!--        <div style="padding-bottom:30px"></div>-->
 
         {% for key,value in dict_dash_csv.items %}
             <div class="tg">
@@ -253,6 +225,7 @@ div{
         {% endfor %}
     {% endif %}
 <!--    End of Dashboard-->
+
 <!--Reporting Rates for Drug-->
     {% if dict_rr_d %}
         <div style="padding-bottom:30px"></div>
@@ -617,18 +590,74 @@ div{
         {%endfor%}
 <!--End for combination of drug-condition-->
 
-<!--Extra-notes-->
+<!--PubMed Workspace-->
+{% if pub_exist  %}
+<div style="padding-top:30px"></div>
 
+<div class="workspace"> PubMed Workspace</div>
+        <br>
+        <br>
+    <div class="view_title" style="width:50%" >&nbsp Articles that are relevant to this scenario </div>
+        <br>
+        <br>
+
+{% for k,l in pub_titles.items %}
+{% if l != "" and l != "''" %}
+<div class="paper_title"><b>Paper {{forloop.counter0}}</b></div>
+<div style="padding-left:20px;">
+<br>
+
+<subt>Title </subt>
+<br>
+<div class="details">{{l}}</div>
+<br>
+{% for p,s in pub_dict_authors.items %}
+{% if k == p %}
+<subt>Authors</subt>
+<br>
+<div class="details">{{ s.0 }}</div>
+<br>
+{% endif %}
+{% endfor %}
+
+{% for q,w in pub_dict_urls.items %}
+{% if k == q %}
+<subt>URL</subt>
+<br>
+<div class="details">{{ w.0 }}</div>
+<br>
+{% endif %}
+{% endfor %}
+
+
+{% for n,m in pub_notes.items %}
+
+{% if k == n and m %}
+<subt>Notes</subt>
+<br>
+<div class="details">{{m}}</div>
+<br>
+{% endif %}
+{% endfor %}
+{% endif %}
+</div>
+{% endfor %}
+    <div style="padding-bottom:30px"></div>
+
+{% endif %}
+<!--End of PubMed Workspace-->
+
+<!--Extra-notes-->
 {% if extra_notes %}
     <div class="final-note" >
         {% if extra_notes != 'empty' %}
-            <h2>-Aggregate notes of the report</h2>
-            {{ extra_notes }}
+            <div class="view_title" style="width:50%">-Aggregate notes of the report</div>
+        <br>
+        <br>
+          <div class="details"> {{ extra_notes }} </div>
         {% endif %}
     </div>
 {% else %}
-
     <textarea id="editFnote" placeholder="Place your notes here..."></textarea>
 {% endif %}
-
 <!--End of extra_notes-->
