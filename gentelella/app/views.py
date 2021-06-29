@@ -1426,6 +1426,7 @@ def final_report(request, scenario_id=None):
     :param scenario_id: the specific scenario, new scenario or None
     :return: the form view
     """
+
     ir_table = ""
     ir_all = ""
     path_all = ""
@@ -1472,6 +1473,14 @@ def final_report(request, scenario_id=None):
         m = m+1
 
     user = sc.owner
+
+    pub_dict = {}
+    pub_obj = PubMed.objects.filter(scenario_id=scenario_open, relevance=True)
+    pub_obj_titles = list(map(lambda el: el.title, pub_obj))
+
+    for i in pub_obj:
+        if i.notes:
+            pub_dict[i.title] = i.notes
 
     notes_openfda1 = {}
     if Notes.objects.filter(user=user) != "":
@@ -1567,7 +1576,6 @@ def final_report(request, scenario_id=None):
 
         if resp_number != []:
             resp_num_id = resp_number[0]['id']
-            print(resp_num_id)
             if resp_num_id == []:
                 char_generate = 'no'
             else:
@@ -1651,15 +1659,11 @@ def final_report(request, scenario_id=None):
         resp_number_cp = response.json()
         if resp_number_cp != []:
             resp_num_id_cp = resp_number_cp[0]['id']
-            print('resp_num_id_cp')
-            print(resp_num_id_cp)
 
             if resp_num_id_cp == []:
                 cp_generate = 'no'
             else:
                 cp_generate = 'yes'
-                print(cp_id)
-                print(resp_num_id_cp)
                 if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.pathways_shot(
                         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
@@ -1688,12 +1692,13 @@ def final_report(request, scenario_id=None):
                'pre_table': pre_table, 'pre_chart': pre_chart, 'drug_table': drug_table, 'drug_chart': drug_chart,
                'demograph_table': demograph_table, 'demograph_chart': demograph_chart, 'charlson_table': charlson_table,
                'charlson_chart': charlson_chart, 'gen_table': gen_table, 'gen_chart': gen_chart,
-               'char_generate': char_generate, 'cp_generate': cp_generate, 'ir_generate': ir_generate}
+               'char_generate': char_generate, 'cp_generate': cp_generate, 'ir_generate': ir_generate,
+               'pub_dict': pub_dict}
 
     return render(request, 'app/final_report.html', context)
 
 
-def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
+def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pub_notes=None, extra_notes=None):
     """ Generate the preview of final report that contains every information that you
     have chosen from OHDSI and OpedFDA workspace and give you the opportunity to
     return to the final report and change your options and add some extra notes
@@ -1762,6 +1767,25 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
     gen_table_rep = request.GET.get("gen_table_rep", None)
     gen_chart_rep = request.GET.get("gen_chart_rep", None)
     cp_all_rep = request.GET.get("cp_all_rep", None)
+
+    pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", None))
+
+    pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", None))
+    pub_value = list(pub_titles.values())
+    pub_exist = 0
+    for i in pub_value:
+        if i != '' and i != "''":
+            pub_exist = 1
+
+    pub_dict_authors = {}
+    pub_dict_urls = {}
+    n = 0
+    for i in pub_value:
+        if i != '' and i != "''":
+            n = n+1
+            pub_obj = PubMed.objects.filter(scenario_id=scenario_id, title=i, relevance=True)
+            pub_dict_authors['{}'.format(n)] = list(map(lambda el: el.authors, pub_obj))
+            pub_dict_urls['{}'.format(n)] = list(map(lambda el: el.url, pub_obj))
 
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
@@ -2494,7 +2518,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, extra_notes=None):
                'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
                'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
-               "coh_dict": coh_dict, "cp_dict": cp_dict}
+               "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_titles": pub_titles, "pub_notes": pub_notes,
+               "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors, "pub_dict_urls": pub_dict_urls}
 
     return render(request, 'app/report_pdf.html', context)
 
@@ -2509,6 +2534,11 @@ def print_report(request, scenario_id=None):
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
     report_notes = urllib.parse.urlencode(json.loads(report_notes))
+    pub_titles = request.GET.get("allPubTitles", None)
+    pub_titles = urllib.parse.urlencode(json.loads(pub_titles))
+    pub_notes = request.GET.get("allPubNotes", None)
+    pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
+
     extra_notes = json.loads(request.GET.get("extra_notes", None))
     if not extra_notes:
         extra_notes = "empty"
@@ -2525,7 +2555,8 @@ def print_report(request, scenario_id=None):
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
 
-    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}'.format(scenario_id, report_notes, extra_notes),
+    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}/{}/{}'.format(scenario_id, report_notes, extra_notes,
+                                                                          pub_titles, pub_notes),
                     file_path, options=options)
     webbrowser.open(r"{}".format(file_path))
 
@@ -2728,7 +2759,6 @@ def patient_history(request, patient_pk=None):
     context = {"patient_cases": patient_cases, "patient_pk": patient_pk}
 
     return render(request, 'app/patient_history.html', context)
-
 
 
 @login_required()
