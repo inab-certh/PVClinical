@@ -70,7 +70,6 @@ urlpatterns = [
          name='report_pdf'),
     path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>/<str:pub_titles>/<str:pub_notes>",
          views.report_pdf, name='report_pdf'),
-
     path("ajax/print_report", views.print_report, name='ajax_print_report'),
     path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
     path("patient_management_workspace/new_case", views.new_case, name='new_case'),

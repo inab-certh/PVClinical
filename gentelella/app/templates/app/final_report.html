@@ -199,7 +199,6 @@
 
                                       </div>
                                     </div>
-
                                 </div>
                                         {% endfor %}
 
@@ -207,6 +206,15 @@
                                 </div>
                             </div>
                             <div id="PubMed" class="container tab-pane fade"><br>
+                                <div style="padding-left:30px; padding-right:30px;">
+                                    <i style=" font-weight:bold;"> {% trans "Εάν επιλέξετε να συμπεριλάβετε " %}
+                                    {% trans "τον τίτλο ενός εγγράφου από το PubMed, προστίθενται αυτόματα και οι " %}
+                                    {% trans "πληροφορίες των συντακτων και του Ενιαίου Εντοπιστή Πόρων(URL) " %}
+                                    {% trans " στην τελική αναφορά. Επίσης, οι σημειώσεις για το κάθε " %}
+                                    {% trans "έγγραφο εμφανίζονται στην τελική αναφορά, μόνο εάν έχετε συμπεριλάβει " %}
+                                    {% trans "και τον τίτλο του εκάστοτε εγγράφου." %}
+                                    </i>
+                                </div>
                                 <br>
                                 <div class="container">
                                     <div class="panel-group" id="accordionpub">
@@ -218,7 +226,7 @@
                                           </div>
                                           <div id="collapsepub" class="panel-collapse collapse in">
                                               <br>
-                                              <table class="table table-striped table-bordered" style="width:800px">
+                                              <table class="table table-striped table-bordered " style="width:1200px">
                                                   {% for title,note in pub_dict.items %}
                                                     <tr>
                                                     <td><button id="PubMedBtn" data-target="#pubModal{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" >
@@ -229,7 +237,7 @@
 
                                                                 <!--  PubMed Modal -->
                                                                     <div class="modal fade report-note-modal"  id="pubModal{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-                                                                      <div class="modal-dialog">
+                                                                      <div class="modal-dialog modal-lg">
                                                                         <div class="modal-content">
                                                                           <div class="modal-header">
                                                                             <h4 class="modal-title col-xs-11">Paper's tittle from Mendeley</h4>
@@ -250,7 +258,7 @@
 
                                                                 <!--  PubMedNote Modal -->
                                                                     <div class="modal fade report-note-modal"  id="pubModalNote{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-                                                                      <div class="modal-dialog">
+                                                                      <div class="modal-dialog modal-lg">
                                                                         <div class="modal-content">
                                                                           <div class="modal-header">
                                                                             <h4 class="modal-title col-xs-11">Notes for this paper from Mendeley</h4>
@@ -268,8 +276,6 @@
                                                                       <!-- /.modal-dialog -->
                                                                     </div>
                                                                     <!-- /.modal -->
-
-
 
                                                     </tr>
                                                   {% endfor %}
@@ -327,12 +333,7 @@
 
                 </div>
             </div>
-
-
-
         </div>
-
-
 
             </div>
         </div>
@@ -373,7 +374,6 @@
         var allPubTitles = {"0":"''"};
 
 
-
         $("[id*=pubnote]").click(function(){
 
             var pubnote_rep= $(this).data('series');
@@ -406,7 +406,6 @@
             console.log(allPubTitles);
 
         });
-
 
 
         $("#irnote").on("change", function(){
@@ -594,7 +593,8 @@
                 "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
                 "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
                 "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
                 dataType: "html",
                 success: function (res) {
 
@@ -618,7 +618,8 @@
                 "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
                 "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
                 "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
                 dataType: "html",
                 success: function (res) {
 
@@ -642,7 +643,8 @@
                 "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
                 "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
                 "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes)},
+                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
                 dataType: "html",
                 success: function (res) {
 
@@ -658,6 +660,7 @@
     $("#result1").click(function() {
         var scid={{scenario_open}};
         var note_val="";
+        console.log(allPubNotes)
 
 
         $.ajax({
