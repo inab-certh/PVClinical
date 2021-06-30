@@ -70,7 +70,13 @@ p    { font-weight: bold; }
  font-size:36px;
  font-family: Arial, Helvetica, sans-serif;
  }
-subt{
+ subt{
+  font-size:16px;
+  font-weight: bold;
+  margin-left:20px;
+ font-family: Arial, Helvetica, sans-serif;
+ }
+subt1{
   font-size:18px;
   font-weight: bold;
   margin-left:20px;

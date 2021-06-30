@@ -4,8 +4,8 @@
 {% load crispy_forms_tags %}
 {% load custom_tags %}
 
-
 {% block title %} New Case {% endblock %}
+
 {% block stylesheets %}
   {{ block.super }}
   <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -109,7 +109,6 @@
 				</div>
 			  </div>
 			</div>
-
 			<div style="margin-top:40px"></div>
 
 		  <a id="quest_modal" data-target="#questionnaireModal" data-toggle="modal" class="btn btn-warning pull-left" style="margin-left: 10px;" ></i>&nbsp
@@ -117,11 +116,9 @@
 
 		<br>
 			<div style="display:none;" class="mt-3">{{ form.questionnaires|as_crispy_field }}</div>
-
 		<br>
 		<br>
 		<br>
-
 			{% if quest_id != None %}
 
 		<div style="margin: auto; width: 70%; color:red;"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
@@ -138,7 +135,6 @@
 				</span>
 
 				</button>
-
 
 			<a class="btn btn-dark col-xs-4" type="button"
 				href="{% url 'patient_management_workspace' %}">

@@ -2556,8 +2556,7 @@ def print_report(request, scenario_id=None):
     file_path = os.path.join(tempfile.gettempdir(), fname)
 
     pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}/{}/{}'.format(scenario_id, report_notes, extra_notes,
-                                                                          pub_titles, pub_notes),
-                    file_path, options=options)
+                                                                             pub_titles, pub_notes), file_path, options=options)
     webbrowser.open(r"{}".format(file_path))
 
     return render(request, 'app/print_report.html')

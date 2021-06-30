@@ -603,13 +603,13 @@
 
 {% for k,l in pub_titles.items %}
 {% if l != "" and l != "''" %}
-<div class="paper_title"><b>Paper {{forloop.counter0}}</b></div>
+<div class="paper_title"><b>Paper {{ forloop.counter0 }}</b></div>
 <div style="padding-left:20px;">
 <br>
 
 <subt>Title </subt>
 <br>
-<div class="details">{{l}}</div>
+<div class="details">{{ l }}</div>
 <br>
 {% for p,s in pub_dict_authors.items %}
 {% if k == p %}
@@ -635,7 +635,7 @@
 {% if k == n and m %}
 <subt>Notes</subt>
 <br>
-<div class="details">{{m}}</div>
+<div class="details">{{ m }}</div>
 <br>
 {% endif %}
 {% endfor %}
