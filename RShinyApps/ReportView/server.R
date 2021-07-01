@@ -1364,6 +1364,101 @@ output$downloadData <- downloadHandler(
   
 )
 
+output$downloadAllData <- downloadHandler(
+  filename = function() {
+    paste('AllReports', ".xlsx", sep = "")
+  },
+  content = function(file) {
+    
+    q <- geturlquery()
+    v1 <- c(q$v1, q$v2, q$v3)
+    t1 <- c(q$t1, q$t2, q$t3)
+   
+
+    if (v1[1] != ""){
+      t1[1] = q$dename
+    }
+    if (v1[2] == "patient.reaction.reactionmeddrapt"){
+      t1[2] = q$ename
+    }
+    myurl <- buildURL(v1, t1, limit=100)
+    mydf <- fda_fetch_p(session, myurl)
+    
+    df <- mydf
+    
+    if ( is.data.frame(mydf$results$patient) )
+    {
+      mydf <- (mydf$results$patient)    
+      types <- (sapply(mydf, class))
+      typesval <- types[types!='data.frame' & types!='list']
+      mydfpatient <- mydf[ , names(typesval) ]
+      myvars <- c( 'patientonsetage', 'patientweight','patientsex' )
+      availnames <-  myvars %in% names(mydfpatient)
+      mydfpatient <- mydf[ , myvars[availnames] ]
+      mynames <- names(mydfpatient)
+      mynames <- gsub('patientonsetage', 'Age', mynames, fixed=TRUE )
+      mynames <- gsub('patientweight', 'Weight', mynames, fixed=TRUE )
+      mynames <- gsub('patientsex', 'Gender', mynames, fixed=TRUE )
+      names(mydfpatient) <- mynames
+    }
+    
+    if ('Gender' %in% names(mydfpatient))
+    { 
+      mydfpatient$Gender[ mydfpatient$Gender==2] <- 'Female' 
+      mydfpatient$Gender[ mydfpatient$Gender==1] <- 'Male' 
+      mydfpatient$Gender[ mydfpatient$Gender==0] <- 'Unknown' 
+    }
+    
+    mydfpatient$Weight [is.na(mydfpatient$Weight)] <- "UNKNOWN"
+    mydfpatient$Age [is.na(mydfpatient$Age)] <- "UNKNOWN"
+    mydfpatient$Gender [is.na(mydfpatient$Gender)] <- "UNKNOWN"
+    
+    mydfpatient$Safetyreportid <- df$results$safetyreportid
+    mydfpatient$Received_date <- df$results$receivedate
+    mydfpatient$Reaction <- lapply(df$results$patient$reaction, function(x) x[(names(x) %in% c("reactionmeddrapt"))])
+    mydfpatient$Reaction <- lapply(mydfpatient$Reaction,function(x) na_val(x))
+    outcome_val <-  c('Recovered/Resolved', 'Recovering/Resolving', 'Not recovered/Not resolved', 'Recovered/Resolved with sequelae', 'Fatal', 'Unknown')
+    mydfpatient$Outcome <- lapply(df$results$patient$reaction, function(x) as.numeric(unlist(x[(names(x) %in% c("reactionoutcome"))])))
+    mydfpatient$Outcome <- lapply( mydfpatient$Outcome, function(x) outcome_val[x] )
+    mydfpatient$Outcome <- lapply(mydfpatient$Outcome,function(x) na_val(x))
+    drug_val <-  lapply(df$results$patient$drug, function(x) x[(names(x) %in% c("drugcharacterization", "medicinalproduct"))])
+    mydfpatient$Suspect_drugs <- lapply(drug_val,function(x) x[x$drugcharacterization==1,2])
+    mydfpatient$Suspect_drugs <- lapply(mydfpatient$Suspect_drugs,function(x) na_val(x))
+    mydfpatient$Concomitant_drugs <- lapply(drug_val,function(x) x[x$drugcharacterization==2,2])
+    mydfpatient$Concomitant_drugs <- lapply(mydfpatient$Concomitant_drugs,function(x) na_val(x))
+    
+    myvars <-  c("seriousnesscongenitalanomali",
+                 "seriousnessdeath",
+                 "seriousnessdisabling",
+                 "seriousnesshospitalization",
+                 "seriousnesslifethreatening",
+                 "seriousnessother")
+    availnames <-  names(df$results) %in% myvars 
+    myserious <- names( df$results)[availnames]
+    serious <- df$results[myserious]
+    # browser()
+    for (i in myserious) {
+      if (i == "seriousnesscongenitalanomali") {
+        serious[which(!is.na(serious["seriousnesscongenitalanomali"])),i]<-"Congenital Anomali"
+      } else if (i == "seriousnessdeath") {
+        serious[which(!is.na(serious["seriousnessdeath"])),i]<-"Death"
+      } else if (i == "seriousnessdisabling") {
+        serious[which(!is.na(serious["seriousnessdisabling"])),i]<-"Disabling" 
+      } else if (i == "seriousnesshospitalization") {
+        serious[which(!is.na(serious["seriousnesshospitalization"])),i]<-"Hospitalization" 
+      }  else if (i == "seriousnesslifethreatening") {
+        serious[which(!is.na(serious["seriousnesslifethreatening"])),i]<-"Life Threatening" 
+      }  else if (i == "seriousnessother") {
+        serious[which(!is.na(serious["seriousnessother"])),i]<-"Other" 
+      }
+    } 
+    serious[is.na(serious)] <- ""
+    mydfpatient$Seriousness <- apply(serious,1,function(x) connection(x))
+  
+    write.xlsx(mydfpatient, file=file, sheetName="allReports", row.names = FALSE)
+  }
+  
+)
 
 output$sourceFdaDataframe<-renderUI({
   if (!is.null(values$urlQuery$hash))
@@ -1646,12 +1741,18 @@ fixDate<-function(dd,type){
 return(tempDD)
 }
 
+connection<-function(x){
+  x <- x[x!=""]
+  
+  paste0(x,collapse = ',')
 
+}
 
-
-
-
-
+na_val<-function(x){
+  x <- x[!is.na(x)]
+  toString(x)
+  
+}
 
 
 

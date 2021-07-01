@@ -1471,6 +1471,23 @@ observeEvent(input$sourceEventDataReportUI,{
     }
 })
 
+observeEvent(input$date1, {
+  
+  if (abs(input$date2-input$date1)>365){
+    updateDateInput(session, "date2",
+                    value=input$date1+365
+    )
+  }
+})
+
+observeEvent(input$date2, {
+  
+  if (abs(input$date2-input$date1)>365){
+    updateDateInput(session, "date1",
+                    value=input$date1-365
+    )
+  }
+})
 
 
 output$infoquery_counts2<-renderUI({
