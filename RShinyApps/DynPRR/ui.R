@@ -61,7 +61,9 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                       HTML( tt('eventname1') ), tt('eventname2'),
                                       placement='left')
                  ),
-                 dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                 # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to", startview="year" ),
+                 dateInput("date1",'Start Date'),
+                 dateInput("date2",'End Date'),
                  #uiOutput("daterange"),
                  uiOutput("dtlocator"),
                           
