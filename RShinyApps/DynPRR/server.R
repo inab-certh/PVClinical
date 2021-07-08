@@ -453,8 +453,10 @@ getvars_d <- reactive({
 #Timerange string from 1 December 1999 to present
 getstartend <- reactive({
   geturlquery()
-  start <- ('1989-06-30')
-  end <- as.character( Sys.Date() ) 
+  # start <- ('1989-06-30')
+  # end <- as.character( Sys.Date() ) 
+  start <- input$date1
+  end <- input$date2
   return( c(start, end))
 })
 
@@ -1194,7 +1196,8 @@ output$prrplot <- renderPlot ({
     
     if ( nrow(mydf) >0 )
       {
-      showdates <- seq( as.Date( input$daterange[1] ), as.Date( input$daterange[2] ), 'months' )
+      showdates <- seq( as.Date( input$date1 ), as.Date( input$date2 ), 'months' )
+      # browser()
       showdates <- substr(showdates, 1, 7)
       mydf <- mydf[mydf[ , i18n()$t('Date') ] %in% showdates,]
       myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$UB) ) )
@@ -1297,10 +1300,14 @@ output$applinks <- renderText({
   return( makeapplinks(  getcururl(), getqueryvars() )  )
 })
 
-output$date1 <- renderText({ 
-  l <- getdaterange()
-  paste( '<b>Reports from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
-})
+# output$date1 <- renderText({
+#   l <- getdaterange()
+# 
+#   paste( '<b>Reports from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
+# })
+
+
+
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
   # q<-NULL
@@ -1310,18 +1317,23 @@ geturlquery <- reactive({
   # q$t2<-"10003239"
   # q$hash <- "ksjdhfksdhfhsk"
   # q$concomitant<- FALSE
+  # browser()
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2) 
   updateTextInput(session, "drugname", value=q$term1)
   updateTextInput(session,"eventname", value=q$term2) 
-  updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange',  start = input$date1, end = input$date2)
+  # updateDateInput(session, 'date1', value = q$start)
+  # updateDateInput(session, 'date2', value = q$end)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateTextInput(session, "t1", value=q$t1)
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2)
-  updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange',  start = input$date1, end = input$date2)
+  # updateDateInput(session, 'date1', value = q$start)
+  # updateDateInput(session, 'date2', value = q$end)
   updateRadioButtons(session, 'useexact',
                      selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
@@ -1395,6 +1407,10 @@ i18n <- reactive({
   }
   translator
 })
+
+# output$to <- renderText({ 
+#  'to'
+# })
 
 output$infoprrplot<-renderUI({
   addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
