@@ -257,8 +257,8 @@ shinyServer(function(input, output, session) {
   
   getstartend <- reactive({
     geturlquery()
-    start <- input$daterange[1]
-    end <- input$daterange[2]
+    start <- input$date1
+    end <- input$date2
     return( c(start, end))
   })
   
@@ -332,7 +332,7 @@ shinyServer(function(input, output, session) {
                        selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
     updateRadioButtons(session, 'useexactE',
                        selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
-    updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
+    updateDateRangeInput(session, 'daterange',  start = input$date1, end = input$date2)
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     
     if (q$v1=="patient.drug.openfda.generic_name"){
@@ -2244,6 +2244,23 @@ getcururl <- reactive({
       }
   })
   
+  observeEvent(input$date1, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date2",
+                      value=input$date1+365
+      )
+    }
+  })
+  
+  observeEvent(input$date2, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date1",
+                      value=input$date1-365
+      )
+    }
+  })
   
   output$maketabsetPRRRORResults <- renderUI({ 
     maketabset( c('prr2', 'cloudprr', 'textplot'), 
