@@ -79,9 +79,15 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                placement='left')
                 
                   ),
-                 dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
-                 # uiOutput("daterangeout"),
-                 uiOutput("dtlocator"),
+                 # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                 # # uiOutput("daterangeout"),
+                 # uiOutput("dtlocator"),
+                 fluidRow( useShinyjs(),
+                           style="margin-bottom: 0.3rem",
+                           column(width=2, dateInput("date1", "", value = (Sys.Date()-365)) ),
+                           column(width=1, p("to"),
+                                  style="margin-top: 2.45rem; text-align: center;"),
+                           column(width=2, dateInput("date2", "", value = Sys.Date()) ),),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 

@@ -285,8 +285,10 @@ shinyServer(function(input, output, session) {
 
   getstartend <- function(){
     geturlquery()
-    start <- input$daterange[1]
-    end <- input$daterange[2]
+    # start <- input$daterange[1]
+    # end <- input$daterange[2]
+    start <- input$date1
+    end <- input$date2
     return( c(start, end))
   }
 
@@ -323,7 +325,7 @@ shinyServer(function(input, output, session) {
       # Refactor
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      query<-createDateAllQuery()
+      query<-createDateAllQuery(input$date1, input$date2)
       result <- con$aggregate(query)
       colnames(result)[1]<-"time"
       result$time <- as.Date(result$time, tz = "HST")
@@ -437,6 +439,24 @@ shinyServer(function(input, output, session) {
 
     return(mydf)
   }
+  
+  observeEvent(input$date1, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date2",
+                      value=input$date1+365
+      )
+    }
+  })
+  
+  observeEvent(input$date2, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date1",
+                      value=input$date1-365
+      )
+    }
+  })
 
   getts <- reactive({
     data <-  getquerydata()$mydfin$result
@@ -1054,7 +1074,7 @@ shinyServer(function(input, output, session) {
     updateTextInput(session,"t2", value=q$t2)
     updateTextInput(session, "drugname", value=q$t1)
     updateTextInput(session,"eventname", value=q$t2)
-    updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+    updateDateRangeInput(session,'daterange',  start = input$date1, end = input$date2)
     updateNumericInput(session,'maxcp', value=q$maxcps)
     updateNumericInput(session,'maxcp2', value=q$maxcps)
     updateRadioButtons(session, 'useexact',
@@ -1231,7 +1251,7 @@ shinyServer(function(input, output, session) {
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    totalQuery<-totalreports()
+    totalQuery<-totalreports(input$date1, input$date2)
     totalResult <- con$aggregate(totalQuery)
     total<-totalResult$safetyreportid
     
@@ -1602,8 +1622,10 @@ shinyServer(function(input, output, session) {
   
   getstartend <- reactive({
     geturlquery()
-    start <- input$daterange[1]
-    end <- input$daterange[2]
+    start <- input$date1
+    end <- input$date2
+    # start <- input$daterange[1]
+    # end <- input$daterange[2]
     return( c(start, end))
   })
   
@@ -1829,7 +1851,7 @@ shinyServer(function(input, output, session) {
       # Refactor
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totalQuery<-totalreports()
+      totalQuery<-totalreports(input$date1, input$date2)
       totalReports <- con$aggregate(totalQuery)
       total <- totalReports$safetyreportid
 
@@ -1839,7 +1861,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")      
         eventName<-q$t1
         
-        eventTotalQuery<-totalEventReports(eventName=eventName)
+        eventTotalQuery<-totalEventReports(eventName=eventName, input$date1, input$date2)
         totalevents <- con$aggregate(eventTotalQuery)
         totaldrug <- totalevents$safetyreportid
         
@@ -1848,7 +1870,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")      
         drugName<-q$t1
         
-        drugTotalQuery<-totalDrugReports(drugName=drugName)
+        drugTotalQuery<-totalDrugReports(drugName=drugName, input$date1, input$date2)
         totaldrugs <- con$aggregate(drugTotalQuery)
         totaldrug <- totaldrugs$safetyreportid
         con$disconnect()
@@ -2025,7 +2047,7 @@ shinyServer(function(input, output, session) {
             # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
             drugName<-str_replace_all(realterms[i], "[[:punct:]]", " ")
             
-            drugTotalQuery<-totalDrugReportsOriginal(drugName=drugName)
+            drugTotalQuery<-totalDrugReportsOriginal(drugName=drugName, input$date1, input$date2)
             totaldrug <- con$aggregate(drugTotalQuery)
             all_events2 <- totaldrug
             
@@ -2036,7 +2058,7 @@ shinyServer(function(input, output, session) {
             # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
             eventName<- str_replace_all(realterms[i], "[[:punct:]]", " ")
             
-            eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName))
+            eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName), input$date1, input$date2)
             totalevent <- con$aggregate(eventTotalQuery)
             all_events2 <- totalevent
             
