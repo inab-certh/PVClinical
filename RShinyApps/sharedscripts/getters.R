@@ -189,7 +189,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
       eventName <-unlist(strsplit(t[2], '\\"'))[1]
     }
     drugName<-NULL
-    eventQuery<-totalDrugsInEventReports(eventName=eventName)
+    eventQuery<-totalDrugsInEventReports(eventName=eventName, input$date1, input$date2)
     eventResult <- con$aggregate(eventQuery)
     colnames(eventResult)[1]<-"term"
     
@@ -201,7 +201,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     drugName<-unlist(strsplit(t[2], '\\"'))[2]
     
-    drugQuery<-totalEventsInReports(drugName=drugName)
+    drugQuery<-totalEventsInReports(drugName=drugName, input$date1, input$date2)
     drugResult <- con$aggregate(drugQuery)
     colnames(drugResult)[1]<-"term"
     

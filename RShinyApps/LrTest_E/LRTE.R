@@ -253,8 +253,10 @@ shinyServer(function(input, output, session) {
   
   getstartend <- reactive({
     geturlquery()
-    start <- input$daterange[1]
-    end <- input$daterange[2]
+    start <- input$date1
+    end <- input$date2
+    # start <- input$daterange[1]
+    # end <- input$daterange[2]
     return( c(start, end))
   }) 
   
@@ -497,7 +499,7 @@ shinyServer(function(input, output, session) {
     } else {
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totaleventQuery<-createConEventQuery(q$t1)
+      totaleventQuery<-createConEventQuery(q$t1, input$date1, input$date2)
       totaleventResult <- con$aggregate(totaleventQuery)
       # eventReport<-totaleventResult$safetyreportid
       colnames(totaleventResult)[1]<-"term"
@@ -526,7 +528,7 @@ shinyServer(function(input, output, session) {
     } else {
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totaleventQuery<-totalEventInReports()
+      totaleventQuery<-totalEventInReports(input$date1, input$date2)
       totaleventResult <- con$aggregate(totaleventQuery)
       # eventReport<-totaleventResult$safetyreportid
       colnames(totaleventResult)[1]<-"term"
@@ -647,7 +649,7 @@ getindcounts <- reactive({
     } else {
       
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugQuery <- SearchEventReports(q$t1)
+      drugQuery <- SearchEventReports(q$t1, input$date1, input$date2)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
       
@@ -745,7 +747,7 @@ gettotals<- reactive({
   } else {
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    totalQuery<-totalreports()
+    totalQuery<-totalreports(input$date1, input$date2)
     totalResult <- con$aggregate(totalQuery)
     total<-totalResult$safetyreportid
     
@@ -1034,7 +1036,7 @@ geteventtotals <- reactive(
         # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
         drugName<-realterms[i]
         
-        drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "))
+        drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
         totaldrug <- con$aggregate(drugTotalQuery)
         all_events2 <- totaldrug
         if( !is.null( all_events2$safetyreportid ) )
@@ -2150,7 +2152,7 @@ geturlquery <- reactive({
 }
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
-  updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
+  updateDateRangeInput(session, 'daterange', start = input$date1, end = input$date2)
   updateRadioButtons(session, 'useexact',
                      selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
@@ -2233,6 +2235,25 @@ getcururl <- reactive({
       file.rename(out, file)
     }
   )
+  
+  observeEvent(input$date1, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date2",
+                      value=input$date1+365
+      )
+    }
+  })
+  
+  observeEvent(input$date2, {
+    
+    if (abs(input$date2-input$date1)>365){
+      updateDateInput(session, "date1",
+                      value=input$date1-365
+      )
+    }
+  })
+  
   
   output$inforrandllr<-renderUI({
     addPopover(session=session, id="inforrandllr", title=paste(i18n()$t("Metrics"), "RR - LLR"), 

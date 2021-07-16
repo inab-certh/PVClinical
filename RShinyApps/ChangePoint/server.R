@@ -302,7 +302,7 @@ gettotalquery <- reactive({
     
   }else {
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drugQuery <- SearchDrugReports(q$t1)
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     rank <- ceiling(length(ids$safetyreportid))
@@ -332,7 +332,7 @@ gettotaldaterangequery <- reactive({
     
   } else {
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drugQuery <- SearchDrugReports(q$t1)
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     rank <- ceiling(length(ids$safetyreportid))
@@ -358,8 +358,10 @@ getdrugeventtotal <- reactive({
 
 getstartend <- function(){
   geturlquery()
-  start <- input$daterange[1]
-  end <- input$daterange[2]
+  # start <- input$daterange[1]
+  # end <- input$daterange[2]
+  start <- input$date1
+  end <- input$date2
   return( c(start, end))
 }
 
@@ -384,7 +386,7 @@ getqueryde <- reactive({
     if (t[1]=="" & t[2] ==""){
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      timeall<-TimeseriesForTotalReports()
+      timeall<-TimeseriesForTotalReports(input$date1, input$date2)
       timeallResult <- con$aggregate(timeall)
       colnames(timeallResult)[1]<-"time"
       timeallResult$time <- as.Date(timeallResult$time, tz = "HST")
@@ -393,7 +395,7 @@ getqueryde <- reactive({
     } else {
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      timeall<-TimeseriesForDrugEventReports(q$t1, q$t2)
+      timeall<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
       timeallResult <- con$aggregate(timeall)
       colnames(timeallResult)[1]<-"time"
       timeallResult$time <- as.Date(timeallResult$time, tz = "HST")
@@ -447,7 +449,7 @@ getcodruglist <- reactive({
     
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    totaleventQuery<-CocomitantForDrugEventReports(q$t1, q$t2)
+    totaleventQuery<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     mydf <- con$aggregate(totaleventQuery)
     # eventReport<-totaleventResult$safetyreportid
     colnames(mydf)[1]<-"term"
@@ -480,7 +482,7 @@ getcoeventlist <- reactive({
   } else {
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    totaleventQuery<-ReactionsForDrugEventReports(q$t1, q$t2)
+    totaleventQuery<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     mydf <- con$aggregate(totaleventQuery)
     colnames(mydf)[1]<-"term"
     con$disconnect()
@@ -675,6 +677,25 @@ anychanged <- reactive({
     closeAlert(session, 'erroralert')
   }
 })
+
+observeEvent(input$date1, {
+  
+  if (abs(input$date2-input$date1)>365){
+    updateDateInput(session, "date2",
+                    value=input$date1+365
+    )
+  }
+})
+
+observeEvent(input$date2, {
+  
+  if (abs(input$date2-input$date1)>365){
+    updateDateInput(session, "date1",
+                    value=input$date1-365
+    )
+  }
+})
+
 #SETTERS
 output$mymodal <- renderText({
   if (input$update > 0)
@@ -1719,7 +1740,7 @@ geturlquery <- reactive({
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2) 
-  updateDateRangeInput(session,'daterange', start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange', start = input$date1, end = input$date2)
   updateNumericInput(session,'maxcp', value=q$maxcps)
   updateNumericInput(session,'maxcp2', value=q$maxcps)
   updateRadioButtons(session, 'useexact',

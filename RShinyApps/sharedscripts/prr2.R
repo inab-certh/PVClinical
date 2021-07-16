@@ -474,7 +474,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
         eventName<-q$t1
         
-        eventQuery<-createConEventQuery(eventName=eventName)
+        eventQuery<-createConEventQuery(eventName=eventName, input$date1, input$date2)
         eventResult <- con$aggregate(eventQuery)
         colnames(eventResult)[1]<-"term"
         
@@ -484,7 +484,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
         drugName<-q$t1
         
-        drugQuery<-createConDrugQuery(drugName=drugName)
+        drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2)
         drugResult <- con$aggregate(drugQuery)
         colnames(drugResult)[1]<-"term"
         
@@ -631,7 +631,7 @@ shinyServer(function(input, output, session) {
     } else {
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-        drugQuery <- SearchEventReports(q$t1)
+        drugQuery <- SearchEventReports(q$t1, input$date1, input$date2)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -680,7 +680,7 @@ shinyServer(function(input, output, session) {
       } else {
         
         con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-        drugQuery <- SearchDrugReports(q$t1)
+        drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -770,7 +770,7 @@ shinyServer(function(input, output, session) {
       # Refactor
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totalQuery<-totalreports()
+      totalQuery<-totalreports(input$date1, input$date2)
       totalResult <- con$aggregate(totalQuery)
       total<-totalResult$safetyreportid
       
@@ -1079,7 +1079,7 @@ shinyServer(function(input, output, session) {
             # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
             drugName<-realterms[i]
             # browser()
-            drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "))
+            drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
             totaldrug <- con$aggregate(drugTotalQuery)
             all_events2 <- totaldrug
             
@@ -1092,7 +1092,7 @@ shinyServer(function(input, output, session) {
             # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
             eventName<-realterms[i]
             
-            eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName))
+            eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName), input$date1, input$date2)
             totalevent <- con$aggregate(eventTotalQuery)
             all_events2 <- totalevent
             

@@ -291,7 +291,7 @@ getquery_d <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    timed<-TimeseriesForDrugReports(q$t1)
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
     timedResult <- con$aggregate(timed)
     colnames(timedResult)[1]<-"time"
     mylist<-timedResult
@@ -328,7 +328,7 @@ getquery_e <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    timev<-TimeseriesForEventReports(q$t2)
+    timev<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
     timevResult <- con$aggregate(timev)
     colnames(timevResult)[1]<-"time"
     mylist<-timevResult
@@ -354,7 +354,7 @@ getquery_all <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    timeall<-TimeseriesForTotalReports()
+    timeall<-TimeseriesForTotalReports(input$date1, input$date2)
     timeallResult <- con$aggregate(timeall)
     colnames(timeallResult)[1]<-"time"
     tmp<-timeallResult
@@ -385,7 +385,7 @@ getvars_de <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     # browser()
-    timede<-TimeseriesForDrugEventReports(q$t1, q$t2)
+    timede<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     timedeResult <- con$aggregate(timede)
     colnames(timedeResult)[1]<-"time"
     tmp<-timedeResult
@@ -412,7 +412,7 @@ getvars_e <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    timee<-TimeseriesForEventReports(q$t2)
+    timee<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
     timeeResult <- con$aggregate(timee)
     colnames(timeeResult)[1]<-"time"
     tmp<-timeeResult
@@ -436,7 +436,7 @@ getvars_d <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    timed<-TimeseriesForDrugReports(q$t1)
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
     timedResult <- con$aggregate(timed)
     colnames(timedResult)[1]<-"time"
     tmp<-timedResult
@@ -543,7 +543,7 @@ getcodruglist <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    coco<-CocomitantForDrugEventReports(q$t1, q$t2)
+    coco<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     cocoResult <- con$aggregate(coco)
     colnames(cocoResult)[1]<-"term"
     mydf<-cocoResult
@@ -575,7 +575,7 @@ getcoeventlist <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     
-    react<-ReactionsForDrugEventReports(q$t1, q$t2)
+    react<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     reactResult <- con$aggregate(react)
     colnames(reactResult)[1]<-"term"
     mydf<-reactResult
