@@ -5,6 +5,7 @@ settings.py
 .gitignore
 pvclinical/
 RShinyApps/QuickView/rsconnect/shinyapps.io/
+*.pyc
 gentelella/users/migrations/__pycache__/__init__.cpython-36.pyc
 gentelella/users/migrations/__pycache__/0001_initial.cpython-36.pyc
 gentelella/users/__pycache__/middleware.cpython-36.pyc
