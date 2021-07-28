@@ -246,18 +246,18 @@ class KnowledgeGraphWrapper:
         whole_query = """
         prefix meddra: <https://w3id.org/phuse/meddra#>
         select ?condition_name, ?soc, ?hlgt, ?hlt, ?pt, ?condition_type, ?condition_code
-        from <http://english211.meddra.org> where {
+        from <{}> where {{
             ?condition a ?condition_type;
                 skos:prefLabel ?condition_name;
                 meddra:hasIdentifier ?condition_code.
             FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
             && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept))).
-            OPTIONAL {?condition meddra:hasPT ?pt}.
-            OPTIONAL {?condition meddra:hasHLT ?hlt}.
-            OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
-            OPTIONAL {?condition meddra:hasSOC ?soc}
-        } order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
-        """
+            OPTIONAL {{?condition meddra:hasPT ?pt}}.
+            OPTIONAL {{?condition meddra:hasHLT ?hlt}}.
+            OPTIONAL {{?condition meddra:hasHLGT ?hlgt}}.
+            OPTIONAL {{?condition meddra:hasSOC ?soc}}
+        }} order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
+        """.format(settings.SPARQL_MEDDRA_URI)
         self.sparql.setQuery(whole_query)
 
         sparql_conditions = self.sparql.query().bindings
@@ -358,15 +358,15 @@ class KnowledgeGraphWrapper:
             whole_query = """
                     prefix meddra: <https://w3id.org/phuse/meddra#> 
                     select ?condition_name, ?parent 
-                    from <http://english211.meddra.org> where {{
-                        ?condition a <{0}>;
+                    from <{0}> where {{
+                        ?condition a <{1}>;
                             skos:prefLabel ?condition_name;
-                            meddra:hasIdentifier "{1}"^^<http://www.w3.org/2001/XMLSchema#string>.
-                        FILTER(STRSTARTS("{0}", STR(meddra:))
-                        && ! STRSTARTS("{0}", STR(meddra:MeddraConcept))).
-                        OPTIONAL {{?condition meddra:has{2} ?parent}}. 
+                            meddra:hasIdentifier "{2}"^^<http://www.w3.org/2001/XMLSchema#string>.
+                        FILTER(STRSTARTS("{1}", STR(meddra:))
+                        && ! STRSTARTS("{1}", STR(meddra:MeddraConcept))).
+                        OPTIONAL {{?condition meddra:has{3} ?parent}}. 
                     }} 
-                    """.format(abbrv_2_type.get(node_type), node_code, parent_type.upper())
+                    """.format(settings.SPARQL_MEDDRA_URI, abbrv_2_type.get(node_type), node_code, parent_type.upper())
             # print(whole_query)
             self.sparql.setQuery(whole_query)
             results = self.sparql.query().bindings
