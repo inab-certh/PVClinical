@@ -175,7 +175,7 @@ class KnowledgeGraphWrapper:
 
             whole_query = """
                 prefix dc: <http://purl.org/dc/terms/>
-                select ?drug_code, ?synonym_name
+                select ?drug_code, ?synonym_name from <{}>
                 where {{
                     {}.
                     ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
@@ -185,9 +185,11 @@ class KnowledgeGraphWrapper:
                     ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:product> ?synonym.
                     ?synonym dc:title ?synonym_name}} UNION {{
                     ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:brand> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:mixture> ?synonym.
                     ?synonym dc:title ?synonym_name}}
                 }}
-            """.format(drugs_union)
+            """.format(settings.SPARQL_DRUGS_URI, drugs_union)
 
             self.sparql.setQuery(whole_query)
             synonyms = self.sparql.query().bindings
@@ -216,12 +218,12 @@ class KnowledgeGraphWrapper:
 
         whole_query = """
             prefix dc: <http://purl.org/dc/terms/>
-            select ?drug_name, ?drug_code where {
+            select ?drug_name, ?drug_code from <{}> where {{
                 ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
                 bind(strafter(str(?atc),str("http://bio2rdf.org/atc:")) as ?drug_code).
                 ?drugbank_drug dc:title ?drug_name.
-            }
-            """
+            }}
+            """.format(settings.SPARQL_DRUGS_URI)
         #
         self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings
