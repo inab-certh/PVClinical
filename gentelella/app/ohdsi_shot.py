@@ -51,6 +51,7 @@ class OHDSIShot():
         :param store_path: the path where the screenshot should be stored (default /tmp)
         """
 
+        print(url, fnames, shoot_elements)
         driver = webdriver.Chrome(options=self.options)
         driver.set_window_size(1920, 12800)
         driver.get(url)
