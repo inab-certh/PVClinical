@@ -1441,6 +1441,12 @@ def final_report(request, scenario_id=None):
     gen_table = ""
     gen_chart = ""
 
+    ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
+    try:
+        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+
     try:
         sc = Scenario.objects.get(id=scenario_id)
     except Exception as e:
@@ -1537,7 +1543,7 @@ def final_report(request, scenario_id=None):
         cp_id = None
 
     try:
-        files = glob.glob('app/static/images/ohdsi_img_print/*.png')
+        files = glob.glob(os.path.join(ohdsi_tmp_img_path, '*.png'))
         for f in files:
             os.remove(f)
     except:
@@ -1566,9 +1572,15 @@ def final_report(request, scenario_id=None):
     char_generate = 'no'
     cp_generate = 'no'
     ir_generate = 'no'
-    img_path = "app/static/images/ohdsi_img"
-    intro = "/static/images/ohdsi_img/"
-    entries = os.listdir('app/static/images/ohdsi_img')
+    img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
+
+    try:
+        os.mkdir(img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+
+    intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
+    entries = os.listdir(img_path)
 
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
@@ -1576,7 +1588,7 @@ def final_report(request, scenario_id=None):
 
         if resp_number != []:
             resp_num_id = resp_number[0]['id']
-            if resp_num_id == []:
+            if resp_num_id == [] or resp_number[0]['status'] != "COMPLETED":
                 char_generate = 'no'
             else:
                 char_generate = 'yes'
@@ -1585,13 +1597,13 @@ def final_report(request, scenario_id=None):
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
-                pre_table = intro + "pre_table_{}_{}.png".format(sc.owner_id, sc.id)
+                pre_table = os.path_join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
                 if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
-                pre_chart = intro + "pre_chart_{}_{}.png".format(sc.owner_id, sc.id)
+                pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1599,7 +1611,7 @@ def final_report(request, scenario_id=None):
                         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
                         store_path=img_path)
-                drug_table = intro + "drug_table_{}_{}.png".format(sc.owner_id, sc.id)
+                drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1607,7 +1619,7 @@ def final_report(request, scenario_id=None):
                         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
                         store_path=img_path)
-                drug_chart = intro + "drug_chart_{}_{}.png".format(sc.owner_id, sc.id)
+                drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1615,7 +1627,7 @@ def final_report(request, scenario_id=None):
                         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
                         store_path=img_path)
-                demograph_table = intro + "demograph_table_{}_{}.png".format(sc.owner_id, sc.id)
+                demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1623,21 +1635,21 @@ def final_report(request, scenario_id=None):
                         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
                         store_path=img_path)
-                demograph_chart = intro + "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)
+                demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
-                charlson_table = intro + "charlson_table_{}_{}.png".format(sc.owner_id, sc.id)
+                charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
-                charlson_chart = intro + "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)
+                charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1645,7 +1657,7 @@ def final_report(request, scenario_id=None):
                         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
                         store_path=img_path)
-                gen_table = intro + "gen_table_{}_{}.png".format(sc.owner_id, sc.id)
+                gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
 
                 if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                     ohdsi_sh.cc_shot(
@@ -1653,14 +1665,14 @@ def final_report(request, scenario_id=None):
                         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
                         store_path=img_path)
-                gen_chart = intro + "gen_chart_{}_{}.png".format(sc.owner_id, sc.id)
+                gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
         resp_number_cp = response.json()
         if resp_number_cp != []:
             resp_num_id_cp = resp_number_cp[0]['id']
 
-            if resp_num_id_cp == []:
+            if resp_num_id_cp == [] or resp_number_cp[0]['status'] != "COMPLETED":
                 cp_generate = 'no'
             else:
                 cp_generate = 'yes'
@@ -1668,7 +1680,7 @@ def final_report(request, scenario_id=None):
                     ohdsi_sh.pathways_shot(
                         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
                         "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-                path_all = intro + "pw_{}_{}.png".format(sc.owner_id, sc.id)
+                path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
 
     try:
         if ir_id != None:
@@ -1680,12 +1692,12 @@ def final_report(request, scenario_id=None):
             if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
                                  "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-            ir_table = intro + "irtable_{}_{}.png".format(sc.owner_id, sc.id)
-            ir_all = intro + "irall_{}_{}.png".format(sc.owner_id, sc.id)
+            ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
     except:
         ir_generate = 'no'
 
-    context = {'scenario_open': scenario_open, "REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
+    context = {'scenario_open': scenario_open, #"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
                'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1, 'ir_id': ir_id,
                'char_id': char_id, 'cp_id': cp_id, 'ir_notes': ir_notes, 'char_notes': char_notes,
                'pathways_notes': pathways_notes, 'ir_table': ir_table, 'ir_all': ir_all, 'path_all': path_all,
@@ -1703,9 +1715,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     have chosen from OHDSI and OpedFDA workspace and give you the opportunity to
     return to the final report and change your options and add some extra notes
     to your final report
-        :param scenario_id: the specific scenario, new scenario or None
-        :param report_notes: notes for every view
-        :param extra_notes: last notes in final report
+    :param scenario_id: the specific scenario, new scenario or None
+    :param report_notes: notes for every view
+    :param extra_notes: last notes in final report
 
      :return: the form view
      """
@@ -1751,7 +1763,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     kin = 0
     lin = 0
 
-    img_path = "app/static/images/ohdsi_img"
+    img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
 
     # ir_table_rep=0 if not selected or 1 if user selected
     ir_table_rep = request.GET.get("ir_table_rep", None)
@@ -1798,7 +1810,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         if resp_number_cp != []:
             resp_num_id_cp = resp_number_cp[0]['id']
 
-    entries = os.listdir('app/static/images/ohdsi_img')
+    entries = os.listdir(img_path)
 
     ir_dict_t = {}
     ir_dict_a = {}
@@ -1807,177 +1819,146 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     ind = 0
 
     image_print = []
-    print_intro = "/static/images/ohdsi_img_print/"
 
-    image_print = os.listdir('app/static/images/ohdsi_img_print')
+    ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
+    try:
+        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+    # print_intro = "/static/images/ohdsi_img_print/"
+
+    image_print = os.listdir(ohdsi_tmp_img_path)
+    print(image_print)
 
     if cp_all_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/pw_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "pw_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif cp_all_rep == "0" and "pw_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*pw_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pw_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if ir_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/irtable_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "irtable_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*irtable_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "/*irtable_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if ir_all_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/irall_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "irall_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*irall_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "/*irall_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if pre_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/pre_table_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "pre_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif pre_table_rep == "0" and "pre_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*pre_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if pre_chart_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/pre_chart_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif pre_chart_rep == "0" and "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*pre_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if drug_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/drug_table_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "drug_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif drug_table_rep == "0" and "drug_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*drug_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if drug_chart_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/drug_chart_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif drug_chart_rep == "0" and "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*drug_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if demograph_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/demograph_table_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif demograph_table_rep == "0" and "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*demograph_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if demograph_chart_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/demograph_chart_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif demograph_chart_rep == "0" and "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*demograph_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if charlson_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/charlson_table_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif charlson_table_rep == "0" and "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*charlson_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if charlson_chart_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/charlson_chart_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif charlson_chart_rep == "0" and "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*charlson_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if gen_table_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/gen_table_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "gen_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif gen_table_rep == "0" and "gen_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*gen_table_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if gen_chart_rep == "1":
-        printPath = shutil.copy("app/static/images/ohdsi_img/gen_chart_{}_{}.png".format(sc.owner_id, sc.id),
-                                'app/static/images/ohdsi_img_print')
+        printPath = shutil.copy(os.path.join(img_path, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
     elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob('app/static/images/ohdsi_img_print/*gen_chart_{}_{}.png'.format(sc.owner_id, sc.id))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     for i in image_print:
+        ind = ind + 1
+        kin = kin + 1
+        lin = lin + 1
         if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = print_intro + i
+            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
         if i == "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = print_intro + i
+            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
         if i == "demograph_table_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = print_intro + i
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
         if i == "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = print_intro + i
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
         if i == "drug_table_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = print_intro + i
+            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
         if i == "drug_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = print_intro + i
+            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
         if i == "gen_table_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = print_intro + i
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
         if i == "gen_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = print_intro + i
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
         if i == "pre_table_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Table {} - All prevalence covariates table".format(ind)] = print_intro + i
+            coh_dict["Table {} - All prevalence covariates table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
         if i == "pre_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = print_intro + i
+            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
-    for i in image_print:
         # case that check in first view before proceed
         if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = print_intro + i
+            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
         if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = print_intro + i
+            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
-    for i in image_print:
         if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
-            ind = ind + 1
-            kin = kin + 1
-            lin = lin + 1
-            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = print_intro + i
+            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
 
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
     scenario = sc.title
