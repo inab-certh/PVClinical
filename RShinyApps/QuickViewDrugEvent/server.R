@@ -327,6 +327,7 @@ shinyServer(function(input, output, session) {
       
       query<-createDateAllQuery(input$date1, input$date2)
       result <- con$aggregate(query)
+
       colnames(result)[1]<-"time"
       result$time <- as.Date(result$time, tz = "HST")
       out<-result
@@ -1063,7 +1064,7 @@ shinyServer(function(input, output, session) {
     # q$t1<-"D10AD04"
     # q$t2<-"10012378"
     # q$hash <- "ksjdhfksdhfhsk"
-    # q$concomitant <- TRUE
+    # q$concomitant <- FALSE
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
@@ -1767,7 +1768,7 @@ shinyServer(function(input, output, session) {
                                count=getprrvarname(), exactrad = input$useexact, eventName = toupper(q$ename))
     } else {
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact, eventName = q$t2 )
+                               count=getprrvarname(), exactrad = input$useexact, eventName = q$t2, date1 = input$date1, date2=input$date2 )
     }
     
     

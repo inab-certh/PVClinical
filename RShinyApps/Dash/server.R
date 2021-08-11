@@ -263,7 +263,7 @@ shinyServer(function(input, output, session) {
     } else {
     
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugQuery <- SearchDrugReports(q$t1)
+      drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
       ids <- con$aggregate(drugQuery)
       con$disconnect()
       
@@ -473,7 +473,7 @@ getsexcounts <- reactive({
   } else {
     
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drugQuery <- SearchDrugReports(q$t1)
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     
@@ -536,7 +536,7 @@ getsourcecounts <- reactive({
   } else {
   
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drugQuery <- SearchDrugReports(q$t1)
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
     ids <- con$aggregate(drugQuery)
     con$disconnect()
 
@@ -607,7 +607,7 @@ getsourcecounts <- reactive({
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       drugName<-q$t1
       
-      drugQuery<-totalEventsInReports(drugName=drugName)
+      drugQuery<-totalEventsInReports(drugName=drugName, startdate = '2018-01-01', enddate = '2019-01-01')
       drugResult <- con$aggregate(drugQuery)
       colnames(drugResult)[1]<-"term"
       
@@ -673,7 +673,7 @@ getcocounts <- reactive({
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     drugName<-q$t1
     
-    drugQuery<-createConDrugQuery(drugName=drugName)
+    drugQuery<-createConDrugQuery(drugName=drugName, startdate = '2018-01-01', enddate = '2019-01-01')
     drugResult <- con$aggregate(drugQuery)
     colnames(drugResult)[1]<-"term"
     
@@ -720,7 +720,7 @@ getindcounts <- reactive({
   } else {
   
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-    drugQuery <- SearchDrugReports(q$t1)
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     
@@ -808,11 +808,11 @@ getindcounts <- reactive({
     } else {
       con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totalQuery<-totalreports()
+      totalQuery<-totalreports(startdate = '2018-01-01', enddate = '2019-01-01')
       totalResult <- con$aggregate(totalQuery)
       total<-totalResult$safetyreportid
       
-      totaldrugQuery<-totalDrugReports(q$t1)
+      totaldrugQuery<-totalDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
       totaldrugResult <- con$aggregate(totaldrugQuery)
       totaldrug<-totaldrugResult$safetyreportid
       con$disconnect()
@@ -1365,7 +1365,7 @@ geturlquery <- reactive({
   # q$t1<-"N05BA12"
   # q$t2<-"Anaemia"
   # q$hash<-"d38ghr"
-  # q$concomitant<- TRUE
+  # q$concomitant<- FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateNumericInput(session, "limit", value = q$limit)
   updateSelectizeInput(session, 't1', selected= q$drug) 

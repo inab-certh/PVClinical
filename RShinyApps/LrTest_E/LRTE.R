@@ -400,7 +400,7 @@ shinyServer(function(input, output, session) {
       v <- c( '_exists_',getexactterm1var() , getexactterm1var(), gettimevar() )
       t <- c(  input$v1, q$t1, gettimerange()  )
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact )
+                               count=getprrvarname(), exactrad = input$useexact , date1 = input$date1, date2 = input$date2)
     }
     
     return( list(mydf=mylist$mydf   ) )
@@ -751,7 +751,7 @@ gettotals<- reactive({
     totalResult <- con$aggregate(totalQuery)
     total<-totalResult$safetyreportid
     
-    totaleventQuery<-totalEventReports(q$t1)
+    totaleventQuery<-totalEventReports(q$t1,  startdate = input$date1, enddate = input$date2)
     totaleventResult <- con$aggregate(totaleventQuery)
     totaldrug<-totaleventResult$safetyreportid
     con$disconnect()
@@ -2135,7 +2135,7 @@ geturlquery <- reactive({
   # q$t1<-"D10AD04"
   # q$t1<-"10019211"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- TRUE
+  # q$concomitant <- FALSE
   # browser()
   updateNumericInput(session, "limit", value = q$limit)
   updateNumericInput(session, "limit2", value = q$limit)
