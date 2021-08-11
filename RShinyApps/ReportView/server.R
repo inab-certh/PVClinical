@@ -1638,7 +1638,7 @@ geturlquery <- reactive({
    # q$t1<-"D10AD04"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"
-   q$concomitant <- TRUE
+   # q$concomitant <- TRUE
    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
    if (!is.null(q$t1)) {

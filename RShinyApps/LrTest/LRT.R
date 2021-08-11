@@ -381,7 +381,7 @@ shinyServer(function(input, output, session) {
                                count=getprrvarname(), exactrad = input$useexact )
     } else {
       mylist <-  getcounts999( session, v= v, t= t , 
-                               count=getprrvarname(), exactrad = input$useexact )
+                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2 )
     }
     
   
@@ -500,7 +500,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
       totaleventQuery<-createConDrugQuery(q$t1, input$date1, input$date2)
       mydf <- con$aggregate(totaleventQuery)
@@ -540,12 +540,12 @@ shinyServer(function(input, output, session) {
                          count= "patient.reaction.reactionmeddrapt.exact", limit=1000 )
       mydf <- fda_fetch_p( session, myurl)
       mydf <- mydf$result[1:1000,]
-      
+      # browser()
     } else {
     
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
       
-      totaleventQuery<-totalEventInReports(input$date1, input$date2)
+      totaleventQuery<-createEventsAllQuery(startdate = input$date1, enddate = input$date2)
       totaleventResult <- con$aggregate(totaleventQuery)
       # eventReport<-totaleventResult$safetyreportid
       colnames(totaleventResult)[1]<-"term"
@@ -660,7 +660,7 @@ getindcounts <- reactive({
     
   } else {
     
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
@@ -746,21 +746,21 @@ getindcounts <- reactive({
     } else {
       
       # Refactor
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      
-      totalQuery<-totalreports(input$date1, input$date2)
+      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      # browser()
+      totalQuery<-totalreports(startdate = input$date1, enddate = input$date2)
       totalResult <- con$aggregate(totalQuery)
       total<-totalResult$safetyreportid
       
       if (q$v1 == 'patient.reaction.reactionmeddrapt') {
         
-        totaleventQuery<-totalEventReports(q$t1)
+        totaleventQuery<-totalEventReports(q$t1, startdate = input$date1, enddate = input$date2)
         totaleventResult <- con$aggregate(totaleventQuery)
         totaldrug<-totaleventResult$safetyreportid
         con$disconnect()
         
       }else{
-        totaldrugQuery<-totalDrugReports(q$t1)
+        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2)
         totaldrugResult <- con$aggregate(totaldrugQuery)
         totaldrug<-totaldrugResult$safetyreportid
         con$disconnect()
@@ -1040,7 +1040,7 @@ geteventtotals <- reactive(
       } else {
         
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
         # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
         eventName<-realterms[i]
         
@@ -2122,10 +2122,10 @@ geturlquery <- reactive({
   # q$t2<-"Anaemia"
   # q$v1<-"patient.drug.openfda.generic_name"
   # q$v1<-"patient.reaction.reactionmeddrapt"
-  # q$t1<-"D10AD04"
+  # q$t1<-"L01CA04"
   # q$t1<-"10003239"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- TRUE
+  # q$concomitant <- FALSE
   
   v$t1<-toupper(toupper(q$t1))
   updateNumericInput(session, "limit", value = q$limit)

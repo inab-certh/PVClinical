@@ -310,7 +310,7 @@ shinyServer(function(input, output, session) {
     # q$t1<-"10003239"
     # q$hash <- "asjhakh"
     # browser()
-    # q$concomitant <- TRUE
+    # q$concomitant <- FALSE
     updateNumericInput(session, "limit", value = q$limit)
     updateNumericInput(session, "limit2", value = q$limit)
     if( getwhich()== 'D'){
@@ -400,7 +400,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact )
+                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2)
     }
     
     mydfAll <- mylist$mydf
@@ -776,13 +776,13 @@ shinyServer(function(input, output, session) {
       
       if (q$v1 == 'patient.reaction.reactionmeddrapt') {
         
-        totaleventQuery<-totalEventReports(q$t1)
+        totaleventQuery<-totalEventReports(q$t1, startdate = input$date1, enddate = input$date2)
         totaleventResult <- con$aggregate(totaleventQuery)
         totaldrug<-totaleventResult$safetyreportid
         con$disconnect()
         
       }else{
-        totaldrugQuery<-totalDrugReports(q$t1)
+        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2)
         totaldrugResult <- con$aggregate(totaldrugQuery)
         totaldrug<-totaldrugResult$safetyreportid
         con$disconnect()

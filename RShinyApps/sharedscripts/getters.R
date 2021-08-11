@@ -154,7 +154,7 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
 
 # Refactor
 getcounts999 <- function( session, v, t, count, limit=1000, 
-                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL  )
+                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2)
 {
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
@@ -189,7 +189,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
       eventName <-unlist(strsplit(t[2], '\\"'))[1]
     }
     drugName<-NULL
-    eventQuery<-totalDrugsInEventReports(eventName=eventName, input$date1, input$date2)
+    eventQuery<-totalDrugsInEventReports(eventName=eventName, date1, date2)
     eventResult <- con$aggregate(eventQuery)
     colnames(eventResult)[1]<-"term"
     
@@ -200,9 +200,12 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
     con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
     drugName<-unlist(strsplit(t[2], '\\"'))[2]
-    
-    drugQuery<-totalEventsInReports(drugName=drugName, input$date1, input$date2)
+    # date1 <- '2018-01-01'
+    # date2 <- '2018-12-30'
+    # browser()
+    drugQuery<-totalEventsInReports(drugName=drugName, date1, date2)
     drugResult <- con$aggregate(drugQuery)
+    # browser()
     colnames(drugResult)[1]<-"term"
     
     mydf<-drugResult
