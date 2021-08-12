@@ -71,6 +71,9 @@ from app.pubmed import PubmedAnalyzer
 
 from Bio import Entrez
 from mendeley import Mendeley
+
+from selenium.common.exceptions import TimeoutException
+
 import urllib
 import requests
 from bs4 import BeautifulSoup
@@ -1569,9 +1572,9 @@ def final_report(request, scenario_id=None):
         pass
 
     ohdsi_sh = ohdsi_shot.OHDSIShot()
-    char_generate = 'no'
-    cp_generate = 'no'
-    ir_generate = 'no'
+    char_generate = "no"
+    cp_generate = "no"
+    ir_generate = "no"
     img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
 
     try:
@@ -1582,6 +1585,20 @@ def final_report(request, scenario_id=None):
     intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
     entries = os.listdir(img_path)
 
+    # pre_table = None
+    # pre_chart = None
+    # drug_table = None
+    # drug_chart = None
+    # demograph_table = None
+    # demograph_chart = None
+    # charlson_table = None
+    # charlson_chart = None
+    # gen_table = None
+    # gen_chart = None
+    # path_all = None
+    # ir_table = None
+    # ir_all = None
+
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
         resp_number = response.json()
@@ -1589,83 +1606,114 @@ def final_report(request, scenario_id=None):
         if resp_number != []:
             resp_num_id = resp_number[0]['id']
             if resp_num_id == [] or resp_number[0]['status'] != "COMPLETED":
-                char_generate = 'no'
+                char_generate = "no"
             else:
-                char_generate = 'yes'
-                if "pre_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                char_generate = "yes"
+                # if "pre_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
-                pre_table = os.path_join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
-                if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                    pre_table = os.path_join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
+                # if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
-                pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
-
-                if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                    pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
+                # if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
                         store_path=img_path)
-                drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
+                    drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
                         store_path=img_path)
-                drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                    drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
                         store_path=img_path)
-                demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
+                    demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
                         store_path=img_path)
-                demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                    demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
-                charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
+                    charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
-                charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                    charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+
+                # if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
                         store_path=img_path)
-                gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
+                    gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
-                if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                # if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.cc_shot(
                         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
                         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
                         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
                         store_path=img_path)
-                gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                    gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
+
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
         resp_number_cp = response.json()
@@ -1673,41 +1721,75 @@ def final_report(request, scenario_id=None):
             resp_num_id_cp = resp_number_cp[0]['id']
 
             if resp_num_id_cp == [] or resp_number_cp[0]['status'] != "COMPLETED":
-                cp_generate = 'no'
+                cp_generate = "no"
             else:
-                cp_generate = 'yes'
-                if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                cp_generate = "yes"
+                # if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                try:
                     ohdsi_sh.pathways_shot(
                         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
                         "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-                path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
+                    path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
+                except TimeoutException:
+                    pass
 
     try:
         if ir_id != None:
-            ir_generate = 'yes'
+            ir_generate = "yes"
 
-            if "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+            # if "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+            try:
                 ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
                                  "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
-            if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            except TimeoutException:
+                pass
+            # if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+            try:
                 ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
                                  "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-            ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
-            ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
+                ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
+            except TimeoutException:
+                pass
     except:
-        ir_generate = 'no'
+        ir_generate = "no"
 
-    context = {'scenario_open': scenario_open, #"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
-               'drug_condition_hash': drug_condition_hash, 'notes_openfda1': notes_openfda1, 'ir_id': ir_id,
-               'char_id': char_id, 'cp_id': cp_id, 'ir_notes': ir_notes, 'char_notes': char_notes,
-               'pathways_notes': pathways_notes, 'ir_table': ir_table, 'ir_all': ir_all, 'path_all': path_all,
-               'pre_table': pre_table, 'pre_chart': pre_chart, 'drug_table': drug_table, 'drug_chart': drug_chart,
-               'demograph_table': demograph_table, 'demograph_chart': demograph_chart, 'charlson_table': charlson_table,
-               'charlson_chart': charlson_chart, 'gen_table': gen_table, 'gen_chart': gen_chart,
-               'char_generate': char_generate, 'cp_generate': cp_generate, 'ir_generate': ir_generate,
-               'pub_dict': pub_dict}
+    shots_labels = {"pre_table": "All prevalence covariates table",
+                    "pre_chart": "All prevalence covariates chart",
+                    "drug_table": "Drug Group Era Long Term table",
+                    "drug_chart": "Drug Group Era Long Term chart",
+                    "demograph_table": "Demographics Age Group table",
+                    "demograph_chart": "Demographics Age Group chart",
+                    "charlson_table": "Charlson Index table",
+                    "charlson_chart": "Charlson Index chart",
+                    "gen_table": "Demographics Gender table",
+                    "gen_chart": "Demographics Gender chart"}
 
-    return render(request, 'app/final_report.html', context)
+    str_to_var = {"pre_table": pre_table,
+                  "pre_chart": pre_chart,
+                  "drug_table": drug_table,
+                  "drug_chart": drug_chart,
+                  "demograph_table": demograph_table,
+                  "demograph_chart": demograph_chart,
+                  "charlson_table": charlson_table,
+                  "charlson_chart": charlson_chart,
+                  "gen_table": gen_table,
+                  "gen_chart": gen_chart}
+
+    shots_paths_labels = [(shot, str_to_var.get(shot), shots_labels.get(shot)) for shot in shots_labels.keys() if
+                          str_to_var.get(shot)]
+
+    context = {"scenario_open": scenario_open, #"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
+               "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
+               "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
+               "pathways_notes": pathways_notes, "ir_table": ir_table, "ir_all": ir_all, "path_all": path_all,
+               # "pre_table": pre_table, "pre_chart": pre_chart, "drug_table": drug_table, "drug_chart": drug_chart,
+               # "demograph_table": demograph_table, "demograph_chart": demograph_chart, "charlson_table": charlson_table,
+               # "charlson_chart": charlson_chart, "gen_table": gen_table, "gen_chart": gen_chart,
+               "char_generate": char_generate, "cp_generate": cp_generate, "ir_generate": ir_generate,
+               "pub_dict": pub_dict, "shots_paths_labels": shots_paths_labels}
+
+    return render(request, "app/final_report.html", context)
 
 
 def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pub_notes=None, extra_notes=None):
@@ -1828,7 +1910,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     # print_intro = "/static/images/ohdsi_img_print/"
 
     image_print = os.listdir(ohdsi_tmp_img_path)
-    print(image_print)
 
     if cp_all_rep == "1":
         printPath = shutil.copy(os.path.join(img_path, "pw_{}_{}.png".format(sc.owner_id, sc.id)),
@@ -1926,39 +2007,52 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         kin = kin + 1
         lin = lin + 1
         if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "demograph_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
         if i == "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "drug_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
         if i == "drug_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "gen_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
         if i == "gen_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "pre_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - All prevalence covariates table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Table {} - All prevalence covariates table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
         if i == "pre_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         # case that check in first view before proceed
         if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
         if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
-            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(ohdsi_tmp_img_path , i)
+            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
 
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
     scenario = sc.title
@@ -2026,7 +2120,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict1.setdefault(k, []).append('')
 
             if files_csv:
-                df1 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + files_csv[0]))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, files_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict1.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
@@ -2056,7 +2150,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv:
                 dict2.setdefault(k, []).append('- Report counts and PRR')
-                df1 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dynprr_csv[0]))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
@@ -2069,7 +2163,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv1:
                 dict2.setdefault(k, []).append('- Drugs in scenario reports')
-                df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dynprr_csv1[0]))
+                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv1[0])))
                 styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler2.render())
                 kin = kin + 1
@@ -2081,7 +2175,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv2:
                 dict2.setdefault(k, []).append('- Events in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dynprr_csv2[0]))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv2[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2153,7 +2247,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if changep_csv:
                 dict3.setdefault(k, []).append('- Drugs in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + changep_csv[0]))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, changep_csv[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2165,7 +2259,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if changep_csv1:
                 dict3.setdefault(k, []).append('- Events in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + changep_csv1[0]))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, changep_csv1[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2193,7 +2287,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
         if files_csv:
             dictcsv[k] = files_csv[0]
-            df1 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dictcsv[k]))
+            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dictcsv[k])))
             styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
             dict_quickview.setdefault(i, []).append(styler1.render())
             lin = lin + 1
@@ -2227,20 +2321,20 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
 
         if dash_csv:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Events', []).append(styler1.render())
             lin = lin+1
             dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
         if dash_csv1:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv1[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Concomitant Medications', []).append(styler1.render())
             lin = lin + 1
             dict_dash_csv.setdefault(' Concomitant Medications', []).append("Table {}".format(lin))
 
         if dash_csv2:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + dash_csv2[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
             lin = lin + 1
@@ -2259,40 +2353,40 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_d_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_d_csv4:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv4[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_d_csv5:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv5[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Table {}".format(lin))
         if rr_d_csv2:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv2[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv1:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv1[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
 
         if rr_d_csv3:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_d_csv3[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2319,43 +2413,44 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lr_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prres".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
         if lr_csv6:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv6[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' LTR Results based on Total Events', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' LTR Results based on Total Events', []).append("Table {}".format(lin))
         if lr_csv2:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv2[0]))
+            df2 = pd.read_csv(r'{}'.format(
+                lr_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Table {}".format(lin))
         if lr_csv:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Table {}".format(lin))
         if lr_csv4:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv4[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
         if lr_csv5:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv5[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Event counts for drug', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Event counts for drug', []).append("Table {}".format(lin))
         if lr_csv1:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv1[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Counts for all events', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Counts for all events', []).append("Table {}".format(lin))
         if lr_csv3:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lr_csv3[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2376,37 +2471,37 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_e_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_e_csv4:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv4[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_e_csv5:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv5[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Table {}".format(lin))
         if rr_e_csv2:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv2[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Table {}".format(lin))
         if rr_e_csv1:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv1[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Table {}".format(lin))
         if rr_e_csv:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if rr_e_csv3:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + rr_e_csv3[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2433,43 +2528,43 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
                                map(lambda el: el.get_text(), soup.find_all('a'))))
         if lre_csv6:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv6[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' LTR Results based on Total Drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Table {}".format(lin))
         if lre_csv2:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv2[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Table {}".format(lin))
         if lre_csv:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Table {}".format(lin))
         if lre_csv4:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv4[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if lre_csv5:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv5[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Drug counts for event', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Drug counts for event', []).append("Table {}".format(lin))
         if lre_csv1:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv1[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Counts for all drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Counts for all drugs', []).append("Table {}".format(lin))
         if lre_csv3:
-            df2 = pd.read_csv(r'{}'.format(settings.REPORT_ENDPOINT + lre_csv3[0]))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2480,24 +2575,24 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     for key in dict1:
         for j in dict1[key]:
             if j != '':
-               empty_OpenFDA = 'no'
+               empty_OpenFDA = "no"
     for key in dict2:
         for j in dict2[key]:
             if j != '':
-                empty_OpenFDA = 'no'
+                empty_OpenFDA = "no"
 
     for key in dict3:
         for j in dict3[key]:
             if j != '':
-                empty_OpenFDA = 'no'
+                empty_OpenFDA = "no"
 
-    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, 'all_combs': all_combs, 'scenario': scenario,
-               'dict_quickview': dict_quickview, 'dict_dashboard_png': dict_dashboard_png,
-               'dict_dash_csv': dict_dash_csv, 'dict_rr_d': dict_rr_d, 'dict_lr': dict_lr,
-               'dict_lrTest_png': dict_lrTest_png, 'dict_rr_e': dict_rr_e,
-               'dict_lre': dict_lre, 'dict_lreTest_png': dict_lreTest_png, 'dict1': dict1,
-               'dict2': dict2, 'dict3': dict3, 'dict_hash_combination': dict_hash_combination,
-               'empty_OpenFDA': empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
+    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, "all_combs": all_combs, "scenario": scenario,
+               "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
+               "dict_dash_csv": dict_dash_csv, "dict_rr_d": dict_rr_d, "dict_lr": dict_lr,
+               "dict_lrTest_png": dict_lrTest_png, "dict_rr_e": dict_rr_e,
+               "dict_lre": dict_lre, "dict_lreTest_png": dict_lreTest_png, "dict1": dict1,
+               "dict2": dict2, "dict3": dict3, "dict_hash_combination": dict_hash_combination,
+               "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
                "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_titles": pub_titles, "pub_notes": pub_notes,
                "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors, "pub_dict_urls": pub_dict_urls}
@@ -2536,8 +2631,9 @@ def print_report(request, scenario_id=None):
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
 
-    pdfkit.from_url('http://127.0.0.1:8000/report_pdf/{}/{}/{}/{}/{}'.format(scenario_id, report_notes, extra_notes,
-                                                                             pub_titles, pub_notes), file_path, options=options)
+    pdfkit.from_url("{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
+                                                          report_notes, extra_notes, pub_titles, pub_notes),
+                    file_path, options=options)
     webbrowser.open(r"{}".format(file_path))
 
     return render(request, 'app/print_report.html')

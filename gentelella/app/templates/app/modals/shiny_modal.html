@@ -1,3 +1,4 @@
+{% load i18n %}
 <style>
 input{
     border: 0px solid;
@@ -169,106 +170,16 @@ img {
 {% if char_generate == 'yes' %}
 <div class="slideshow-container">
     <div class="center">
-  <div class="mySlides1">
-        <input type="checkbox" id="pre_table" value=""><label for="pre_table">&nbsp "All prevalence covariates" table</label>
+    {% for shot_el, shot_path, shot_label in shots_paths_labels %}
+    <div class="mySlides1">
+        <input type="checkbox" id={{ shot_el }} value=""><label for={{ shot_el }}>&nbsp {% trans shot_label %}</label>
             <br>
-            <img src="{{ pre_table }}">
+            <img src="{{ shot_path }}">
       <br>
       <br>
-            <div class="numbertext">Choice: 1 / 10</div>
-  </div>
-
-  <div class="mySlides1">
-        <input type="checkbox" id="pre_chart" value=""><label for="pre_chart">&nbsp "All prevalence covariates" chart</label>
-            <br>
-            <img src="{{ pre_chart }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 2 / 10</div>
-  </div>
-
-  <div class="mySlides1">
-
-  <input type="checkbox" id="drug_table" value=""><label for="drug_table">&nbsp "Drug Group Era Long Term" table</label>
-            <br>
-            <img src="{{ drug_table }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 3 / 10</div>
-  </div>
-  <div class="mySlides1">
-
-  <input type="checkbox" id="drug_chart" value=""><label for="drug_chart">&nbsp "Drug Group Era Long Term" chart</label>
-            <br>
-            <img src="{{ drug_chart }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 4 / 10</div>
-  </div>
-
-<div class="mySlides1">
-
-  <input type="checkbox" id="demograph_table" value=""><label for="demograph_table">
-    &nbsp "Demographics Age Group" table</label>
-            <br>
-            <img src="{{ demograph_table }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 5 / 10</div>
-  </div>
-
-<div class="mySlides1">
-
-  <input type="checkbox" id="demograph_chart" value=""><label for="demograph_chart">
-    &nbsp "Demographics Age Group" chart</label>
-            <br>
-            <img src="{{ demograph_chart }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 6 / 10</div>
-  </div>
-
-<div class="mySlides1">
-
-  <input type="checkbox" id="charlson_table" value=""><label for="charlson_table">&nbsp "Charlson Index" table</label>
-            <br>
-            <img src="{{ charlson_table }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 7 / 10</div>
-  </div>
-
-<div class="mySlides1">
-
-  <input type="checkbox" id="charlson_chart" value=""><label for="charlson_chart">&nbsp "Charlson Index" chart</label>
-            <br>
-            <img src="{{ charlson_chart }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 8 / 10</div>
-  </div>
-
-<div class="mySlides1">
-
-  <input type="checkbox" id="gen_table" value=""><label for="gen_table">&nbsp "Demographics Gender" table</label>
-            <br>
-            <img src="{{ gen_table }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 9 / 10</div>
-  </div>
-<div class="mySlides1">
-
-  <input type="checkbox" id="gen_chart" value=""><label for="gen_chart">&nbsp "Demographics Gender" chart</label>
-            <br>
-            <img src="{{ gen_chart }}">
-      <br>
-      <br>
-            <div class="numbertext">Choice: 10 / 10</div>
-  </div>
-
-
-
+            <div class="numbertext">{% trans "Επιλογή" %}: {{ forloop.counter}} / {{ shots_paths_labels|length }}</div>
+    </div>
+    {% endfor %}
 </div>
   <a class="prev" onclick="plusSlides(-1, 0)">&#10094;</a>
   <a class="next" onclick="plusSlides(1, 0)">&#10095;</a>

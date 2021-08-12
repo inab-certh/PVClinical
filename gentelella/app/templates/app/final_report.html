@@ -539,8 +539,6 @@
 
             if ($(this).is(':checked')) {
                 charlson_chart_rep = 1 ;
-
-
             }else{
                 charlson_chart_rep = 0 ;
 
@@ -551,7 +549,6 @@
 
             if ($(this).is(':checked')) {
                 gen_table_rep = 1 ;
-
             }else{
                 gen_table_rep = 0 ;
 
@@ -562,8 +559,6 @@
 
             if ($(this).is(':checked')) {
                 gen_chart_rep = 1 ;
-
-
             }else{
                 gen_chart_rep = 0 ;
 
@@ -574,7 +569,6 @@
 
             if ($(this).is(':checked')) {
                 cp_all_rep = 1 ;
-
             }else{
                 cp_all_rep = 0 ;
 
@@ -598,14 +592,13 @@
                 dataType: "html",
                 success: function (res) {
 
-
                   },
-                  error: function (res) {
-                    console.log("error "+res);
-                }
-            });
-
+              error: function (res) {
+                console.log("error "+res);
+              }
         });
+
+    });
     $("#closeChar").click(function() {
         var scid={{scenario_open}};
         var note_val="";

@@ -27,12 +27,11 @@ class OHDSIShot():
                             "//div[@class='ir-analysis-results__report-block']/ir-analysis-report/table/tbody/tr/td[1]"}
 
         driver.get(url)
-        element = WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((
+        element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, "//table[@class='ir-analysis-results__tbl sourceTable']/tbody/tr/td[10]/span/button")))
         element.click()
 
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
         size = e.size
@@ -51,7 +50,6 @@ class OHDSIShot():
         :param store_path: the path where the screenshot should be stored (default /tmp)
         """
 
-        print(url, fnames, shoot_elements)
         driver = webdriver.Chrome(options=self.options)
         driver.set_window_size(1920, 12800)
         driver.get(url)
@@ -73,9 +71,8 @@ class OHDSIShot():
         for se in shoot_elements:
             el_path = "//h3[text()='{}']/../div".format(
                 se[0])
-            # print(el_path)
 
-            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, el_path)))
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, el_path)))
             # Show the first 100 results in table
             if se[1] == "table":
 
@@ -83,7 +80,7 @@ class OHDSIShot():
                     "{}/div[1]/div[1]/div[@class='dataTables_length']/label/select/option[text()='{}']".format(
                         el_path, tbls_len)).click()
 
-            e = WebDriverWait(driver, 60).until(
+            e = WebDriverWait(driver, 30).until(
                 EC.visibility_of_element_located((By.XPATH, "{}{}".format(el_path, eltype2pathext.get(se[1])))))
 
             e.screenshot("{}/{}".format(store_path, fnames[shoot_elements.index(se)]))
@@ -102,7 +99,7 @@ class OHDSIShot():
         element_path = {"all": "//div[@class='pathway-results__report-group']"}
         driver = webdriver.Chrome(options=self.options)
         driver.get(url)
-        element = WebDriverWait(driver, 20).until(
+        element = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH,
                                         "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]\
                                         /sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']\
@@ -110,7 +107,7 @@ class OHDSIShot():
 
         element.click()
 
-        WebDriverWait(driver, 20).until(
+        WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//table[@class='pathway-results__detail-table table']")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
@@ -122,14 +119,14 @@ class OHDSIShot():
 
 
 
-ohdsi_shot = OHDSIShot()
-ohdsi_shot.ir_shot("http://83.212.101.101:8080/atlas/#/iranalysis/100", "ir_100.png")
-ohdsi_shot.pathways_shot("http://83.212.101.101:8080/atlas/#/pathways/27/results/2483", "pw_27_2483.png")
-ohdsi_shot.cc_shot("http://83.212.101.101:8080/atlas/#/cc/characterizations/53/results/2480",
-                   fnames=[], shoot_elements=[
-        ("All prevalence covariates", "table"), ("All prevalence covariates", "chart"),
-        ("CONDITION / Charlson Index", "table"), ("CONDITION / Charlson Index", "chart"),
-        ("DEMOGRAPHICS / Demographics Gender", "table"), ("DEMOGRAPHICS / Demographics Gender", "chart"),
-        ("DEMOGRAPHICS / Demographics Age Group", "table"), ("DEMOGRAPHICS / Demographics Age Group", "chart"),
-        ("DRUG / Drug Group Era Long Term", "table"), ("DRUG / Drug Group Era Long Term", "chart")],
-                   tbls_len=25, store_path="/tmp")
+# ohdsi_shot = OHDSIShot()
+# ohdsi_shot.ir_shot("http://83.212.101.101:8080/atlas/#/iranalysis/100", "ir_100.png")
+# ohdsi_shot.pathways_shot("http://83.212.101.101:8080/atlas/#/pathways/27/results/2483", "pw_27_2483.png")
+# ohdsi_shot.cc_shot("http://83.212.101.101:8080/atlas/#/cc/characterizations/53/results/2480",
+#                    fnames=[], shoot_elements=[
+#         ("All prevalence covariates", "table"), ("All prevalence covariates", "chart"),
+#         ("CONDITION / Charlson Index", "table"), ("CONDITION / Charlson Index", "chart"),
+#         ("DEMOGRAPHICS / Demographics Gender", "table"), ("DEMOGRAPHICS / Demographics Gender", "chart"),
+#         ("DEMOGRAPHICS / Demographics Age Group", "table"), ("DEMOGRAPHICS / Demographics Age Group", "chart"),
+#         ("DRUG / Drug Group Era Long Term", "table"), ("DRUG / Drug Group Era Long Term", "chart")],
+#                    tbls_len=25, store_path="/tmp")

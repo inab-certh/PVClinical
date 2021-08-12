@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
   $("[id*=ShinyBtn]").click(function(){
-  console.log("ok")
+  // console.log("ok")
       var drug= $(this).data('drug');
       var con= $(this).data('con');
       var hash= $(this).data('hash');
@@ -21,36 +21,36 @@ $(document).ready(function(){
   });
 
 	var i=0;
-        $('input[type="checkbox"]').click(function(){
-            if($(this).prop("checked") == true){
-                i=i+1
-                document.getElementById("result1").disabled = false;
-            }
-            else if($(this).prop("checked") == false){
-                i=i-1
-                if(i==0){
+    $('input[type="checkbox"]').click(function(){
+        if($(this).prop("checked") == true){
+            i=i+1
+            document.getElementById("result1").disabled = false;
+        }
+        else if($(this).prop("checked") == false){
+            i=i-1
+            if(i==0){
 
-                document.getElementById("result1").disabled = true;
-                }
+            document.getElementById("result1").disabled = true;
             }
-        });
+        }
     });
+});
 
 $(document).ready(function(){
 	var i=0;
-        $('input[type="checkbox"]').click(function(){
-            if($(this).prop("checked") == true){
-                i=i+1
-                document.getElementById("result").disabled = false;
+    $('input[type="checkbox"]').click(function(){
+        if($(this).prop("checked") == true){
+            i=i+1
+            document.getElementById("result").disabled = false;
+        }
+        else if($(this).prop("checked") == false){
+            i=i-1
+            if(i==0){
+            document.getElementById("result").disabled = true;
             }
-            else if($(this).prop("checked") == false){
-                i=i-1
-                if(i==0){
-                document.getElementById("result").disabled = true;
-                }
-            }
-        });
+        }
     });
+});
 
 $(document).ready(function(){
 
@@ -68,13 +68,13 @@ $(document).ready(function(){
     $(".note_chkb").on("change", function(){
 
         if($(this).is(':checked') && !(hash in all_notes)){
-            console.log(note)
-            console.log(hash)
+            // console.log(note)
+            // console.log(hash)
             all_notes[hash]=note;
-            console.log(all_notes);
+            // console.log(all_notes);
         }else if(!$(this).is(':checked') && (hash in all_notes)){
             delete all_notes[hash];
-            console.log(all_notes);
+            // console.log(all_notes);
         }
     });
 
@@ -88,12 +88,9 @@ $(document).ready(function(){
 
     $("#div2").hide();
 
-
-
-$("#link1").on("click", function() {
-    $("#div1").show();
-    $("#div2").hide();
+    $("#link1").on("click", function() {
+        $("#div1").show();
+        $("#div2").hide();
+    });
 });
-
-   });
 
