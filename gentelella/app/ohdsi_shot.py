@@ -27,11 +27,11 @@ class OHDSIShot():
                             "//div[@class='ir-analysis-results__report-block']/ir-analysis-report/table/tbody/tr/td[1]"}
 
         driver.get(url)
-        element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        element = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((
             By.XPATH, "//table[@class='ir-analysis-results__tbl sourceTable']/tbody/tr/td[10]/span/button")))
         element.click()
 
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
         size = e.size
@@ -72,7 +72,7 @@ class OHDSIShot():
             el_path = "//h3[text()='{}']/../div".format(
                 se[0])
 
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, el_path)))
+            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, el_path)))
             # Show the first 100 results in table
             if se[1] == "table":
 
@@ -99,7 +99,7 @@ class OHDSIShot():
         element_path = {"all": "//div[@class='pathway-results__report-group']"}
         driver = webdriver.Chrome(options=self.options)
         driver.get(url)
-        element = WebDriverWait(driver, 10).until(
+        element = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.XPATH,
                                         "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]\
                                         /sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']\
@@ -107,7 +107,7 @@ class OHDSIShot():
 
         element.click()
 
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.XPATH, "//table[@class='pathway-results__detail-table table']")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
