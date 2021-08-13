@@ -5,7 +5,6 @@ import re
 import requests
 import tempfile
 import uuid
-import hashlib
 import glob
 import shutil
 
@@ -1462,24 +1461,15 @@ def final_report(request, scenario_id=None):
                              [c.name for c in conditions] or [""]))
 
     scenario_open = sc.id
-    synolo = []
+
+    drug_condition_hash = []
 
     for i in range(len(all_combs)):
         p = sc.title+str(sc.owner)+str(i)
-        k = repr(p).encode('utf-8')
-        h = hashlib.md5(k)
+        h = hashlib.md5(repr(p).encode('utf-8'))
         hash = h.hexdigest()
-        synolo.append(hash)
 
-    drug_condition_hash = []
-    m = 0
-    for i in all_combs:
-        k = list(i)
-        k.append(synolo[m])
-        p = tuple(k)
-        drug_condition_hash.append(p)
-
-        m = m+1
+        drug_condition_hash.append(list(all_combs[i])+[hash])
 
     user = sc.owner
 
@@ -1507,6 +1497,8 @@ def final_report(request, scenario_id=None):
                     notes_openfda1[k] = dict_openfda_notes[key]
                 if j == key and i == "":
                     notes_openfda1[k] = dict_openfda_notes[key]
+
+
     # ir table and heatmap
 
     drugs_cohort_name = None
@@ -1598,6 +1590,9 @@ def final_report(request, scenario_id=None):
     # path_all = None
     # ir_table = None
     # ir_all = None
+
+    from time import time
+    start = time()
 
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
@@ -1753,6 +1748,9 @@ def final_report(request, scenario_id=None):
                 pass
     except:
         ir_generate = "no"
+
+    end = time()
+    print(f'OHDSI shots took {end - start} seconds!')
 
     shots_labels = {"pre_table": "All prevalence covariates table",
                     "pre_chart": "All prevalence covariates chart",
@@ -2061,22 +2059,14 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     all_combs = list(product([d.name for d in drugs] or [""],
                              [c.name for c in conditions] or [""]))
 
-    synolo = []
-    import hashlib
+    drug_condition_hash = []
+
     for i in range(len(all_combs)):
         p = sc.title+str(sc.owner)+str(i)
-        k = repr(p).encode('utf-8')
-        h = hashlib.md5(k)
+        h = hashlib.md5(repr(p).encode('utf-8'))
         hash = h.hexdigest()
-        synolo.append(hash)
-    drug_condition_hash = []
-    m = 0
-    for i in all_combs:
-            k = list(i)
-            k.append(synolo[m])
-            p = tuple(k)
-            drug_condition_hash.append(p)
-            m = m+1
+
+        drug_condition_hash.append(list(all_combs[i])+[hash])
 
     r = requests.get(settings.REPORT_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
