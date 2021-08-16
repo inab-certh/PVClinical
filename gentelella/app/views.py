@@ -1,3 +1,4 @@
+import concurrent.futures
 import hashlib
 import json
 import os
@@ -1594,6 +1595,15 @@ def final_report(request, scenario_id=None):
     from time import time
     start = time()
 
+    # Prepare lists for threading functions, parameters and results
+    threads_funcs = []
+    threads_shot_urls = []
+    threads_fnames = []
+    threads_shoot_elms = []
+    threads_tbls_len = []
+    threads_store_path = []
+    threads_results = []
+
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
         resp_number = response.json()
@@ -1605,109 +1615,203 @@ def final_report(request, scenario_id=None):
             else:
                 char_generate = "yes"
                 # if "pre_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
-                    pre_table = os.path_join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["pre_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("All prevalence covariates", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("pre_table",
+                                       os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
+                #     pre_table = os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
                 # if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
-                    pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("All prevalence covariates", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("pre_chart",
+                                        os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
+                #     pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
                 # if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
-                        store_path=img_path)
-                    drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["drug_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DRUG / Drug Group Era Long Term", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("drug_table",
+                                        os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
-                        store_path=img_path)
-                    drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DRUG / Drug Group Era Long Term", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("drug_chart",
+                                        os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
-                        store_path=img_path)
-                    demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Age Group", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("demograph_table",
+                                        os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
-                        store_path=img_path)
-                    demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Age Group", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("demograph_chart",
+                                        os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
-                    charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("CONDITION / Charlson Index", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("charlson_table",
+                                        os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
+                #     charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
-                    charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("CONDITION / Charlson Index", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("charlson_chart",
+                                        os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
+                #     charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
 
                 # if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
-                        store_path=img_path)
-                    gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["gen_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Gender", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("gen_table",
+                                        os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
                 # if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.cc_shot(
-                        "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                        fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                        shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
-                        store_path=img_path)
-                    gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Gender", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("gen_chart",
+                                        os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
@@ -1720,72 +1824,126 @@ def final_report(request, scenario_id=None):
             else:
                 cp_generate = "yes"
                 # if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-                try:
-                    ohdsi_sh.pathways_shot(
-                        "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
-                        "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-                    path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
-                except TimeoutException:
-                    pass
+                threads_funcs.append(ohdsi_sh.pathways_shot)
+                threads_shot_urls.append("{}/#/pathways/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, cp_id, resp_num_id_cp))
+                threads_fnames.append("pw_{}_{}.png".format(sc.owner_id, sc.id))
+                threads_shoot_elms.append("all")
+                threads_tbls_len.append(None)
+                threads_store_path.append(img_path)
+                threads_results.append(("path_all",
+                                        os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.pathways_shot(
+                #         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
+                #         "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+                #     path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
 
     try:
         if ir_id != None:
             ir_generate = "yes"
 
             # if "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-            try:
-                ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-                                 "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
-                ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
-            except TimeoutException:
-                pass
+            threads_funcs.append(ohdsi_sh.ir_shot)
+            threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
+            threads_fnames.append("irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            threads_shoot_elms.append("table")
+            threads_tbls_len.append(None)
+            threads_store_path.append(img_path)
+            threads_results.append(("ir_table",
+                                    os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))))
+
+            # try:
+            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+            #                      "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
+            #     ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            # except TimeoutException:
+            #     pass
             # if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
-            try:
-                ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-                                 "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-                ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
-            except TimeoutException:
-                pass
+            threads_funcs.append(ohdsi_sh.ir_shot)
+            threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
+            threads_fnames.append("irall_{}_{}.png".format(sc.owner_id, sc.id))
+            threads_shoot_elms.append("all")
+            threads_tbls_len.append(None)
+            threads_store_path.append(img_path)
+            threads_results.append(("ir_all",
+                                    os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))))
+
+            # try:
+            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+            #                      "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+            #     ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
+            # except TimeoutException:
+            #     pass
     except:
         ir_generate = "no"
 
+    str_to_var = {}
+    with concurrent.futures.ThreadPoolExecutor(13) as executor:
+        futures = []
+        for i in range(len(threads_funcs)):
+            args = [arg for arg in [threads_shot_urls[i], threads_fnames[i], threads_shoot_elms[i],
+                                    threads_tbls_len[i], threads_store_path[i]] if arg]
+            futures.append(
+                executor.submit(
+                    threads_funcs[i], *args
+                )
+            )
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                print(future.result())
+                # str_to_var[threads_results[i][0]] = threads_results[i][1]
+            except (requests.ConnectTimeout, TimeoutException):
+                pass
+
     end = time()
     print(f'OHDSI shots took {end - start} seconds!')
+    print(str_to_var)
 
-    shots_labels = {"pre_table": "All prevalence covariates table",
-                    "pre_chart": "All prevalence covariates chart",
-                    "drug_table": "Drug Group Era Long Term table",
-                    "drug_chart": "Drug Group Era Long Term chart",
-                    "demograph_table": "Demographics Age Group table",
-                    "demograph_chart": "Demographics Age Group chart",
-                    "charlson_table": "Charlson Index table",
-                    "charlson_chart": "Charlson Index chart",
-                    "gen_table": "Demographics Gender table",
-                    "gen_chart": "Demographics Gender chart"}
+    cc_shots_labels = {"pre_table": "All prevalence covariates table",
+                       "pre_chart": "All prevalence covariates chart",
+                       "drug_table": "Drug Group Era Long Term table",
+                       "drug_chart": "Drug Group Era Long Term chart",
+                       "demograph_table": "Demographics Age Group table",
+                       "demograph_chart": "Demographics Age Group chart",
+                       "charlson_table": "Charlson Index table",
+                       "charlson_chart": "Charlson Index chart",
+                       "gen_table": "Demographics Gender table",
+                       "gen_chart": "Demographics Gender chart"}
 
-    str_to_var = {"pre_table": pre_table,
-                  "pre_chart": pre_chart,
-                  "drug_table": drug_table,
-                  "drug_chart": drug_chart,
-                  "demograph_table": demograph_table,
-                  "demograph_chart": demograph_chart,
-                  "charlson_table": charlson_table,
-                  "charlson_chart": charlson_chart,
-                  "gen_table": gen_table,
-                  "gen_chart": gen_chart}
+    # str_to_var = {"pre_table": pre_table,
+    #               "pre_chart": pre_chart,
+    #               "drug_table": drug_table,
+    #               "drug_chart": drug_chart,
+    #               "demograph_table": demograph_table,
+    #               "demograph_chart": demograph_chart,
+    #               "charlson_table": charlson_table,
+    #               "charlson_chart": charlson_chart,
+    #               "gen_table": gen_table,
+    #               "gen_chart": gen_chart}
 
-    shots_paths_labels = [(shot, str_to_var.get(shot), shots_labels.get(shot)) for shot in shots_labels.keys() if
-                          str_to_var.get(shot)]
+    cc_shots_paths_labels = [(cc_shot, str_to_var.get(cc_shot), cc_shots_labels.get(cc_shot)
+                              ) for cc_shot in cc_shots_labels.keys() if str_to_var.get(cc_shot)]
+
+    print(cc_shots_paths_labels)
 
     context = {"scenario_open": scenario_open, #"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
-               "pathways_notes": pathways_notes, "ir_table": ir_table, "ir_all": ir_all, "path_all": path_all,
+               "pathways_notes": pathways_notes,
+               # "ir_table": ir_table, "ir_all": ir_all, "path_all": path_all,
                # "pre_table": pre_table, "pre_chart": pre_chart, "drug_table": drug_table, "drug_chart": drug_chart,
                # "demograph_table": demograph_table, "demograph_chart": demograph_chart, "charlson_table": charlson_table,
                # "charlson_chart": charlson_chart, "gen_table": gen_table, "gen_chart": gen_chart,
                "char_generate": char_generate, "cp_generate": cp_generate, "ir_generate": ir_generate,
-               "pub_dict": pub_dict, "shots_paths_labels": shots_paths_labels}
+               "pub_dict": pub_dict, "cc_shots_paths_labels": cc_shots_paths_labels}
+
+    # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
+    context.update(str_to_var)
 
     return render(request, "app/final_report.html", context)
 
