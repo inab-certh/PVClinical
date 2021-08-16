@@ -170,14 +170,14 @@ img {
 {% if char_generate == 'yes' %}
 <div class="slideshow-container">
     <div class="center">
-    {% for shot_el, shot_path, shot_label in shots_paths_labels %}
+    {% for cc_shot_el, cc_shot_path, cc_shot_label in cc_shots_paths_labels %}
     <div class="mySlides1">
-        <input type="checkbox" id={{ shot_el }} value=""><label for={{ shot_el }}>&nbsp {% trans shot_label %}</label>
+        <input type="checkbox" id={{ cc_shot_el }} value=""><label for={{ cc_shot_el }}>&nbsp {% trans cc_shot_label %}</label>
             <br>
-            <img src="{{ shot_path }}">
+            <img src="{{ cc_shot_path }}">
       <br>
       <br>
-            <div class="numbertext">{% trans "Επιλογή" %}: {{ forloop.counter}} / {{ shots_paths_labels|length }}</div>
+            <div class="numbertext">{% trans "Επιλογή" %}: {{ forloop.counter}} / {{ cc_shots_paths_labels|length }}</div>
     </div>
     {% endfor %}
 </div>

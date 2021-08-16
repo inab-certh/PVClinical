@@ -20,6 +20,7 @@ class OHDSIShot():
         :param store_path: the path where the screenshot should be stored (default /tmp)
         """
 
+        created_outfiles = []
         driver = webdriver.Chrome(options=self.options)
 
         element_path = {"all": "//div[@class='ir-analysis-results__report-block']",
@@ -27,18 +28,21 @@ class OHDSIShot():
                             "//div[@class='ir-analysis-results__report-block']/ir-analysis-report/table/tbody/tr/td[1]"}
 
         driver.get(url)
-        element = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((
+        element = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((
             By.XPATH, "//table[@class='ir-analysis-results__tbl sourceTable']/tbody/tr/td[10]/span/button")))
         element.click()
 
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
         size = e.size
         width, height = size['width'], size['height']
         driver.set_window_size(1.5 * width, 1.7 * height)
-        e.screenshot("{}/{}".format(store_path, fname))
+        out_fpath = "{}/{}".format(store_path, fname)
+        created = e.screenshot(out_fpath)
+        created_outfiles.append((created, out_fpath))
         driver.quit()
+        return created_outfiles
 
     def cc_shot(self, url, fnames=[], shoot_elements=[], tbls_len=100, store_path="/tmp"):
         """ Take a screenshot of the cohort characterizations results
@@ -68,11 +72,13 @@ class OHDSIShot():
         fnames = fnames if len(fnames) == len(shoot_elements) else ["{}.png".format("_".join(se).replace(
             " / ", "_")) for se in shoot_elements]
 
+        created_outfiles = []
+
         for se in shoot_elements:
             el_path = "//h3[text()='{}']/../div".format(
                 se[0])
 
-            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, el_path)))
+            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, el_path)))
             # Show the first 100 results in table
             if se[1] == "table":
 
@@ -80,12 +86,15 @@ class OHDSIShot():
                     "{}/div[1]/div[1]/div[@class='dataTables_length']/label/select/option[text()='{}']".format(
                         el_path, tbls_len)).click()
 
-            e = WebDriverWait(driver, 30).until(
+            e = WebDriverWait(driver, 60).until(
                 EC.visibility_of_element_located((By.XPATH, "{}{}".format(el_path, eltype2pathext.get(se[1])))))
+            out_fpath = "{}/{}".format(store_path, fnames[shoot_elements.index(se)])
+            created = e.screenshot(out_fpath)
 
-            e.screenshot("{}/{}".format(store_path, fnames[shoot_elements.index(se)]))
+            created_outfiles.append((created, out_fpath))
 
         driver.quit()
+        return created_outfiles
 
 
     def pathways_shot(self, url, fname, shoot_element="all", store_path="/tmp"):
@@ -96,10 +105,12 @@ class OHDSIShot():
         :param store_path: the path where the screenshot should be stored (default /tmp)
         """
 
+        created_outfiles = []
+
         element_path = {"all": "//div[@class='pathway-results__report-group']"}
         driver = webdriver.Chrome(options=self.options)
         driver.get(url)
-        element = WebDriverWait(driver, 20).until(
+        element = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH,
                                         "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]\
                                         /sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']\
@@ -107,15 +118,18 @@ class OHDSIShot():
 
         element.click()
 
-        WebDriverWait(driver, 20).until(
+        WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//table[@class='pathway-results__detail-table table']")))
 
         e = driver.find_element_by_xpath(element_path.get(shoot_element))
         size = e.size
         width, height = size['width'], size['height']
         driver.set_window_size(1.5 * width, 1.7 * height)
-        e.screenshot("{}/{}".format(store_path, fname))
+        out_fpath = "{}/{}".format(store_path, fname)
+        created = e.screenshot(out_fpath)
+        created_outfiles.append((created, out_fpath))
         driver.quit()
+        return created_outfiles
 
 
 
