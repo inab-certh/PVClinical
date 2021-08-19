@@ -18,6 +18,8 @@ class OHDSIShot():
         :param fname: the filename of the screenshot file
         :param shoot_element: choose which specific element to shoot (all for both table and heatmap)
         :param store_path: the path where the screenshot should be stored (default /tmp)
+        :return: list of tuples containing status True/False concerning the creation status and the output filename(s)
+        that should be created
         """
 
         created_outfiles = []
@@ -52,6 +54,8 @@ class OHDSIShot():
         (e.g. [("CONDITION / Charlson Index", "chart"), ("DEMOGRAPHICS / Demographics Gender", "table")]
         :param tbls_len: the number of results shown in tables
         :param store_path: the path where the screenshot should be stored (default /tmp)
+        :return: list of tuples containing status True/False concerning the creation status and the output filenames
+        that should be created
         """
 
         driver = webdriver.Chrome(options=self.options)
@@ -103,6 +107,8 @@ class OHDSIShot():
         :param fname: the filename of the screenshot file
         :param shoot_element: choose which specific element to shoot (all for all tables and charts)
         :param store_path: the path where the screenshot should be stored (default /tmp)
+        :return: list of tuples containing status True/False concerning the creation status and the output filename(s)
+        that should be created
         """
 
         created_outfiles = []

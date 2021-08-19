@@ -171,9 +171,9 @@
                       </td>
 
                       <td>
-                        <a href="{% url 'final_report' scenario.id %}">
-                          <i class="fas fa-file-pdf fa-1x"></i>
-                        </a>
+                        <button class="btn btn-outline report-btn" data-href="{% url 'final_report' scenario.id %}">
+                          <i class="fas fa-file-pdf"></i>
+                        </button>
                       </td>
 
                       <td>
@@ -924,3 +924,11 @@
 
 {% endblock javascripts %}
 
+{% block modals %}
+  {{ block.super }}
+  {% trans "Επιβεβαίωση τροφοδότησης αναφοράς" as mod_title %}
+  {% trans "Η διαδικασία αυτή μπορεί να έχει μεγάλη διάρκεια! Είστε σίγουροι ότι επιθυμείτε να προχωρήσετε;" as mod_body%}
+  {% trans "Επιβεβαίωση" as main_lbl%}
+  {% trans "Ακύρωση" as dismiss_lbl %}
+  {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="genReportConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl %}
+{% endblock modals%}

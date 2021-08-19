@@ -290,7 +290,7 @@
                             </div>
                             </div>
                             </div>
-                    <button type="button" class="btn btn-primary active" name="checkenable" id="result1"  disabled>
+                    <button type="button" class="btn btn-primary active" name="checkenable" id="proceed-report-btn"  disabled>
                     <i class="fas fa-spinner"></i> &nbsp {% trans "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα." %}</button></a>
                 </div>
 
@@ -348,6 +348,9 @@
     {% block javascripts %}
 
     {{ block.super }}
+    <script>
+        var openfda_shiny_endpoint = "{{OPENFDA_SHINY_ENDPOINT}}";
+    </script>
     <script src="/static/build/js/final_report.js"></script>
 
     <script>
@@ -650,10 +653,12 @@
 
         });
 
-    $("#result1").click(function() {
+    $("#proceed-report-btn").click(function() {
         var scid={{scenario_open}};
         var note_val="";
         console.log(allPubNotes)
+
+        $("#loaderOverlay").fadeIn();
 
 
         $.ajax({
@@ -668,6 +673,7 @@
                 dataType: "html",
                 success: function (res) {
                         $('#report_preview').html(res);
+                        $("#loaderOverlay").fadeOut();
 
                   },
                   error: function (res) {
@@ -681,24 +687,29 @@
     });
 
 
-        $("#download").click(function() {
-            var scid={{scenario_open}};
+    $("#download").click(function() {
+        $("#loaderOverlay").fadeIn();
+        var scid={{scenario_open}};
 
-            var extra_notes=$("#editFnote").val();
+        var extra_notes=$("#editFnote").val();
 
-        $.ajax({
-                url: "/ajax/print_report",
-                data: {"scenario_id": scid , "all_notes": JSON.stringify(all_notes),
-                 "extra_notes": JSON.stringify(extra_notes), "allPubTitles": JSON.stringify(allPubTitles),
-                 "allPubNotes": JSON.stringify(allPubNotes)},
-                dataType: "html",
-                success: function (res) {
+        var xhr = new XMLHttpRequest();
+        var params = "scenario_id="+JSON.stringify(scid)+"&all_notes="+JSON.stringify(all_notes)+"&extra_notes="+JSON.stringify(extra_notes)+"&allPubTitles="+JSON.stringify(allPubTitles)+"&allPubNotes="+JSON.stringify(allPubNotes);
 
-                  },
-                  error: function (res) {
-                    console.log("error "+res);
-                }
-            });
+        xhr.open('GET', '/ajax/print_report'+"?"+params, true);
+        xhr.responseType = 'blob';
+
+        xhr.onload = function(e) {
+          if (this.status == 200) {
+            var blob = new Blob([this.response], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(blob);
+            window.open(fileURL,'_blank');
+          }
+        };
+
+        xhr.send();
+        $("#loaderOverlay").fadeOut();
+
     });
 
 
