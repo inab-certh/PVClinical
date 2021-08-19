@@ -22,6 +22,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template import loader
+from django.http import FileResponse
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.http import QueryDict
@@ -101,7 +102,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "sc_id": scenario_id
                 }
 
-    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.SHINY_ENDPOINT}, request))
+    return HttpResponse(template.render({"scenario": scenario, "openfda_shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
 
 
 def get_synonyms(request):
@@ -1588,9 +1589,9 @@ def final_report(request, scenario_id=None):
     # charlson_chart = None
     # gen_table = None
     # gen_chart = None
-    # path_all = None
-    # ir_table = None
-    # ir_all = None
+    path_all = None
+    ir_table = None
+    ir_all = None
 
     from time import time
     start = time()
@@ -1895,14 +1896,14 @@ def final_report(request, scenario_id=None):
 
         for future in concurrent.futures.as_completed(futures):
             try:
-                print(future.result())
-                # str_to_var[threads_results[i][0]] = threads_results[i][1]
+                for res in future.result():
+                    if res[0]:
+                        str_to_var.update(dict(filter(lambda el: el[1] in res[1], threads_results)))
             except (requests.ConnectTimeout, TimeoutException):
                 pass
 
     end = time()
     print(f'OHDSI shots took {end - start} seconds!')
-    print(str_to_var)
 
     cc_shots_labels = {"pre_table": "All prevalence covariates table",
                        "pre_chart": "All prevalence covariates chart",
@@ -1929,9 +1930,8 @@ def final_report(request, scenario_id=None):
     cc_shots_paths_labels = [(cc_shot, str_to_var.get(cc_shot), cc_shots_labels.get(cc_shot)
                               ) for cc_shot in cc_shots_labels.keys() if str_to_var.get(cc_shot)]
 
-    print(cc_shots_paths_labels)
 
-    context = {"scenario_open": scenario_open, #"REPORT_ENDPOINT": settings.REPORT_ENDPOINT,
+    context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes,
@@ -2763,17 +2763,16 @@ def print_report(request, scenario_id=None):
     pub_notes = request.GET.get("allPubNotes", None)
     pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
 
-    extra_notes = json.loads(request.GET.get("extra_notes", None))
+    extra_notes = json.loads(request.GET.get("extra_notes", ""))
     if not extra_notes:
         extra_notes = "empty"
 
     options = {
-        'margin-top': '0.45in',
-        'margin-right': '0.45in',
-        'margin-bottom': '0.45in',
-        'margin-left': '0.45in',
-        'encoding': "UTF-8",
+        'page-size': 'A4',
+        'encoding': 'UTF-8',
         'footer-right': '[page]',
+        'enable-local-file-access': None,
+        # 'disable-smart-shrinking': None,
     }
 
     fname = "{}.pdf".format(str(uuid.uuid4()))
@@ -2782,9 +2781,12 @@ def print_report(request, scenario_id=None):
     pdfkit.from_url("{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
                                                           report_notes, extra_notes, pub_titles, pub_notes),
                     file_path, options=options)
-    webbrowser.open(r"{}".format(file_path))
 
-    return render(request, 'app/print_report.html')
+    try:
+        return FileResponse(open(file_path, 'rb'), content_type='application/pdf', as_attachment=True)
+    except FileNotFoundError:
+        raise Http404()
+
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))

@@ -128,19 +128,25 @@ img {
         {% endif %}
 
     {% if ir_generate == 'yes' %}
-
-       <input type="checkbox" class="class_ir_table" id="ir_table" value=""> <label for="ir_table">&nbsp Include table</label>
-          <br>
-          <br>
-          <br>
-        <img src="{{ ir_table }}" class="crop_img_mod">
-          <br>
-          <br>
-      <input type="checkbox" class="class_ir_all" id="ir_all" value=""> <label for="ir_all">&nbsp Include table with heatmap</label>
-          <br>
-          <br>
-          <br>
-        <img src="{{ ir_all }}" width="97%">
+          {% if ir_table %}
+            <input type="checkbox" class="class_ir_table" id="ir_table" value=""> <label for="ir_table">&nbsp Include table</label>
+            <br>
+            <br>
+            <br>
+            <img src="{{ ir_table }}" class="crop_img_mod">
+            <br>
+            <br>
+          {% endif %}
+          {% if ir_all %}
+            <input type="checkbox" class="class_ir_all" id="ir_all" value=""> <label for="ir_all">&nbsp Include table with heatmap</label>
+              <br>
+              <br>
+              <br>
+            <img src="{{ ir_all }}" width="97%">
+          {% endif %}
+          {% if ir_table is None and ir_all is None %}
+              <b>An error might have occurred during preview generation. Please try again later!</b>
+          {% endif %}
     {% endif %}
 
       </div>
@@ -215,6 +221,7 @@ img {
         {% endif %}
 
         {% if cp_generate == 'yes' %}
+          {% if path_all %}
             <div class="checkbox_choices">
                 <label class="checkbox-inline">
                 <input type="checkbox" id="cp_all" value="">&nbsp Include tables and charts
@@ -223,7 +230,11 @@ img {
             <br>
             <br>
             <img src="{{ path_all }}" width="97%">
+          {% else %}
+            <b>An error might have occurred during preview generation. Please try again later!</b>
+          {% endif %}
         {% endif %}
+
       </div>
       <div class="modal-footer">
         <button id="closePath" type="button" class="btn btn-default" data-dismiss="modal">Close</button>

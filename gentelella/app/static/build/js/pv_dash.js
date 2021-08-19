@@ -37,4 +37,30 @@ $(function() {
             location.reload();
         }
     });
+
+
+
+
+    $("button.report-btn").on("click", function (){
+        console.log("cliiiiiiiiiiicked");
+        var new_location = $(this).attr("data-href");
+
+        $("#genReportConfirmModal").modal("show");
+
+        $("#genReportConfirmModal #confirmBtn").on("click", function() {
+            $("#genReportConfirmModal").modal("hide");
+            $("#loaderOverlay").fadeIn();
+            window.location = new_location;
+        }
+        )
+    });
 });
+
+
+// document.onreadystatechange = function() {
+//     if (document.readyState !== "complete") {
+//         $("#loaderOverlay").fadeIn();
+//     } else {
+//         $("#loaderOverlay").fadeOut();
+//     }
+// };

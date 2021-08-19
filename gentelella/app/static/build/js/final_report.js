@@ -1,14 +1,13 @@
 $(document).ready(function(){
 
   $("[id*=ShinyBtn]").click(function(){
-  // console.log("ok")
       var drug= $(this).data('drug');
       var con= $(this).data('con');
       var hash= $(this).data('hash');
-      var urlquickview1= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-	  var urlquickview2= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
-      var urlquickview3= "http://83.212.101.89:3838/deployshiny/"+ $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-       console.log(urlquickview1);
+      var urlquickview1= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+	  var urlquickview2= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
+      var urlquickview3= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+      console.log(urlquickview1);
 
      if (con == ''){
         document.getElementById('iframe_shiny').src = urlquickview2;
@@ -17,40 +16,42 @@ $(document).ready(function(){
         }else{
         document.getElementById('iframe_shiny').src = urlquickview1;
 
-     };
+     }
   });
 
 	var i=0;
     $('input[type="checkbox"]').click(function(){
         if($(this).prop("checked") == true){
-            i=i+1
-            document.getElementById("result1").disabled = false;
-        }
-        else if($(this).prop("checked") == false){
-            i=i-1
-            if(i==0){
-
-            document.getElementById("result1").disabled = true;
-            }
-        }
-    });
-});
-
-$(document).ready(function(){
-	var i=0;
-    $('input[type="checkbox"]').click(function(){
-        if($(this).prop("checked") == true){
-            i=i+1
+            i=i+1;
+            document.getElementById("proceed-report-btn").disabled = false;
             document.getElementById("result").disabled = false;
         }
         else if($(this).prop("checked") == false){
-            i=i-1
+            i=i-1;
             if(i==0){
+
+            document.getElementById("proceed-report-btn").disabled = true;
             document.getElementById("result").disabled = true;
             }
         }
     });
 });
+
+// $(document).ready(function(){
+// 	var i=0;
+//     $('input[type="checkbox"]').click(function(){
+//         if($(this).prop("checked") == true){
+//             i=i+1;
+//             document.getElementById("result").disabled = false;
+//         }
+//         else if($(this).prop("checked") == false){
+//             i=i-1;
+//             if(i==0){
+//             document.getElementById("result").disabled = true;
+//             }
+//         }
+//     });
+// });
 
 $(document).ready(function(){
 

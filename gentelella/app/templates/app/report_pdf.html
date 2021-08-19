@@ -1,8 +1,16 @@
 {% load i18n %}
 {% load staticfiles %}
+
+<html>
+<head>
 {% block stylesheets %}
     <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
 {% endblock stylesheets %}
+
+</head>
+<body>
+<div id="reportBody">
+
 
     <img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="35%">
     <img src='https://www.certh.gr/skn/logo_el.png' align="right" width="40%" >
@@ -661,3 +669,6 @@
     <textarea id="editFnote" placeholder="Place your notes here..."></textarea>
 {% endif %}
 <!--End of extra_notes-->
+</div>
+</body>
+</html>
