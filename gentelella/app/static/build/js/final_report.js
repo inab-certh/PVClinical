@@ -1,25 +1,24 @@
 $(document).ready(function(){
+    $("[id*=ShinyBtn]").click(function(){
+        var drug= $(this).data('drug');
+        var con= $(this).data('con');
+        var hash= $(this).data('hash');
+        var lang = $("#curLang").data("lang").substring(0, 2).toLowerCase();
+        var urlquickview1= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+        var urlquickview2= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
+        var urlquickview3= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
+        // console.log(urlquickview1);
 
-  $("[id*=ShinyBtn]").click(function(){
-      var drug= $(this).data('drug');
-      var con= $(this).data('con');
-      var hash= $(this).data('hash');
-      var urlquickview1= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con+ "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-	  var urlquickview2= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
-      var urlquickview3= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'')+ "/?lang=en&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-      console.log(urlquickview1);
+        if (con == '') {
+            document.getElementById('iframe_shiny').src = urlquickview2;
+        } else if (drug == '') {
+            document.getElementById('iframe_shiny').src = urlquickview3;
+        } else {
+            document.getElementById('iframe_shiny').src = urlquickview1;
+        }
+    });
 
-     if (con == ''){
-        document.getElementById('iframe_shiny').src = urlquickview2;
-        }else if (drug == ''){
-        document.getElementById('iframe_shiny').src = urlquickview3;
-        }else{
-        document.getElementById('iframe_shiny').src = urlquickview1;
-
-     }
-  });
-
-	var i=0;
+    var i=0;
     $('input[type="checkbox"]').click(function(){
         if($(this).prop("checked") == true){
             i=i+1;
@@ -35,25 +34,6 @@ $(document).ready(function(){
             }
         }
     });
-});
-
-// $(document).ready(function(){
-// 	var i=0;
-//     $('input[type="checkbox"]').click(function(){
-//         if($(this).prop("checked") == true){
-//             i=i+1;
-//             document.getElementById("result").disabled = false;
-//         }
-//         else if($(this).prop("checked") == false){
-//             i=i-1;
-//             if(i==0){
-//             document.getElementById("result").disabled = true;
-//             }
-//         }
-//     });
-// });
-
-$(document).ready(function(){
 
     $("[id*=NotesBtn]").click(function(){
         hash= $(this).data('hash');

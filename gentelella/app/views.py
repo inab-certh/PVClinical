@@ -2078,14 +2078,14 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         printPath = shutil.copy(os.path.join(img_path, "irtable_{}_{}.png".format(sc.owner_id, sc.id)),
                                 ohdsi_tmp_img_path)
     elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "/*irtable_{}_{}.png".format(sc.owner_id, sc.id)))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irtable_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if ir_all_rep == "1":
         printPath = shutil.copy(os.path.join(img_path, "irall_{}_{}.png".format(sc.owner_id, sc.id)),
                                 ohdsi_tmp_img_path)
     elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
-        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "/*irall_{}_{}.png".format(sc.owner_id, sc.id)))
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irall_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if pre_table_rep == "1":
