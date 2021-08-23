@@ -177,7 +177,7 @@
                       </td>
 
                       <td>
-                        <button class="btn btn-outline delete-sc-btn" data-toggle="modal" data-target="#scDeleteConfirmModal" data-scid="{{ scenario.id }}" type="button">
+                        <button class="btn btn-outline delete-sc-btn" data-scid="{{ scenario.id }}" type="button">
                           <i class="fa fa-trash"></i>
                         </button>
                       </td>
@@ -888,7 +888,8 @@
       $("#aggrNotesBtn").attr("data-url", url);
 
 
-      $(".delete-sc-btn").on("click", function () {
+      $(document).on("click", ".delete-sc-btn", function () {
+        $("#scDeleteConfirmModal").modal("show");
         // On trash can button click, pass record id to modal confirm btn
         $("#confirmBtn").data("record", $(this).data("scid"));
 

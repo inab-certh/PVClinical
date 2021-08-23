@@ -89,7 +89,7 @@
                                         <div class="panel panel-default">
                                           <div class="panel-heading">
                                             <h4 class="panel-title">
-                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapseohdsi" style="color:#5A738E;">{% trans "Επιλέξτε ποιες απο τις πληροφορίες του περιβάλλοντος εργασίας OHDSI θέλετε να συμπεριλάβετε." %}</a>
+                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapseohdsi" style="color:#5A738E;">{% trans "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας OHDSI που θέλετε να συμπεριλάβετε" %}</a>
                                             </h4>
 
                                           </div>
@@ -221,7 +221,7 @@
                                         <div class="panel panel-default">
                                           <div class="panel-heading">
                                             <h4 class="panel-title">
-                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapsepub" style="color:#5A738E;">Choose which of the PubMed views information you want to include</a>
+                                              <a data-toggle="collapse" data-parent="#accordion" href="#collapsepub" style="color:#5A738E;">{% trans "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας PubMed που θέλετε να συμπεριλάβετε" %}</a>
                                             </h4>
                                           </div>
                                           <div id="collapsepub" class="panel-collapse collapse in">
@@ -240,14 +240,14 @@
                                                                       <div class="modal-dialog modal-lg">
                                                                         <div class="modal-content">
                                                                           <div class="modal-header">
-                                                                            <h4 class="modal-title col-xs-11">Paper's tittle from Mendeley</h4>
+                                                                            <h4 class="modal-title col-xs-11">{% trans "Τίτλος δημοσίευσης από Mendeley" %}</h4>
                                                                                <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                                                 </div>
                                                                           <div class="modal-body">
                                                                                 <input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ title }}" data-series="{{ forloop.counter}}">&nbsp; {{ title }}<label for="pubtitle{{ forloop.counter}}" ></label>
                                                                           </div>
                                                                           <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
                                                                           </div>
                                                                         </div>
                                                                         <!-- /.modal-content -->
@@ -261,14 +261,14 @@
                                                                       <div class="modal-dialog modal-lg">
                                                                         <div class="modal-content">
                                                                           <div class="modal-header">
-                                                                            <h4 class="modal-title col-xs-11">Notes for this paper from Mendeley</h4>
+                                                                            <h4 class="modal-title col-xs-11">{% trans "Σημειώσεις δημοσίευσης από Mendeley" %}}</h4>
                                                                                <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                                                 </div>
                                                                           <div class="modal-body">
                                                                                 <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ note }}" data-series="{{ forloop.counter}}">&nbsp; {{ note }}<label for="pubnote{{ forloop.counter}}" ></label>
                                                                           </div>
                                                                           <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
                                                                           </div>
                                                                         </div>
                                                                         <!-- /.modal-content -->
@@ -656,7 +656,7 @@
     $("#proceed-report-btn").click(function() {
         var scid={{scenario_open}};
         var note_val="";
-        console.log(allPubNotes)
+        // console.log(allPubNotes);
 
         $("#loaderOverlay").fadeIn();
 

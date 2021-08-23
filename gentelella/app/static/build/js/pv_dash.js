@@ -41,13 +41,10 @@ $(function() {
 
 
 
-    $("button.report-btn").on("click", function (){
-        console.log("cliiiiiiiiiiicked");
-        var new_location = $(this).attr("data-href");
-
+    $(document).on("click", "button.report-btn", function (){
         $("#genReportConfirmModal").modal("show");
-
-        $("#genReportConfirmModal #confirmBtn").on("click", function() {
+        var new_location = $(this).attr("data-href");
+        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
             $("#genReportConfirmModal").modal("hide");
             $("#loaderOverlay").fadeIn();
             window.location = new_location;
