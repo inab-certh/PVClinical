@@ -1,4 +1,8 @@
 $(function() {
+    $(window).load(function(){
+        $("#loaderOverlay").fadeOut();
+    });
+
     $('.has-popover').popover({'trigger':'manual'
     }).on("mouseenter", function () {
         var _this = this;
@@ -13,6 +17,12 @@ $(function() {
                 $(_this).popover("hide");
             }
         }, 100);
+    });
+
+    $("#scenariosTbl tr td a").on("click", function(){
+        if($(this).attr("href")!="#") {
+            $("#loaderOverlay").fadeIn();
+        }
     });
 
     $("div.scenario-info a.has-popover").on('click',function(e){
