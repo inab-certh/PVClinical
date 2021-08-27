@@ -73,7 +73,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "sc_id": scenario_id
                 }
 
-    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.SHINY_ENDPOINT}, request))
+    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
 
 
 def get_synonyms(request):
@@ -1482,34 +1482,38 @@ def social_media(request, sc_id):
         all_combs = list(product(sorted([d.name for d in drugs]) or [""],
                                  sorted([c.name for c in conditions]) or [""]))
 
-        all_combs = list(map(lambda el: " && ".join(filter(None, el)), all_combs))
+        # all_combs = list(map(lambda el: " && ".join(filter(None, el)), all_combs))
 
-        keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
+        # keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
         # Collection name which is a hash of the search expression for twitter (or other social media)
-        col_name = hashlib.md5(keywords.encode()).hexdigest()
+        # col_name = hashlib.md5(keywords.encode()).hexdigest()
 
-        data = {"keywords": keywords, "scenarioID": sc_id}
+        # data = {"keywords": keywords, "scenarioID": sc_id}
 
-        resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
-        resp_json = resp.json()
+        # resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
+        # resp_json = resp.json()
 
-        start_switch = resp.status_code == 200 and resp_json.get(
-            "processStatus") == "Stopped" or resp.status_code == 404
+        # start_switch = resp.status_code == 200 and resp_json.get(
+        #     "processStatus") == "Stopped" or resp.status_code == 404
 
         # content_switch = resp.status_code == 404
+        all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
+        twitter_query = " OR ".join(all_combs)
 
     except Scenario.DoesNotExist:
         sc = None
-        col_name = None
-        keywords = None
-        start_switch = False
+        twitter_query = ""
+        # col_name = None
+        # keywords = None
+        # start_switch = False
 
     context = {
         "scenario": sc,
-        "keywords": keywords,
-        "col_name": col_name,
+        # "keywords": keywords,
+        # "col_name": col_name,
         "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
-        "start_switch": start_switch,
+        "twitter_query": twitter_query,
+        # "start_switch": start_switch,
         # "tethys_endpoint": settings.TETHYS_ENDPOINT,
         "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
