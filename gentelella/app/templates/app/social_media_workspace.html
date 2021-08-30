@@ -80,22 +80,10 @@
                             </div>
                         {% endif %}
 
-                        <button id="startSMDEBtn" class="social-btn btn btn-dark pull-left" onclick="start_data_extraction('{{ scenario.id }}', '{{ keywords }}')" type="button" data-url="" data-toggle="tooltip" data-placement="right" data-html="true" title="<p>{% trans 'Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>" {% if start_switch is False %}disabled{% endif %}>
-                            <i class="far fa-play-circle fa-2x"></i>
-                            <span class="visible-lg">
-                                {% trans "Έναρξη εξόρυξης δεδομένων" %}
-                            </span>
-                        </button>
-                        <button id="stopSMDEBtn" class="social-btn btn btn-danger pull-right" onclick="stop_data_extraction('{{ scenario.id }}', '{{ keywords }}')" type="button" data-url="" data-toggle="tooltip" data-placement="left" data-html="true" title="<p>{% trans 'Λήξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς διερεύνηση σενάριο' %}</p>" {% if start_switch %}disabled{% endif %}>
-                            <i class="far fa-stop-circle fa-2x"></i>
-                            <span class="visible-lg">
-                                {% trans "Λήξη εξόρυξης δεδομένων" %}
-                            </span>
-                        </button>
                     </div>
 
                     <div class="row iframe-container">
-                        <iframe src="{{ sm_shiny_endpoint }}?dbName={{ scenario.id }}&colName={{ col_name }}" class="social-iframe" allowfullscreen></iframe>
+                        <iframe src="{{ sm_shiny_endpoint }}?twitterQuery={{ twitter_query }}" class="social-iframe" allowfullscreen></iframe>
                     </div>
 
                 </div>
