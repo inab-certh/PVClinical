@@ -503,14 +503,14 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
         ir_options.get("study_end_date")) if ir_options.get("study_start_date") and ir_options.get("study_end_date") \
         else _("Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!")
     # additional_info["age_crit_info"] = "{} {}"
-
     age_crit_dict = dict([("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
                           ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
                           ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
                           ("!bt", _("Όχι ανάμεσα σε"))])
     additional_info["age_crit_info"] = "{} {} {}".format(
         _("Κριτήριο ηλικίας:"), age_crit_dict.get(ir_options.get("age_crit")).lower(),
-        " {} ".format(_("και")).join([str(ir_options.get("age")), str(ir_options.get("ext_age"))]))\
+        " {} ".format(_("και")).join([str(ir_options.get("age")), str(ir_options.get("ext_age"))]
+                                     ) if ir_options.get("age_crit") in ["bt", "!bt"] else str(ir_options.get("age")))\
         if ir_options.get("age_crit") else _("Δεν έχει οριστεί συγκεκριμένο ηλικιακό κριτήριο!")
 
     genders_dict = dict([("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))])
