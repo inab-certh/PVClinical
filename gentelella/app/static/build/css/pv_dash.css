@@ -28,7 +28,7 @@
   	text-align: center;
   	padding-top: 25%;
   	opacity: .83;
-	display: none;
+	display: inline-block;
 }
 
 .cssload-loader {
