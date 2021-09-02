@@ -48,8 +48,6 @@ urlpatterns = [
     path('LiteratureWorkspace/<int:scenario_id>/<str:first>/<str:end>/<int:page_id>', views.pubMed_view, name='LiteratureWorkspace'),
     path("ajax/save_pubmed_input/", views.save_pubmed_input, name='save_pubmed_input'),
     path("ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
-    path("ajax/start-data-extraction", views.start_sm_data_extraction, name='start_sm_data_extraction'),
-    path("ajax/stop-data-extraction", views.stop_sm_data_extraction, name='stop_sm_data_extraction'),
     path("edit-scenario/ajax/mendeley_login", views.is_logged_in, name='mendeley_login'),
     path("paper_notes_view", views.paper_notes_view, name='paper_notes'),
     path('social-auth/', include('social_django.urls', namespace='social_mendeley')),
@@ -60,8 +58,7 @@ urlpatterns = [
     path("notes/<int:sc_id>", views.allnotes, name='allnotes'),
     path("notes/dashboard", views.allnotes, name='allnotes'),
     path("social-media/<int:sc_id>", views.social_media, name='social_media_workspace'),
-    # path('tinymce/', include('tinymce.urls')),
-    # path('ckeditor/', include('ckeditor_uploader.urls')),
+
     path("final_report", views.final_report, name='final_report'),
     path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
     path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
