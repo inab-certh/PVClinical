@@ -1,5 +1,7 @@
+import ast
 import concurrent.futures
 import hashlib
+import html
 
 import json
 import os
@@ -1420,6 +1422,27 @@ def allnotes(request):
     return render(request, 'app/all_notes.html', context)
 
 
+def openfda_screenshots_exist(request):
+    """ An ajax callback checking if there is at least one screenshot for the specific user, scenario pair (hashes
+    parameter corresponds to that drug-condition combinations' hashes for that pair) on the server hosting the
+    screenshots for openfda workspace
+    :param request: The request from which hashes are retrieved and this function is called
+    :return: true or false, depending on whether the specific screenshot files were found or not on server
+    """
+    r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    existing_files = list(filter(lambda lnk: "." in lnk, map(lambda link: link['href'], soup.find_all('a', href=True))))
+    hashes = ast.literal_eval(html.unescape(request.GET.get("hashes", None)))
+
+    found_files = list(filter(lambda fname: fname.split("_")[0] in hashes, existing_files))
+    ret = {}
+    ret["exist"] = (len(found_files) != 0)
+
+    return JsonResponse(ret)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def final_report(request, scenario_id=None):
     """ Create a final report that contains every information that you
     select from OHDSI and OpedFDA workspace
@@ -1468,6 +1491,8 @@ def final_report(request, scenario_id=None):
         hash = h.hexdigest()
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
+
+    hashes = list(map(lambda dch: dch[2], drug_condition_hash))
 
     user = sc.owner
 
@@ -1899,7 +1924,7 @@ def final_report(request, scenario_id=None):
                 pass
 
     end = time()
-    print(f'OHDSI shots took {end - start} seconds!')
+    # print(f'OHDSI shots took {end - start} seconds!')
 
     cc_shots_labels = {"pre_table": "All prevalence covariates table",
                        "pre_chart": "All prevalence covariates chart",
@@ -1930,13 +1955,9 @@ def final_report(request, scenario_id=None):
     context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
-               "pathways_notes": pathways_notes,
-               # "ir_table": ir_table, "ir_all": ir_all, "path_all": path_all,
-               # "pre_table": pre_table, "pre_chart": pre_chart, "drug_table": drug_table, "drug_chart": drug_chart,
-               # "demograph_table": demograph_table, "demograph_chart": demograph_chart, "charlson_table": charlson_table,
-               # "charlson_chart": charlson_chart, "gen_table": gen_table, "gen_chart": gen_chart,
-               "char_generate": char_generate, "cp_generate": cp_generate, "ir_generate": ir_generate,
-               "pub_dict": pub_dict, "cc_shots_paths_labels": cc_shots_paths_labels}
+               "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
+               "ir_generate": ir_generate, "pub_dict": pub_dict, "cc_shots_paths_labels": cc_shots_paths_labels,
+               "hashes": hashes}
 
     # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
     context.update(str_to_var)
@@ -1944,6 +1965,8 @@ def final_report(request, scenario_id=None):
     return render(request, "app/final_report.html", context)
 
 
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pub_notes=None, extra_notes=None):
     """ Generate the preview of final report that contains every information that you
     have chosen from OHDSI and OpedFDA workspace and give you the opportunity to
@@ -2221,8 +2244,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         hash = h.hexdigest()
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
+    print(drug_condition_hash)
 
-    r = requests.get(settings.REPORT_ENDPOINT)
+    r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
 
     dict_quickview = {}
@@ -2264,7 +2288,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict1.setdefault(k, []).append('')
 
             if files_csv:
-                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, files_csv[0])))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, files_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict1.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
@@ -2294,7 +2318,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv:
                 dict2.setdefault(k, []).append('- Report counts and PRR')
-                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv[0])))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
@@ -2307,7 +2331,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv1:
                 dict2.setdefault(k, []).append('- Drugs in scenario reports')
-                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv1[0])))
+                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv1[0])))
                 styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler2.render())
                 kin = kin + 1
@@ -2319,7 +2343,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if dynprr_csv2:
                 dict2.setdefault(k, []).append('- Events in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dynprr_csv2[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv2[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2391,7 +2415,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if changep_csv:
                 dict3.setdefault(k, []).append('- Drugs in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, changep_csv[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2403,7 +2427,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
             if changep_csv1:
                 dict3.setdefault(k, []).append('- Events in scenario reports')
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, changep_csv1[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv1[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
@@ -2431,7 +2455,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
         if files_csv:
             dictcsv[k] = files_csv[0]
-            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dictcsv[k])))
+            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dictcsv[k])))
             styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
             dict_quickview.setdefault(i, []).append(styler1.render())
             lin = lin + 1
@@ -2465,20 +2489,20 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
 
         if dash_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Events', []).append(styler1.render())
             lin = lin+1
             dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
         if dash_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Concomitant Medications', []).append(styler1.render())
             lin = lin + 1
             dict_dash_csv.setdefault(' Concomitant Medications', []).append("Table {}".format(lin))
 
         if dash_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, dash_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
             lin = lin + 1
@@ -2497,40 +2521,40 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_d_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_d_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_d_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Table {}".format(lin))
         if rr_d_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Table {}".format(lin))
 
         if rr_d_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
 
         if rr_d_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_d_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2557,7 +2581,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lr_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prres".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
         if lr_csv6:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv6[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' LTR Results based on Total Events', []).append(styler1.render())
             lin = lin + 1
@@ -2570,31 +2594,31 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             lin = lin + 1
             dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Table {}".format(lin))
         if lr_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Table {}".format(lin))
         if lr_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Drugs in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
         if lr_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Event counts for drug', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Event counts for drug', []).append("Table {}".format(lin))
         if lr_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Counts for all events', []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(' Counts for all events', []).append("Table {}".format(lin))
         if lr_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lr_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2615,37 +2639,37 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_e_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_e_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
         if rr_e_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Table {}".format(lin))
         if rr_e_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Table {}".format(lin))
         if rr_e_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Table {}".format(lin))
         if rr_e_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if rr_e_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, rr_e_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2672,43 +2696,43 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
                                map(lambda el: el.get_text(), soup.find_all('a'))))
         if lre_csv6:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv6[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' LTR Results based on Total Drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Table {}".format(lin))
         if lre_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Table {}".format(lin))
         if lre_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Table {}".format(lin))
         if lre_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Events in scenario reports', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
         if lre_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Drug counts for event', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Drug counts for event', []).append("Table {}".format(lin))
         if lre_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Counts for all drugs', []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(' Counts for all drugs', []).append("Table {}".format(lin))
         if lre_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.REPORT_ENDPOINT, lre_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(' Indications in scenario reports', []).append(styler1.render())
             lin = lin + 1
@@ -2730,8 +2754,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             if j != '':
                 empty_OpenFDA = "no"
 
-    context = {"REPORT_ENDPOINT": settings.REPORT_ENDPOINT, "all_combs": all_combs, "scenario": scenario,
-               "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
+    context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
+               "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
                "dict_dash_csv": dict_dash_csv, "dict_rr_d": dict_rr_d, "dict_lr": dict_lr,
                "dict_lrTest_png": dict_lrTest_png, "dict_rr_e": dict_rr_e,
                "dict_lre": dict_lre, "dict_lreTest_png": dict_lreTest_png, "dict1": dict1,

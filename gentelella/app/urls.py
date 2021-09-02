@@ -39,6 +39,7 @@ urlpatterns = [
     path('ajax/conds-nodes-ids', views.get_conditions_nodes_ids, name='conds_nodes_ids'),
     path('ajax/get-note-content', views.get_note_content, name='get_note_content'),
     path('ajax/get-note', views.get_note, name='get_note'),
+    path('ajax/openfda-screenshots-exist', views.openfda_screenshots_exist, name='openfda-screenshots-exist'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('ohdsi-workspace/<int:scenario_id>', views.ohdsi_workspace, name='ohdsi_workspace'),
