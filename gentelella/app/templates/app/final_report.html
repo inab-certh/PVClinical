@@ -148,7 +148,7 @@
 
                             <div id="OpenFDA" class="container tab-pane fade"><br>
                                 <div style="padding-left:30px; padding-right:30px;">
-                                    <input type="checkbox" id="opendfa"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
+                                    <input type="checkbox" id="opendfaChkBx"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
                                     {% trans "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί" %}
                                     {% trans "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες" %}
                                     {% trans "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά." %}</i><label for="openfda"></label>
@@ -350,6 +350,7 @@
     {{ block.super }}
     <script>
         var openfda_shiny_endpoint = "{{OPENFDA_SHINY_ENDPOINT}}";
+        var hashes = "{{ hashes }}";
     </script>
     <script src="/static/build/js/final_report.js"></script>
 

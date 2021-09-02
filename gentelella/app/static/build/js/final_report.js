@@ -18,14 +18,39 @@ $(document).ready(function(){
         }
     });
 
+    var openfda_shots_exist = false;
+
+    function openfda_screenshots_exist(files_hashes) {
+        $.ajax({
+            url: "/ajax/openfda-screenshots-exist",
+            data: {"hashes": JSON.stringify(files_hashes)},
+            type: "GET",
+            dataType: "json",
+            async: false
+        }).done(function(ret) {
+            openfda_shots_exist = ret.exist;
+        }).fail(function () {
+            openfda_shots_exist = false;
+        });
+    }
+
+
+    $("#shinyModal").on('hidden.bs.modal', function() {
+        openfda_screenshots_exist(hashes);
+    });
+
     var i=0;
-    $('input[type="checkbox"]').click(function(){
-        if($(this).prop("checked") == true){
+    $("#opendfaChkBx").change(function() {
+        if(this.checked) {
+            openfda_screenshots_exist(hashes);
+        }
+        // console.log(openfda_shots_exist);
+        if(openfda_shots_exist == true && $(this).prop("checked") == true){
             i=i+1;
             document.getElementById("proceed-report-btn").disabled = false;
             document.getElementById("result").disabled = false;
         }
-        else if($(this).prop("checked") == false){
+        else {
             i=i-1;
             if(i==0){
 
