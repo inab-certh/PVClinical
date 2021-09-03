@@ -142,11 +142,11 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
   max <- nrow(mydf)
   # max <- min(900, nrow(mydf) )
   
-  if (!is.null(eventName)){
-    mydf<-mydf[which(mydf$term==eventName),]
+  if (is.null(eventName) | identical(eventName, character(0))){
+    mydf<-mydf[1:max,]
   }
   else {
-    mydf<-mydf[1:max,]
+    mydf<-mydf[which(mydf$term==eventName),]
   }
 
   return( list(mydf=mydf, myurl=myurl, exact = exact, excludeddf = excludeddf   ) )
