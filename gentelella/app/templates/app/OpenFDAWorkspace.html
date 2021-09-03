@@ -59,6 +59,15 @@
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>
                                                 <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
+
+                                                 {% if scenario.drugs|length == 0 %}
+                                                    <label class="switch">
+                                                      <input type="checkbox" id="concomitantd" checked>
+                                                      <span class="slider round"></span>
+                                                    </label>
+                                                    <span class="DrugEventParameter" id="ctitle">Concomitant</span>
+                                                 {% endif %}
+
                                             </legend>
                                             {% for condition in scenario.conditions %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
@@ -742,7 +751,16 @@
 
 
         function buildUrlComb(app, indx) {
-            if (document.getElementById('concomitant').checked){
+            if (document.getElementById('concomitantd') != null){
+                if ( document.getElementById('concomitantd').checked){
+                    econcomitant = true;
+                } else {
+                    econcomitant = false;
+                }
+            } else {
+                econcomitant = true;
+            }
+            if (document.getElementById('concomitant').checked &&  econcomitant){
                  var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
@@ -751,9 +769,11 @@
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
                 }
+                if (condition  === undefined){
+                    var condition =  $("input[name='eventCheckBox']").attr("data-code")
+                }
 
 
-                console.log(condition)
                 // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
                 // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
                 var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
@@ -764,7 +784,7 @@
                 } else {
                     tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
                 }
-                console.log(tmpQueryUrl);
+
                 document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
             } else {
                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
@@ -776,6 +796,9 @@
                     var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
                 }
 
+                if (condition  === undefined){
+                    var condition =  $("input[name='eventCheckBox']").attr("data-code")
+                }
 
                 console.log(condition)
                 // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;

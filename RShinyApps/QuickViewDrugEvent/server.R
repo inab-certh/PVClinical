@@ -255,19 +255,21 @@ shinyServer(function(input, output, session) {
 
 
   gettotalquery <- reactive({
+    
     geturlquery()
     toggleModal(session, 'updatemodal', 'close')
     v1 <- getbestdrugvar()
     t1 <- c(getbestterm1() )
     myurl <- buildURL(v1, t1, count='', limit=5 )
     mydf <- fda_fetch_p( session, myurl, wait = getwaittime())
-    browser()
+    # browser()
     mydf <- list(result=mydf$result, url=myurl, meta=mydf$meta)
-    browser()
+    # browser()
     return(mydf)
   })
 
   gettotaldaterangequery <- reactive({
+    
     geturlquery()
     v1 <- c( getbestdrugvar(), gettimevar() )
     t1 <- c(getbestterm1(), gettimerange() )
@@ -297,7 +299,8 @@ shinyServer(function(input, output, session) {
     
     if (q$concomitant == TRUE){
       
-      v <- c( getbestdrugvar(), getbestaevar() , gettimevar() )
+      # v <- c( getbestdrugvar(), getbestaevar() , gettimevar() )
+      v <- c( q$v1, getbestaevar() , gettimevar() )
       t <- c( getbestterm1(), getbestterm2(), gettimerange() )
       if (t[1] == q$t1){
         t[1]<-toupper(paste0('"',q$dename,'"'))
@@ -305,6 +308,7 @@ shinyServer(function(input, output, session) {
       if (!is.null(q$t2)){
         t[2]<-toupper(q$ename)
       }
+      
       myurl <- buildURL(v, t, count=gettimevar() )
       out <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=5 )
       # browser()
@@ -1060,11 +1064,11 @@ shinyServer(function(input, output, session) {
     q <- parseQueryString(session$clientData$url_search)
     # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
-    # q$v2<-"patient.reaction.reactionmeddrapt"
+    # q$v1<-"patient.reaction.reactionmeddrapt"
     # q$t1<-"D10AD04"
-    # q$t2<-"10012378"
+    # q$t1<-"10028813"
     # q$hash <- "ksjdhfksdhfhsk"
-    # q$concomitant <- FALSE
+    # q$concomitant <- TRUE
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
@@ -1098,6 +1102,8 @@ shinyServer(function(input, output, session) {
         
         q$ename <- event$names[[1]][1]
         
+      } else {
+        q$ename <- NULL
       }
     } else {
       con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
@@ -1207,6 +1213,7 @@ shinyServer(function(input, output, session) {
 
   #Build table containing drug-event pairs
   getdrugcountstable <- reactive({
+    
     geturlquery()
     mydf <- getdrugcounts()
     myurl <- mydf$myurl
@@ -1764,8 +1771,15 @@ shinyServer(function(input, output, session) {
     # browser()
     if (q$concomitant == TRUE){
       t[2]<- q$dename
-      mylist <-  getcounts999fda( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact, eventName = toupper(q$ename))
+      if (q$v1 ==  "patient.reaction.reactionmeddrapt"){
+        mylist <-  getcounts999fda( session, v= v, t= t, 
+                                    count="patient.drug.openfda.generic_name.exact", exactrad = input$useexact, eventName = toupper(q$ename))
+        
+      } else {
+        mylist <-  getcounts999fda( session, v= v, t= t, 
+                                    count=getprrvarname(), exactrad = input$useexact, eventName = toupper(q$ename))
+      }
+      
     } else {
       mylist <-  getcounts999( session, v= v, t= t, 
                                count=getprrvarname(), exactrad = input$useexact, eventName = q$t2, date1 = input$date1, date2=input$date2 )
@@ -1825,7 +1839,7 @@ shinyServer(function(input, output, session) {
   #Get total counts in database for each event and Total reports in database
   gettotals<- reactive({
     q<-geturlquery()
-    
+  
     if (q$concomitant == TRUE){
       
       v <- c( '_exists_', '_exists_', gettimevar() )
@@ -1836,6 +1850,7 @@ shinyServer(function(input, output, session) {
       v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
       t <- c( getbestvar1(), getprrvarname(), getbestterm1(), gettimerange() )
       t[3] <- q$dename
+      v[3]<- q$v1
       totaldrugurl <- buildURL( v, t, count='', limit=1)
       totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag=paste( 'No Reports for',
                                                                           ifelse(getwhich()=='D', 'drug', 'event' ), getterm1( session ), '<br>' ) )
@@ -1888,7 +1903,7 @@ shinyServer(function(input, output, session) {
     q<-geturlquery()
     # print(session)
     #    totals <- gettotals()
-    # browser()
+    
     comblist <- makecomb(session, getdrugcounts()$mydf, geteventtotals(), gettotals(), getsearchtype())
     # browser()
     
@@ -2012,6 +2027,7 @@ shinyServer(function(input, output, session) {
   
   geteventtotals <- reactive(
     {
+      
       q <- geturlquery()
       mydf <- getdrugcounts()$mydf
       if ( !is.data.frame(mydf) ) 
@@ -2022,20 +2038,35 @@ shinyServer(function(input, output, session) {
       foundtermslist <- mydf[,1]
       foundtermslist <- paste('"', foundtermslist, '"', sep='')
       foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-      
+     
       all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
       for (i in seq_along(foundtermslist))
       {
         if (q$concomitant==TRUE){
-          eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
-          #    myv <- c('_exists_', eventvar)
-          myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
-          myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
-          #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
-          cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
-          #   print(cururl)
-          #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
-          all_events2 <- fda_fetch_p( session, cururl, message= i )
+          if (q$v1 == "patient.reaction.reactionmeddrapt"){
+            eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+            #    myv <- c('_exists_', eventvar)
+            myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
+            myv[2] <- "patient.drug.openfda.generic_name.exact"
+            myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
+            #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+            cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
+            #   print(cururl)
+            #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
+            all_events2 <- fda_fetch_p( session, cururl, message= i )
+            
+          } else {
+            eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+            #    myv <- c('_exists_', eventvar)
+            myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
+            myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
+            #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+            cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
+            #   print(cururl)
+            #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
+            all_events2 <- fda_fetch_p( session, cururl, message= i )
+          }
+       
           #    Sys.sleep( .25 )
           
           curcount <- all_events2$meta$results$total

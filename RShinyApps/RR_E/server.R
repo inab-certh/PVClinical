@@ -9,4 +9,4 @@ require(RColorBrewer)
 require(wordcloud)
 
 source( 'sourcedir.R')
-source('helperfunctions.r')
+# source('helperfunctions.r')
