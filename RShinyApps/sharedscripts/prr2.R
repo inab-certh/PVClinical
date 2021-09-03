@@ -305,14 +305,14 @@ shinyServer(function(input, output, session) {
   
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
-    q<-NULL
+    # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
-    q$v1<-"patient.reaction.reactionmeddrapt"
+    # q$v1<-"patient.reaction.reactionmeddrapt"
     # q$t1<-"D10AD04"
-    q$t1<-"10003239"
+    # q$t1<-"10003239"
     # q$hash <- "asjhakh"
     # browser()
-    q$concomitant <- FALSE
+    # q$concomitant <- FALSE
     updateNumericInput(session, "limit", value = q$limit)
     updateNumericInput(session, "limit2", value = q$limit)
     if( getwhich()== 'D'){
