@@ -15,6 +15,7 @@ import shutil
 from math import ceil
 from itertools import chain
 from itertools import product
+from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
@@ -1429,12 +1430,17 @@ def openfda_screenshots_exist(request):
     :param request: The request from which hashes are retrieved and this function is called
     :return: true or false, depending on whether the specific screenshot files were found or not on server
     """
-    r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    existing_files = list(filter(lambda lnk: "." in lnk, map(lambda link: link['href'], soup.find_all('a', href=True))))
+    # r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    # soup = BeautifulSoup(r.text, 'html.parser')
+    # existing_files = filter(lambda lnk: "." in lnk, map(lambda link: link['href'], soup.find_all('a', href=True)))
+
+    ls_resp = requests.get("{}list-media-files".format(settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS))
+    existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
+
     hashes = ast.literal_eval(html.unescape(request.GET.get("hashes", None)))
 
-    found_files = list(filter(lambda fname: fname.split("_")[0] in hashes, existing_files))
+    found_files = list(filter(lambda fname: re.match("^[a-z0-9]*", fname).group() in hashes, existing_files))
     ret = {}
     ret["exist"] = (len(found_files) != 0)
 
@@ -1463,6 +1469,7 @@ def final_report(request, scenario_id=None):
     charlson_chart = ""
     gen_table = ""
     gen_chart = ""
+
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
@@ -1493,6 +1500,12 @@ def final_report(request, scenario_id=None):
         drug_condition_hash.append(list(all_combs[i])+[hash])
 
     hashes = list(map(lambda dch: dch[2], drug_condition_hash))
+
+    # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
+    del_resp = requests.delete("{}delete-media-files".format(
+        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        params={"hashes": hashes})
 
     user = sc.owner
 

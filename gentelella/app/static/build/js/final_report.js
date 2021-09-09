@@ -20,7 +20,13 @@ $(document).ready(function(){
 
     var openfda_shots_exist = false;
 
-    function openfda_screenshots_exist(files_hashes) {
+
+    /**
+     *  Activate or deactivate proceed buttons.
+     *  If even one screenshot exists and checkbox is checked activate.
+     *  Deactivate otherwise.
+    */
+    function set_proceed_btns_status(files_hashes) {
         $.ajax({
             url: "/ajax/openfda-screenshots-exist",
             data: {"hashes": JSON.stringify(files_hashes)},
@@ -31,32 +37,27 @@ $(document).ready(function(){
             openfda_shots_exist = ret.exist;
         }).fail(function () {
             openfda_shots_exist = false;
+        }).always(function(){
+            // console.log($("#opendfaChkBx").is(":checked"));
+            var disabled = !(openfda_shots_exist == true && $("#opendfaChkBx").is(":checked") == true);
+            $("#proceed-report-btn").prop("disabled", disabled);
+            $("#result").prop("disabled", disabled);
+
         });
     }
 
 
     $("#shinyModal").on('hidden.bs.modal', function() {
-        openfda_screenshots_exist(hashes);
+        set_proceed_btns_status(hashes);
     });
 
     var i=0;
-    $("#opendfaChkBx").change(function() {
-        if(this.checked) {
-            openfda_screenshots_exist(hashes);
-        }
-        // console.log(openfda_shots_exist);
-        if(openfda_shots_exist == true && $(this).prop("checked") == true){
-            i=i+1;
-            document.getElementById("proceed-report-btn").disabled = false;
-            document.getElementById("result").disabled = false;
-        }
-        else {
-            i=i-1;
-            if(i==0){
-
-            document.getElementById("proceed-report-btn").disabled = true;
-            document.getElementById("result").disabled = true;
-            }
+    $("#opendfaChkBx").on('change', function() {
+        if($(this).is(":checked")) {
+            set_proceed_btns_status(hashes);
+        } else {
+            $("#proceed-report-btn").prop("disabled", true);
+            $("#result").prop("disabled", true);
         }
     });
 
