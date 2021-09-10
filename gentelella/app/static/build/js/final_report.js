@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(function(){
     $("[id*=ShinyBtn]").click(function(){
         var drug= $(this).data('drug');
         var con= $(this).data('con');
@@ -38,21 +38,20 @@ $(document).ready(function(){
         }).fail(function () {
             openfda_shots_exist = false;
         }).always(function(){
-            // console.log($("#opendfaChkBx").is(":checked"));
-            var disabled = !(openfda_shots_exist == true && $("#opendfaChkBx").is(":checked") == true);
+            // console.log($("#openfdaChkBx").is(":checked"));
+            var disabled = !(openfda_shots_exist == true && $("#openfdaChkBx").is(":checked") == true);
+
             $("#proceed-report-btn").prop("disabled", disabled);
             $("#result").prop("disabled", disabled);
-
         });
     }
-
 
     $("#shinyModal").on('hidden.bs.modal', function() {
         set_proceed_btns_status(hashes);
     });
 
     var i=0;
-    $("#opendfaChkBx").on('change', function() {
+    $("#openfdaChkBx").on('change', function() {
         if($(this).is(":checked")) {
             set_proceed_btns_status(hashes);
         } else {
@@ -67,19 +66,17 @@ $(document).ready(function(){
         var con= $(this).data('con');
         note= $(this).data('note');
 
-        $("#shinyModal_notes").val( note ) ;
+        $("#shinyModal_notes").val(note) ;
         $("#label_shiny_note").text(note);
     });
 
-
     $(".note_chkb").on("change", function(){
-
         if($(this).is(':checked') && !(hash in all_notes)){
-            // console.log(note)
-            // console.log(hash)
+            console.log(note)
+            console.log(hash)
             all_notes[hash]=note;
             // console.log(all_notes);
-        }else if(!$(this).is(':checked') && (hash in all_notes)){
+        } else if(!$(this).is(':checked') && (hash in all_notes)){
             delete all_notes[hash];
             // console.log(all_notes);
         }

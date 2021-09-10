@@ -2800,7 +2800,13 @@ def print_report(request, scenario_id=None):
     if not extra_notes:
         extra_notes = "empty"
 
+    cookie_list = request.COOKIES
+
     options = {
+        'cookie': [
+            ('csrftoken', cookie_list['csrftoken']),
+            ('sessionid', cookie_list['sessionid']),
+        ],
         'page-size': 'A4',
         'encoding': 'UTF-8',
         'footer-right': '[page]',
@@ -2810,7 +2816,6 @@ def print_report(request, scenario_id=None):
 
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
-
     pdfkit.from_url("{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
                                                           report_notes, extra_notes, pub_titles, pub_notes),
                     file_path, options=options)
