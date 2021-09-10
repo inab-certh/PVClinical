@@ -148,7 +148,7 @@
 
                             <div id="OpenFDA" class="container tab-pane fade"><br>
                                 <div style="padding-left:30px; padding-right:30px;">
-                                    <input type="checkbox" id="opendfaChkBx"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
+                                    <input type="checkbox" id="openfdaChkBx"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
                                     {% trans "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί" %}
                                     {% trans "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες" %}
                                     {% trans "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά." %}</i><label for="openfda"></label>
@@ -323,12 +323,12 @@
                          <h2>{% trans "Βήμα 2: Επεξεργαστείτε και συμπληρώστε την προεπισκόπησή σας με τις τελευταίες προσθήκες" %}</h2>
                         <div class="x_panel">
                             <div class="report">
-                            <div style="color:black" id="report_preview" ></div>
+                            <div style="color:black" id="report_preview"></div>
                             </div>
                         </div>
                      </div>
                     <br>
-                    <button type="button" class="btn btn-primary active" id="download">
+                    <button type="button" class="btn btn-primary active" id="downloadReportBtn">
                     <i class="fas fa-spinner"></i> &nbsp {% trans "Λήψη της τελικής αναφοράς" %}</button>
 
                 </div>
@@ -351,12 +351,10 @@
     <script>
         var openfda_shiny_endpoint = "{{OPENFDA_SHINY_ENDPOINT}}";
         var hashes = "{{ hashes }}";
+        var all_notes={"empty":"empty"};
     </script>
-    <script src="/static/build/js/final_report.js"></script>
-
     <script>
     $(document).ready(function(){
-        var all_notes={"empty":"empty"};
         var note ;
         var hash ;
         var ir_table_rep=0 ;
@@ -673,11 +671,15 @@
                 "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes) },
                 dataType: "html",
                 success: function (res) {
-                        $('#report_preview').html(res);
-                        $("#loaderOverlay").fadeOut();
-
-                  },
-                  error: function (res) {
+                    var el = document.createElement("html");
+                    el.innerHTML = res;
+                    var head_content = el.getElementsByTagName("head")[0].innerHTML;
+                    $("head").append(head_content);
+                    var div_content = $("<div />").append(res).find("#reportBody").html();
+                    $("#report_preview").html(div_content);
+                    $("#loaderOverlay").fadeOut();
+                },
+                error: function (res) {
                     console.log("error "+res);
                 }
             });
@@ -688,7 +690,7 @@
     });
 
 
-    $("#download").click(function() {
+    $("#downloadReportBtn").click(function() {
         $("#loaderOverlay").fadeIn();
         var scid={{scenario_open}};
 
@@ -736,5 +738,5 @@ $('input[class^="class"]').click(function() {
 
     });
     </script>
-
+    <script src="/static/build/js/final_report.js"></script>
 {% endblock javascripts%}
