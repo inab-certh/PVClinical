@@ -32,6 +32,7 @@ shinyServer(function(input, output, session) {
   # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
   
   values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE)
   
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
@@ -799,6 +800,7 @@ output$coquery2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlcoquery2xlsrow")
     hide(id = "infocoquery2")
+    hide(id = 'sourceConcomReport')
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -896,6 +898,7 @@ output$coqueryE2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlcoqueryE2xlsrow")
     hide(id = "infocoqueryE2")
+    hide(id = 'sourceEventDataReport')
     return(NULL)
   }
   
@@ -1037,6 +1040,7 @@ output$query_counts2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlquery_counts2xlsrow")
     hide(id = "infoquery_counts2")
+    hide(id = 'sourceInDataReport')
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -1171,6 +1175,7 @@ output$prrplot <- renderPlot ({
     hide(id = "maintabs")
     hide(id = "dlprrxlsrow")
     hide(id = "infoprrplot")
+    hide(id = 'sourcePlotReport')
     return(NULL)
   }
   mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
@@ -1193,7 +1198,7 @@ output$prrplot <- renderPlot ({
   
   if ( !is.null(mydf) & getterm1( session, FALSE)!='' & getterm2( session, FALSE)!='' )
     {
-    
+    ckbx$cb1 <- TRUE
     if ( nrow(mydf) >0 )
       {
       showdates <- seq( as.Date( input$date1 ), as.Date( input$date2 ), 'months' )
@@ -1315,8 +1320,10 @@ geturlquery <- reactive({
   # q$v2<-"patient.reaction.reactionmeddrapt"
   # q$t1<-"L04AB02"
   # q$t2<-"10003239"
+  # q$t1<-"G01AE10"
+  # q$t2<-"10079622"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<- FALSE
+  # q$concomitant<- TRUE
   # browser()
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
@@ -1454,7 +1461,7 @@ observeEvent(input$sourceConcomReportUI,{
 })
 
 output$sourcePlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash)) &&  ckbx$cb1)
     checkboxInput("sourcePlotReportUI", "Save plot")
 })
 

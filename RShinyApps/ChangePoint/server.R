@@ -37,6 +37,9 @@ shinyServer(function(input, output, session) {
   
   values<-reactiveValues(urlQuery=NULL)
   
+  #Values for checkboxes view
+  ckbx <- reactiveValues(cb1=FALSE, cb2=FALSE, cb3=FALSE, cb4=FALSE)
+  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -950,12 +953,14 @@ output$maxcp <- renderText({
 })
 output$queryplot <- renderPlotly({ 
   q<-geturlquery()
+  
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
   queryForExcel<<-mydf
   if (length(mydf) > 0 )
   {
+    
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
@@ -976,6 +981,7 @@ output$queryplot <- renderPlotly({
   Dates2<-unlist(Dates2, use.names=FALSE)
   if ( is.data.frame(mydf$display) )
   {
+    ckbx$cb4 <- TRUE
     labs <-    mydf$display[[1]]
     Date<-mydf$display[[1]]
     Counts<-as.vector(mydf$display[,2])
@@ -1059,6 +1065,7 @@ output$queryplot <- renderPlotly({
     
     p
   } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
+  
 })
 
 
@@ -1236,6 +1243,7 @@ output$dlCountsForEventsInSelectedReports <- downloadHandler(
 )
 output$cpmeanplot <- renderPlotly ({
   q<- geturlquery()
+  
   if(getterm1( session)!=""){
   mydf <-getquerydata()$mydfin$result
   cpmeanForExcel<<-mydf
@@ -1258,6 +1266,7 @@ output$cpmeanplot <- renderPlotly ({
     s1 <- calccpmean()
     labs <-    index( getts() )
     pos <- seq(1, length(labs), 3)
+    ckbx$cb1 <- TRUE
     
     if ( getterm1( session, FALSE )==''  )
       {
@@ -1337,9 +1346,11 @@ output$cpmeanplot <- renderPlotly ({
       
       range_0<-range_1
     }
+    
     if (!is.null(input$sourcePlotReportUI)){
       if (input$sourcePlotReportUI){
         withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpmeanplot.png")))
+        
         # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
         # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
         # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
@@ -1353,6 +1364,7 @@ output$cpmeanplot <- renderPlotly ({
     }
     p
     
+    
     }
     else
     {
@@ -1365,6 +1377,8 @@ output$cpmeanplot <- renderPlotly ({
     return (NULL)
   }
 })
+
+# ckbx$cb1 <- TRUE
 
 output$infocpvartext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
@@ -1391,10 +1405,12 @@ output$infocpvartext <- renderUI ({
 
 output$cpvarplot <- renderPlotly ({
   q<-geturlquery()
+  
   mydf <-getquerydata()$mydfin$result
   cpvarForExcel<<-mydf
   if (length(mydf) > 0 )
   {
+    ckbx$cb2 <- TRUE
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
@@ -1491,7 +1507,8 @@ output$cpvarplot <- renderPlotly ({
       
     }
     p
-    }
+  }
+  
 })
 
 output$cpbayestext <- renderPrint ({
@@ -1605,6 +1622,7 @@ build_infocpbayes_table <- function(out)({
 # })
 output$cpbayesplot <- renderPlotly ({
   q<-geturlquery()
+  
   mydf <-getquerydata()$mydfin$result
   cpbayesForExcel<<-mydf
   if (length(mydf) > 0 )
@@ -1623,7 +1641,7 @@ output$cpbayesplot <- renderPlotly ({
   }
   if (length(mydf) > 0)
     {
-    
+    ckbx$cb3 <- TRUE
     s1 <- calccpbayes()$bcp.flu
     # labs <-    index( getts() )
     # plot(s1)
@@ -1690,7 +1708,9 @@ output$cpbayesplot <- renderPlotly ({
     
     fig
     }
-})
+  
+  })
+
 output$querytitle <- renderText({ 
   return( paste('<h4>Counts for', getterm1( session,FALSE), 'with event "', getterm2( session,FALSE), '"</h4>') )
 })
@@ -1728,8 +1748,10 @@ geturlquery <- reactive({
   # q$t2<-"10013654"
   # q$t1<-"Omeprazole"
   # q$t2<-"Hypokalaemia"
+  # q$t1<-"G01AE10"
+  # q$t2<-"10079622"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<- FALSE
+  # q$concomitant<- TRUE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2)   
@@ -1825,7 +1847,7 @@ output$ChangePointAnalysis <- renderUI({
 })
 
 output$sourcePlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash) && ckbx$cb1))
     checkboxInput("sourcePlotReportUI", "Save plot")
 })
 
@@ -1842,7 +1864,7 @@ observeEvent(input$sourcePlotReportUI,{
 })
 
 output$sourceVarPlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash) && ckbx$cb2))
     checkboxInput("sourceVarPlotReportUI", "Save plot")
 })
 
@@ -1859,7 +1881,7 @@ observeEvent(input$sourceVarPlotReportUI,{
 })
 
 output$sourceBayesPlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash)) && ckbx$cb3)
     checkboxInput("sourceBayesPlotReportUI", "Save plot")
 })
 
