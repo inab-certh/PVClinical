@@ -36,6 +36,7 @@ shinyServer(function(input, output, session) {
 #     return(0.0)
 #   })
   values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE, cb2=FALSE, cb3=FALSE)
   
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
@@ -863,7 +864,9 @@ output$serious <- renderTable({
     mydf[,'Case Counts'] <- prettyNum( mydf[,'Case Counts'], big.mark=',' )
     mydf[,'%'] <- paste0( format( mydf[,'%'], big.mark=',', digits=2, width=4 ), '%' )
     return(mydf) 
-  } else  {return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
+  } else  {
+    # hide(id = 'sourceSeriousReport')
+    return(data.frame(Term=paste( 'No results for', getdrugname() ), Count=0))}
 }, height=300, align=c("rllr"), sanitize.text.function = function(x) x)  
 
 
@@ -873,6 +876,7 @@ output$seriousplot <- renderPlotly({
   seriousForExcel<<-mydf
   if ( is.data.frame(mydf) )
   {
+    ckbx$cb2 <- TRUE
     names(mydf) <- c('Serious', 'Case Counts' )
     # return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Seriousness")) ) 
     fig <- plot_ly(
@@ -928,6 +932,7 @@ output$sexplot <- renderPlotly({
   sexForExcel<<-mydf
   if ( is.data.frame(mydf) )
   {
+    ckbx$cb3 <- TRUE
     # names(mydf) <- c('Gender', 'Case Counts', 'Code' )
     # return( dotchart(mydf[,2], labels=mydf[,1], main=i18n()$t("Gender")) ) 
     fig <- plot_ly(
@@ -981,6 +986,7 @@ output$sourceplot <- renderPlotly({
   sourceForExcel<<-mydf
   if (length(mydf) > 0 )
   {
+    ckbx$cb1 <- TRUE
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
@@ -1363,9 +1369,9 @@ geturlquery <- reactive({
   # q$v1<-"patient.drug.openfda.generic_name"
   # q$v2<-"patient.reaction.reactionmeddrapt"
   # q$t1<-"N05BA12"
-  # q$t2<-"Anaemia"
+  # q$t1<-"HFHFHJH"
   # q$hash<-"d38ghr"
-  # q$concomitant<- FALSE
+  # q$concomitant<- TRUE
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateNumericInput(session, "limit", value = q$limit)
   updateSelectizeInput(session, 't1', selected= q$drug) 
@@ -1571,7 +1577,7 @@ output$About <- renderUI({
 })
 #Serious primary
 output$sourcePrimaryPlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash)) && ckbx$cb1)
     checkboxInput("sourcePrimaryPlotReportUI", "Save plot")
 })
 
@@ -1588,7 +1594,7 @@ observeEvent(input$sourcePrimaryPlotReportUI,{
 })
 #Serious checkbox
 output$sourceSeriousReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash)) && ckbx$cb2)
     checkboxInput("sourceSeriousPlotReportUI", "Save plot")
 })
 
@@ -1606,7 +1612,7 @@ observeEvent(input$sourceSeriousPlotReportUI,{
 
 #Sex checkbox
 output$sourceSexPlotReport<-renderUI({
-  if (!is.null(values$urlQuery$hash))
+  if ((!is.null(values$urlQuery$hash)) && ckbx$cb3)
     checkboxInput("sourceSexPlotReportUI", "Save plot")
 })
 

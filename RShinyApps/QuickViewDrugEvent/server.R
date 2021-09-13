@@ -47,6 +47,7 @@ shinyServer(function(input, output, session) {
   
 
   values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE)
   
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
@@ -808,7 +809,12 @@ shinyServer(function(input, output, session) {
       # write.xlsx(mydf, "../mydf.xlsx")
       if (length(mydf) > 0)
       {
-        closeAlert(session, "nodataAlert")
+        if(!is.null(session$nodataAlert))
+        {
+          closeAlert(session, "nodataAlert")
+        }
+        # closeAlert(session, "nodataAlert")
+        ckbx$cb1 <- TRUE
         s1 <- calccpmean()
         labs <-    index( getts() )
         pos <- seq(1, length(labs), 3)
@@ -932,7 +938,8 @@ shinyServer(function(input, output, session) {
         hide("prr2")
         hide("infocpmeantext")
         hide("xlsrow")
-        
+        hide("sourcePlotReport")
+        hide("sourceDataframe")
         createAlert(session, "nodata_qvde", "nodataAlert", title = i18n()$t("Info"),
                      content = i18n()$t("No data for the specific Drug-Event combination"), append = FALSE)
         # shinyalert("Oops!", "Something went wrong.", type = "error")
@@ -1064,9 +1071,11 @@ shinyServer(function(input, output, session) {
     q <- parseQueryString(session$clientData$url_search)
     # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
-    # q$v1<-"patient.reaction.reactionmeddrapt"
+    # q$v2<-"patient.reaction.reactionmeddrapt"
     # q$t1<-"D10AD04"
-    # q$t1<-"10028813"
+    # q$t2<-"10028813"
+    # q$t1<-"G01AE10"
+    # q$t2<-"10079622"
     # q$hash <- "ksjdhfksdhfhsk"
     # q$concomitant <- TRUE
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
@@ -2562,7 +2571,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$sourcePlotReport<-renderUI({
-    if (!is.null(values$urlQuery$hash))
+    if ((!is.null(values$urlQuery$hash)) && ckbx$cb1)
       checkboxInput("sourcePlotReportUI", "Save plot")
   })
   

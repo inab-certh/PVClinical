@@ -20,6 +20,7 @@ shinyServer(function(input, output, session) {
   
   
   values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE, cb2=FALSE)
   
   mywait <- 0.5
   v=reactiveValues(t1=NULL)
@@ -1126,6 +1127,7 @@ output$prr <- DT::renderDT({
   }
   if ( is.data.frame(PRRRes) )
   { 
+    ckbx$cb2 <- TRUE
     PRRResIndatatable=PRRRes
   } else  {
     PRRResIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
@@ -1310,6 +1312,7 @@ output$simplot <- renderPlotly({
     }
     
   }
+  ckbx$cb1 <- TRUE
   simplot()
 } )
 
@@ -2113,7 +2116,6 @@ output$date1 <- renderText({
 # URL Stuff =====
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
-  
   # q<-NULL
   # q$v1<-"patient.drug.openfda.generic_name"
   # q$v2<-"patient.reaction.reactionmeddrapt"
@@ -2125,7 +2127,7 @@ geturlquery <- reactive({
   # q$t1<-"L01CA04"
   # q$t1<-"10003239"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- FALSE
+  # q$concomitant <- TRUE
   
   v$t1<-toupper(toupper(q$t1))
   updateNumericInput(session, "limit", value = q$limit)
@@ -2317,7 +2319,7 @@ output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- ou
  })
  
  output$sourcePRRDataframe<-renderUI({
-   if (!is.null(values$urlQuery$hash))
+   if ((!is.null(values$urlQuery$hash)) && ckbx$cb2)
      checkboxInput("sourcePRRDataframeUI", "Save data values")
  })
  
@@ -2436,7 +2438,7 @@ output$downloadBtnLbl1 <- output$downloadBtnLbl2 <- output$downloadBtnLbl3 <- ou
  })
  
  output$sourceLLRPlotReport<-renderUI({
-   if (!is.null(values$urlQuery$hash))
+   if ((!is.null(values$urlQuery$hash)) && ckbx$cb1)
      checkboxInput("sourceLLRPlotReportUI", "Save plot")
  })
  

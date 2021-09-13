@@ -21,6 +21,7 @@ shinyServer(function(input, output, session) {
   # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
   
   values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE, cb2=FALSE)
   
   mywait <- 0.5
   output$page_content <- renderUI({
@@ -1178,6 +1179,7 @@ output$prr <- DT::renderDT({
   }
   if ( is.data.frame(res) )
   { 
+    ckbx$cb2 <- TRUE
     resIndatatable=res
   } else  {
     PRRResIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
@@ -1350,6 +1352,7 @@ output$simplot <- renderPlotly({
     }
     
   }
+  ckbx$cb1 <- TRUE
   simplot()
 } )
 
@@ -2135,7 +2138,7 @@ geturlquery <- reactive({
   # q$t1<-"D10AD04"
   # q$t1<-"10019211"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- FALSE
+  # q$concomitant <- TRUE
   # browser()
   updateNumericInput(session, "limit", value = q$limit)
   updateNumericInput(session, "limit2", value = q$limit)
@@ -2354,7 +2357,7 @@ getcururl <- reactive({
   
   
   output$sourcePRRDataframe<-renderUI({
-    if (!is.null(values$urlQuery$hash))
+    if ((!is.null(values$urlQuery$hash)) && ckbx$cb2)
       checkboxInput("sourcePRRDataframeUI", "Save data values")
   })
   
@@ -2473,7 +2476,7 @@ getcururl <- reactive({
   })
   
   output$sourceLLRPlotReport<-renderUI({
-    if (!is.null(values$urlQuery$hash))
+    if ((!is.null(values$urlQuery$hash)) && ckbx$cb1)
       checkboxInput("sourceLLRPlotReportUI", "Save plot")
   })
   

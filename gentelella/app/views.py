@@ -986,7 +986,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
 
     if res == 500:
         url = 'app/errors/500.html'
-        return redirect(url)
+        return render( url, status=500)
 
 
     try:
