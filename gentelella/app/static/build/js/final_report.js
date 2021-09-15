@@ -1,4 +1,33 @@
 $(function(){
+    var openfda_proceed_disabled = true;
+    var ohdsi_proceed_disabled = true;
+    var pubmed_proceed_disabled = true;
+
+    var event; // The custom event that will be created
+    proceed_elm = document.createElement("div")
+    function triggerProceedActivation(el) {
+        if (document.createEvent) {
+            event = document.createEvent("Event");
+            event.initEvent("proceedactivation", true, true);
+            event.eventName = "proceedactivation";
+            el.dispatchEvent(event);
+        } else {
+            event = document.createEventObject();
+            event.eventName = "proceedactivation";
+            event.eventType = "proceedactivation";
+            el.fireEvent("on" + event.eventType, event);
+        }
+    }
+
+    proceed_elm.addEventListener("proceedactivation", function(e) {
+        var proceed_disabled = openfda_proceed_disabled && Object.keys(all_notes).length === 0 &&
+            ohdsi_proceed_disabled;
+
+        $("#proceed-report-btn").prop("disabled", proceed_disabled);
+        $("#resultBtn").prop("disabled", proceed_disabled);
+    });
+
+
     $("[id*=ShinyBtn]").click(function(){
         var drug= $(this).data('drug');
         var con= $(this).data('con');
@@ -23,10 +52,10 @@ $(function(){
 
     /**
      *  Activate or deactivate proceed buttons.
-     *  If even one screenshot exists and checkbox is checked activate.
+     *  If even one openFDA screenshot exists and checkbox is checked, activate.
      *  Deactivate otherwise.
     */
-    function set_proceed_btns_status(files_hashes) {
+    function openfda_set_proceed_btns_status(files_hashes) {
         $.ajax({
             url: "/ajax/openfda-screenshots-exist",
             data: {"hashes": JSON.stringify(files_hashes)},
@@ -39,26 +68,34 @@ $(function(){
             openfda_shots_exist = false;
         }).always(function(){
             // console.log($("#openfdaChkBx").is(":checked"));
-            var disabled = !(openfda_shots_exist == true && $("#openfdaChkBx").is(":checked") == true);
-
-            $("#proceed-report-btn").prop("disabled", disabled);
-            $("#result").prop("disabled", disabled);
+            openfda_proceed_disabled = !(openfda_shots_exist == true);
+            triggerProceedActivation(proceed_elm);
         });
     }
+    function ohdsi_set_proceed_btns_status() {
+        ohdsi_proceed_disabled = !(ir_table_rep || ir_all_rep || pre_table_rep || pre_chart_rep || drug_table_rep ||
+            drug_chart_rep || demograph_table_rep || demograph_chart_rep || charlson_table_rep || charlson_chart_rep ||
+            gen_table_rep || gen_chart_rep || cp_all_rep)
+        triggerProceedActivation(proceed_elm);
+    }
+
+    $(".ohdsi-report-modal").on('hidden.bs.modal', function() {
+        ohdsi_set_proceed_btns_status(hashes);
+    });
 
     $("#shinyModal").on('hidden.bs.modal', function() {
-        set_proceed_btns_status(hashes);
+        openfda_set_proceed_btns_status(hashes);
     });
 
     var i=0;
-    $("#openfdaChkBx").on('change', function() {
-        if($(this).is(":checked")) {
-            set_proceed_btns_status(hashes);
-        } else {
-            $("#proceed-report-btn").prop("disabled", true);
-            $("#result").prop("disabled", true);
-        }
-    });
+    // $("#openfdaChkBx").on('change', function() {
+    //     if($(this).is(":checked")) {
+    //         openfda_set_proceed_btns_status(hashes);
+    //     } else {
+    //         $("#proceed-report-btn").prop("disabled", true);
+    //         $("#resultBtn").prop("disabled", true);
+    //     }
+    // });
 
     $("[id*=NotesBtn]").click(function(){
         hash= $(this).data('hash');
@@ -72,14 +109,18 @@ $(function(){
 
     $(".note_chkb").on("change", function(){
         if($(this).is(':checked') && !(hash in all_notes)){
-            console.log(note)
-            console.log(hash)
+            // console.log(note)
+            // console.log(hash)
             all_notes[hash]=note;
             // console.log(all_notes);
         } else if(!$(this).is(':checked') && (hash in all_notes)){
             delete all_notes[hash];
             // console.log(all_notes);
         }
+    });
+
+    $(".report-note-modal").on('hidden.bs.modal', function() {
+        triggerProceedActivation(proceed_elm);
     });
 
     $("#shinyModal_notes").on('show.bs.modal', function (){

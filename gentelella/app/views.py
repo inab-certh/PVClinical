@@ -2257,7 +2257,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         hash = h.hexdigest()
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
-    print(drug_condition_hash)
 
     r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
