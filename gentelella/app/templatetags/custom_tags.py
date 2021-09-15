@@ -36,7 +36,11 @@ def get_elmnt_by_val(lst, val):
 def get_elmnt_by_index(lst, indx):
     return lst[indx]
 
-
 @register.filter
 def underscore_char(string, char):
     return string.replace(char, "_")
+
+@register.filter
+def hexdigest_in_dict(dic):
+    import string
+    return len(list(filter(lambda el: all(c in string.hexdigits for c in el) and len(el)==32, dic.keys())))>0

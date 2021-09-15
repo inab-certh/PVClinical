@@ -11,6 +11,7 @@
 <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 .report{
@@ -47,7 +48,7 @@
                                 <i class="fas fa-long-arrow-alt-right fa-2x"></i>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="result" disabled>{% trans "Βήμα 2" %}</button>
+                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="resultBtn" disabled>{% trans "Βήμα 2" %}</button>
                         </li>
                     </ul>
                         <div class="tab-content" id="pills-tabContent">
@@ -70,7 +71,7 @@
                             <br>
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs " role="tablist">
-                            <li class="nav-item ">
+                            <li class="nav-item active">
                               <a class="nav-link active" data-toggle="tab" href="#OHDSI">OHDSI</a>
                             </li>
                             <li class="nav-item">
@@ -351,12 +352,7 @@
     <script>
         var openfda_shiny_endpoint = "{{OPENFDA_SHINY_ENDPOINT}}";
         var hashes = "{{ hashes }}";
-        var all_notes={"empty":"empty"};
-    </script>
-    <script>
-    $(document).ready(function(){
-        var note ;
-        var hash ;
+        var all_notes={};
         var ir_table_rep=0 ;
         var ir_all_rep=0 ;
         var pre_table_rep=0 ;
@@ -372,9 +368,21 @@
         var cp_all_rep=0 ;
         var pubnote_rep="" ;
         var pubtitle_rep=0 ;
+    </script>
+    <script>
+    $(document).ready(function(){
+        var note ;
+        var hash ;
         var allPubNotes = {"0":"''"};
         var allPubTitles = {"0":"''"};
-
+        var el_name_to_value = {"#irnote": "{{ ir_notes|striptags|safe }}",
+            "#charnote": "{{ char_notes|striptags|safe }}", "#pathwaysnote": "{{ pathways_notes|striptags|safe }}"};
+        var el_name_to_var = {"#ir_table": "ir_table_rep", "#ir_all": "ir_all_rep", "#pre_table": "pre_table_rep",
+            "#pre_chart": "pre_chart_rep", "#drug_table": "drug_table_rep", "#drug_chart": "drug_chart_rep",
+            "#demograph_table": "demograph_table_rep", "#demograph_chart": "demograph_chart_rep",
+            "#charlson_table": "charlson_table_rep", "#charlson_chart": "charlson_chart_rep", "#gen_table": "gen_table_rep",
+            "#gen_chart": "gen_chart_rep", "#cp_all": "cp_all_rep"
+        }
 
         $("[id*=pubnote]").click(function(){
 
@@ -409,173 +417,192 @@
 
         });
 
-
-        $("#irnote").on("change", function(){
-
+        $(Object.keys(el_name_to_value).join(", ")).on("change", function(){
             if($(this).is(':checked')){
-                all_notes['ir']="{{ ir_notes|striptags|safe }}";
+                all_notes[$(this).attr("id").replace("note", "")] = el_name_to_value["#"+$(this).attr("id")];
+            } else {
+                delete all_notes[$(this).attr("id").replace("note", "")];
             };
-
         });
 
-        $("#charnote").on("change", function(){
+        // $("#irnote").on("change", function(){
+        //
+        //     if($(this).is(':checked')){
+        //         all_notes['ir']="{{ ir_notes|striptags|safe }}";
+        //     };
+        //
+        // });
+        //
+        // $("#charnote").on("change", function(){
+        //
+        //     if($(this).is(':checked')){
+        //         all_notes['char']="{{ char_notes|striptags|safe }}";
+        //     };
+        //
+        // });
+        //
+        //
+        // $("#pathwaysnote").on("change", function(){
+        //
+        //     if($(this).is(':checked')){
+        //         all_notes['pathways']="{{ pathways_notes|striptags|safe }}";
+        //     };
+        //
+        // });
 
-            if($(this).is(':checked')){
-                all_notes['char']="{{ char_notes|striptags|safe }}";
-            };
-
-        });
-
-        $("#pathwaysnote").on("change", function(){
-
-            if($(this).is(':checked')){
-                all_notes['pathways']="{{ pathways_notes|striptags|safe }}";
-            };
-
-        });
-
-        $("#ir_table").on("change", function(){
-
+        $(Object.keys(el_name_to_var).join(", ")).on("change", function(){
             if ($(this).is(':checked')) {
-                ir_table_rep = 1 ;
+                eval(''+el_name_to_var["#"+$(this).attr("id")]+' = 1 ');
 
             }else{
-                ir_table_rep = 0 ;
-
-            }
-
-        });
-        $("#ir_all").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                ir_all_rep = 1 ;
-
-            }else{
-                ir_all_rep = 0 ;
-
-            }
-
-        });
-
-        $("#pre_table").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                pre_table_rep = 1 ;
-
-            }else{
-                pre_table_rep = 0 ;
-
-            }
-
-        });
-        $("#pre_chart").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                pre_chart_rep = 1 ;
-
-            }else{
-                pre_chart_rep = 0 ;
-
+                eval(''+el_name_to_var["#"+$(this).attr("id")]+' = 0 ');
             }
         });
 
-        $("#drug_table").on("change", function(){
 
-            if ($(this).is(':checked')) {
-                drug_table_rep = 1 ;
-
-            }else{
-                drug_table_rep = 0 ;
-
-            }
-        });
-
-        $("#drug_chart").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                drug_chart_rep = 1 ;
-
-
-            }else{
-                drug_chart_rep = 0 ;
-
-            }
-
-        });
-
-        $("#demograph_table").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                demograph_table_rep = 1 ;
-
-            }else{
-                demograph_table_rep = 0 ;
-
-            }
-        });
-
-        $("#demograph_chart").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                demograph_chart_rep = 1 ;
-
-
-            }else{
-                demograph_chart_rep = 0 ;
-
-            }
-        });
-
-        $("#charlson_table").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                charlson_table_rep = 1 ;
-
-            }else{
-                charlson_table_rep = 0 ;
-
-            }
-        });
-
-        $("#charlson_chart").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                charlson_chart_rep = 1 ;
-            }else{
-                charlson_chart_rep = 0 ;
-
-            }
-        });
-
-        $("#gen_table").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                gen_table_rep = 1 ;
-            }else{
-                gen_table_rep = 0 ;
-
-            }
-        });
-
-        $("#gen_chart").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                gen_chart_rep = 1 ;
-            }else{
-                gen_chart_rep = 0 ;
-
-            }
-        });
-
-        $("#cp_all").on("change", function(){
-
-            if ($(this).is(':checked')) {
-                cp_all_rep = 1 ;
-            }else{
-                cp_all_rep = 0 ;
-
-            }
-        });
+        // $("#ir_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         ir_table_rep = 1 ;
+        //
+        //     }else{
+        //         ir_table_rep = 0 ;
+        //
+        //     }
+        //
+        // });
+        // $("#ir_all").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         ir_all_rep = 1 ;
+        //
+        //     }else{
+        //         ir_all_rep = 0 ;
+        //
+        //     }
+        //
+        // });
+        //
+        // $("#pre_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         pre_table_rep = 1 ;
+        //
+        //     }else{
+        //         pre_table_rep = 0 ;
+        //
+        //     }
+        //
+        // });
+        // $("#pre_chart").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         pre_chart_rep = 1 ;
+        //
+        //     }else{
+        //         pre_chart_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        //
+        // $("#drug_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         drug_table_rep = 1 ;
+        //
+        //     }else{
+        //         drug_table_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#drug_chart").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         drug_chart_rep = 1 ;
+        //
+        //
+        //     }else{
+        //         drug_chart_rep = 0 ;
+        //
+        //     }
+        //
+        // });
+        //
+        // $("#demograph_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         demograph_table_rep = 1 ;
+        //
+        //     }else{
+        //         demograph_table_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#demograph_chart").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         demograph_chart_rep = 1 ;
+        //
+        //
+        //     }else{
+        //         demograph_chart_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#charlson_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         charlson_table_rep = 1 ;
+        //
+        //     }else{
+        //         charlson_table_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#charlson_chart").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         charlson_chart_rep = 1 ;
+        //     }else{
+        //         charlson_chart_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#gen_table").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         gen_table_rep = 1 ;
+        //     }else{
+        //         gen_table_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#gen_chart").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         gen_chart_rep = 1 ;
+        //     }else{
+        //         gen_chart_rep = 0 ;
+        //
+        //     }
+        // });
+        //
+        // $("#cp_all").on("change", function(){
+        //
+        //     if ($(this).is(':checked')) {
+        //         cp_all_rep = 1 ;
+        //     }else{
+        //         cp_all_rep = 0 ;
+        //
+        //     }
+        // });
 
     $("#closeIr").click(function() {
         var scid={{scenario_open}};
@@ -652,7 +679,7 @@
 
         });
 
-    $("#proceed-report-btn").click(function() {
+    $("#proceed-report-btn, #resultBtn").click(function() {
         var scid={{scenario_open}};
         var note_val="";
         // console.log(allPubNotes);
@@ -677,16 +704,16 @@
                     $("head").append(head_content);
                     var div_content = $("<div />").append(res).find("#reportBody").html();
                     $("#report_preview").html(div_content);
-                    $("#loaderOverlay").fadeOut();
+                    // $("#loaderOverlay").fadeOut();
                 },
                 error: function (res) {
                     console.log("error "+res);
                 }
             });
+        $("#loaderOverlay").fadeOut();
 
             $("#div1").hide();
             $("#div2").show();
-
     });
 
 
@@ -715,28 +742,28 @@
 
     });
 
-
-$('input[class^="class"]').click(function() {
-    var $this = $(this);
-    if ($this.is(".class_ir_table")) {
-        if ($(".class_ir_table:checked").length > 0) {
-            $(".class_ir_all").prop({ disabled: true});
-        } else{
-         $(".class_ir_all").prop({ disabled: false});
+    $('input[class^="class"]').click(function() {
+        var $this = $(this);
+        if ($this.is(".class_ir_table")) {
+            if ($(".class_ir_table:checked").length > 0) {
+                $(".class_ir_all").prop({ disabled: true});
+            } else{
+             $(".class_ir_all").prop({ disabled: false});
+            }
         }
-    }
-    if ($this.is(".class_ir_all")) {
-        if ($(".class_ir_all:checked").length > 0) {
-            $(".class_ir_table").prop({ disabled: true});
-        } else{
-         $(".class_ir_table").prop({ disabled: false});
+        if ($this.is(".class_ir_all")) {
+            if ($(".class_ir_all:checked").length > 0) {
+                $(".class_ir_table").prop({ disabled: true});
+            } else{
+             $(".class_ir_table").prop({ disabled: false});
+
+            }
 
         }
-
-    }
-});
+    });
 
     });
     </script>
     <script src="/static/build/js/final_report.js"></script>
+
 {% endblock javascripts%}

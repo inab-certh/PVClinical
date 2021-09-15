@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load staticfiles %}
-
+{% load custom_tags %}
 <html>
 <head>
 {% block stylesheets %}
@@ -35,11 +35,11 @@
 
 <!--OHDSI WORKSPACE-->
 
-{% if coh_dict or ir_dict_t or ir_dict_a or cp_dict %}
+{% if coh_dict or ir_dict_t or ir_dict_a or cp_dict or "ir" in report_notes or "char" in report_notes or "pathways" in report_notes %}
     <div class="workspace"> OHDSI Workspace</div>
 {% endif %}
 
-{% if coh_dict %}
+{% if coh_dict or "char" in report_notes %}
     <br>
     <br>
     <div class="view_title" >&nbsp Cohort Characterization </div>
@@ -68,7 +68,7 @@
 
 {% endif %}
 
-{% if ir_dict_t or ir_dict_a %}
+{% if ir_dict_t or ir_dict_a or "ir" in report_notes  %}
     <br>
     <br>
 <div class="view_title" >&nbsp Incidence Rate </div>
@@ -97,7 +97,7 @@
     {% endfor %}
 
     {% for hash,note in report_notes.items %}
-            {%if hash == 'ir' %}
+            {% if hash == 'ir' %}
             <div class="tg" style="padding-top:50px;">
                 <div class="view_title" >&nbsp Notes for Incidence Rate</div>
                 <br>
@@ -112,7 +112,7 @@
 {% endif %}
 
 
-{% if cp_dict %}
+{% if cp_dict or "pathways" in report_notes %}
     <br>
     <br>
     <div class="tg">
@@ -127,7 +127,7 @@
     {% endfor %}
 
 {% for hash,note in report_notes.items %}
-            {%if hash == 'pathways' %}
+            {% if hash == 'pathways' %}
             <div class="tg" style="padding-top:50px;">
                 <div class="view_title" >&nbsp Notes for Pathway Analysis</div>
                 <br>
@@ -141,6 +141,33 @@
 
 {% endif %}
 <!--OHDSI WORKSPACE END-->
+
+{% if empty_OpenFDA == '' and report_notes|hexdigest_in_dict %}
+<div style="padding-top:30px"></div>
+
+<div class="workspace">OpenFDA Workspace</div>
+<br>
+{% for k,v in dict_hash_combination.items %}
+    {% for hash,note in report_notes.items %}
+        {% if hash == k %}
+         <div class="tg">
+        <div style="margin-left: 20px;"></div>
+        <subt>{{ v }}</subt>
+        <div style="padding-bottom:30px"></div>
+        </div>
+
+        <div style="padding-bottom:30px"></div>
+
+            <div class="view_title" >&nbsp Notes</div>
+            <br>
+            <br>
+            <div class="notes_content">{{note}}</div>
+            <br>
+            <br>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% endif %}
 
 <!--For drug or condition only-->
     {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
@@ -159,7 +186,7 @@
 
 {% if no_comb == "" %}
     {% for hash,note in report_notes.items %}
-        {%if hash != 'empty' %}
+        {% if hash != 'empty' %}
         <div style="padding-bottom:30px"></div>
 
             <div class="view_title" >&nbsp Notes</div>
