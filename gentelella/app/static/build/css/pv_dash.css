@@ -929,3 +929,54 @@ iframe.social-iframe {
 .scenario-info a {
 	color: white;
 }
+
+div#OpenFDA .panel .panel-body strong {
+	white-space:nowrap;
+}
+
+.btn-responsive {
+	white-space: normal !important;
+    word-wrap: break-word;
+}
+
+button:disabled+span {
+	opacity: .65;
+}
+
+button+span {
+	margin-left: 0.3rem;
+}
+
+input[type='checkbox']+span {
+	margin-left: 0.3rem;
+}
+
+#collapsepub>table td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+#collapsepub>table td:first-child {
+	border-left: 0px;
+}
+
+#collapsepub>table td:last-child {
+	border: 0px;
+}
+
+/*#collapsepub #PubMedBtn.collapsed:after {*/
+/*    font-family: Fontawesome;*/
+/*    content: '\f078';*/
+/*    float: right;*/
+/*}*/
+
+#collapsepub #PubMedBtn[aria-expanded=true] .fa-plus {
+   display: none;
+}
+#collapsepub #PubMedBtn[aria-expanded=false] .fa-minus {
+   display: none;
+}
+
+#collapsepub #PubMedBtn.collapsed:after {
+	content: none;
+}

@@ -1510,12 +1510,11 @@ def final_report(request, scenario_id=None):
     user = sc.owner
 
     pub_dict = {}
-    pub_obj = PubMed.objects.filter(scenario_id=scenario_open, relevance=True)
-    pub_obj_titles = list(map(lambda el: el.title, pub_obj))
+    pub_objs = PubMed.objects.filter(scenario_id=scenario_open, relevance=True)
+    # pub_objs_titles = list(map(lambda el: el.title, pub_objs))
 
-    for i in pub_obj:
-        if i.notes:
-            pub_dict[i.title] = i.notes
+    # for i in pub_objs:
+    #     pub_dict[i.title] = i.notes
 
     notes_openfda1 = {}
     if Notes.objects.filter(user=user) != "":
@@ -1969,7 +1968,7 @@ def final_report(request, scenario_id=None):
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
-               "ir_generate": ir_generate, "pub_dict": pub_dict, "cc_shots_paths_labels": cc_shots_paths_labels,
+               "ir_generate": ir_generate, "pub_objs": pub_objs, "cc_shots_paths_labels": cc_shots_paths_labels,
                "hashes": hashes}
 
     # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context

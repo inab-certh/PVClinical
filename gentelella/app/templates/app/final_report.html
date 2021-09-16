@@ -100,43 +100,43 @@
                                                 <tr>
                                                     {% if ir_id %}
                                                         <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Ρυθμός Επίπτωσης" %}</td>
+                                                        <i class="fas fa-search-plus"></i></button><span> {% trans "Ρυθμός Επίπτωσης" %}</span></td>
                                                     {% else %}
                                                         <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Ρυθμός Επίπτωσης" %}</td>
+                                                            <i class="fas fa-search-plus"></i></button><span> {% trans "Ρυθμός Επίπτωσης" %}</span></td>
                                                     {% endif %}
                                                     <td>
                                                         <button class="btn btn-secondary" id="IrNotes" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}">
                                                             <i class="fas fa-search-plus"></i>
-                                                        </button>&nbsp; {% trans "Σημειώσεις" %}
+                                                        </button><span> {% trans "Σημειώσεις" %}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     {% if char_id %}
                                                 <td><button id="CharOHDSIBtn" data-target="#charModal" class="btn btn-secondary" data-toggle="modal" data-charid="{{ char_id }}" data-scenario="{{ scenario_open }}">
-                                                <i class="fas fa-search-plus"></i></button>&nbsp; {% trans "Χαρακτηρισμός Πληθυσμού" %}</td>
+                                                    <i class="fas fa-search-plus"></i></button><span> {% trans "Χαρακτηρισμός Πληθυσμού" %}</span></td>
                                                     {% else %}
                                                         <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp; {% trans "Χαρακτηρισμός Πληθυσμού" %}</td>
+                                                            <i class="fas fa-search-plus"></i></button><span> {% trans "Χαρακτηρισμός Πληθυσμού" %}</span></td>
                                                     {% endif %}
                                                     <td>
                                                         <button class="btn btn-secondary" id="CharNotes" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}">
                                                             <i class="fas fa-search-plus"></i>
-                                                        </button>&nbsp; {% trans "Σημειώσεις" %}
+                                                        </button><span> {% trans "Σημειώσεις" %}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                   {% if cp_id %}
                                                     <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario_open }}">
-                                                    <i class="fas fa-search-plus"></i></button>&nbsp; {% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</td>
+                                                    <i class="fas fa-search-plus"></i></button><span>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</span></td>
                                                   {% else %}
                                                     <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
-                                                    <i class="fas fa-search-plus"></i></button> &nbsp {% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</td>
+                                                        <i class="fas fa-search-plus"></i></button><span>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</span></td>
                                                   {% endif %}
                                                   <td>
                                                      <button class="btn btn-secondary" id="PathwaysNotes" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}">
                                                         <i class="fas fa-search-plus"></i>
-                                                    </button>&nbsp; {% trans "Σημειώσεις" %}
+                                                     </button><span> {% trans "Σημειώσεις" %}</span>
                                                   </td>
                                                 </tr>
                                                 </table>
@@ -148,11 +148,20 @@
                             </div>
 
                             <div id="OpenFDA" class="container tab-pane fade"><br>
-                                <div style="padding-left:30px; padding-right:30px;">
-                                    <input type="checkbox" id="openfdaChkBx"><i style=" font-weight:bold;"> {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}
-                                    {% trans "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί" %}
-                                    {% trans "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες" %}
-                                    {% trans "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά." %}</i><label for="openfda"></label>
+                                <div style="padding-left:1.5rem; padding-right:1.5rem; text-align: justify; text-justify: inter-word;">
+<!--                                    <input type="checkbox" id="openfdaChkBx">-->
+                                    <i style="font-weight:bold;">
+<!--                                    {% trans "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας," %}-->
+<!--                                    {% trans "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί" %}-->
+<!--                                    {% trans "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες" %}-->
+<!--                                    {% trans "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά." %}-->
+                                        {% blocktrans %} Αν θέλετε να συμπεριλάβετε πληροφορία από το OpenFDA περιβάλλον εργασίας
+                                        στην τελική σας αναφορά, πατήστε στους ακόλουθους πίνακες επιλογής, τα αντίστοιχα
+                                        κουμπιά αναζήτησης που βρίσκονται δίπλα από τις θεματικές ενότητες που σας ενδιαφέρουν,
+                                        και επιλέξτε από τα επιμέρους στοιχεία που εμφανίζονται σε κάθε αναδυόμενο παράθυρο διαλόγου.
+                                        {% endblocktrans %}
+                                    </i>
+<!--                                    <label for="openfdaChkBx"></label>-->
                                 </div>
                                 <br>
                                 <div class="container">
@@ -169,31 +178,31 @@
                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
                                       <div class="panel-body">
 
-                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Γρήγορη Επισκόπηση" %} &nbsp</strong>
+                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Γρήγορη Επισκόπηση" %}</span></strong>
 
                                           {% if d and c %}
 
-                                         <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button> {% trans "Δυναμικό PRR" %}</strong>
+                                          <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Δυναμικό PRR" %}</span></strong>
 
-                                         <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Ανάλυση Αλλαγής Σημείου" %}</strong>
+                                          <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Ανάλυση Αλλαγής Σημείου" %}</span></strong>
 
                                           {% elif d %}
 
-                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Πίνακας" %} &nbsp &nbsp</strong>
+                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας" %}</span></strong>
 
-                                         <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Λόγος Αναφορών" %} &nbsp &nbsp</strong>
+                                          <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></strong>
 
-                                         <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %} &nbsp &nbsp</strong>
+                                          <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %}</span></strong>
 
                                           {% elif c %}
-                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Λόγος Αναφορών" %} &nbsp &nbsp</strong>
-                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %} &nbsp &nbsp</strong>
+                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></strong>
+                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %}</span></strong>
                                           {%endif%}
 <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
 
                                           {%for key1,value1 in notes_openfda1.items%}
                                           {% if key1 == k %}
-                                           <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button>{% trans "Σημειώσεις" %}</strong>
+                                          <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
 
                                           {% endif %}
                                           {%endfor%}
@@ -207,7 +216,16 @@
                                 </div>
                             </div>
                             <div id="PubMed" class="container tab-pane fade"><br>
-                                <div style="padding-left:30px; padding-right:30px;">
+                                {% if not pub_objs %}
+                                    <div style="padding-left:1.5rem; padding-right:1.5rem; text-align: justify; text-justify: inter-word;">
+                                    <i style="font-size: 2.3rem; font-weight:bold;">
+                                        {% trans "Δεν υπάρχουν σχετικές πληροφορίες για το περιβάλλον εργασίας PubMed" %}
+                                    </i>
+                                    </div>
+                                    <br>
+                                    <br>
+                                {% else %}
+                                <div style="padding-left:1.5rem; padding-right:1.5rem; text-align: justify; text-justify: inter-word;">
                                     <i style=" font-weight:bold;"> {% trans "Εάν επιλέξετε να συμπεριλάβετε " %}
                                     {% trans "τον τίτλο ενός εγγράφου από το PubMed, προστίθενται αυτόματα και οι " %}
                                     {% trans "πληροφορίες των συντακτων και του Ενιαίου Εντοπιστή Πόρων(URL) " %}
@@ -227,72 +245,111 @@
                                           </div>
                                           <div id="collapsepub" class="panel-collapse collapse in">
                                               <br>
-                                              <table class="table table-striped table-bordered " style="width:1200px">
-                                                  {% for title,note in pub_dict.items %}
-                                                    <tr>
-                                                    <td><button id="PubMedBtn" data-target="#pubModal{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" >
-                                                        <i class="fas fa-search-plus"></i></button>  &nbsp {{ title }}</td>
+                                              <table class="table table-bordered">
+                                                  <tbody>
+                                                    {% for pub_obj in pub_objs %}
+                                                        <tr>
+                                                        <td>
+                                                            <input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ pub_obj.title }}" data-series="{{ forloop.counter}}">
+                                                            <button id="PubMedBtn" data-toggle="collapse" data-target="#pubObjDetails{{ forloop.counter}}" aria-expanded="false" class="btn btn-secondary" data-toggle="modal" aria-controls="pubObjDetails{{ forloop.counter}}">
+                                                                <i class="fa fa-plus pull-right"></i>
+                                                                <i class="fa fa-minus pull-right"></i>
+                                                            </button>
+                                                            <span><em>{{ pub_obj.title }}</em></span>
+                                                        </td>
 
-                                                    <td><button id="PubMedNoteBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal">
-                                                        <i class="fas fa-search-plus"></i></button> &nbsp Notes</td>
+                                                        <td><button id="PubMedNoteBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" {% if not pub_obj.notes %}disabled{% endif %}>
+                                                            <i class="fas fa-search-plus"></i></button><span> {% trans "Σημειώσεις" %}</span></td>
 
-                                                                <!--  PubMed Modal -->
-                                                                    <div class="modal fade report-note-modal"  id="pubModal{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-                                                                      <div class="modal-dialog modal-lg">
-                                                                        <div class="modal-content">
-                                                                          <div class="modal-header">
-                                                                            <h4 class="modal-title col-xs-11">{% trans "Τίτλος δημοσίευσης από Mendeley" %}</h4>
-                                                                               <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                                </div>
-                                                                          <div class="modal-body">
-                                                                                <input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ title }}" data-series="{{ forloop.counter}}">&nbsp; {{ title }}<label for="pubtitle{{ forloop.counter}}" ></label>
+                                                        <td id="pubObjDetails{{ forloop.counter}}" class="collapse">
+                                                            <!-- PubMed Accordion -->
+                                                            <table class="table table-bordered">
+                                                                <tr>
+                                                                    <td><strong>{% trans "Pubdate" %}</strong></td>
+                                                                    <td><em>{{ pub_obj.pubdate }}</em></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>{% trans "Authors" %}</strong></td>
+                                                                    <td><em>{{ pub_obj.authors }}</em></td>
+                                                                </tr>
+                                                                 <tr>
+                                                                    <td><strong>{% trans "Url" %}</strong></td>
+                                                                    <td><a href="{{ pub_obj.url }}" target="_blank"><em>{{ pub_obj.url }}</em></a></td>
+                                                                </tr>
+                                                            <!--                                                                                  <label for="pubtitle{{ forloop.counter}}"></label>-->
+                                                            </table>
+                                                        </td>
+
+                                                                    <!--  PubMed Modal -->
+    <!--                                                                    <div class="modal fade report-note-modal"  id="pubModal{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">-->
+    <!--                                                                      <div class="modal-dialog modal-lg">-->
+    <!--                                                                        <div class="modal-content">-->
+    <!--                                                                          <div class="modal-header">-->
+    <!--                                                                            <h4 class="modal-title col-xs-11">{% trans "Τίτλος δημοσίευσης από Mendeley" %}</h4>-->
+    <!--                                                                               <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+    <!--                                                                                </div>-->
+    <!--                                                                          <div class="modal-body">-->
+    <!--&lt;!&ndash;                                                                              <input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ pub_obj.title }}" data-series="{{ forloop.counter}}">&ndash;&gt;-->
+    <!--                                                                              <table class="table table-striped table-bordered " style="width:1200px">-->
+    <!--                                                                                  <tr>-->
+    <!--                                                                                      <td>{% trans "Title"</td>-->
+    <!--                                                                                      <td><em>{{ pub_obj.title }}</em></td>-->
+    <!--                                                                                  </tr>-->
+    <!--                                                                                  <tr>-->
+    <!--                                                                                      <td>{% trans "Authors"</td>-->
+    <!--                                                                                      <td><em>{{ pub_obj.authors }}</em></td>-->
+    <!--                                                                                  </tr>-->
+    <!--&lt;!&ndash;                                                                                  <label for="pubtitle{{ forloop.counter}}"></label>&ndash;&gt;-->
+    <!--                                                                              </table>-->
+    <!--                                                                          </div>-->
+    <!--                                                                          <div class="modal-footer">-->
+    <!--                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>-->
+    <!--                                                                          </div>-->
+    <!--                                                                        </div>-->
+    <!--                                                                        &lt;!&ndash; /.modal-content &ndash;&gt;-->
+    <!--                                                                      </div>-->
+    <!--                                                                      &lt;!&ndash; /.modal-dialog &ndash;&gt;-->
+    <!--                                                                    </div>-->
+    <!--                                                                    &lt;!&ndash; /.modal &ndash;&gt;-->
+
+                                                                    <!--  PubMedNote Modal -->
+                                                                        <div class="modal fade report-note-modal"  id="pubModalNote{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
+                                                                          <div class="modal-dialog modal-lg">
+                                                                            <div class="modal-content">
+                                                                              <div class="modal-header">
+                                                                                <h4 class="modal-title col-xs-11">{% trans "Σημειώσεις δημοσίευσης από Mendeley" %}</h4>
+                                                                                   <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                                    </div>
+                                                                              <div class="modal-body">
+                                                                                  <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}"><span>{{ pub_obj.notes }}</span><label for="pubnote{{ forloop.counter}}" ></label>
+                                                                              </div>
+                                                                              <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
+                                                                              </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
                                                                           </div>
-                                                                          <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
-                                                                          </div>
+                                                                          <!-- /.modal-dialog -->
                                                                         </div>
-                                                                        <!-- /.modal-content -->
-                                                                      </div>
-                                                                      <!-- /.modal-dialog -->
-                                                                    </div>
-                                                                    <!-- /.modal -->
+                                                                        <!-- /.modal -->
 
-                                                                <!--  PubMedNote Modal -->
-                                                                    <div class="modal fade report-note-modal"  id="pubModalNote{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
-                                                                      <div class="modal-dialog modal-lg">
-                                                                        <div class="modal-content">
-                                                                          <div class="modal-header">
-                                                                            <h4 class="modal-title col-xs-11">{% trans "Σημειώσεις δημοσίευσης από Mendeley" %}}</h4>
-                                                                               <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                                </div>
-                                                                          <div class="modal-body">
-                                                                                <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ note }}" data-series="{{ forloop.counter}}">&nbsp; {{ note }}<label for="pubnote{{ forloop.counter}}" ></label>
-                                                                          </div>
-                                                                          <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
-                                                                          </div>
-                                                                        </div>
-                                                                        <!-- /.modal-content -->
-                                                                      </div>
-                                                                      <!-- /.modal-dialog -->
-                                                                    </div>
-                                                                    <!-- /.modal -->
+                                                        </tr>
+                                                    {% endfor %}
 
-                                                    </tr>
-                                                  {% endfor %}
-
+                                                  </tbody>
                                                 </table>
                                               <br>
                                           </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% endif %}
 
                             </div>
                             </div>
                             </div>
-                    <button type="button" class="btn btn-primary active" name="checkenable" id="proceed-report-btn"  disabled>
-                    <i class="fas fa-spinner"></i> &nbsp {% trans "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα." %}</button></a>
+                    <button type="button" class="btn btn-primary btn-responsive active" name="checkenable" id="proceed-report-btn"  disabled>
+                    <i class="fas fa-spinner"></i> &nbsp {% trans "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα." %}</button>
                 </div>
 
                 <div id="div2">
