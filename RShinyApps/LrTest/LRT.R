@@ -465,24 +465,24 @@ shinyServer(function(input, output, session) {
   })  
   
   observeEvent(input$date1, {
-    
+
     if (abs(input$date2-input$date1)>365){
       updateDateInput(session, "date2",
                       value=input$date1+365
       )
     }
   })
-  
+
   observeEvent(input$date2, {
-    
+
     if (abs(input$date2-input$date1)>365){
       updateDateInput(session, "date1",
                       value=input$date1-365
       )
     }
   })
-  
-  
+
+
   getcodruglist <- reactive({
     q<-geturlquery()
     # browser()
@@ -501,7 +501,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       
-      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       
       totaleventQuery<-createConDrugQuery(q$t1, input$date1, input$date2)
       mydf <- con$aggregate(totaleventQuery)
@@ -544,7 +544,7 @@ shinyServer(function(input, output, session) {
       # browser()
     } else {
     
-      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       
       totaleventQuery<-createEventsAllQuery(startdate = input$date1, enddate = input$date2)
       totaleventResult <- con$aggregate(totaleventQuery)
@@ -661,7 +661,7 @@ getindcounts <- reactive({
     
   } else {
     
-    con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
@@ -747,7 +747,7 @@ getindcounts <- reactive({
     } else {
       
       # Refactor
-      con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       # browser()
       totalQuery<-totalreports(startdate = input$date1, enddate = input$date2)
       totalResult <- con$aggregate(totalQuery)
@@ -928,7 +928,7 @@ getindcounts <- reactive({
     {
       closeAlert(session, 'simalert')
     }
-    
+    browser()
     numsims <- getnumsims(session)
     mycritval <- getCritVal2(session, numsims, comb$n.j[1], comb$ni., comb$n..[1], comb$pi., .95)
     critval05 <- mycritval$critval
@@ -985,7 +985,7 @@ geteventtotals <- reactive(
   allevent <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
   allreport <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
   # browser()
-  for (i in seq_along(foundtermslist))
+  for (i in seq_along(foundtermslist[1:10]))
     {
     if ( realterms[[i]] =='Other')
     {
@@ -1041,7 +1041,7 @@ geteventtotals <- reactive(
       } else {
         
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("fda2018", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
         eventName<-realterms[i]
         
@@ -2127,7 +2127,7 @@ geturlquery <- reactive({
   # q$t1<-"L01CA04"
   # q$t1<-"10003239"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- TRUE
+  # q$concomitant <- FALSE
   
   v$t1<-toupper(toupper(q$t1))
   updateNumericInput(session, "limit", value = q$limit)
@@ -2152,7 +2152,7 @@ geturlquery <- reactive({
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   
 
-  con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+  con_atc <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
   drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
   con_atc$disconnect()
   

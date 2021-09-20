@@ -153,7 +153,7 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
 }
 
 # Refactor
-getcounts999 <- function( session, v, t, count, limit=1000, 
+getcounts999 <- function( session, v, t, count, limit=10, 
                           exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2)
 {
   if ( is.null( t ) ){
@@ -183,7 +183,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   # Refactor
   if ( v[2] == "patient.reaction.reactionmeddrapt.exact"){
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     eventName<-unlist(strsplit(t[2], '\\"'))[2]
     if (is.na(eventName) ){
       eventName <-unlist(strsplit(t[2], '\\"'))[1]
@@ -198,7 +198,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
     
   } else {
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     drugName<-unlist(strsplit(t[2], '\\"'))[2]
     # date1 <- '2018-01-01'
     # date2 <- '2018-12-30'
@@ -258,7 +258,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   max <- nrow(mydf)
   # max <- min(900, nrow(mydf) )
   if (!is.null(eventName) && !is.null(drugName)){
-    con_med <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con_med <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     event <- con_med$find(paste0('{"code" : "',eventName,'"}'))
     con_med$disconnect()
     eventName = toupper(event$names[[1]][1])

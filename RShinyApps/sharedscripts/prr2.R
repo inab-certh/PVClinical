@@ -5,7 +5,7 @@ library(DT)
 library(xlsx)
 
 library(plotly)
-
+library(parallel)
 require(wordcloud)
 library(shiny)
 library(shiny.i18n)
@@ -338,13 +338,13 @@ shinyServer(function(input, output, session) {
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     
     if (q$v1=="patient.drug.openfda.generic_name"){
-      con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con_atc <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
       con_atc$disconnect()
       
       q$dename <- drug$names[[1]][1]
     } else {
-      con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con_medra <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
       con_medra$disconnect()
       
@@ -473,7 +473,7 @@ shinyServer(function(input, output, session) {
       # Refactor
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         eventName<-q$t1
         
         eventQuery<-createConEventQuery(eventName=eventName, input$date1, input$date2)
@@ -483,7 +483,7 @@ shinyServer(function(input, output, session) {
         mydf<-eventResult
       } else {
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         drugName<-q$t1
         
         drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2)
@@ -632,7 +632,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
-        con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         drugQuery <- SearchEventReports(q$t1, input$date1, input$date2)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
@@ -681,7 +681,7 @@ shinyServer(function(input, output, session) {
         
       } else {
         
-        con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
@@ -770,7 +770,7 @@ shinyServer(function(input, output, session) {
     } else {
       
       # Refactor
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       
       totalQuery<-totalreports(input$date1, input$date2)
       totalResult <- con$aggregate(totalQuery)
@@ -838,7 +838,7 @@ shinyServer(function(input, output, session) {
       if (is.null(q$t2))
         comb <- comblist$comb
       else {
-        con_med <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con_med <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         event <- con_med$find(paste0('{"code" : "',input$t2,'"}'))
         con_med$disconnect()
         eventName = toupper(event$names[[1]][1])
@@ -922,7 +922,7 @@ shinyServer(function(input, output, session) {
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
     # Refactor
-    con <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     drug <- con$find(paste0('{"code" : "',getterm1( session ),'"}'))
     mydrugc <- drug$names[[1]][1]
     con$disconnect()
@@ -1043,9 +1043,48 @@ shinyServer(function(input, output, session) {
     return( list(mydf=mydf, sourcedf=sourcedf) )
   })  
   
-
+  
+  mongoEventTotals <- function(x) {
+    q <- geturlquery()
+    
+    if (q$v1 == "patient.reaction.reactionmeddrapt"){
+      
+      # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
+      drugName<-x
+      
+      drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
+      totaldrug <- con$aggregate(drugTotalQuery)
+      all_events2 <- totaldrug
+      
+      curcount <- all_events2$safetyreportid
+      # con$disconnect()
+    } else {
+      
+      # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
+      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
+      eventName<-x
+      
+      eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName), input$date1, input$date2)
+      totalevent <- con$aggregate(eventTotalQuery)
+      all_events2 <- totalevent
+      
+      curcount <- all_events2$safetyreportid
+      # con$disconnect()
+    }
+    if( is.null( curcount ) )
+    {
+      curcount <- NA
+    }
+    con$disconnect()
+    return(curcount)
+  }
+  
   geteventtotals <- reactive(
     {
+      
       q <- geturlquery()
       mydf <- getdrugcounts()$mydf
       if ( !is.data.frame(mydf) ) 
@@ -1056,69 +1095,129 @@ shinyServer(function(input, output, session) {
       foundtermslist <- mydf[,1]
       foundtermslist <- paste('"', foundtermslist, '"', sep='')
       foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-      
-      all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
-      for (i in seq_along(foundtermslist))
-      {
+    
         if (q$concomitant == TRUE){
-          eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
-          #    myv <- c('_exists_', eventvar)
-          myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
-          myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
-          #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
-          cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
-          #   print(cururl)
-          # all_events2 <- getcounts999fda( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )
-          all_events2 <- fda_fetch_p( session, cururl, message= i )
-          curcount <- all_events2$meta$results$total
-          
-        } else {
-          # Refactor
-          if (q$v1 == "patient.reaction.reactionmeddrapt"){
+          all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
+          for (i in seq_along(foundtermslist[1:10]))
+            {
+              eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+              #    myv <- c('_exists_', eventvar)
+              myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
+              myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
+              #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+              cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
+              #   print(cururl)
+              # all_events2 <- getcounts999fda( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )
+              all_events2 <- fda_fetch_p( session, cururl, message= i )
+              curcount <- all_events2$meta$results$total
             
-            # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-            con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-            # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
-            drugName<-realterms[i]
-            # browser()
-            drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
-            totaldrug <- con$aggregate(drugTotalQuery)
-            all_events2 <- totaldrug
-            
-            curcount <- all_events2$safetyreportid
-            
-          } else {
-            
-            # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-            con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-            # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
-            eventName<-realterms[i]
-            
-            eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName), input$date1, input$date2)
-            totalevent <- con$aggregate(eventTotalQuery)
-            all_events2 <- totalevent
-            
-            curcount <- all_events2$safetyreportid
-            
+            # Redone
+              all[i, 'term'] <- realterms[[i]]
+              if( is.null( curcount ) )
+              {
+                curcount <- NA
+              }
+              all[i, 'count'] <- curcount
           }
-          
-          # Redone
-          
-        }
         # browser()
         # all[i, 'URL'] <- removekey( makelink( cururl ) )
-        all[i, 'term'] <- realterms[[i]]
-        if( is.null( curcount ) )
-        {
-          curcount <- NA
+       
+        
+        } else { 
+          # browser()
+          
+          terms <- realterms[1:10]
+          start_time <- Sys.time()
+          numAll <- mclapply(terms,function(x) mongoEventTotals(x),mc.cores=2)
+          end_time <- Sys.time()
+          print(end_time - start_time)
+          all <- data.frame(term = realterms[1:10], count = as.numeric(unlist(numAll)) )
+          
         }
-        all[i, 'count'] <- curcount
-      }
-      con$disconnect()
+      
       # browser()
       return(all) 
     } )  
   
+
+  # geteventtotals <- reactive(
+  #   {
+  #     start_time <- Sys.time()
+  #     q <- geturlquery()
+  #     mydf <- getdrugcounts()$mydf
+  #     if ( !is.data.frame(mydf) ) 
+  #     {
+  #       return(NA)
+  #     }
+  #     realterms <- mydf[,1]
+  #     foundtermslist <- mydf[,1]
+  #     foundtermslist <- paste('"', foundtermslist, '"', sep='')
+  #     foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
+  #     # browser()
+  #     all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
+  #     for (i in seq_along(foundtermslist[1:10]))
+  #     {
+  #       if (q$concomitant == TRUE){
+  #         eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+  #         #    myv <- c('_exists_', eventvar)
+  #         myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
+  #         myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
+  #         #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+  #         cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
+  #         #   print(cururl)
+  #         # all_events2 <- getcounts999fda( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )
+  #         all_events2 <- fda_fetch_p( session, cururl, message= i )
+  #         curcount <- all_events2$meta$results$total
+  #         
+  #       } else {
+  #         # Refactor
+  #         if (q$v1 == "patient.reaction.reactionmeddrapt"){
+  #           
+  #           # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
+  #           con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+  #           # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
+  #           drugName<-realterms[i]
+  #           # browser()
+  #           drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
+  #           totaldrug <- con$aggregate(drugTotalQuery)
+  #           all_events2 <- totaldrug
+  #           
+  #           curcount <- all_events2$safetyreportid
+  #           # con$disconnect()
+  #         } else {
+  #           
+  #           # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
+  #           con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+  #           # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
+  #           eventName<-realterms[i]
+  #           
+  #           eventTotalQuery<-totalEventReportsOriginal(str_to_sentence(eventName), input$date1, input$date2)
+  #           totalevent <- con$aggregate(eventTotalQuery)
+  #           all_events2 <- totalevent
+  #           
+  #           curcount <- all_events2$safetyreportid
+  #           # con$disconnect()
+  #         }
+  #         con$disconnect()
+  #         
+  #         # Redone
+  #         
+  #       }
+  #       # browser()
+  #       # all[i, 'URL'] <- removekey( makelink( cururl ) )
+  #       all[i, 'term'] <- realterms[[i]]
+  #       if( is.null( curcount ) )
+  #       {
+  #         curcount <- NA
+  #       }
+  #       all[i, 'count'] <- curcount
+  #     }
+  #     end_time <- Sys.time()
+  #     print(end_time - start_time)
+  #     # browser()
+  #     return(all) 
+  #   } )  
+  # 
 # geteventtotals <- reactive(
 #   {
 #   geturlquery()
@@ -2143,6 +2242,17 @@ getcururl <- reactive({
   getTranslatedTabsetNamesWithTextPlot <- function(){
     return (c( i18n()$t("Tables"),i18n()$t("Word Cloud"),i18n()$t("text Plot")))
   }
+  
+  observe({
+    # TRUE if input$controller is odd, FALSE if even.
+    filename <- paste0(cacheFolder,values$urlQuery$hash,"_prr.csv")
+    if (file.exists(filename)) {
+      
+      updateCheckboxInput(session, "sourcePRRDataframeUI", value = TRUE)
+      
+    }
+  })
+
   
   output$sourcePRRDataframe<-renderUI({
     if (!is.null(values$urlQuery$hash))
