@@ -960,15 +960,9 @@ input[type='checkbox']+span {
 	border-left: 0px;
 }
 
-#collapsepub>table td:last-child {
+#collapsepub>table>td:last-child {
 	border: 0px;
 }
-
-/*#collapsepub #PubMedBtn.collapsed:after {*/
-/*    font-family: Fontawesome;*/
-/*    content: '\f078';*/
-/*    float: right;*/
-/*}*/
 
 #collapsepub #PubMedBtn[aria-expanded=true] .fa-plus {
    display: none;
@@ -979,4 +973,17 @@ input[type='checkbox']+span {
 
 #collapsepub #PubMedBtn.collapsed:after {
 	content: none;
+}
+
+#finalReport .container .panel-group table button {
+	border-radius: 30%;
+	background-color: #e8e6e6;
+}
+
+.table-light {
+	background-color: #f9f9f9;
+}
+
+div.report-citation {
+	margin: 1rem 2rem;
 }

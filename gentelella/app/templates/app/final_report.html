@@ -28,7 +28,7 @@
 
 {% block content %}
 
-<div class="right_col" role="main">
+<div id="finalReport" class="right_col" role="main">
     <div class="row tile_count">
         <div class="col-4 col-offset-6">
             <div class="x_panel">
@@ -188,15 +188,15 @@
 
                                           {% elif d %}
 
-                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας" %}</span></strong>
+                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας Ελέγχου" %}</span></strong>
 
                                           <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></strong>
 
-                                          <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %}</span></strong>
+                                          <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
 
                                           {% elif c %}
                                           <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></strong>
-                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεχγος Λόγου Πιθανοφανειών" %}</span></strong>
+                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
                                           {%endif%}
 <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
 
@@ -245,40 +245,40 @@
                                           </div>
                                           <div id="collapsepub" class="panel-collapse collapse in">
                                               <br>
-                                              <table class="table table-bordered">
+                                              <table class="table table-bordered table-light">
                                                   <tbody>
                                                     {% for pub_obj in pub_objs %}
                                                         <tr>
-                                                        <td>
-                                                            <input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ pub_obj.title }}" data-series="{{ forloop.counter}}">
-                                                            <button id="PubMedBtn" data-toggle="collapse" data-target="#pubObjDetails{{ forloop.counter}}" aria-expanded="false" class="btn btn-secondary" data-toggle="modal" aria-controls="pubObjDetails{{ forloop.counter}}">
-                                                                <i class="fa fa-plus pull-right"></i>
-                                                                <i class="fa fa-minus pull-right"></i>
-                                                            </button>
-                                                            <span><em>{{ pub_obj.title }}</em></span>
-                                                        </td>
+                                                            <td><input type="checkbox" id="pubtitle{{ forloop.counter}}" value="" data-title="{{ pub_obj.title }}" data-series="{{ forloop.counter}}" data-objid="{{pub_obj.id}}"></td>
+                                                            <td>
+                                                                <button id="PubMedBtn" data-toggle="collapse" data-target="#pubObjDetails{{ forloop.counter}}" aria-expanded="false" class="btn btn-secondary" data-toggle="modal" aria-controls="pubObjDetails{{ forloop.counter}}">
+                                                                    <i class="fa fa-plus pull-right"></i>
+                                                                    <i class="fa fa-minus pull-right"></i>
+                                                                </button>
+                                                                <span><em>{{ pub_obj.title }}</em></span>
+                                                            </td>
 
-                                                        <td><button id="PubMedNoteBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" {% if not pub_obj.notes %}disabled{% endif %}>
-                                                            <i class="fas fa-search-plus"></i></button><span> {% trans "Σημειώσεις" %}</span></td>
+                                                            <td><button id="PubMedNoteBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" {% if not pub_obj.notes %}disabled{% endif %}>
+                                                                <i class="fas fa-search-plus"></i></button><span> {% trans "Σημειώσεις" %}</span></td>
 
-                                                        <td id="pubObjDetails{{ forloop.counter}}" class="collapse">
-                                                            <!-- PubMed Accordion -->
-                                                            <table class="table table-bordered">
-                                                                <tr>
-                                                                    <td><strong>{% trans "Pubdate" %}</strong></td>
-                                                                    <td><em>{{ pub_obj.pubdate }}</em></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><strong>{% trans "Authors" %}</strong></td>
-                                                                    <td><em>{{ pub_obj.authors }}</em></td>
-                                                                </tr>
-                                                                 <tr>
-                                                                    <td><strong>{% trans "Url" %}</strong></td>
-                                                                    <td><a href="{{ pub_obj.url }}" target="_blank"><em>{{ pub_obj.url }}</em></a></td>
-                                                                </tr>
-                                                            <!--                                                                                  <label for="pubtitle{{ forloop.counter}}"></label>-->
-                                                            </table>
-                                                        </td>
+                                                            <td id="pubObjDetails{{ forloop.counter}}" class="collapse">
+                                                                <!-- PubMed Accordion -->
+                                                                <table class="table table-bordered">
+                                                                    <tr>
+                                                                        <td><strong>{% trans "Ημερομηνία δημοσίευσης" %}</strong></td>
+                                                                        <td><em>{{ pub_obj.pubdate }}</em></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><strong>{% trans "Συντάκτες" %}</strong></td>
+                                                                        <td><em>{{ pub_obj.authors }}</em></td>
+                                                                    </tr>
+                                                                     <tr>
+                                                                        <td><strong>{% trans "Σύνδεσμος" %}</strong></td>
+                                                                        <td><a href="{{ pub_obj.url }}" target="_blank"><em>{{ pub_obj.url }}</em></a></td>
+                                                                    </tr>
+                                                                <!--                                                                                  <label for="pubtitle{{ forloop.counter}}"></label>-->
+                                                                </table>
+                                                            </td>
 
                                                                     <!--  PubMed Modal -->
     <!--                                                                    <div class="modal fade report-note-modal"  id="pubModal{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">-->
@@ -313,7 +313,7 @@
     <!--                                                                    &lt;!&ndash; /.modal &ndash;&gt;-->
 
                                                                     <!--  PubMedNote Modal -->
-                                                                        <div class="modal fade report-note-modal"  id="pubModalNote{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
+                                                                        <div class="modal fade pubmed-report-modal"  id="pubModalNote{{ forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="OpenModalLabel" aria-hidden="true">
                                                                           <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                               <div class="modal-header">
@@ -321,7 +321,7 @@
                                                                                    <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                                                     </div>
                                                                               <div class="modal-body">
-                                                                                  <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}"><span>{{ pub_obj.notes }}</span><label for="pubnote{{ forloop.counter}}" ></label>
+                                                                                  <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}" data-objid="{{pub_obj.id}}"><span>{{ pub_obj.notes }}</span><label for="pubnote{{ forloop.counter}}" ></label>
                                                                               </div>
                                                                               <div class="modal-footer">
                                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
@@ -423,15 +423,13 @@
         var gen_table_rep=0 ;
         var gen_chart_rep=0 ;
         var cp_all_rep=0 ;
-        var pubnote_rep="" ;
-        var pubtitle_rep=0 ;
+        var allPubNotes = {};
+        var allPubTitles = {};
     </script>
     <script>
     $(document).ready(function(){
         var note ;
         var hash ;
-        var allPubNotes = {"0":"''"};
-        var allPubTitles = {"0":"''"};
         var el_name_to_value = {"#irnote": "{{ ir_notes|striptags|safe }}",
             "#charnote": "{{ char_notes|striptags|safe }}", "#pathwaysnote": "{{ pathways_notes|striptags|safe }}"};
         var el_name_to_var = {"#ir_table": "ir_table_rep", "#ir_all": "ir_all_rep", "#pre_table": "pre_table_rep",
@@ -441,38 +439,6 @@
             "#gen_chart": "gen_chart_rep", "#cp_all": "cp_all_rep"
         }
 
-        $("[id*=pubnote]").click(function(){
-
-            var pubnote_rep= $(this).data('series');
-            var note= $(this).data('note');
-
-            if ($(this).is(':checked')) {
-
-                pubnote_rep = $(this).data('series') ;
-                allPubNotes[pubnote_rep]=note;
-            }else{
-                pubnote_rep = $(this).data('series') ;
-                allPubNotes[pubnote_rep]="";
-            }
-
-            });
-
-        $("[id*=pubtitle]").click(function(){
-
-            var pubtitle_rep= $(this).data('series');
-            var title= $(this).data('title');
-
-            if ($(this).is(':checked')) {
-                pubtitle_rep = $(this).data('series') ;
-                allPubTitles[pubtitle_rep]=title;
-
-            }else{
-                pubtitle_rep = $(this).data('series') ;
-                allPubTitles[pubtitle_rep]="";
-            }
-            console.log(allPubTitles);
-
-        });
 
         $(Object.keys(el_name_to_value).join(", ")).on("change", function(){
             if($(this).is(':checked')){
@@ -482,30 +448,6 @@
             };
         });
 
-        // $("#irnote").on("change", function(){
-        //
-        //     if($(this).is(':checked')){
-        //         all_notes['ir']="{{ ir_notes|striptags|safe }}";
-        //     };
-        //
-        // });
-        //
-        // $("#charnote").on("change", function(){
-        //
-        //     if($(this).is(':checked')){
-        //         all_notes['char']="{{ char_notes|striptags|safe }}";
-        //     };
-        //
-        // });
-        //
-        //
-        // $("#pathwaysnote").on("change", function(){
-        //
-        //     if($(this).is(':checked')){
-        //         all_notes['pathways']="{{ pathways_notes|striptags|safe }}";
-        //     };
-        //
-        // });
 
         $(Object.keys(el_name_to_var).join(", ")).on("change", function(){
             if ($(this).is(':checked')) {
@@ -516,150 +458,6 @@
             }
         });
 
-
-        // $("#ir_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         ir_table_rep = 1 ;
-        //
-        //     }else{
-        //         ir_table_rep = 0 ;
-        //
-        //     }
-        //
-        // });
-        // $("#ir_all").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         ir_all_rep = 1 ;
-        //
-        //     }else{
-        //         ir_all_rep = 0 ;
-        //
-        //     }
-        //
-        // });
-        //
-        // $("#pre_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         pre_table_rep = 1 ;
-        //
-        //     }else{
-        //         pre_table_rep = 0 ;
-        //
-        //     }
-        //
-        // });
-        // $("#pre_chart").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         pre_chart_rep = 1 ;
-        //
-        //     }else{
-        //         pre_chart_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        //
-        // $("#drug_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         drug_table_rep = 1 ;
-        //
-        //     }else{
-        //         drug_table_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#drug_chart").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         drug_chart_rep = 1 ;
-        //
-        //
-        //     }else{
-        //         drug_chart_rep = 0 ;
-        //
-        //     }
-        //
-        // });
-        //
-        // $("#demograph_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         demograph_table_rep = 1 ;
-        //
-        //     }else{
-        //         demograph_table_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#demograph_chart").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         demograph_chart_rep = 1 ;
-        //
-        //
-        //     }else{
-        //         demograph_chart_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#charlson_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         charlson_table_rep = 1 ;
-        //
-        //     }else{
-        //         charlson_table_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#charlson_chart").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         charlson_chart_rep = 1 ;
-        //     }else{
-        //         charlson_chart_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#gen_table").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         gen_table_rep = 1 ;
-        //     }else{
-        //         gen_table_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#gen_chart").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         gen_chart_rep = 1 ;
-        //     }else{
-        //         gen_chart_rep = 0 ;
-        //
-        //     }
-        // });
-        //
-        // $("#cp_all").on("change", function(){
-        //
-        //     if ($(this).is(':checked')) {
-        //         cp_all_rep = 1 ;
-        //     }else{
-        //         cp_all_rep = 0 ;
-        //
-        //     }
-        // });
 
     $("#closeIr").click(function() {
         var scid={{scenario_open}};
@@ -742,7 +540,6 @@
         // console.log(allPubNotes);
 
         $("#loaderOverlay").fadeIn();
-
 
         $.ajax({
                 url: "/ajax/report_pdf",

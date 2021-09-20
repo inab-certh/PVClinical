@@ -21,7 +21,7 @@ $(function(){
 
     proceed_elm.addEventListener("proceedactivation", function(e) {
         var proceed_disabled = openfda_proceed_disabled && Object.keys(all_notes).length === 0 &&
-            ohdsi_proceed_disabled;
+            ohdsi_proceed_disabled && pubmed_proceed_disabled;
 
         $("#proceed-report-btn").prop("disabled", proceed_disabled);
         $("#resultBtn").prop("disabled", proceed_disabled);
@@ -79,23 +79,54 @@ $(function(){
         triggerProceedActivation(proceed_elm);
     }
 
+    function pubmed_set_proceed_btns_status() {
+        pubmed_proceed_disabled = !(Object.keys(allPubTitles).length>0 || Object.keys(allPubNotes).length>0);
+        triggerProceedActivation(proceed_elm);
+    }
+
     $(".ohdsi-report-modal").on('hidden.bs.modal', function() {
-        ohdsi_set_proceed_btns_status(hashes);
+        ohdsi_set_proceed_btns_status();
     });
 
     $("#shinyModal").on('hidden.bs.modal', function() {
         openfda_set_proceed_btns_status(hashes);
     });
 
+    $(".pubmed-report-modal").on('hidden.bs.modal', function() {
+        pubmed_set_proceed_btns_status();
+    });
+
+    $("[id^=pubnote]").click(function(){
+
+        var pubnote_rep= $(this).data('series');
+        var note= $(this).data('note');
+
+        if ($(this).is(':checked')) {
+            allPubNotes[pubnote_rep]=$(this).data('objid');
+        }else{
+            // pubnote_rep = $(this).data('series') ;
+            // allPubNotes[pubnote_rep]="";
+            delete allPubNotes[pubnote_rep];
+        }
+    });
+
+    $("[id^=pubtitle]").click(function(){
+
+        var pubtitle_rep= $(this).data('series');
+
+        if ($(this).is(':checked')) {
+            allPubTitles[pubtitle_rep]=$(this).data('objid');
+
+        }else{
+            // pubtitle_rep = $(this).data('series') ;
+            // allPubTitles[pubtitle_rep]="";
+            delete allPubTitles[pubtitle_rep];
+        }
+        pubmed_set_proceed_btns_status();
+    });
+
+
     var i=0;
-    // $("#openfdaChkBx").on('change', function() {
-    //     if($(this).is(":checked")) {
-    //         openfda_set_proceed_btns_status(hashes);
-    //     } else {
-    //         $("#proceed-report-btn").prop("disabled", true);
-    //         $("#resultBtn").prop("disabled", true);
-    //     }
-    // });
 
     $("[id*=NotesBtn]").click(function(){
         hash= $(this).data('hash');
