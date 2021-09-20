@@ -2052,21 +2052,27 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", None))
 
     pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", None))
-    pub_value = list(pub_titles.values())
-    pub_exist = 0
-    for i in pub_value:
-        if i != '' and i != "''":
-            pub_exist = 1
-
-    pub_dict_authors = {}
-    pub_dict_urls = {}
-    n = 0
-    for i in pub_value:
-        if i != '' and i != "''":
-            n = n+1
-            pub_obj = PubMed.objects.filter(scenario_id=scenario_id, title=i, relevance=True)
-            pub_dict_authors['{}'.format(n)] = list(map(lambda el: el.authors, pub_obj))
-            pub_dict_urls['{}'.format(n)] = list(map(lambda el: el.url, pub_obj))
+    print(pub_titles)
+    # pub_value = list(pub_titles.values())
+    pub_objs = PubMed.objects.filter(id__in=pub_titles.values())
+    print(pub_objs)
+    pub_exist = len(pub_titles)
+    # for i in pub_value:
+    #     if i != '' and i != "''":
+    #         pub_exist = 1
+    #
+    # pub_dict_authors = {}
+    # pub_dict_urls = {}
+    # n = 0
+    # print(pub_titles)
+    # for i in pub_value:
+    #     if i != '' and i != "''":
+    #         n = n+1
+    #         pub_obj = PubMed.objects.filter(scenario_id=scenario_id, title=i, relevance=True)
+    #         pub_dict_authors['{}'.format(n)] = list(map(lambda el: el.authors, pub_obj))
+    #         pub_dict_urls['{}'.format(n)] = list(map(lambda el: el.url, pub_obj))
+    #         print(pub_dict_authors)
+    #         print(pub_dict_urls)
 
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
@@ -2773,8 +2779,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                "dict2": dict2, "dict3": dict3, "dict_hash_combination": dict_hash_combination,
                "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
-               "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_titles": pub_titles, "pub_notes": pub_notes,
-               "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors, "pub_dict_urls": pub_dict_urls}
+               "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
+               "pub_objs": pub_objs}
+               # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
+               # "pub_dict_urls": pub_dict_urls}
 
     return render(request, 'app/report_pdf.html', context)
 

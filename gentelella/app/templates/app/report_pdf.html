@@ -20,29 +20,32 @@
 <div align="center"><img src="/static/images/pvclinical.png" width="35%"></div>
     <div style="padding-top:200px"></div>
 
-<div id="review">Review of {{scenario}}</div>
+<div id="review">{% trans "Επισκόπηση σεναρίου:" %} {{scenario}}</div>
 
     <br>
     <div style="padding-top:300px"></div>
-        <div class="info_title">Personal Informations</div>
-            <div style="padding-top:30px"></div>
-        <info>First Name:</info>
-            <div style="padding-top:30px"></div>
-        <info>Last Name:</info>
-            <div style="padding-top:30px"></div>
-        <info>Date Issued:</info>
+        <div class="info_title">{% trans "Προσωπικές πληροφορίες" %}</div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Όνομα:" %} </span><span class="pers-val">{{ request.user.first_name}}</span>
+    </div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Επώνυμο:" %} </span><span class="pers-val">{{ request.user.last_name}}</span>
+    </div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Ημερομηνία Έκδοσης:" %} </span><span class="pers-val">{% now "j N Y" %}</span>
+    </div>
     <div style="padding-top:100px"></div>
 
 <!--OHDSI WORKSPACE-->
 
 {% if coh_dict or ir_dict_t or ir_dict_a or cp_dict or "ir" in report_notes or "char" in report_notes or "pathways" in report_notes %}
-    <div class="workspace"> OHDSI Workspace</div>
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας OHDSI" %}</div>
 {% endif %}
 
 {% if coh_dict or "char" in report_notes %}
     <br>
     <br>
-    <div class="view_title" >&nbsp Cohort Characterization </div>
+    <div class="view_title" >{% trans "Χαρακτηρισμός Πληθυσμού" %}</div>
     {% for k,l in coh_dict.items %}
         <br>
         <br>
@@ -56,7 +59,7 @@
     {% for hash,note in report_notes.items %}
             {%if hash == 'char' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >&nbsp Notes for Cohort Characterization</div>
+                <div class="view_title" >{% trans "Σημειώσεις για Χαρακτηρισμό Πληθυσμού" %}</div>
                 <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
@@ -71,7 +74,7 @@
 {% if ir_dict_t or ir_dict_a or "ir" in report_notes  %}
     <br>
     <br>
-<div class="view_title" >&nbsp Incidence Rate </div>
+<div class="view_title" >{% trans "Ρυθμός Επίπτωσης" %}</div>
     {% for k,l in ir_dict_a.items %}
         <br>
         <br>
@@ -99,7 +102,7 @@
     {% for hash,note in report_notes.items %}
             {% if hash == 'ir' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >&nbsp Notes for Incidence Rate</div>
+                <div class="view_title" >{% trans "Σημειώσεις για Ρυθμό Επίπτωσης" %}</div>
                 <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
@@ -116,7 +119,7 @@
     <br>
     <br>
     <div class="tg">
-    <div class="view_title" >&nbsp Pathway Analysis </div>
+    <div class="view_title" >{% trans "Ανάλυση Μονοπατιού" %}</div>
     {% for k,l in cp_dict.items %}
         <br>
         <br>
@@ -129,7 +132,7 @@
 {% for hash,note in report_notes.items %}
             {% if hash == 'pathways' %}
             <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >&nbsp Notes for Pathway Analysis</div>
+                <div class="view_title" >{% trans "Σημειώσεις για Ανάλυση Μονοπατιού" %}</div>
                 <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
@@ -145,7 +148,7 @@
 {% if empty_OpenFDA == '' and report_notes|hexdigest_in_dict %}
 <div style="padding-top:30px"></div>
 
-<div class="workspace">OpenFDA Workspace</div>
+<div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
 <br>
 {% for k,v in dict_hash_combination.items %}
     {% for hash,note in report_notes.items %}
@@ -158,7 +161,7 @@
 
         <div style="padding-bottom:30px"></div>
 
-            <div class="view_title" >&nbsp Notes</div>
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
             <br>
             <br>
             <div class="notes_content">{{note}}</div>
@@ -172,7 +175,7 @@
 <!--For drug or condition only-->
     {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
     <div style="padding-top:30px"></div>
-    <div class="workspace"> OpenFDA Workspace</div>
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
     <br>
     <br>
 
@@ -189,7 +192,7 @@
         {% if hash != 'empty' %}
         <div style="padding-bottom:30px"></div>
 
-            <div class="view_title" >&nbsp Notes</div>
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
             <br>
             <br>
             <div class="notes_content">{{note}}</div>
@@ -205,7 +208,7 @@
         {% for key,value in dict_quickview.items %}
             {% if value.2 or value.0 != '' %}
         <div style="padding-bottom:30px"></div>
-                <div class="view_title">&nbsp Quick View</div>
+                <div class="view_title">{% trans "Γρήγορη Επισκόπηση" %}</div>
                 <br>
                 <br>
                 <br>
@@ -216,7 +219,7 @@
                 <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ value.0 }}'>
                 <br>
                 <br>
-                <subt>{{value.1}}- Change in mean analysis</subt>
+                <subt>{{value.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
                 </div>
             <br>
             <br>
@@ -224,7 +227,7 @@
             {% if value.2 %}
                 <div class="tg">
                 <div style="margin-left: 20px;">{{value.2|safe}}</div>
-                <subt>{{value.3}}- PRR and ROR results </subt>
+                <subt>{{value.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
                 </div>
                 <br>
                 <br>
@@ -235,7 +238,7 @@
         <!--Dashboard-->
     {% if dict_dashboard_png or dict_dash_csv %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >&nbsp Dashboard</div>
+        <div class="view_title" >{% trans "Πίνακας Ελέγχου" %}</div>
         <br>
         <br>
         <br>
@@ -264,7 +267,7 @@
 <!--Reporting Rates for Drug-->
     {% if dict_rr_d %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >&nbsp Reporting Rates</div>
+        <div class="view_title" >{% trans "Λόγος Αναφορών" %}</div>
     <br>
     <br>
     <br>
@@ -281,7 +284,7 @@
 <!--Reporting Rates for Event-->
     {% if dict_rr_e %}
         <div style="padding-bottom:30px"></div>
-        <div class="view_title" >&nbsp Reporting Rates</div>
+        <div class="view_title" >{% trans "Λόγος Αναφορών" %}</div>
         <br>
         <br>
         <br>
@@ -300,7 +303,7 @@
 <!--Likelihood for Drug-->
 {% if dict_lrTest_png or dict_lr %}
     <div style="padding-bottom:30px"></div>
-    <div class="view_title" >&nbsp Likelihood Rate Test</div>
+    <div class="view_title" >{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</div>
     <br>
     <br>
     {% for img, fig in dict_lrTest_png.items %}
@@ -309,7 +312,7 @@
     <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
     <br>
     <br>
-    <subt>{{fig}}- Simulation Results for Event Based LRT</subt>
+    <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων" %}</subt>
     <div style="padding-bottom:30px"></div>
     </div>
     {% endfor %}
@@ -329,7 +332,7 @@
 <!--Likelihood for Event-->
 {% if dict_lreTest_png or dict_lre %}
     <div style="padding-bottom:30px"></div>
-    <div class="view_title" >&nbsp Likelihood Rate Test</div>
+    <div class="view_title" >{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</div>
     <br>
     <br>
         {% for img,fig  in dict_lreTest_png.items %}
@@ -338,7 +341,7 @@
         <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
-        <subt>{{fig}}- Simulation Results for Drug Based LRT</subt>
+        <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων" %}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
         {% endfor %}
@@ -361,7 +364,7 @@
 {% if empty_OpenFDA != '' %}
 <div style="padding-top:30px"></div>
 
-<div class="workspace">OpenFDA Workspace</div>
+<div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
 <br>
 {% endif %}
 
@@ -381,7 +384,7 @@
 <br>
 {% for hash,note in report_notes.items %}
     {% if hash == k %}
-    <div class="view_title" >&nbsp Notes</div>
+    <div class="view_title" >{% trans "Σημειώσεις" %}</div>
     <br>
     <br>
     <div class="notes_content">{{note}}</div>
@@ -396,7 +399,7 @@
 {% endif %}
 
 {% if val1.0 != '' or val1.2 != '' %}
-    <div class="view_title">&nbsp Quick View</div>
+    <div class="view_title">{% trans "Γρήγορη Επισκόπηση" %}</div>
     <br>
     <br>
     <br>
@@ -406,12 +409,10 @@
             <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val1.0}}'>
             <br>
             <br>
-            <subt>{{val1.1}}- Change in mean analysis</subt>
+            <subt>{{val1.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
             <br>
-            <div class="details">&#9432; Changepoint is an instance in time where the statistical properties before and after this time point differ.
-            With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
-            is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
-            changepoints of data.</div>
+            <div class="details">&#9432; {% blocktrans %}Η ανάλυση μεταβολής μέσου (change in mean analysis), υπολογίζει σημεία αλλαγής,
+                μόνο όταν αλλάζει η μέση τιμή (mean) των δεδομένων.{% endblocktrans %}</div>
             </div>
                 <br>
                 <br>
@@ -421,7 +422,7 @@
         {% if val1.2 != '' %}
             <div class="tg">
             <div style="margin-left: 20px;">{{ val1.2|safe }}</div>
-            <subt>{{val1.3}}- PRR and ROR results </subt>
+            <subt>{{val1.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
             <br>
             <br>
             </div>
@@ -432,7 +433,7 @@
 
 {% if val2.0 != '' or val2.2 != '' or val2.5 != '' or val2.8 != '' %}
 
-    <div class="view_title">&nbsp Dynamic PRR</div>
+    <div class="view_title">{% trans "Δυναμικό PRR" %}</div>
         <br>
 
         {% if val2.0 != '' %}
@@ -442,10 +443,7 @@
             <br>
             <subt>{{val2.1}}- PRR over time </subt>
             <br>
-            <div class="details">&#9432;Changepoint is an instance in time where the statistical properties before and after this time point differ.
-            With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
-            is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
-            changepoints of data.</div>
+            <div class="details">{% blocktrans %}&#9432;{% endblocktrans %}</div>
             <br>
             <br>
             </div>
@@ -457,7 +455,7 @@
             <div style="margin-left: 20px;">{{val2.3|safe}}</div>
             <subt>{{val2.4}}{{val2.2|safe}}</subt>
             <br>
-            <div class="details">&#9432; Monthly and cumulative counts for drug-event combination.</div>
+            <div class="details">&#9432; {% trans "Μηνιαίο και αθροιστικό πλήθος για συνδυασμό φαρμάκου-συμβάντος" %}</div>
             <br>
             <br>
             </div>
@@ -469,7 +467,7 @@
             <div style="margin-left: 20px;">{{val2.6|safe}}</div>
             <subt>{{val2.7}}{{val2.5|safe}}</subt>
             <br>
-            <div class="details">&#9432; Frequency table for drugs found in selected reports</div>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές" %}</div>
             <br>
             <br>
             </div>
@@ -481,7 +479,7 @@
             <div style="margin-left: 20px;">{{val2.9|safe}}</div>
             <subt>{{val2.10}}{{val2.8|safe}}</subt>
             <br>
-            <div class="details">&#9432; Frequency table for events found in selected reports</div>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές" %}</div>
             <br>
             <br>
             </div>
@@ -507,7 +505,7 @@
         <br>
         {% for hash,note in report_notes.items %}
             {% if hash == k %}
-                <div class="view_title" >&nbsp Notes</div>
+                <div class="view_title" >{% trans "Σημειώσεις" %}</div>
                 <br>
                 <br>
                 <div class="notes_content">{{note}}</div>
@@ -524,7 +522,7 @@
 {%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
     <br>
     <br>
-    <div class="view_title">&nbsp Change Point Analysis</div>
+    <div class="view_title">{% trans "Ανάλυση Αλλαγής Σημείου" %}</div>
         {% if val3.0 != '' %}
             <div class="tg">
             <br>
@@ -536,10 +534,12 @@
             <br>
             <subt>{{val3.2}}{{val3.0}}</subt>
             <br>
-            <div class="details">&#9432; Changepoint is an instance in time where the statistical properties before and after this time point differ.
-            With potential changes naturally occurring in data and many statistical methods assuming a “no change” setup, changepoint analysis
-            is important in both applied and theoretical statistics.ChangePoint Calculates the optimal positioning and (potentially) number of
-            changepoints of data.</div>
+            <div class="details">&#9432; {% blocktrans %}Το σημείο αλλαγής (changepoint) είναι μια στιγμή στο χρόνο, όπου οι στατιστικές ιδιότητες πριν και μετά από αυτό
+                το σημείο διαφέρουν. Καθώς πολλές αλλαγές λαμβάνουν χώρα, αυθόρμητα, σε υπό ανάλυση δεδομένα και καθώς πολλές
+                στατιστικές μέθοδοι υποθέτουν ότι αλλαγές «δεν υφίστανται» στα δεδομένα, η ανάλυση change point έχει βαρύτητα
+                τόσο στην εφαρμοσμένη όσο και στη θεωρητική στατιστική.
+                H ανάλυση ChangePoint, υπολογίζει το βέλτιστο σημείο και δυνητικά τον αριθμό των σημείων αλλαγής στα υπό ανάλυση
+                δεδομένα.{% endblocktrans %}</div>
             <br>
             <br>
             </div>
@@ -554,7 +554,7 @@
             <br>
             <subt>{{val3.5}}{{val3.3}}</subt>
             <br>
-            <div class="details">&#9432; Change in variance analysis calculates change points for mean only changes.</div>
+            <div class="details">&#9432; {% trans "H ανάλυση μεταβολής διακύμανσης, υπολογίζει σημεία αλλαγής, μόνο όταν αλλάζει η διακύμανση (variance) των δεδομένων." %}</div>
             <br>
             <br>
             </div>
@@ -569,10 +569,14 @@
             <br>
             <subt>{{val3.8}}{{val3.6|safe}}</subt>
             <br>
-            <div class="details">&#9432; Bayesian change point analysis it is assumed there exists an unknown partition of a data series y into blocks such that the mean is constant within each block.
-            In the multivariate case, a common change point structure is assumed; means are constant within each block of each sequence, but may differ across sequences within a given block.
-            <br> The primary result is an estimate of the posterior mean.Unlike a frequentist or algorithmic approach to the problem, these estimates will not be constant within regions, and no
-            single partition is identified as best. Estimates of the probability of a change point at any given location are provided, however.</div>
+            <div class="details">&#9432; {% blocktrans %}Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), γίνεται η υπόθεση υπάρχει ένας άγνωστος
+                διαμερισμός μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε η μέση τιμή να είναι σταθερή σε κάθε μπλοκ.
+                Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση για μια κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε
+                κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.
+                Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση της εκ των υστέρων μέσης τιμής.
+                Αντίθετα από μια συχνοτική ή αλγοριθμική προσέγγιση στο πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές
+                εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις
+                της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη τοποθεσία.{% endblocktrans %}</div>
             <br>
             <br>
             </div>
@@ -587,7 +591,7 @@
             <br>
             <subt>{{val3.11}}{{val3.9|safe}}</subt>
             <br>
-            <div class="details">&#9432; Drug-event reports per date diagram.</div>
+            <div class="details">&#9432; {% trans "Αναφορές φαρμάκων-συμβάντων ανά διάγραμμα ημερομηνίας." %}</div>
             <br>
             <br>
             </div>
@@ -600,7 +604,7 @@
             <div style="margin-left: 20px;">{{val3.13|safe}}</div>
             <subt>{{val3.14}}{{val3.12|safe}}</subt>
             <br>
-            <div class="details">&#9432; Frequency table for drugs found in selected reports. Drug name is linked to PRR results for drug-event combinations.</div>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για τα φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές. Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων." %}</div>
             <br>
             <br>
             </div>
@@ -613,7 +617,7 @@
             <div style="margin-left: 20px;"> {{val3.16|safe}}</div>
             <subt>{{val3.17}}{{val3.15|safe}}</subt>
             <br>
-            <div class="details">&#9432; Frequency table for evetns found in selected reports. Event name is linked to PRR results for drug-event combinations.</div>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για τα συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές. Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων." %}</div>
             <br>
             <br>
             </div>
@@ -629,40 +633,49 @@
 {% if pub_exist  %}
 <div style="padding-top:30px"></div>
 
-<div class="workspace"> PubMed Workspace</div>
+<div class="workspace">{% trans "Περιβάλλον Εργασίας PubMed" %}</div>
         <br>
         <br>
-    <div class="view_title" style="width:50%" >&nbsp Articles that are relevant to this scenario </div>
+    <div class="view_title" style="width:50%" >{% trans "Άρθρα σχετικά με το παρόν σενάριο" %}</div>
         <br>
         <br>
 
-{% for k,l in pub_titles.items %}
-{% if l != "" and l != "''" %}
-<div class="paper_title"><b>Paper {{ forloop.counter0 }}</b></div>
-<div style="padding-left:20px;">
-<br>
-
-<subt>Title </subt>
-<br>
-<div class="details">{{ l }}</div>
-<br>
-{% for p,s in pub_dict_authors.items %}
-{% if k == p %}
-<subt>Authors</subt>
-<br>
-<div class="details">{{ s.0 }}</div>
-<br>
-{% endif %}
+{% for po in pub_objs %}
+    <div class="row report-citation">
+        <span>[{{ forloop.counter }}]. </span>
+        <span>{{ po.authors }}. </span>
+        <span>({{ po.pubdate|str_to_date|date:"Y, M d" }}). </span>
+        <span><em>{{ po.title }}. </em></span>
+        <span>{{ po.url }}</span>
+    </div>
 {% endfor %}
+<!--{% for k,l in pub_titles.items %}-->
+<!--{% if l != "" and l != "''" %}-->
+<!--<div class="paper_title"><b>Paper {{ forloop.counter }}</b></div>-->
+<!--<div style="padding-left:20px;">-->
+<!--<br>-->
 
-{% for q,w in pub_dict_urls.items %}
-{% if k == q %}
-<subt>URL</subt>
-<br>
-<div class="details">{{ w.0 }}</div>
-<br>
-{% endif %}
-{% endfor %}
+<!--<subt>Title </subt>-->
+<!--<br>-->
+<!--<div class="details">{{ l }}</div>-->
+<!--<br>-->
+<!--{% for p,s in pub_dict_authors.items %}-->
+<!--{% if k == p %}-->
+<!--<subt>Authors</subt>-->
+<!--<br>-->
+<!--<div class="details">{{ s.0 }}</div>-->
+<!--<br>-->
+<!--{% endif %}-->
+<!--{% endfor %}-->
+
+<!--{% for q,w in pub_dict_urls.items %}-->
+<!--{% if k == q %}-->
+<!--<subt>URL</subt>-->
+<!--<br>-->
+<!--<div class="details">{{ w.0 }}</div>-->
+<!--<br>-->
+<!--{% endif %}-->
+<!--{% endfor %}-->
 
 
 {% for n,m in pub_notes.items %}
@@ -686,14 +699,14 @@
 {% if extra_notes %}
     <div class="final-note" >
         {% if extra_notes != 'empty' %}
-            <div class="view_title" style="width:50%">-Aggregate notes of the report</div>
+            <div class="view_title" style="width:50%">-{% trans "Συγκεντρωτικές σημειώσεις για την αναφορά" %}</div>
         <br>
         <br>
           <div class="details"> {{ extra_notes }} </div>
         {% endif %}
     </div>
 {% else %}
-    <textarea id="editFnote" placeholder="Place your notes here..."></textarea>
+    <textarea id="editFnote" placeholder='{% trans "Κρατήστε εδώ τις σημειώσεις σας..." %}'></textarea>
 {% endif %}
 <!--End of extra_notes-->
 </div>

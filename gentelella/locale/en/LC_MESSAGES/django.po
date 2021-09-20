@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 15:42+0300\n"
+"POT-Creation-Date: 2021-09-20 14:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -321,8 +321,11 @@ msgstr "Relevance"
 #: app/templates/app/final_report.html:111
 #: app/templates/app/final_report.html:125
 #: app/templates/app/final_report.html:139
-#: app/templates/app/final_report.html:205 app/templates/app/ir.html:35
-#: app/templates/app/pathways.html:35 app/templates/app/sidebar.html:61
+#: app/templates/app/final_report.html:205
+#: app/templates/app/final_report.html:262 app/templates/app/ir.html:35
+#: app/templates/app/pathways.html:35 app/templates/app/report_pdf.html:161
+#: app/templates/app/report_pdf.html:192 app/templates/app/report_pdf.html:384
+#: app/templates/app/report_pdf.html:505 app/templates/app/sidebar.html:61
 #: app/templates/app/social_media_workspace.html:23 app/views.py:1245
 msgid "Σημειώσεις"
 msgstr "Notes"
@@ -404,8 +407,6 @@ msgid "Γρήγορη επισκόπηση"
 msgstr "Quick view"
 
 #: app/templates/app/OpenFDAWorkspace.html:132
-#: app/templates/app/OpenFDAWorkspace.html:200
-#: app/templates/app/final_report.html:191
 msgid "Πίνακας"
 msgstr "Dashboard"
 
@@ -426,12 +427,14 @@ msgstr "LabelView"
 #: app/templates/app/OpenFDAWorkspace.html:140
 #: app/templates/app/OpenFDAWorkspace.html:208
 #: app/templates/app/final_report.html:185
+#: app/templates/app/report_pdf.html:433
 msgid "Δυναμικό PRR"
 msgstr "Dynamic PRR"
 
 #: app/templates/app/OpenFDAWorkspace.html:143
 #: app/templates/app/OpenFDAWorkspace.html:211
 #: app/templates/app/final_report.html:187
+#: app/templates/app/report_pdf.html:522
 msgid "Ανάλυση Αλλαγής Σημείου"
 msgstr "Change Point Analysis"
 
@@ -454,6 +457,12 @@ msgstr "Likelihood Rate Test"
 #: app/templates/app/OpenFDAWorkspace.html:221
 msgid "ντραγκενφορσβιοθ"
 msgstr "DrugEnforceView"
+
+#: app/templates/app/OpenFDAWorkspace.html:200
+#: app/templates/app/final_report.html:191
+#: app/templates/app/report_pdf.html:238
+msgid "Πίνακας Ελέγχου"
+msgstr "Dashboard"
 
 #: app/templates/app/add_edit_scenario.html:35 app/templates/app/index.html:39
 #: app/templates/app/notes_aggregated.html:65
@@ -723,17 +732,17 @@ msgid "Ανασκόπηση"
 msgstr "Review"
 
 #: app/templates/app/final_report.html:43
-#: app/templates/app/final_report.html:309
+#: app/templates/app/final_report.html:357
 msgid "Κάνε τη δική σου ανασκόπηση ακολουθώντας τα παρακάτω βήματα:"
 msgstr "Make your own review by following next steps:"
 
 #: app/templates/app/final_report.html:47
-#: app/templates/app/final_report.html:313
+#: app/templates/app/final_report.html:361
 msgid "Βήμα 1"
 msgstr "Step 1"
 
 #: app/templates/app/final_report.html:51
-#: app/templates/app/final_report.html:317
+#: app/templates/app/final_report.html:365
 msgid "Βήμα 2"
 msgstr "Step 2"
 
@@ -764,27 +773,27 @@ msgstr ""
 "checkbox"
 
 #: app/templates/app/final_report.html:62
-#: app/templates/app/final_report.html:325
+#: app/templates/app/final_report.html:373
 msgid "Τώρα μπορείτε να επεξεργαστείτε την αναφορά σας και να συμπεριλάβετε"
 msgstr "Now you can edit your report and include "
 
 #: app/templates/app/final_report.html:63
-#: app/templates/app/final_report.html:326
+#: app/templates/app/final_report.html:374
 msgid "ορισμένες προσθήκες που  πιστεύετε ότι θα σας βοηθήσουν να ολοκληρώσετε"
 msgstr "some additions that you think will be helpful to complete"
 
 #: app/templates/app/final_report.html:64
-#: app/templates/app/final_report.html:327
+#: app/templates/app/final_report.html:375
 msgid "την προεπισκόπηση σας."
 msgstr "your review."
 
 #: app/templates/app/final_report.html:65
-#: app/templates/app/final_report.html:328
+#: app/templates/app/final_report.html:376
 msgid "Κάντε κλικ στο παρακάτω πλαίσιο για να γράψετε τα σχόλιά σας και να"
 msgstr "Click in frame bellow to write your comments and"
 
 #: app/templates/app/final_report.html:66
-#: app/templates/app/final_report.html:329
+#: app/templates/app/final_report.html:377
 msgid "αποθηκεύσετε επιπλέον κείμενο στην τελική σας έκθεση."
 msgstr " save some extra text in your final report."
 
@@ -793,27 +802,26 @@ msgid "Βήμα 1: Κάντε τις επιλογές σας για κάθε χ�
 msgstr "Step 1: Choose your options for every workspace."
 
 #: app/templates/app/final_report.html:93
-#, fuzzy
-#| msgid ""
-#| "Επιλέξτε ποιες απο τις πληροφορίες του περιβάλλοντος εργασίας OHDSI "
-#| "θέλετε να συμπεριλάβετε."
 msgid ""
 "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας OHDSI που θέλετε να "
 "συμπεριλάβετε"
-msgstr "Choose which of the OHDSI  views information you want to include"
+msgstr ""
+"Choose the piece of information you would like to include to the final "
+"report from OHDSI workspace"
 
 #: app/templates/app/final_report.html:103
 #: app/templates/app/final_report.html:106
 #: app/templates/app/ohdsi_workspace.html:54
-#: app/templates/app/ohdsi_workspace.html:127 app/views.py:1272
+#: app/templates/app/ohdsi_workspace.html:127
+#: app/templates/app/report_pdf.html:74 app/views.py:1272
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
 #: app/templates/app/final_report.html:117
 #: app/templates/app/final_report.html:120
 #: app/templates/app/ohdsi_workspace.html:65
-#: app/templates/app/ohdsi_workspace.html:138 app/views.py:662
-#: app/views.py:1272
+#: app/templates/app/ohdsi_workspace.html:138
+#: app/templates/app/report_pdf.html:45 app/views.py:662 app/views.py:1272
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort Characterization"
 
@@ -859,80 +867,97 @@ msgstr ""
 "inside each pop-up dialog"
 
 #: app/templates/app/final_report.html:181
+#: app/templates/app/report_pdf.html:208 app/templates/app/report_pdf.html:399
 msgid "Γρήγορη Επισκόπηση"
-msgstr "Quick view"
+msgstr "Quick View"
 
 #: app/templates/app/final_report.html:193
 #: app/templates/app/final_report.html:198
+#: app/templates/app/report_pdf.html:267 app/templates/app/report_pdf.html:284
 msgid "Λόγος Αναφορών"
 msgstr "Reporting Rates"
 
 #: app/templates/app/final_report.html:195
 #: app/templates/app/final_report.html:199
-msgid "Έλεχγος Λόγου Πιθανοφανειών"
+#: app/templates/app/report_pdf.html:303 app/templates/app/report_pdf.html:332
+msgid "Έλεγχος Λόγου Πιθανοφανειών"
 msgstr "Likelihood Rate Test"
 
-#: app/templates/app/final_report.html:220
+#: app/templates/app/final_report.html:222
+msgid "Δεν υπάρχουν σχετικές πληροφορίες για το περιβάλλον εργασίας PubMed"
+msgstr "No relevant information available for PubMed workspace"
+
+#: app/templates/app/final_report.html:229
 msgid "Εάν επιλέξετε να συμπεριλάβετε "
 msgstr "If you choose to include "
 
-#: app/templates/app/final_report.html:221
+#: app/templates/app/final_report.html:230
 msgid "τον τίτλο ενός εγγράφου από το PubMed, προστίθενται αυτόματα και οι "
 msgstr "the title of a paper from PubMed, author and "
 
-#: app/templates/app/final_report.html:222
+#: app/templates/app/final_report.html:231
 msgid "πληροφορίες των συντακτων και του Ενιαίου Εντοπιστή Πόρων(URL) "
 msgstr "Unified Resource Locator (URL) information is automatically added "
 
-#: app/templates/app/final_report.html:223
+#: app/templates/app/final_report.html:232
 msgid " στην τελική αναφορά. Επίσης, οι σημειώσεις για το κάθε "
 msgstr "to the final report. Also, notes for each "
 
-#: app/templates/app/final_report.html:224
+#: app/templates/app/final_report.html:233
 msgid "έγγραφο εμφανίζονται στην τελική αναφορά, μόνο εάν έχετε συμπεριλάβει "
 msgstr "paper appear in the final report only if you have included "
 
-#: app/templates/app/final_report.html:225
+#: app/templates/app/final_report.html:234
 msgid "και τον τίτλο του εκάστοτε εγγράφου."
 msgstr "the title of each paper."
 
-#: app/templates/app/final_report.html:234
-#, fuzzy
-#| msgid ""
-#| "Επιλέξτε ποιες απο τις πληροφορίες του περιβάλλοντος εργασίας OHDSI "
-#| "θέλετε να συμπεριλάβετε."
+#: app/templates/app/final_report.html:243
 msgid ""
 "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας PubMed που θέλετε να "
 "συμπεριλάβετε"
-msgstr "Choose which of the OHDSI  views information you want to include"
+msgstr ""
+"Choose the piece of information you would like to include to the final "
+"report from PubMed workspace"
 
-#: app/templates/app/final_report.html:253
+#: app/templates/app/final_report.html:268
+msgid "Ημερομηνία δημοσίευσης"
+msgstr "Pubdate"
+
+#: app/templates/app/final_report.html:272
+msgid "Συντάκτες"
+msgstr "Authors"
+
+#: app/templates/app/final_report.html:276
+msgid "Σύνδεσμος"
+msgstr "Url link"
+
+#: app/templates/app/final_report.html:288
 msgid "Τίτλος δημοσίευσης από Mendeley"
 msgstr "Title of publication from Mendeley"
 
-#: app/templates/app/final_report.html:260
-#: app/templates/app/final_report.html:281
+#: app/templates/app/final_report.html:306
+#: app/templates/app/final_report.html:327
 #: app/templates/app/modals/scenario_patient_modal.html:14
 #: app/templates/app/modals/scenario_patient_modal.html:52
 msgid "Κλείσιμο"
 msgstr "Close"
 
-#: app/templates/app/final_report.html:274
+#: app/templates/app/final_report.html:320
 msgid "Σημειώσεις δημοσίευσης από Mendeley"
 msgstr "Notes of publication from Mendeley"
 
-#: app/templates/app/final_report.html:304
+#: app/templates/app/final_report.html:352
 msgid ""
 "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα."
 msgstr "Proceed to step 2 to see the review's status until now"
 
-#: app/templates/app/final_report.html:333
+#: app/templates/app/final_report.html:381
 msgid ""
 "Βήμα 2: Επεξεργαστείτε και συμπληρώστε την προεπισκόπησή σας με τις "
 "τελευταίες προσθήκες"
 msgstr "Step 2: Edit and fill in your review with the last additions"
 
-#: app/templates/app/final_report.html:342
+#: app/templates/app/final_report.html:390
 msgid "Λήψη της τελικής αναφοράς"
 msgstr "Download your final report"
 
@@ -1008,10 +1033,8 @@ msgid "Προσθήκη σεναρίου"
 msgstr "Add Scenario"
 
 #: app/templates/app/index.html:195
-#, fuzzy
-#| msgid "Επιβεβαίωση διαγραφής"
 msgid "Επιβεβαίωση τροφοδότησης αναφοράς"
-msgstr "Deletion confirmation"
+msgstr "Generating report confirmation"
 
 #: app/templates/app/index.html:196
 msgid ""
@@ -1383,6 +1406,187 @@ msgstr "Add new patient case"
 msgid "Questionnaire"
 msgstr ""
 
+#: app/templates/app/report_pdf.html:23
+msgid "Επισκόπηση σεναρίου:"
+msgstr "Review of scenario:"
+
+#: app/templates/app/report_pdf.html:27
+msgid "Προσωπικές πληροφορίες"
+msgstr "Personal Information"
+
+#: app/templates/app/report_pdf.html:29
+msgid "Όνομα:"
+msgstr "First Name:"
+
+#: app/templates/app/report_pdf.html:31
+msgid "Επώνυμο:"
+msgstr "Last Name:"
+
+#: app/templates/app/report_pdf.html:33
+msgid "Ημερομηνία Έκδοσης:"
+msgstr "Date Issued:"
+
+#: app/templates/app/report_pdf.html:39
+msgid "Περιβάλλον Εργασίας OHDSI"
+msgstr "OHDSI Workspace"
+
+#: app/templates/app/report_pdf.html:59
+msgid "Σημειώσεις για Χαρακτηρισμό Πληθυσμού"
+msgstr "Notes for Cohort Characterization"
+
+#: app/templates/app/report_pdf.html:102
+msgid "Σημειώσεις για Ρυθμό Επίπτωσης"
+msgstr "Notes for Incidence Rate"
+
+#: app/templates/app/report_pdf.html:119
+msgid "Ανάλυση Μονοπατιού"
+msgstr "Pathway Analysis"
+
+#: app/templates/app/report_pdf.html:132
+msgid "Σημειώσεις για Ανάλυση Μονοπατιού"
+msgstr "Notes for Pathway Analysis"
+
+#: app/templates/app/report_pdf.html:148 app/templates/app/report_pdf.html:175
+#: app/templates/app/report_pdf.html:364
+msgid "Περιβάλλον Εργασίας OpenFDA"
+msgstr "OpenFDA Workspace"
+
+#: app/templates/app/report_pdf.html:219 app/templates/app/report_pdf.html:409
+msgid "Ανάλυση μεταβολής μέσου"
+msgstr "Change in mean analysis"
+
+#: app/templates/app/report_pdf.html:227 app/templates/app/report_pdf.html:422
+msgid "Αποτελέσματα PRR και ROR"
+msgstr "PRR and ROR results"
+
+#: app/templates/app/report_pdf.html:312
+msgid "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων"
+msgstr "Simulation Results for Event Based LRT"
+
+#: app/templates/app/report_pdf.html:341
+msgid "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων"
+msgstr "Simulation Results for Drug Based LRT"
+
+#: app/templates/app/report_pdf.html:411
+msgid ""
+"Η ανάλυση μεταβολής μέσου (change in mean analysis), υπολογίζει σημεία "
+"αλλαγής,\n"
+"                μόνο όταν αλλάζει η μέση τιμή (mean) των δεδομένων."
+msgstr ""
+"Change in variance analysis calculates change points for mean only changes."
+
+#: app/templates/app/report_pdf.html:443
+msgid "&#9432;"
+msgstr ""
+
+#: app/templates/app/report_pdf.html:455
+msgid "Μηνιαίο και αθροιστικό πλήθος για συνδυασμό φαρμάκου-συμβάντος"
+msgstr "Monthly and cumulative counts for drug-event combination."
+
+#: app/templates/app/report_pdf.html:467
+msgid "Πίνακας συχνοτήτων για φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές"
+msgstr "Frequency table for drugs found in selected reports"
+
+#: app/templates/app/report_pdf.html:479
+msgid ""
+"Πίνακας συχνοτήτων για συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές"
+msgstr "Frequency table for events found in selected reports"
+
+#: app/templates/app/report_pdf.html:534
+msgid ""
+"Το σημείο αλλαγής (changepoint) είναι μια στιγμή στο χρόνο, όπου οι "
+"στατιστικές ιδιότητες πριν και μετά από αυτό\n"
+"                το σημείο διαφέρουν. Καθώς πολλές αλλαγές λαμβάνουν χώρα, "
+"αυθόρμητα, σε υπό ανάλυση δεδομένα και καθώς πολλές\n"
+"                στατιστικές μέθοδοι υποθέτουν ότι αλλαγές «δεν υφίστανται» "
+"στα δεδομένα, η ανάλυση change point έχει βαρύτητα\n"
+"                τόσο στην εφαρμοσμένη όσο και στη θεωρητική στατιστική.\n"
+"                H ανάλυση ChangePoint, υπολογίζει το βέλτιστο σημείο και "
+"δυνητικά τον αριθμό των σημείων αλλαγής στα υπό ανάλυση\n"
+"                δεδομένα."
+msgstr ""
+"Changepoint is an instance in time where the statistical properties before "
+"and after this time point differ.\n"
+"            With potential changes naturally occurring in data and many "
+"statistical methods assuming a “no change” setup, changepoint analysis\n"
+"            is important in both applied and theoretical statistics."
+"ChangePoint Calculates the optimal positioning and (potentially) number of\n"
+"            changepoints of data."
+
+#: app/templates/app/report_pdf.html:554
+msgid ""
+"H ανάλυση μεταβολής διακύμανσης, υπολογίζει σημεία αλλαγής, μόνο όταν "
+"αλλάζει η διακύμανση (variance) των δεδομένων."
+msgstr ""
+"Change in variance analysis calculates change points for mean only changes."
+
+#: app/templates/app/report_pdf.html:569
+msgid ""
+"Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), "
+"γίνεται η υπόθεση υπάρχει ένας άγνωστος\n"
+"                διαμερισμός μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε η "
+"μέση τιμή να είναι σταθερή σε κάθε μπλοκ.\n"
+"                Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση για μια "
+"κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε\n"
+"                κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ "
+"των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.\n"
+"                Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση της εκ των υστέρων "
+"μέσης τιμής.\n"
+"                Αντίθετα από μια συχνοτική ή αλγοριθμική προσέγγιση στο "
+"πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές\n"
+"                εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το "
+"καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις\n"
+"                της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη "
+"τοποθεσία."
+msgstr ""
+"In Bayesian change point analysis it is assumed that there exists an unknown "
+"partition of a data series y into blocks such that the mean is constant "
+"within each block.In the multivariate case, a common change point structure "
+"is assumed; means are constant within each block of each sequence, but may "
+"differ across sequences within a given block.The primary result is an "
+"estimate of the posterior mean.Unlike a frequentist or algorithmic approach "
+"to the problem, these estimates will not be constant within regions, and "
+"nosingle partition is identified as best. Estimates of the probability of a "
+"change point at any given location are provided, however."
+
+#: app/templates/app/report_pdf.html:591
+msgid "Αναφορές φαρμάκων-συμβάντων ανά διάγραμμα ημερομηνίας."
+msgstr "Drug-event reports per date diagram."
+
+#: app/templates/app/report_pdf.html:604
+msgid ""
+"Πίνακας συχνοτήτων για τα φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές. "
+"Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς "
+"φαρμάκων-συμβάντων."
+msgstr ""
+"Frequency table for drugs found in selected reports. Drug name is linked to "
+"PRR results for drug-event combinations."
+
+#: app/templates/app/report_pdf.html:617
+msgid ""
+"Πίνακας συχνοτήτων για τα συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές. "
+"Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς "
+"φαρμάκων-συμβάντων."
+msgstr ""
+"Frequency table for events found in selected reports. Event name is linked "
+"to PRR results for drug-event combinations."
+
+#: app/templates/app/report_pdf.html:633
+msgid "Περιβάλλον Εργασίας PubMed"
+msgstr "PubMed Workspace"
+
+#: app/templates/app/report_pdf.html:636
+msgid "Άρθρα σχετικά με το παρόν σενάριο"
+msgstr "Articles relevant to this scenario"
+
+#: app/templates/app/report_pdf.html:699
+msgid "Συγκεντρωτικές σημειώσεις για την αναφορά"
+msgstr "Aggregated notes for the report"
+
+#: app/templates/app/report_pdf.html:706
+msgid "Κρατήστε εδώ τις σημειώσεις σας..."
+msgstr "Place your notes here..."
+
 #: app/templates/app/sidebar.html:27
 msgid "Καλωσήλθατε"
 msgstr "Welcome"
@@ -1609,7 +1813,7 @@ msgstr "No cohort pathways analysis with the specific id found!"
 msgid "Μονοπάτι Ακολουθίας Εκδήλωσης Συμβάντων Πληθυσμού"
 msgstr "Cohort Pathways"
 
-#: app/views.py:3064
+#: app/views.py:3071
 msgid "Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"
 msgstr "Social Media Workspace"
 
