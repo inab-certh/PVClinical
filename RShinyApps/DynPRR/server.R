@@ -290,7 +290,7 @@ getquery_d <- reactive({
     }
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
     timedResult <- con$aggregate(timed)
@@ -327,7 +327,7 @@ getquery_e <- reactive({
     mylist <- fda_fetch_p( session, myurl)
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     timev<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
     timevResult <- con$aggregate(timev)
@@ -353,7 +353,7 @@ getquery_all <- reactive({
     tmp <- mydf$result
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     timeall<-TimeseriesForTotalReports(input$date1, input$date2)
     timeallResult <- con$aggregate(timeall)
@@ -384,7 +384,7 @@ getvars_de <- reactive({
     myurl <- mylist$myurl
   }  else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     # browser()
     timede<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     timedeResult <- con$aggregate(timede)
@@ -411,7 +411,7 @@ getvars_e <- reactive({
     myurl <- mylist$myurl
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     timee<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
     timeeResult <- con$aggregate(timee)
@@ -435,7 +435,7 @@ getvars_d <- reactive({
     myurl <- mylist$myurl
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
     timedResult <- con$aggregate(timed)
@@ -542,7 +542,7 @@ getcodruglist <- reactive({
     
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     coco<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     cocoResult <- con$aggregate(coco)
@@ -574,7 +574,7 @@ getcoeventlist <- reactive({
     
   } else {
     # Refactor
-    con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
     react<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
     reactResult <- con$aggregate(react)
@@ -614,7 +614,7 @@ getcocounts <- function(whichcount = 'D'){
     mylist <- getcoeventlist()
     
   }
-  con$disconnect()
+  # con$disconnect()
   mydf <- mylist$mydf
 
   if(is.null(mydf) || length(mydf$cumsum)==0)
@@ -1320,10 +1320,10 @@ geturlquery <- reactive({
   # q$v2<-"patient.reaction.reactionmeddrapt"
   # q$t1<-"L04AB02"
   # q$t2<-"10003239"
-  # q$t1<-"G01AE10"
+  # # q$t1<-"G01AE10"
   # q$t2<-"10079622"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<- TRUE
+  # q$concomitant<- FALSE
   # browser()
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
@@ -1347,13 +1347,13 @@ geturlquery <- reactive({
                      selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
-  con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+  con_atc <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
   drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
   con_atc$disconnect()
   
   q$dename <- drug$names[[1]][1]
   
-  con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+  con_medra <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
   event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
   con_medra$disconnect()
   
