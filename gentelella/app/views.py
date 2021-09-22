@@ -12,6 +12,7 @@ import uuid
 import glob
 import shutil
 
+from collections import namedtuple
 from math import ceil
 from itertools import chain
 from itertools import product
@@ -1501,11 +1502,12 @@ def final_report(request, scenario_id=None):
 
     hashes = list(map(lambda dch: dch[2], drug_condition_hash))
 
-    # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
-    del_resp = requests.delete("{}delete-media-files".format(
-        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
-        params={"hashes": hashes})
+    if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
+        # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
+        del_resp = requests.delete("{}delete-media-files".format(
+            settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+            auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+            params={"hashes": hashes})
 
     user = sc.owner
 
@@ -1986,9 +1988,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     to your final report
     :param scenario_id: the specific scenario, new scenario or None
     :param report_notes: notes for every view
+    :param pub_titles: selected article titles from pubmed
+    :param pub_notes: selected notes from pubmed
     :param extra_notes: last notes in final report
-
-     :return: the form view
+    :return: the form view
      """
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
@@ -2049,14 +2052,27 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     gen_chart_rep = request.GET.get("gen_chart_rep", None)
     cp_all_rep = request.GET.get("cp_all_rep", None)
 
-    pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", None))
+    pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", "{}"))
+    pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", "{}"))
+    report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", "{}"))
 
-    pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", None))
-    print(pub_titles)
+    report_notes = "" if report_notes == "-" else report_notes
+    extra_notes = "" if extra_notes == "-" else extra_notes
+    pub_titles = "" if pub_titles == "-" else pub_titles
+    pub_notes = "" if pub_notes == "-" else pub_notes
+
     # pub_value = list(pub_titles.values())
-    pub_objs = PubMed.objects.filter(id__in=pub_titles.values())
-    print(pub_objs)
-    pub_exist = len(pub_titles)
+    # PubObj = namedtuple("PubObj", ["title", "notes"])
+    # pub_objs = [PubObj(po.title, po.notes, po.authors, po.pubdate if po.id in pub_notes.values() else "") for po
+    #             in PubMed.objects.filter(id__in=pub_titles.values())]
+
+    pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
+    pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
+    # pub_zero_notes = pub_objs.exclude(id__in=pub_notes.values())
+    # for po in pub_objs:
+    #     if po.notes not in
+
+    pub_exist = len(pub_tobjs) + len(pub_nobjs)
     # for i in pub_value:
     #     if i != '' and i != "''":
     #         pub_exist = 1
@@ -2247,7 +2263,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(
                 settings.MEDIA_URL, 'ohdsi_img_print', i)
 
-    report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", None))
+
     scenario = sc.title
     drugs = [d for d in sc.drugs.all()]
     conditions = [c for c in sc.conditions.all()]
@@ -2755,21 +2771,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             lin = lin + 1
             dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
-    empty_OpenFDA = ''
-
-    for key in dict1:
-        for j in dict1[key]:
-            if j != '':
-               empty_OpenFDA = "no"
-    for key in dict2:
-        for j in dict2[key]:
-            if j != '':
-                empty_OpenFDA = "no"
-
-    for key in dict3:
-        for j in dict3[key]:
-            if j != '':
-                empty_OpenFDA = "no"
+    empty_OpenFDA = "no" if list(
+        filter(None, list(dict1.values()) + list(dict2.values()) + list(dict3.values()))) else ""
 
     context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
                "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
@@ -2780,7 +2783,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
                "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
-               "pub_objs": pub_objs}
+               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs}
                # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
                # "pub_dict_urls": pub_dict_urls}
 
@@ -2803,15 +2806,16 @@ def print_report(request, scenario_id=None):
     pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
 
     extra_notes = json.loads(request.GET.get("extra_notes", ""))
-    if not extra_notes:
-        extra_notes = "empty"
 
-    cookie_list = request.COOKIES
+    # if not extra_notes:
+    #     extra_notes = "empty"
+
+    cookies_dict = request.COOKIES
 
     options = {
         'cookie': [
-            ('csrftoken', cookie_list['csrftoken']),
-            ('sessionid', cookie_list['sessionid']),
+            ('csrftoken', cookies_dict['csrftoken']),
+            ('sessionid', cookies_dict['sessionid']),
         ],
         'page-size': 'A4',
         'encoding': 'UTF-8',
@@ -2822,9 +2826,12 @@ def print_report(request, scenario_id=None):
 
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
-    pdfkit.from_url("{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
-                                                          report_notes, extra_notes, pub_titles, pub_notes),
-                    file_path, options=options)
+    url = "{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
+                                                          report_notes or "-", extra_notes or "-",
+                                                          pub_titles or "-", pub_notes or "-")
+
+    resp = requests.get(url, cookies=cookies_dict)
+    pdfkit.from_url(resp.url, file_path, options=options)
 
     try:
         return FileResponse(open(file_path, 'rb'), content_type='application/pdf', as_attachment=True)

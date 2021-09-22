@@ -3,9 +3,9 @@
     text-overflow: ellipsis;
 }
 
-.crop_img_pr {
-    margin: 0 -75px -300px 0;
-}
+/*.crop_img_pr {*/
+/*    margin: 0 -75px -300px 0;*/
+/*}*/
 
 .view_title {
     color: #515254;
@@ -88,7 +88,7 @@ subt1 {
  }
 
 div.pers-info {
-    padding: 2rem;
+    padding: 1.7rem;
     color: #0d0d0d;
     width: 100%;
     font-family: Arial, Helvetica, sans-serif;
@@ -169,4 +169,21 @@ textarea {
     background-color: white!important;
 }
 
+.notes-tbl {
+    width: 90%;
+    /*margin-left: 0.5rem;*/
+}
 
+div.report-citation {
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+	margin: 1rem 1rem;
+}
+
+/*.workspace + .tg > div > img {*/
+/*    margin-bottom: 5rem;*/
+/*}*/
+
+#editFnote {
+    margin-top: 2rem;
+}
