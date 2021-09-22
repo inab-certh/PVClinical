@@ -24,7 +24,7 @@
 
     <br>
     <div style="padding-top:300px"></div>
-        <div class="info_title">{% trans "Προσωπικές πληροφορίες" %}</div>
+        <div class="info_title">{% trans "Πληροφορίες Σύνταξης" %}</div>
     <div class="pers-info">
         <span class="pers-label">{% trans "Όνομα:" %} </span><span class="pers-val">{{ request.user.first_name}}</span>
     </div>
@@ -145,6 +145,7 @@
 {% endif %}
 <!--OHDSI WORKSPACE END-->
 
+
 {% if empty_OpenFDA == '' and report_notes|hexdigest_in_dict %}
 <div style="padding-top:30px"></div>
 
@@ -173,7 +174,7 @@
 {% endif %}
 
 <!--For drug or condition only-->
-    {% if dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre %}
+    {% if empty_OpenFDA and dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre  %}
     <div style="padding-top:30px"></div>
     <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
     <br>
@@ -361,12 +362,6 @@
 <!--End for drug or con only-->
 
 <!--for combination of drug-condition-->
-{% if empty_OpenFDA != '' %}
-<div style="padding-top:30px"></div>
-
-<div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
-<br>
-{% endif %}
 
 {% for key1,val1 in dict1.items%}
 {% for key2,val2 in dict2.items%}
@@ -634,64 +629,52 @@
 <div style="padding-top:30px"></div>
 
 <div class="workspace">{% trans "Περιβάλλον Εργασίας PubMed" %}</div>
+    <br>
+    {% if pub_tobjs %}
+        <div class="view_title" style="width:50%" >{% trans "Άρθρα σχετικά με το παρόν σενάριο" %}</div>
         <br>
         <br>
-    <div class="view_title" style="width:50%" >{% trans "Άρθρα σχετικά με το παρόν σενάριο" %}</div>
-        <br>
-        <br>
 
-{% for po in pub_objs %}
-    <div class="row report-citation">
-        <span>[{{ forloop.counter }}]. </span>
-        <span>{{ po.authors }}. </span>
-        <span>({{ po.pubdate|str_to_date|date:"Y, M d" }}). </span>
-        <span><em>{{ po.title }}. </em></span>
-        <span>{{ po.url }}</span>
-    </div>
-{% endfor %}
-<!--{% for k,l in pub_titles.items %}-->
-<!--{% if l != "" and l != "''" %}-->
-<!--<div class="paper_title"><b>Paper {{ forloop.counter }}</b></div>-->
-<!--<div style="padding-left:20px;">-->
-<!--<br>-->
+        {% for pto in pub_tobjs %}
+            <div class="row report-citation">
+                <span>[{{ forloop.counter }}]. </span>
+                <span>{{ pto.authors }}. </span>
+                <span>({{ pto.pubdate|str_to_date|date:"Y, M d" }}). </span>
+                <span><em>{{ pto.title }}. </em></span>
+                <a href="{{ pto.url }}" target="_blank">{{ pto.url }}</a>
+            </div>
+        {% endfor %}
+    {% endif %}
 
-<!--<subt>Title </subt>-->
-<!--<br>-->
-<!--<div class="details">{{ l }}</div>-->
-<!--<br>-->
-<!--{% for p,s in pub_dict_authors.items %}-->
-<!--{% if k == p %}-->
-<!--<subt>Authors</subt>-->
-<!--<br>-->
-<!--<div class="details">{{ s.0 }}</div>-->
-<!--<br>-->
-<!--{% endif %}-->
-<!--{% endfor %}-->
-
-<!--{% for q,w in pub_dict_urls.items %}-->
-<!--{% if k == q %}-->
-<!--<subt>URL</subt>-->
-<!--<br>-->
-<!--<div class="details">{{ w.0 }}</div>-->
-<!--<br>-->
-<!--{% endif %}-->
-<!--{% endfor %}-->
+    {% if pub_nobjs %}
+        <div class="tg" style="padding-top:50px;">
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+            <br>
+            <br>
+            <div class="notes_content">
+                <table class="notes-tbl">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Τίτλος" %} </th>
+                            <th>{% trans "Σημειώσεις" %} </th>
+                        </tr>
 
 
-{% for n,m in pub_notes.items %}
-
-{% if k == n and m %}
-<subt>Notes</subt>
-<br>
-<div class="details">{{ m }}</div>
-<br>
-{% endif %}
-{% endfor %}
-{% endif %}
-</div>
-{% endfor %}
-    <div style="padding-bottom:30px"></div>
-
+                    </thead>
+                    <tbody>
+                        {% for pno in pub_nobjs %}
+                            <tr>
+                                <td>{{ pno.title }}</td>
+                                <td>{{ pno.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <br>
+        </div>
+    {% endif %}
 {% endif %}
 <!--End of PubMed Workspace-->
 

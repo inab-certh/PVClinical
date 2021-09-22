@@ -96,7 +96,7 @@ $(function(){
         pubmed_set_proceed_btns_status();
     });
 
-    $("[id^=pubnote]").click(function(){
+    $("[id^=pubnote]").change(function(){
 
         var pubnote_rep= $(this).data('series');
         var note= $(this).data('note');
@@ -110,7 +110,7 @@ $(function(){
         }
     });
 
-    $("[id^=pubtitle]").click(function(){
+    $("[id^=pubtitle]").change(function(){
 
         var pubtitle_rep= $(this).data('series');
 

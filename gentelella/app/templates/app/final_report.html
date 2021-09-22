@@ -577,6 +577,8 @@
 
         var extra_notes=$("#editFnote").val();
 
+        console.log(allPubTitles);
+        console.log(allPubNotes);
         var xhr = new XMLHttpRequest();
         var params = "scenario_id="+JSON.stringify(scid)+"&all_notes="+JSON.stringify(all_notes)+"&extra_notes="+JSON.stringify(extra_notes)+"&allPubTitles="+JSON.stringify(allPubTitles)+"&allPubNotes="+JSON.stringify(allPubNotes);
 
