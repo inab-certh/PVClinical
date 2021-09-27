@@ -7,6 +7,7 @@ library(xlsx)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
 translator$set_translation_language('en')
 library(tidyverse)
+library(parallel)
 
 popcoquery <- function()
 {
@@ -965,87 +966,107 @@ gettotals<- reactive({
     return( list(mydf=mydf, mydf2= mydf2 , sourcedf=sourcedf) )
   })  
   
-geteventtotals <- reactive(
-  {
-  q <- geturlquery()
-  # browser()
-  starttime <- Sys.time()
-  mydf <- getdrugcounts()$mydfE
-  if ( !is.data.frame(mydf) ) {return(NULL)}
-  realterms <- mydf[,1]
-  foundtermslist <- mydf[,1]
-  foundtermslist <- paste('"', foundtermslist, '"', sep='')
-  foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-  myrows <- length(foundtermslist)
-#   if (getlimit( session ) < 35)
-#     {
-#      myrows <- myrows +1 
-#     }
-  allevent <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
-  allreport <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
+  mongoDrugTotals <- function(x, date) {
+    
+    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
+    drugName<-x
+    
+    drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), date[1], date[2])
+    totaldrug <- con$aggregate(drugTotalQuery)
+    all_events2 <- totaldrug
+    
+    curcount <- all_events2$safetyreportid
+    # con$disconnect()
+    if( is.null( curcount ) )
+    {
+      curcount <- NA
+    }
+    con$disconnect()
+    return(curcount)
+  }  
   
-  for (i in seq_along(foundtermslist[1:10]))
+  geteventtotals <- reactive(
     {
-    if ( realterms[[i]] =='Other')
-    {
-      allreport[i, 'URL'] <- 'removekey( makelink( myurl3 )'
-      allreport[i, 'term'] <- 'Other'
-#      allreport[i, 'count'] <- as.numeric(gettotals()$total - myquery3$meta$results$total) 
-      allreport[i, 'count'] <- as.numeric(gettotals()$total - sum(allevent$count) ) 
-      # End find exact      
-      allevent[i, 'URL'] <- '-' 
-      allevent[i, 'term'] <- 'Other'
-      mydf <- getalleventlist()$mydf
-      allevent[i, 'count'] <- as.numeric( sum(mydf$count) - sum(allevent$count) )
-    } else {
+      q <- geturlquery()
+      # browser()
+      starttime <- Sys.time()
+      mydf <- getdrugcounts()$mydfE
+      if ( !is.data.frame(mydf) ) {return(NULL)}
+      realterms <- mydf[,1]
+      foundtermslist <- mydf[,1]
+      foundtermslist <- paste('"', foundtermslist, '"', sep='')
+      foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
+      myrows <- length(foundtermslist)
+      #   if (getlimit( session ) < 35)
+      #     {
+      #      myrows <- myrows +1 
+      #     }
+      allevent <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
+      allreport <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
       if (q$concomitant == TRUE){
-        # eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
-        # #      myv <- c('_exists_', eventvar)
-        # myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
-        # myt <- c( input$v1, getterm1var(),  str_replace_all(foundtermslist[[i]], "[[:punct:]]", " "), gettimerange()   )
-        # #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
-        # cururl <- buildURL(v= myv, t=myt, limit=1)
-        # #Sys.sleep( .25 )
-        # all_events2 <- fda_fetch_p( session, cururl, message= i )
-        # # browser()
-        # if( length( all_events2) != 0 )
-        # {
-        #   allevent[i, 'count'] <- all_events2$meta$results$total
-        #   allevent[i, 'term'] <- realterms[[i]]
-        # } else {
-        #   allevent[i, 'count'] <- 0
-        #   allevent[i, 'term'] <- realterms[[i]]
-        # }
-        eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
-        #      myv <- c('_exists_', eventvar)
-        myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
-        myt <- c( input$v1, getterm1var(),  foundtermslist[[i]], gettimerange()   )
-        #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
-        cururl <- buildURL(v= myv, t=myt, limit=1)
-        #Sys.sleep( .25 )
-        all_events2 <- fda_fetch_p( session, cururl, message= i )
-        allevent[i, 'URL'] <- removekey( makelink( cururl ) )
-        allevent[i, 'term'] <- realterms[[i]]
-        allevent[i, 'count'] <- all_events2$meta$results$total
-        #       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
-        #       allreport[i, 'term'] <- realterms[[i]]
-        #       allreport[i, 'count'] <- all_events2$meta$results$total
-      } else {
-        # browser()
-        # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-        # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
-        drugName<-realterms[i]
-        
-        drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
-        totaldrug <- con$aggregate(drugTotalQuery)
-        all_events2 <- totaldrug
-        if( !is.null( all_events2$safetyreportid ) )
+        for (i in seq_along(foundtermslist[1:10]))
         {
-          allevent[i, 'count'] <- all_events2$safetyreportid
-          allevent[i, 'term'] <- realterms[[i]]
+          if ( realterms[[i]] =='Other')
+          {
+            allreport[i, 'URL'] <- 'removekey( makelink( myurl3 )'
+            allreport[i, 'term'] <- 'Other'
+            #      allreport[i, 'count'] <- as.numeric(gettotals()$total - myquery3$meta$results$total) 
+            allreport[i, 'count'] <- as.numeric(gettotals()$total - sum(allevent$count) ) 
+            # End find exact      
+            allevent[i, 'URL'] <- '-' 
+            allevent[i, 'term'] <- 'Other'
+            mydf <- getalleventlist()$mydf
+            allevent[i, 'count'] <- as.numeric( sum(mydf$count) - sum(allevent$count) )
+          } else {
+            
+            # eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+            # #      myv <- c('_exists_', eventvar)
+            # myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
+            # myt <- c( input$v1, getterm1var(),  str_replace_all(foundtermslist[[i]], "[[:punct:]]", " "), gettimerange()   )
+            # #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+            # cururl <- buildURL(v= myv, t=myt, limit=1)
+            # #Sys.sleep( .25 )
+            # all_events2 <- fda_fetch_p( session, cururl, message= i )
+            # # browser()
+            # if( length( all_events2) != 0 )
+            # {
+            #   allevent[i, 'count'] <- all_events2$meta$results$total
+            #   allevent[i, 'term'] <- realterms[[i]]
+            # } else {
+            #   allevent[i, 'count'] <- 0
+            #   allevent[i, 'term'] <- realterms[[i]]
+            # }
+            eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+            #      myv <- c('_exists_', eventvar)
+            myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
+            myt <- c( input$v1, getterm1var(),  foundtermslist[[i]], gettimerange()   )
+            #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+            cururl <- buildURL(v= myv, t=myt, limit=1)
+            #Sys.sleep( .25 )
+            all_events2 <- fda_fetch_p( session, cururl, message= i )
+            allevent[i, 'URL'] <- removekey( makelink( cururl ) )
+            allevent[i, 'term'] <- realterms[[i]]
+            allevent[i, 'count'] <- all_events2$meta$results$total
+            #       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
+            #       allreport[i, 'term'] <- realterms[[i]]
+            #       allreport[i, 'count'] <- all_events2$meta$results$total
+          }
         }
-       
+      } else {
+        terms <- realterms[1:10]
+        
+        # session$cache$set(key ="t",terms)
+        # session$cache$set(key ="d",c(input$date1, input$date2))
+        start_time <- Sys.time()
+        date <- c(input$date1, input$date2)
+        
+        numAll <- mclapply(terms, function(x) mongoDrugTotals(x, date), mc.cores = 5)
+        end_time <- Sys.time()
+        print(end_time - start_time)
+        # browser()
+        allevent <- data.frame(term = realterms[1:10], count = as.numeric(unlist(numAll)) )
+        allreportsdf <- NULL
       }  
       
       # allevent[i, 'URL'] <- removekey( makelink( cururl ) )
@@ -1057,16 +1078,119 @@ geteventtotals <- reactive(
       # }
       
       # allevent[i, 'count'] <- all_events2$meta$results$total 
-#       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
+      #       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
       
       # allreport[i, 'term'] <- realterms[[i]]
-#       allreport[i, 'count'] <- all_events2$meta$results$total
-      }
-    }
-  # browser()
-#  print( as.double(Sys.time()-starttime ) )
-  return( list( alleventsdf = allevent, allreportsdf = allreport )  )
-} )
+      #       allreport[i, 'count'] <- all_events2$meta$results$total
+      
+      
+      # browser()
+      #  print( as.double(Sys.time()-starttime ) )
+      return( list( alleventsdf = allevent, allreportsdf = allreport )  )
+    } )
+  
+# geteventtotals <- reactive(
+#   {
+#   q <- geturlquery()
+#   # browser()
+#   starttime <- Sys.time()
+#   mydf <- getdrugcounts()$mydfE
+#   if ( !is.data.frame(mydf) ) {return(NULL)}
+#   realterms <- mydf[,1]
+#   foundtermslist <- mydf[,1]
+#   foundtermslist <- paste('"', foundtermslist, '"', sep='')
+#   foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
+#   myrows <- length(foundtermslist)
+# #   if (getlimit( session ) < 35)
+# #     {
+# #      myrows <- myrows +1 
+# #     }
+#   allevent <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
+#   allreport <- data.frame(term=rep(URL='u', 'a', myrows ), count=0L,  stringsAsFactors = FALSE)
+#   
+#   for (i in seq_along(foundtermslist[1:10]))
+#     {
+#     if ( realterms[[i]] =='Other')
+#     {
+#       allreport[i, 'URL'] <- 'removekey( makelink( myurl3 )'
+#       allreport[i, 'term'] <- 'Other'
+# #      allreport[i, 'count'] <- as.numeric(gettotals()$total - myquery3$meta$results$total) 
+#       allreport[i, 'count'] <- as.numeric(gettotals()$total - sum(allevent$count) ) 
+#       # End find exact      
+#       allevent[i, 'URL'] <- '-' 
+#       allevent[i, 'term'] <- 'Other'
+#       mydf <- getalleventlist()$mydf
+#       allevent[i, 'count'] <- as.numeric( sum(mydf$count) - sum(allevent$count) )
+#     } else {
+#       if (q$concomitant == TRUE){
+#         # eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+#         # #      myv <- c('_exists_', eventvar)
+#         # myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
+#         # myt <- c( input$v1, getterm1var(),  str_replace_all(foundtermslist[[i]], "[[:punct:]]", " "), gettimerange()   )
+#         # #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+#         # cururl <- buildURL(v= myv, t=myt, limit=1)
+#         # #Sys.sleep( .25 )
+#         # all_events2 <- fda_fetch_p( session, cururl, message= i )
+#         # # browser()
+#         # if( length( all_events2) != 0 )
+#         # {
+#         #   allevent[i, 'count'] <- all_events2$meta$results$total
+#         #   allevent[i, 'term'] <- realterms[[i]]
+#         # } else {
+#         #   allevent[i, 'count'] <- 0
+#         #   allevent[i, 'term'] <- realterms[[i]]
+#         # }
+#         eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
+#         #      myv <- c('_exists_', eventvar)
+#         myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
+#         myt <- c( input$v1, getterm1var(),  foundtermslist[[i]], gettimerange()   )
+#         #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
+#         cururl <- buildURL(v= myv, t=myt, limit=1)
+#         #Sys.sleep( .25 )
+#         all_events2 <- fda_fetch_p( session, cururl, message= i )
+#         allevent[i, 'URL'] <- removekey( makelink( cururl ) )
+#         allevent[i, 'term'] <- realterms[[i]]
+#         allevent[i, 'count'] <- all_events2$meta$results$total
+#         #       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
+#         #       allreport[i, 'term'] <- realterms[[i]]
+#         #       allreport[i, 'count'] <- all_events2$meta$results$total
+#       } else {
+#         # browser()
+#         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
+#         con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+#         # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
+#         drugName<-realterms[i]
+#         
+#         drugTotalQuery<-totalDrugReportsOriginal(str_replace_all(drugName, "[[:punct:]]", " "), input$date1, input$date2)
+#         totaldrug <- con$aggregate(drugTotalQuery)
+#         all_events2 <- totaldrug
+#         if( !is.null( all_events2$safetyreportid ) )
+#         {
+#           allevent[i, 'count'] <- all_events2$safetyreportid
+#           allevent[i, 'term'] <- realterms[[i]]
+#         }
+#        
+#       }  
+#       
+#       # allevent[i, 'URL'] <- removekey( makelink( cururl ) )
+#       # browser()
+#       
+#       # if (length(totaldrug) != 0){
+#       #   allevent[i, 'term'] <- realterms[[i]]
+#       #   
+#       # }
+#       
+#       # allevent[i, 'count'] <- all_events2$meta$results$total 
+# #       allreport[i, 'URL'] <- removekey( makelink( cururl ) )
+#       
+#       # allreport[i, 'term'] <- realterms[[i]]
+# #       allreport[i, 'count'] <- all_events2$meta$results$total
+#       }
+#     }
+#   # browser()
+# #  print( as.double(Sys.time()-starttime ) )
+#   return( list( alleventsdf = allevent, allreportsdf = allreport )  )
+# } )
  #end calculations
 
 # setters ======
