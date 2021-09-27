@@ -116,13 +116,18 @@ hidden(
 
   fluidRow(
     column(width=4,
-           withSpinner(plotlyOutput("sourceplot"))
+           uiOutput("sourcePrimaryPlotReport"),
+           withSpinner(plotlyOutput("sourceplot")),
            
-           ),
+
+           
+    ), 
     column(width=4,
+           uiOutput("sourceSeriousReport"),
            withSpinner(plotlyOutput("seriousplot"))
             ),
     column(width=4,
+           uiOutput("sourceSexPlotReport"),
            withSpinner(plotlyOutput("sexplot"))
            )
   ),
@@ -133,14 +138,19 @@ hidden(
     column(width=9,
       tabsetPanel(
 
-        tabPanel(uiOutput( "Events"), makeDataTableOutput('query')
+        tabPanel(uiOutput( "Events"),  
+                 uiOutput("sourceEventReport", style = "left:170px;z-index:10"),
+                 makeDataTableOutput('query')
                  # withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
+                 uiOutput("sourceConcomitantReport", style = "left:170px;z-index:10"),
                  makeDataTableOutput('coquery')
                  
             ),
-        tabPanel(uiOutput("Indications"),makeDataTableOutput('indquery')
+        tabPanel(uiOutput("Indications"),
+                 uiOutput("sourceIndicationReport", style = "left:170px;z-index:10"),
+                 makeDataTableOutput('indquery')
                  
         )
         
