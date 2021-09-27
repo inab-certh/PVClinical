@@ -868,6 +868,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
 
+
             return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results, 'dates':dates})
 
         except Exception as e:
@@ -975,6 +976,11 @@ def pubmed_search(query, begin, max, access_token, start, end):
         a = w.run(fetch_pubmed)
 
         res = a.get_result()
+
+    if res == 500:
+        url = 'app/errors/500.html'
+        return render( url, status=500)
+
 
     try:
 
