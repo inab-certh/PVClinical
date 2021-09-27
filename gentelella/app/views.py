@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 import re
@@ -73,7 +72,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "sc_id": scenario_id
                 }
 
-    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.SHINY_ENDPOINT}, request))
+    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
 
 
 def get_synonyms(request):
@@ -153,20 +152,14 @@ def get_conditions_nodes_ids(request):
 
     req_conditions = json.loads(request.GET.get("conditions", None))
 
-    # knw = KnowledgeGraphWrapper()
-    # medDRA_tree_str = json.dumps(knw.get_medDRA_tree())
     with open(os.path.join(settings.JSONS_DIR, "medDRA_tree.json")) as fp:
         medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
         "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
-    # print(rel_conds_lst)
+
     rel_conds_lst = list(chain.from_iterable(rel_conds_lst))
-    # all_conditions = knw.get_conditions()
-    # rel_conds_lst = [filter(lambda c: c.code == condition.split(" - ").pop(),
-    #                         all_conditions) for  condition in req_conditions]
-    # rel_conds_lst = list(map(lambda cond: cond.id, chain.from_iterable(rel_conds_lst)))
 
     data = {}
     data["conds_nodes_ids"] = rel_conds_lst
@@ -510,14 +503,14 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
         ir_options.get("study_end_date")) if ir_options.get("study_start_date") and ir_options.get("study_end_date") \
         else _("Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!")
     # additional_info["age_crit_info"] = "{} {}"
-
     age_crit_dict = dict([("lt", _("Μικρότερη από")), ("lte", _("Μικρότερη ή ίση με")),
                           ("eq", _("Ίση με")), ("gt", _("Μεγαλύτερη από")),
                           ("gte", _("Μεγαλύτερη ή ίση με")), ("bt", _("Ανάμεσα σε")),
                           ("!bt", _("Όχι ανάμεσα σε"))])
     additional_info["age_crit_info"] = "{} {} {}".format(
         _("Κριτήριο ηλικίας:"), age_crit_dict.get(ir_options.get("age_crit")).lower(),
-        " {} ".format(_("και")).join([str(ir_options.get("age")), str(ir_options.get("ext_age"))]))\
+        " {} ".format(_("και")).join([str(ir_options.get("age")), str(ir_options.get("ext_age"))]
+                                     ) if ir_options.get("age_crit") in ["bt", "!bt"] else str(ir_options.get("age")))\
         if ir_options.get("age_crit") else _("Δεν έχει οριστεί συγκεκριμένο ηλικιακό κριτήριο!")
 
     genders_dict = dict([("MALE", _("Άρρεν")), ("FEMALE", _("Θήλυ"))])
@@ -1488,70 +1481,18 @@ def social_media(request, sc_id):
         all_combs = list(product(sorted([d.name for d in drugs]) or [""],
                                  sorted([c.name for c in conditions]) or [""]))
 
-        all_combs = list(map(lambda el: " && ".join(filter(None, el)), all_combs))
-
-        keywords = "({})".format(" || ".join(["({})".format(comb) for comb in all_combs]))
-        # Collection name which is a hash of the search expression for twitter (or other social media)
-        col_name = hashlib.md5(keywords.encode()).hexdigest()
-
-        data = {"keywords": keywords, "scenarioID": sc_id}
-
-        resp = requests.post(url="{}info".format(settings.TETHYS_ENDPOINT), json=data)
-        resp_json = resp.json()
-
-        start_switch = resp.status_code == 200 and resp_json.get(
-            "processStatus") == "Stopped" or resp.status_code == 404
-
-        # content_switch = resp.status_code == 404
+        all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
+        twitter_query = " OR ".join(all_combs)
 
     except Scenario.DoesNotExist:
         sc = None
-        col_name = None
-        keywords = None
-        start_switch = False
+        twitter_query = ""
 
     context = {
         "scenario": sc,
-        "keywords": keywords,
-        "col_name": col_name,
         "sm_shiny_endpoint": settings.SM_SHINY_ENDPOINT,
-        "start_switch": start_switch,
-        # "tethys_endpoint": settings.TETHYS_ENDPOINT,
+        "twitter_query": twitter_query,
         "title": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης")
     }
 
     return render(request, 'app/social_media_workspace.html', context)
-
-
-@csrf_protect
-def start_sm_data_extraction(request):
-    """ Start social media data extraction
-    :param request: The request
-    :return: The resulting response from the creation process attempt
-    """
-
-    keywords = request.POST.get("keywords", None)
-    sc_id = request.POST.get("scenarioID", None)
-
-    data = {"keywords": keywords, "scenarioID": sc_id}
-    # data.update(settings.TWITTER_CREDENTIALS)
-
-    resp = requests.post(url="{}create".format(settings.TETHYS_ENDPOINT), json=data)
-    return JsonResponse(resp.json(), status=resp.status_code)
-
-
-@csrf_protect
-def stop_sm_data_extraction(request):
-    """ Stop social media data extraction
-    :param request: The request
-    :return: The resulting response from the stopping process attempt
-    """
-
-    keywords = request.POST.get("keywords", None)
-    sc_id = request.POST.get("scenarioID", None)
-
-    data = {"keywords": keywords, "scenarioID": sc_id}
-    # data.update(settings.TWITTER_CREDENTIALS)
-
-    resp = requests.post(url="{}stop".format(settings.TETHYS_ENDPOINT), json=data)
-    return JsonResponse(resp.json(), status=resp.status_code)
