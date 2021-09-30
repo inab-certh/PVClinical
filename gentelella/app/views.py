@@ -1482,7 +1482,7 @@ def social_media(request, sc_id):
                                  sorted([c.name for c in conditions]) or [""]))
 
         all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
-        twitter_query = " OR ".join(all_combs)
+        twitter_query = " OR ".join(list(set(all_combs)))
 
     except Scenario.DoesNotExist:
         sc = None
