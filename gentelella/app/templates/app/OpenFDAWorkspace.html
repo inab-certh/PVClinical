@@ -41,9 +41,9 @@
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-code = "{{ drug.code }}" name="drugCheckBox" value="{{ drug.name }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-code = "{{ drug.code }}" name="drugCheckBox" value="{{ drug.code }}" checked>
                                                     <label class="custom-control-label"
-                                                           for="customCheck1">{{ drug.name }}</label>
+                                                           for="customCheck1">{{ drug.name }}/{{ drug.code }}</label>
                                                 </div>
                                             {% endfor %}
 
@@ -764,10 +764,10 @@
                  var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
+                    var drug = $("input[type=checkbox][value='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
-                    var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
+                    var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
                 }
                 if (condition  === undefined){
                     var condition =  $("input[name='eventCheckBox']").attr("data-code")
