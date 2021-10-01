@@ -154,7 +154,7 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
 
 # Refactor
 getcounts999 <- function( session, v, t, count, limit=10, 
-                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2)
+                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2, drugNameOrg = NULL)
 {
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
@@ -203,7 +203,7 @@ getcounts999 <- function( session, v, t, count, limit=10,
     # date1 <- '2018-01-01'
     # date2 <- '2018-12-30'
     # browser()
-    drugQuery<-totalEventsInReports(drugName=drugName, date1, date2)
+    drugQuery<-totalEventsInReports(drugName=drugName, date1, date2, drugNameOrg)
     drugResult <- con$aggregate(drugQuery)
     # browser()
     colnames(drugResult)[1]<-"term"

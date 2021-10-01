@@ -292,7 +292,7 @@ getquery_d <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2, q$dename)
     timedResult <- con$aggregate(timed)
     colnames(timedResult)[1]<-"time"
     mylist<-timedResult
@@ -386,7 +386,7 @@ getvars_de <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     # browser()
-    timede<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+    timede<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
     timedeResult <- con$aggregate(timede)
     colnames(timedeResult)[1]<-"time"
     tmp<-timedeResult
@@ -437,7 +437,7 @@ getvars_d <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2)
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2, q$dename)
     timedResult <- con$aggregate(timed)
     colnames(timedResult)[1]<-"time"
     tmp<-timedResult
@@ -544,7 +544,7 @@ getcodruglist <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    coco<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+    coco<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
     cocoResult <- con$aggregate(coco)
     colnames(cocoResult)[1]<-"term"
     mydf<-cocoResult
@@ -576,7 +576,7 @@ getcoeventlist <- reactive({
     # Refactor
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    react<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+    react<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
     reactResult <- con$aggregate(react)
     colnames(reactResult)[1]<-"term"
     mydf<-reactResult

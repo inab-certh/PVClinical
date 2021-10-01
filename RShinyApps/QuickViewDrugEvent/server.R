@@ -1072,8 +1072,8 @@ shinyServer(function(input, output, session) {
     # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
     # q$v2<-"patient.reaction.reactionmeddrapt"
-    # q$t1<-"D10AD04"
-    # q$t2<-"10028813"
+    # q$t1<-"A02BC01"
+    # q$t2<-"10021015"
     # q$t1<-"G01AE10"
     # q$t2<-"10079622"
     # q$hash <- "ksjdhfksdhfhsk"
@@ -1213,9 +1213,9 @@ shinyServer(function(input, output, session) {
   getdrugcounts999 <- reactive({
 
     q<-geturlquery()
-    
+    # browser()
     mylist <- getcounts999 ( session, v= getexactdrugvarname(), t= geteventvarname( session, quote = FALSE ),
-                             count=geteventvarname(), limit=999, exactrad=input$useexact, counter=1, eventName=q$t2 )
+                             count=geteventvarname(), limit=999, exactrad=input$useexact, counter=1, eventName=q$t2, drugNameOrg = q$dename )
     return( list(mydf=mylist$mydf, myurl=(mylist$myurl), exact = mylist$exact  ) )
   })
 
@@ -1790,8 +1790,9 @@ shinyServer(function(input, output, session) {
       }
       
     } else {
+      # browser()
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact, eventName = q$t2, date1 = input$date1, date2=input$date2 )
+                               count=getprrvarname(), exactrad = input$useexact, eventName = q$t2, date1 = input$date1, date2=input$date2, drugNameOrg = q$dename )
     }
     
     
@@ -1895,7 +1896,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")      
         drugName<-q$t1
         
-        drugTotalQuery<-totalDrugReports(drugName=drugName, input$date1, input$date2)
+        drugTotalQuery<-totalDrugReports(drugName=drugName, input$date1, input$date2, q$dename)
         totaldrugs <- con$aggregate(drugTotalQuery)
         totaldrug <- totaldrugs$safetyreportid
         con$disconnect()
@@ -2047,7 +2048,7 @@ shinyServer(function(input, output, session) {
       foundtermslist <- mydf[,1]
       foundtermslist <- paste('"', foundtermslist, '"', sep='')
       foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-     
+      # browser()
       all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
       for (i in seq_along(foundtermslist))
       {
