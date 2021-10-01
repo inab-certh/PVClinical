@@ -305,7 +305,7 @@ gettotalquery <- reactive({
     
   }else {
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dname)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     rank <- ceiling(length(ids$safetyreportid))
@@ -335,7 +335,7 @@ gettotaldaterangequery <- reactive({
     
   } else {
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dname)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     rank <- ceiling(length(ids$safetyreportid))
@@ -398,7 +398,7 @@ getqueryde <- reactive({
     } else {
       con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
       
-      timeall<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+      timeall<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
       timeallResult <- con$aggregate(timeall)
       colnames(timeallResult)[1]<-"time"
       timeallResult$time <- as.Date(timeallResult$time, tz = "HST")
@@ -452,7 +452,7 @@ getcodruglist <- reactive({
     
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    totaleventQuery<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+    totaleventQuery<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
     mydf <- con$aggregate(totaleventQuery)
     # eventReport<-totaleventResult$safetyreportid
     colnames(mydf)[1]<-"term"
@@ -485,7 +485,7 @@ getcoeventlist <- reactive({
   } else {
     con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
     
-    totaleventQuery<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2)
+    totaleventQuery<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
     mydf <- con$aggregate(totaleventQuery)
     colnames(mydf)[1]<-"term"
     con$disconnect()

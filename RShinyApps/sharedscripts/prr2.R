@@ -403,7 +403,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2)
+                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2, drugNameOrg = q$dename)
     }
     
     mydfAll <- mylist$mydf
@@ -487,7 +487,7 @@ shinyServer(function(input, output, session) {
         con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
         drugName<-q$t1
         
-        drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2)
+        drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2, q$dename)
         drugResult <- con$aggregate(drugQuery)
         colnames(drugResult)[1]<-"term"
         
@@ -634,7 +634,7 @@ shinyServer(function(input, output, session) {
     } else {
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
         con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-        drugQuery <- SearchEventReports(q$t1, input$date1, input$date2)
+        drugQuery <- SearchEventReports(q$t1, input$date1, input$date2, q$dename)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -683,7 +683,7 @@ shinyServer(function(input, output, session) {
       } else {
         
         con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-        drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
+        drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dename)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -785,7 +785,7 @@ shinyServer(function(input, output, session) {
         con$disconnect()
         
       }else{
-        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2)
+        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2, q$dename)
         totaldrugResult <- con$aggregate(totaldrugQuery)
         totaldrug<-totaldrugResult$safetyreportid
         con$disconnect()
