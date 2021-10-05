@@ -790,10 +790,10 @@
                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][value="+drug_condition[0]+"]").attr("data-code")
+                    var drug = $("input[type=checkbox][value='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
-                    var condition = $("input[type=checkbox][value="+drug_condition[1]+"]").attr("data-code")
+                    var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
                 }
 
                 if (condition  === undefined){

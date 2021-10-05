@@ -1072,6 +1072,8 @@ shinyServer(function(input, output, session) {
     # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
     # q$v2<-"patient.reaction.reactionmeddrapt"
+    # q$t1<-"J01CA04"
+    # q$t2<-"10037844"
     # q$t1<-"A02BC01"
     # q$t2<-"10021015"
     # q$t1<-"G01AE10"
@@ -2048,7 +2050,7 @@ shinyServer(function(input, output, session) {
       foundtermslist <- mydf[,1]
       foundtermslist <- paste('"', foundtermslist, '"', sep='')
       foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-      # browser()
+      browser()
       all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
       for (i in seq_along(foundtermslist))
       {
