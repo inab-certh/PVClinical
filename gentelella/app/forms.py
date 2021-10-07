@@ -236,6 +236,9 @@ class IRForm(forms.Form):
             self.cleaned_data["study_start_date"] = None
             self.cleaned_data["study_start_date"] = None
 
+        if self.cleaned_data.get("age_crit") not in ["bt", "!bt"]:
+            self.cleaned_data["ext_age"] = None
+
         return self.cleaned_data
 
 
