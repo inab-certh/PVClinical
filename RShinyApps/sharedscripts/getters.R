@@ -154,7 +154,7 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
 
 # Refactor
 getcounts999 <- function( session, v, t, count, limit=10, 
-                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2)
+                          exactrad='exact', counter=1, db= '/drug/',eventName=NULL, date1, date2, drugNameOrg = NULL)
 {
   if ( is.null( t ) ){
     return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
@@ -179,11 +179,11 @@ getcounts999 <- function( session, v, t, count, limit=10,
   #     browser()
   #   }
   #   mydf <- mylist$result
-  # browser()
+  browser()
   # Refactor
   if ( v[2] == "patient.reaction.reactionmeddrapt.exact"){
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("dict_fda", url = mongoConnection())
     eventName<-unlist(strsplit(t[2], '\\"'))[2]
     if (is.na(eventName) ){
       eventName <-unlist(strsplit(t[2], '\\"'))[1]
@@ -198,12 +198,12 @@ getcounts999 <- function( session, v, t, count, limit=10,
     
   } else {
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("dict_fda", url = mongoConnection())
     drugName<-unlist(strsplit(t[2], '\\"'))[2]
     # date1 <- '2018-01-01'
     # date2 <- '2018-12-30'
     # browser()
-    drugQuery<-totalEventsInReports(drugName=drugName, date1, date2)
+    drugQuery<-totalEventsInReports(drugName=drugName, date1, date2, drugNameOrg)
     drugResult <- con$aggregate(drugQuery)
     # browser()
     colnames(drugResult)[1]<-"term"
@@ -258,7 +258,7 @@ getcounts999 <- function( session, v, t, count, limit=10,
   max <- nrow(mydf)
   # max <- min(900, nrow(mydf) )
   if (!is.null(eventName) && !is.null(drugName)){
-    con_med <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con_med <- mongo("medra", url = mongoConnection())
     event <- con_med$find(paste0('{"code" : "',eventName,'"}'))
     con_med$disconnect()
     eventName = toupper(event$names[[1]][1])

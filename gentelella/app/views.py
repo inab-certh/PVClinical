@@ -54,8 +54,12 @@ from mendeley import Mendeley
 
 
 @login_required()
-@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def OpenFDAWorkspace(request, scenario_id=None):
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
     template = loader.get_template('app/OpenFDAWorkspace.html')
     scenario = {}
     sc = Scenario.objects.get(id=scenario_id)
@@ -788,6 +792,8 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
     """
     data = {}
 
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]

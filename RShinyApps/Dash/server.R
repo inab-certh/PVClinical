@@ -263,8 +263,8 @@ shinyServer(function(input, output, session) {
       }
     } else {
     
-      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-      drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugQuery <- SearchDrugReports(q$t1, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
       
@@ -473,8 +473,8 @@ getsexcounts <- reactive({
     
   } else {
     
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
+    con <- mongo("dict_fda", url = mongoConnection())
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     
@@ -536,8 +536,8 @@ getsourcecounts <- reactive({
     
   } else {
   
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
+    con <- mongo("dict_fda", url = mongoConnection())
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
 
@@ -605,10 +605,10 @@ getsourcecounts <- reactive({
       
     } else {
       
-      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      con <- mongo("dict_fda", url = mongoConnection())
       drugName<-q$t1
       
-      drugQuery<-totalEventsInReports(drugName=drugName, startdate = '2018-01-01', enddate = '2019-01-01')
+      drugQuery<-totalEventsInReports(drugName=drugName, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
       drugResult <- con$aggregate(drugQuery)
       colnames(drugResult)[1]<-"term"
       
@@ -671,10 +671,10 @@ getcocounts <- reactive({
     
   } else {
     
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("dict_fda", url = mongoConnection())
     drugName<-q$t1
     
-    drugQuery<-createConDrugQuery(drugName=drugName, startdate = '2018-01-01', enddate = '2019-01-01')
+    drugQuery<-createConDrugQuery(drugName=drugName, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
     drugResult <- con$aggregate(drugQuery)
     colnames(drugResult)[1]<-"term"
     
@@ -720,8 +720,8 @@ getindcounts <- reactive({
     
   } else {
   
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-    drugQuery <- SearchDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
+    con <- mongo("dict_fda", url = mongoConnection())
+    drugQuery <- SearchDrugReports(q$t1, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
     ids <- con$aggregate(drugQuery)
     con$disconnect()
     
@@ -807,13 +807,13 @@ getindcounts <- reactive({
       totaldrug <- totaldrugreports$meta$results$total
       
     } else {
-      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      con <- mongo("dict_fda", url = mongoConnection())
       
       totalQuery<-totalreports(startdate = '2018-01-01', enddate = '2019-01-01')
       totalResult <- con$aggregate(totalQuery)
       total<-totalResult$safetyreportid
       
-      totaldrugQuery<-totalDrugReports(q$t1, startdate = '2018-01-01', enddate = '2019-01-01')
+      totaldrugQuery<-totalDrugReports(q$t1, startdate = '2019-01-01', enddate = '2020-01-01', q$dname)
       totaldrugResult <- con$aggregate(totaldrugQuery)
       totaldrug<-totaldrugResult$safetyreportid
       con$disconnect()
@@ -1384,7 +1384,7 @@ geturlquery <- reactive({
   updateRadioButtons(session, 'useexactE',
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
   
-  con_atc <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+  con_atc <- mongo("atc", url = mongoConnection())
   drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
   con_atc$disconnect()
   
