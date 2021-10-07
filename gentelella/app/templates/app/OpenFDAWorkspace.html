@@ -41,7 +41,7 @@
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-code = "{{ drug.code }}" name="drugCheckBox" value="{{ drug.code }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" name="drugCheckBox" value="{{ drug.code }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ drug.name }} ({{ drug.code }})</label>
                                                 </div>
@@ -245,7 +245,7 @@
                                                 <div class="col">
                                                     <div id="divFrameComb{{ forloop.counter }}">
                                                         <div id="firstComb{{ forloop.counter }}"  class="loader"></div>
-                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator('firstComb{{ forloop.counter }}')" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
                                                     </div>
                                                 </div>
                                             </div>
@@ -561,8 +561,8 @@
             // }
         }
 
-        function closeProgressIndicator() {
-            $("#first").hide();
+        function closeProgressIndicator(elid) {
+            $('#'+elid).hide();
         }
         function openProgressIndicator() {
             $("#first").show();
@@ -764,7 +764,7 @@
                  var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][value='"+drug_condition[0]+"']").attr("data-code")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
@@ -790,7 +790,7 @@
                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][value='"+drug_condition[0]+"']").attr("data-code")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
