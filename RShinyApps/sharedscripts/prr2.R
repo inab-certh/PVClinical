@@ -339,13 +339,13 @@ shinyServer(function(input, output, session) {
     updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     
     if (q$v1=="patient.drug.openfda.generic_name"){
-      con_atc <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      con_atc <- mongo("atc", url = mongoConnection())
       drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
       con_atc$disconnect()
       
       q$dename <- drug$names[[1]][1]
     } else {
-      con_medra <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      con_medra <- mongo("medra", url = mongoConnection())
       event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
       con_medra$disconnect()
       
@@ -403,7 +403,7 @@ shinyServer(function(input, output, session) {
       
     } else {
       mylist <-  getcounts999( session, v= v, t= t, 
-                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2)
+                               count=getprrvarname(), exactrad = input$useexact, date1 = input$date1, date2 = input$date2, drugNameOrg = q$dename)
     }
     
     mydfAll <- mylist$mydf
@@ -474,7 +474,7 @@ shinyServer(function(input, output, session) {
       # Refactor
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+        con <- mongo("dict_fda", url = mongoConnection())
         eventName<-q$t1
         
         eventQuery<-createConEventQuery(eventName=eventName, input$date1, input$date2)
@@ -484,10 +484,10 @@ shinyServer(function(input, output, session) {
         mydf<-eventResult
       } else {
         # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+        con <- mongo("dict_fda", url = mongoConnection())
         drugName<-q$t1
         
-        drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2)
+        drugQuery<-createConDrugQuery(drugName=drugName, input$date1, input$date2, q$dename)
         drugResult <- con$aggregate(drugQuery)
         colnames(drugResult)[1]<-"term"
         
@@ -633,8 +633,8 @@ shinyServer(function(input, output, session) {
       
     } else {
       if (q$v1 == 'patient.reaction.reactionmeddrapt'){
-        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-        drugQuery <- SearchEventReports(q$t1, input$date1, input$date2)
+        con <- mongo("dict_fda", url = mongoConnection())
+        drugQuery <- SearchEventReports(q$t1, input$date1, input$date2, q$dename)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -682,8 +682,8 @@ shinyServer(function(input, output, session) {
         
       } else {
         
-        con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
-        drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2)
+        con <- mongo("dict_fda", url = mongoConnection())
+        drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dename)
         ids <- con$aggregate(drugQuery)
         con$disconnect()
         
@@ -771,7 +771,7 @@ shinyServer(function(input, output, session) {
     } else {
       
       # Refactor
-      con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+      con <- mongo("dict_fda", url = mongoConnection())
       
       totalQuery<-totalreports(input$date1, input$date2)
       totalResult <- con$aggregate(totalQuery)
@@ -785,7 +785,7 @@ shinyServer(function(input, output, session) {
         con$disconnect()
         
       }else{
-        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2)
+        totaldrugQuery<-totalDrugReports(q$t1, startdate = input$date1, enddate = input$date2, q$dename)
         totaldrugResult <- con$aggregate(totaldrugQuery)
         totaldrug<-totaldrugResult$safetyreportid
         con$disconnect()
@@ -841,7 +841,7 @@ shinyServer(function(input, output, session) {
       if (is.null(q$t2))
         comb <- comblist$comb
       else {
-        con_med <- mongo("medra", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+        con_med <- mongo("medra", url = mongoConnection())
         event <- con_med$find(paste0('{"code" : "',input$t2,'"}'))
         con_med$disconnect()
         eventName = toupper(event$names[[1]][1])
@@ -925,7 +925,7 @@ shinyServer(function(input, output, session) {
     #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
     #     row.names(comb)<- seq(1:nrow(comb))
     # Refactor
-    con <- mongo("atc", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("atc", url = mongoConnection())
     drug <- con$find(paste0('{"code" : "',getterm1( session ),'"}'))
     mydrugc <- drug$names[[1]][1]
     con$disconnect()
@@ -1050,7 +1050,7 @@ shinyServer(function(input, output, session) {
   mongoDrugTotals <- function(x, date) {
     
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("dict_fda", url = mongoConnection())
     # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
     drugName<-x
     
@@ -1070,7 +1070,7 @@ shinyServer(function(input, output, session) {
   
   mongoEventTotals <- function(x, date) {
     
-    con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+    con <- mongo("dict_fda", url = mongoConnection())
     
     eventName<-x
     
@@ -1197,7 +1197,7 @@ shinyServer(function(input, output, session) {
   #         if (q$v1 == "patient.reaction.reactionmeddrapt"){
   #           
   #           # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-  #           con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+  #           con <- mongo("dict_fda", url = mongoConnection())
   #           # drugName<-unlist(strsplit(myt[2], '\\"'))[2]
   #           drugName<-realterms[i]
   #           # browser()
@@ -1210,7 +1210,7 @@ shinyServer(function(input, output, session) {
   #         } else {
   #           
   #           # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")
-  #           con <- mongo("dict_fda", url = "mongodb://pv_user:DnKrgEBXGR@160.40.71.111:27017/FDAforPVClinical")
+  #           con <- mongo("dict_fda", url = mongoConnection())
   #           # eventName<-unlist(strsplit(myt[2], '\\"'))[2]
   #           eventName<-realterms[i]
   #           
