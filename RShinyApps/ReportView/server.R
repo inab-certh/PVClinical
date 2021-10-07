@@ -211,18 +211,18 @@ observeEvent( input$searchID, {
   q <- geturlquery()
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      eventQuery <- SearchEventReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugQuery <- SearchDrugReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(),q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
@@ -384,18 +384,18 @@ getquery <- reactive({
   
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      eventQuery <- SearchEventReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2,startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugQuery <- SearchDrugReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
@@ -463,18 +463,18 @@ getfullquery <- reactive({
  
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      eventQuery <- SearchEventReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
-      con <- mongo("dict_fda", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
-      drugQuery <- SearchDrugReports(q$t1)
+      con <- mongo("dict_fda", url = mongoConnection())
+      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
@@ -930,7 +930,7 @@ output$patientreactiontabletitle <- renderText({
 output$patientreaction <- renderTable({  
   mydf <- getquery()
   mydf <- getdf( mydf=mydf$patientdf, 'reaction', message='No primary source data')
-  
+  # browser()
   drop<-c("reactionmeddraversionpt")
   mydf <- mydf[,!(names(mydf) %in% drop)]
   if (!is.atomic(mydf)){
@@ -949,8 +949,14 @@ output$patientreaction <- renderTable({
     }
   }
   
-  if (is.null(colnames(mydf)))
+  if (is.atomic(mydf)){
+    mydf <- data.frame(Reaction=list(mydf))
+    colnames(mydf) <- 'Reaction'
+  }
+  else if(is.null(colnames(mydf))) {
     return (NULL)
+  }
+    
   colnames(mydf) = gsub("_", " ",colnames(mydf))
   
   if (!is.null(input$sourcePatientDataframeUI)){
@@ -1635,7 +1641,7 @@ geturlquery <- reactive({
    # q$v2<-"patient.reaction.reactionmeddrapt"
    # # q$t1<-"Omeprazole"
    # # q$t2<-"Hypokalaemia"
-   # q$t1<-"D10AD04"
+   # q$t1<-"A02BC01"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"
    # q$concomitant <- TRUE
@@ -1697,14 +1703,14 @@ if(!is.null(q$v3) )
 #   return(q)
   if (!is.null(q$v1)){
     if (q$v1=="patient.drug.openfda.generic_name"){
-      con_atc <- mongo("atc", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con_atc <- mongo("atc", url = mongoConnection())
       drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
       con_atc$disconnect()
       
       q$dename <- drug$names[[1]][1]
       if (!is.null(q$v2)){
         
-        con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+        con_medra <- mongo("medra", url = mongoConnection())
         event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
         con_medra$disconnect()
         
@@ -1712,7 +1718,7 @@ if(!is.null(q$v3) )
         
       }
     } else {
-      con_medra <- mongo("medra", url = "mongodb://sdimitsaki:hXN8ERdZE6yt@83.212.101.89:37777/FDAforPVClinical?authSource=admin")
+      con_medra <- mongo("medra", url = mongoConnection())
       event <- con_medra$find(paste0('{"code" : "',q$t1,'"}'))
       con_medra$disconnect()
       
