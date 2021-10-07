@@ -1484,8 +1484,8 @@ def social_media(request, sc_id):
         # Retrieve scenario conditions
         conditions = sc.conditions.all()
 
-        all_combs = list(product(sorted([d.name for d in drugs]) or [""],
-                                 sorted([c.name for c in conditions]) or [""]))
+        all_combs = list(product(sorted(set([d.name for d in drugs])) or [""],
+                                 sorted(set([c.name for c in conditions])) or [""]))
 
         all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
         twitter_query = " OR ".join(all_combs)
