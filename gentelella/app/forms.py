@@ -227,6 +227,10 @@ class IRForm(forms.Form):
     def is_valid(self):
         self.fields.get("study_start_date").required = self.data.get("add_study_window")
         self.fields.get("study_end_date").required = self.data.get("add_study_window")
+
+        if not self.data.get("genders"):
+            self.add_error(None, _("Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"))
+
         return super(IRForm, self).is_valid()
 
     def clean(self):
