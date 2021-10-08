@@ -1,5 +1,5 @@
 $(function () {
-    $(document).on("click", "a>img[name^='pubmed_image_']", function () {
+    $(document).on("click", "a img[name^='pubmed_image_']", function () {
         // console.log("Link starting");
         // scenario_id = $(".delete-sc-btn").data("scid");
         var scenario_id = $(this).attr('name').replace("pubmed_image_", "");
