@@ -25,6 +25,12 @@ $(function() {
         }
     });
 
+    $(".ws-menu.btn-group>ul>li>a").on("click", function(){
+        if(!$(this).attr("href").endsWith("#")) {
+            $("#loaderOverlay").fadeIn();
+        }
+    });
+
     $("div.scenario-info a.has-popover").on('click',function(e){
         e.preventDefault();
     });
