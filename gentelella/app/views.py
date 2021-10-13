@@ -190,7 +190,7 @@ def index(request):
     # print(request.META.get('HTTP_REFERER'))
 
     scenarios = []
-    for sc in Scenario.objects.order_by('-timestamp').all():
+    for sc in Scenario.objects.filter(owner=request.user).order_by('-timestamp').all():
         scenarios.append({
             "id": sc.id,
             "title": sc.title,
