@@ -345,30 +345,33 @@ def ohdsi_workspace(request, scenario_id=None):
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + [conditions_cohort])), "ir")
+                                                              [drugs_cohort] + [conditions_cohort])),
+                                                     domain="ir", owner=sc.owner, sid=sc.id)
         ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
         if ir_ent:
             ir_id = ir_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+            res_st, res_json = ohdsi_wrappers.create_ir(sc.owner, sc.id, [drugs_cohort], [conditions_cohort])
             ir_id = res_json.get("id")
 
         cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + conditions_distinct_cohorts)), "cp")
+                                                              [drugs_cohort] + conditions_distinct_cohorts)),
+                                                     domain="cp", owner=sc.owner, sid=sc.id)
         cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
 
         if cp_ent:
             cp_id = cp_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_cp([drugs_cohort], conditions_distinct_cohorts)
+            res_st, res_json = ohdsi_wrappers.create_cp(sc.owner, sc.id, [drugs_cohort], conditions_distinct_cohorts)
             cp_id = res_json.get("id")
 
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
-                                                                filter(None,[drugs_cohort, conditions_cohort]))), "char")
+                                                                filter(None,[drugs_cohort, conditions_cohort]))),
+                                                       domain="char", owner=sc.owner, sid=sc.id)
 
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
@@ -376,7 +379,8 @@ def ohdsi_workspace(request, scenario_id=None):
             char_id = char_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
+            res_st, res_json = ohdsi_wrappers.create_char(sc.owner, sc.id,
+                                                          list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
 
     all_drugs_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All drugs cohort") or {}
