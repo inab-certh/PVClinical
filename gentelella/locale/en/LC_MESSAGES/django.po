@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-08 14:49+0300\n"
+"POT-Creation-Date: 2021-10-14 15:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,6 +120,10 @@ msgstr "Study time window end date:"
 #: app/forms.py:208 app/forms.py:215
 msgid "ΕΕΕΕ-ΜΜ-ΗΗ"
 msgstr "YYYY-MM-DD"
+
+#: app/forms.py:232 app/views.py:527
+msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
+msgstr "No specific gender criterion has been appointed!"
 
 #: app/forms.py:253
 msgid "Χαρακτηριστικά ανάλυσης:"
@@ -375,6 +379,10 @@ msgstr "Next"
 #: app/templates/app/LiteratureWorkspace.html:573
 msgid "Δεν υπάρχουν αποτελέσματα"
 msgstr "No results"
+
+#: app/templates/app/OpenFDAWorkspace.html:37
+msgid "Συγχορηγούμενα"
+msgstr "Concomitant"
 
 #: app/templates/app/OpenFDAWorkspace.html:139
 msgid "Aggregated"
@@ -1183,10 +1191,6 @@ msgstr "No specific age criterion has been appointed!"
 #: app/views.py:526
 msgid "Κριτήριο φύλου:"
 msgstr "Gender criterion:"
-
-#: app/views.py:527
-msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
-msgstr "No specific gender criterion has been appointed!"
 
 #: app/views.py:576
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
