@@ -24,7 +24,10 @@
             <div class="col col-sm-12">
                 <div>
                     <div class="tab-content" style="margin-left: 20px;">
-<!--                        <div class="tab-pane active" role="tabpanel" id="tab-1">-->
+                        <div class="tab-pane active" role="tabpanel" id="tab-1">
+                             <legend class="legend-margins">
+                                <p class="DrugEventParameter">{{ scenario.title }}</p>
+                             </legend>
 <!--                            <div class="row drug-events-selection-row">-->
 <!--                                <div class="col drugSelectionCol">-->
 <!--                                    <div id="drugCheckBoxes">-->
@@ -114,7 +117,7 @@
 <!--                                    </div>-->
 <!--                                </div>-->
 <!--                            </div>-->
-<!--                        </div>-->
+                        </div>
                 {% if dates|length > 0 %}
                         <div style="float: left; width: 300px; pointer-events: none;" class="input-group in-daterange">
                             <input type="text" class="form-control" value='{{ dates.0 }}'>

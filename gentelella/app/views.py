@@ -821,6 +821,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
+                "title": sc.title,
                 "timestamp": sc.timestamp
                 }
 
