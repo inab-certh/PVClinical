@@ -14,6 +14,8 @@ from app.models import Drug
 from app.models import Condition
 from app.models import Notes
 from app.models import Scenario
+from app.models import PatientCase
+from app.models import Questionnaire
 from app.models import Status
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
@@ -338,29 +340,96 @@ class NotesForm(forms.ModelForm):
         model = Notes
         fields = ['content']
 
+class PatientForm(forms.ModelForm):
+    scenarios = forms.ModelMultipleChoiceField(
+        queryset=Scenario.objects.all(),
+        widget=forms.CheckboxSelectMultiple, label=''
+    )
 
-# class SocialMediaForm(forms.Form):
-#
-#     features = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "char-features-fld"}),
-#                                         initial=[],
-#                                         label=_("Χαρακτηριστικά ανάλυσης:"),
-#                                         required=False,
-#                                         choices=[])
-#
-#     def __init__(self, *args, **kwargs):
-#         self.options = kwargs.pop("char_options")
-#         self.read_only = kwargs.pop("read_only")
-#         super(CharForm, self).__init__(*args, **kwargs)
-#
-#         analysis_features = ohdsi_wrappers.get_char_analysis_features()
-#
-#         self.features_descriptions = dict([(el.get("name"), el.get("description")) for el in analysis_features])
-#         avail_features = ["Drug Group Era Long Term", "Charlson Index",
-#                           "Demographics Age Group", "Demographics Gender"]
-#
-#         self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
-#                                                   if f.get("name") in avail_features], key=lambda x: x[1])
-#
-#         for k in self.fields.keys():
-#             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
-#             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+    questionnaires = forms.ModelMultipleChoiceField(
+        queryset=Questionnaire.objects.all(),
+        widget=forms.CheckboxSelectMultiple, label=''
+    )
+    class Meta:
+        model = PatientCase
+        fields = ['patient_id', 'scenarios', 'questionnaires']
+
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+        scenarios = Scenario.objects.all()
+        self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς')
+
+        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in scenarios]
+        questionnaires = Questionnaire.objects.all()
+        self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
+
+
+
+
+class QuestionnaireForm(forms.ModelForm):
+    q1 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="1. Do you suspect an adverse drug reaction?"
+    )
+    q2 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="2. Did the event appear after the drug was administered or dose increased?"
+    )
+    q3 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="3. Were pre-existing symptoms exacerbated by the drug?"
+    )
+    q4 = forms.ChoiceField(
+        choices=((True, 'Yes or Unassessable'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced?"
+    )
+    q5 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="5. Was the event associated with long-lasting disability or impairment?"
+    )
+    q6 = forms.ChoiceField(
+        choices=((True, 'Low'), (False, 'High or Unsure')),
+        widget=forms.RadioSelect(), required=False,
+        label="6. What is the probability that the event was due to an underlying disease?"
+    )
+    q7 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="7. Is there any objective evidence supportive of the casual ADR mechanism?"
+    )
+    q8 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="8. Was there a positive rechallenge?"
+    )
+    q9 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="9. Is there a past history of the same event with this drug in this patient?"
+    )
+    q10 = forms.ChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        widget=forms.RadioSelect(), required=False,
+        label="10. Has the event previously been reported with this drug?"
+    )
+    patient_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    sc_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+
+    class Meta:
+        model = Questionnaire
+
+        fields = ('q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10')
+
+
+    def save(self, commit=True):
+        # print(self.cleaned_data)
+        # self.cleaned_data['patient_id']=""
+        return super(QuestionnaireForm, self).save(commit=commit)
+
+

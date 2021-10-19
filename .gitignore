@@ -3,6 +3,7 @@ settings.py
 .Rproj.user
 .pvenv/
 .gitignore
+pvclinical/
 RShinyApps/QuickView/rsconnect/shinyapps.io/
 *.pyc
 *.RData
