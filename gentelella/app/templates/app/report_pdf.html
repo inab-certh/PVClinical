@@ -1,0 +1,697 @@
+{% load i18n %}
+{% load staticfiles %}
+{% load custom_tags %}
+<html>
+<head>
+{% block stylesheets %}
+    <link href='{% static "build/css/report_pdf.css" %}' rel="stylesheet">
+{% endblock stylesheets %}
+
+</head>
+<body>
+<div id="reportBody">
+
+
+    <img src='https://www.inab.certh.gr/img/logos/footelogo.jpg' align="left" width="35%">
+    <img src='https://www.certh.gr/skn/logo_el.png' align="right" width="40%" >
+<br>
+    <div style="padding-top:250px"></div>
+
+<div align="center"><img src="/static/images/pvclinical.png" width="35%"></div>
+    <div style="padding-top:200px"></div>
+
+<div id="review">{% trans "Επισκόπηση σεναρίου:" %} {{scenario}}</div>
+
+    <br>
+    <div style="padding-top:300px"></div>
+        <div class="info_title">{% trans "Πληροφορίες Σύνταξης" %}</div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Όνομα:" %} </span><span class="pers-val">{{ request.user.first_name}}</span>
+    </div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Επώνυμο:" %} </span><span class="pers-val">{{ request.user.last_name}}</span>
+    </div>
+    <div class="pers-info">
+        <span class="pers-label">{% trans "Ημερομηνία Έκδοσης:" %} </span><span class="pers-val">{% now "j N Y" %}</span>
+    </div>
+    <div style="padding-top:100px"></div>
+
+<!--OHDSI WORKSPACE-->
+
+{% if coh_dict or ir_dict_t or ir_dict_a or cp_dict or "ir" in report_notes or "char" in report_notes or "pathways" in report_notes %}
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας OHDSI" %}</div>
+{% endif %}
+
+{% if coh_dict or "char" in report_notes %}
+    <br>
+    <br>
+    <div class="view_title" >{% trans "Χαρακτηρισμός Πληθυσμού" %}</div>
+    {% for k,l in coh_dict.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}"></div>
+                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
+
+    {% for hash,note in report_notes.items %}
+            {%if hash == 'char' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >{% trans "Σημειώσεις για Χαρακτηρισμό Πληθυσμού" %}</div>
+                <br>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+{% endif %}
+
+{% if ir_dict_t or ir_dict_a or "ir" in report_notes  %}
+    <br>
+    <br>
+<div class="view_title" >{% trans "Ρυθμός Επίπτωσης" %}</div>
+    {% for k,l in ir_dict_a.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}" width="97%"></div>
+
+                <div style="padding-top:30px"><subt>{{ k }}</subt></div>
+        </div>
+
+    {% endfor %}
+
+    {% for k,l in ir_dict_t.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}" class="crop_img_pr"></div>
+            <br>
+            <br>
+                <subt>{{ k }}</subt>
+        </div>
+    {% endfor %}
+
+    {% for hash,note in report_notes.items %}
+            {% if hash == 'ir' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >{% trans "Σημειώσεις για Ρυθμό Επίπτωσης" %}</div>
+                <br>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+{% endif %}
+
+
+{% if cp_dict or "pathways" in report_notes %}
+    <br>
+    <br>
+    <div class="tg">
+    <div class="view_title" >{% trans "Ανάλυση Μονοπατιού" %}</div>
+    {% for k,l in cp_dict.items %}
+        <br>
+        <br>
+        <br>
+                <div style="margin-left: 20px;"><img src="{{ l }}" width="97%"></div>
+                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
+
+{% for hash,note in report_notes.items %}
+            {% if hash == 'pathways' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >{% trans "Σημειώσεις για Ανάλυση Μονοπατιού" %}</div>
+                <br>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+{% endif %}
+<!--OHDSI WORKSPACE END-->
+
+
+{% if empty_OpenFDA == '' and report_notes|hexdigest_in_dict %}
+<div style="padding-top:30px"></div>
+
+<div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
+<br>
+{% for k,v in dict_hash_combination.items %}
+    {% for hash,note in report_notes.items %}
+        {% if hash == k %}
+         <div class="tg">
+        <div style="margin-left: 20px;"></div>
+        <subt>{{ v }}</subt>
+        <div style="padding-bottom:30px"></div>
+        </div>
+
+        <div style="padding-bottom:30px"></div>
+
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+            <br>
+            <br>
+            <div class="notes_content">{{note}}</div>
+            <br>
+            <br>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% endif %}
+
+<!--For drug or condition only-->
+    {% if empty_OpenFDA and dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre  %}
+    <div style="padding-top:30px"></div>
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
+    <br>
+    <br>
+
+    {% for drug, con in all_combs%}
+        <div class="drug_event">{%if drug != '' %}{{drug}}{% else %}{{con}}{% endif %}</div>
+        <div style="padding-bottom:20px"></div>
+    {% endfor %}
+    {% endif %}
+
+<!--Notes-->
+
+{% if no_comb == "" %}
+    {% for hash,note in report_notes.items %}
+        {% if hash != 'empty' %}
+        <div style="padding-bottom:30px"></div>
+
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+            <br>
+            <br>
+            <div class="notes_content">{{note}}</div>
+            <br>
+            <br>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<!--End Notes-->
+<!--    Quickview-->
+    {% if dict_quickview %}
+        {% for key,value in dict_quickview.items %}
+            {% if value.2 or value.0 != '' %}
+        <div style="padding-bottom:30px"></div>
+                <div class="view_title">{% trans "Γρήγορη Επισκόπηση" %}</div>
+                <br>
+                <br>
+                <br>
+            {% endif %}
+
+            {% if value.0 != '' %}
+                <div class="tg">
+                <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ value.0 }}'>
+                <br>
+                <br>
+                <subt>{{value.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
+                </div>
+            <br>
+            <br>
+            {% endif %}
+            {% if value.2 %}
+                <div class="tg">
+                <div style="margin-left: 20px;">{{value.2|safe}}</div>
+                <subt>{{value.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
+                </div>
+                <br>
+                <br>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+        <!--Dashboard-->
+    {% if dict_dashboard_png or dict_dash_csv %}
+        <div style="padding-bottom:30px"></div>
+        <div class="view_title" >{% trans "Πίνακας Ελέγχου" %}</div>
+        <br>
+        <br>
+        <br>
+    {% for img,fig in dict_dashboard_png.items %}
+          <div class="tg">
+          <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+              <br>
+              <br>
+        <div class="fig"><br>{{fig}}</div>
+          <div style="padding-bottom:30px"></div>
+
+          </div>
+        {% endfor %}
+<!--        <div style="padding-bottom:30px"></div>-->
+
+        {% for key,value in dict_dash_csv.items %}
+            <div class="tg">
+            <div style="margin-left: 20px;">{{value.0|safe}}</div>
+            <subt> {{value.1}}-{{key}}</subt>
+            <div style="padding-bottom:30px"></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+<!--    End of Dashboard-->
+
+<!--Reporting Rates for Drug-->
+    {% if dict_rr_d %}
+        <div style="padding-bottom:30px"></div>
+        <div class="view_title" >{% trans "Λόγος Αναφορών" %}</div>
+    <br>
+    <br>
+    <br>
+        {% for key,value in dict_rr_d.items %}
+        <div class="tg">
+        <div style="margin-left: 20px;">{{value.0|safe}}</div>
+        <subt>{{value.1}} -{{key}}</subt>
+        <div style="padding-bottom:30px"></div>
+        </div>
+        {% endfor %}
+    {% endif %}
+<!--End of Reporting Rates for Drug-->
+
+<!--Reporting Rates for Event-->
+    {% if dict_rr_e %}
+        <div style="padding-bottom:30px"></div>
+        <div class="view_title" >{% trans "Λόγος Αναφορών" %}</div>
+        <br>
+        <br>
+        <br>
+        <br>
+        {% for key,value in dict_rr_e.items %}
+            <div class="tg">
+            <div style="margin-left: 20px;">{{value.0|safe}}</div>
+            <div style="padding-bottom:40px"></div>
+            <subt>{{value.1}} -{{key}}</subt>
+            <div style="padding-bottom:30px"></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+<!--End of Reporting Rates for Event-->
+
+<!--Likelihood for Drug-->
+{% if dict_lrTest_png or dict_lr %}
+    <div style="padding-bottom:30px"></div>
+    <div class="view_title" >{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</div>
+    <br>
+    <br>
+    {% for img, fig in dict_lrTest_png.items %}
+    <div class="tg">
+    <div style="padding-bottom:30px"></div>
+    <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+    <br>
+    <br>
+    <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων" %}</subt>
+    <div style="padding-bottom:30px"></div>
+    </div>
+    {% endfor %}
+
+    <div style="padding-bottom:30px"></div>
+
+    {% for key,value in dict_lr.items %}
+    <div class="tg">
+    <div style="margin-left: 20px;">{{value.0|safe}}</div>
+    <subt>{{value.1}} -{{key}}</subt>
+    <div style="padding-bottom:30px"></div>
+    </div>
+    {% endfor %}
+{% endif %}
+<!--End Likelihood for Drug-->
+
+<!--Likelihood for Event-->
+{% if dict_lreTest_png or dict_lre %}
+    <div style="padding-bottom:30px"></div>
+    <div class="view_title" >{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</div>
+    <br>
+    <br>
+        {% for img,fig  in dict_lreTest_png.items %}
+        <div class="tg">
+        <div style="padding-bottom:30px"></div>
+        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+        <br>
+        <br>
+        <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων" %}</subt>
+        <div style="padding-bottom:30px"></div>
+        </div>
+        {% endfor %}
+
+    <div style="padding-bottom:30px"></div>
+
+        {% for key,value in dict_lre.items %}
+        <div class="tg">
+        <div style="margin-left: 20px;">{{value.0|safe}}</div>
+        <subt>{{value.1}} -{{key}}</subt>
+        <div style="padding-bottom:30px"></div>
+        </div>
+        {% endfor %}
+{% endif %}
+<!--End Likelihood for Event-->
+
+<!--End for drug or con only-->
+
+<!--for combination of drug-condition-->
+
+{% for key1,val1 in dict1.items%}
+{% for key2,val2 in dict2.items%}
+
+{% if key1 == key2  %}
+
+{%if val1.0 != '' or val1.2 != '' or val2.0 != '' or val2.1 != '' or val2.2 != '' or val2.3 != '' or val2.4 != '' or val2.5 != '' or val2.6 != '' %}
+
+{% for k,v in dict_hash_combination.items %}
+{% if k == key1 %}
+<br>
+<br>
+<div class="drug_event">{{v}}</div>
+<br>
+<br>
+{% for hash,note in report_notes.items %}
+    {% if hash == k %}
+    <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+    <br>
+    <br>
+    <div class="notes_content">{{note}}</div>
+    <br>
+    <br>
+    {%endif%}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
+
+{% endif %}
+
+{% if val1.0 != '' or val1.2 != '' %}
+    <div class="view_title">{% trans "Γρήγορη Επισκόπηση" %}</div>
+    <br>
+    <br>
+    <br>
+    <br>
+        {% if val1.0 != '' %}
+            <div class="tg">
+            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val1.0}}'>
+            <br>
+            <br>
+            <subt>{{val1.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
+            <br>
+            <div class="details">&#9432; {% blocktrans %}Η ανάλυση μεταβολής μέσου (change in mean analysis), υπολογίζει σημεία αλλαγής,
+                μόνο όταν αλλάζει η μέση τιμή (mean) των δεδομένων.{% endblocktrans %}</div>
+            </div>
+                <br>
+                <br>
+        {%endif%}
+
+
+        {% if val1.2 != '' %}
+            <div class="tg">
+            <div style="margin-left: 20px;">{{ val1.2|safe }}</div>
+            <subt>{{val1.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+    <br>
+    <br>
+{%endif%}
+
+{% if val2.0 != '' or val2.2 != '' or val2.5 != '' or val2.8 != '' %}
+
+    <div class="view_title">{% trans "Δυναμικό PRR" %}</div>
+        <br>
+
+        {% if val2.0 != '' %}
+            <div class="tg">
+            <img width="90%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val2.0}}'>
+            <br>
+            <br>
+            <subt>{{val2.1}}- PRR over time </subt>
+            <br>
+            <div class="details">{% blocktrans %}&#9432;{% endblocktrans %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val2.2 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <div style="margin-left: 20px;">{{val2.3|safe}}</div>
+            <subt>{{val2.4}}{{val2.2|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Μηνιαίο και αθροιστικό πλήθος για συνδυασμό φαρμάκου-συμβάντος" %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val2.5 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <div style="margin-left: 20px;">{{val2.6|safe}}</div>
+            <subt>{{val2.7}}{{val2.5|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές" %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val2.8 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <div style="margin-left: 20px;">{{val2.9|safe}}</div>
+            <subt>{{val2.10}}{{val2.8|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές" %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+{% endif %}
+
+{% endif %}
+{% endfor %}
+
+{% for key3,val3 in dict3.items%}
+
+{% if key1 == key3  %}
+
+{%if val1.0 == '' and val1.2 == '' and val2.0 == '' and val2.2 == '' and val2.5 == '' and val2.8 == '' %}
+{%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
+
+{% for k,v in dict_hash_combination.items %}
+    {% if k == key1 %}
+        <br>
+        <br>
+        <div class="drug_event">{{v}} </div>
+        <br>
+        <br>
+        {% for hash,note in report_notes.items %}
+            {% if hash == k %}
+                <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+                <br>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            {%endif%}
+        {% endfor %}
+
+    {% endif %}
+{% endfor %}
+{% endif %}
+
+{% endif %}
+{%if val3.0 != '' or val3.3 != '' or val3.6 != '' or val3.9 != '' or val3.12 != '' or val3.15 != '' %}
+    <br>
+    <br>
+    <div class="view_title">{% trans "Ανάλυση Αλλαγής Σημείου" %}</div>
+        {% if val3.0 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <br>
+            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.1}}'>
+            <br>
+            <br>
+            <subt>{{val3.2}}{{val3.0}}</subt>
+            <br>
+            <div class="details">&#9432; {% blocktrans %}Το σημείο αλλαγής (changepoint) είναι μια στιγμή στο χρόνο, όπου οι στατιστικές ιδιότητες πριν και μετά από αυτό
+                το σημείο διαφέρουν. Καθώς πολλές αλλαγές λαμβάνουν χώρα, αυθόρμητα, σε υπό ανάλυση δεδομένα και καθώς πολλές
+                στατιστικές μέθοδοι υποθέτουν ότι αλλαγές «δεν υφίστανται» στα δεδομένα, η ανάλυση change point έχει βαρύτητα
+                τόσο στην εφαρμοσμένη όσο και στη θεωρητική στατιστική.
+                H ανάλυση ChangePoint, υπολογίζει το βέλτιστο σημείο και δυνητικά τον αριθμό των σημείων αλλαγής στα υπό ανάλυση
+                δεδομένα.{% endblocktrans %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val3.3 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.4}}'>
+            <br>
+            <br>
+            <subt>{{val3.5}}{{val3.3}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "H ανάλυση μεταβολής διακύμανσης, υπολογίζει σημεία αλλαγής, μόνο όταν αλλάζει η διακύμανση (variance) των δεδομένων." %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val3.6 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.7}}'>
+            <br>
+            <br>
+            <subt>{{val3.8}}{{val3.6|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% blocktrans %}Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), γίνεται η υπόθεση υπάρχει ένας άγνωστος
+                διαμερισμός μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε η μέση τιμή να είναι σταθερή σε κάθε μπλοκ.
+                Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση για μια κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε
+                κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.
+                Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση της εκ των υστέρων μέσης τιμής.
+                Αντίθετα από μια συχνοτική ή αλγοριθμική προσέγγιση στο πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές
+                εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις
+                της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη τοποθεσία.{% endblocktrans %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val3.9 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.10}}'>
+            <br>
+            <br>
+            <subt>{{val3.11}}{{val3.9|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Αναφορές φαρμάκων-συμβάντων ανά διάγραμμα ημερομηνίας." %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val3.12 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <div style="margin-left: 20px;">{{val3.13|safe}}</div>
+            <subt>{{val3.14}}{{val3.12|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για τα φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές. Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων." %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+        {% if val3.15 != '' %}
+            <div class="tg">
+            <br>
+            <br>
+            <br>
+            <div style="margin-left: 20px;"> {{val3.16|safe}}</div>
+            <subt>{{val3.17}}{{val3.15|safe}}</subt>
+            <br>
+            <div class="details">&#9432; {% trans "Πίνακας συχνοτήτων για τα συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές. Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς φαρμάκων-συμβάντων." %}</div>
+            <br>
+            <br>
+            </div>
+        {% endif %}
+{% endif %}
+{% endif %}
+        {% endfor %}
+
+        {%endfor%}
+<!--End for combination of drug-condition-->
+
+<!--PubMed Workspace-->
+{% if pub_exist  %}
+<div style="padding-top:30px"></div>
+
+<div class="workspace">{% trans "Περιβάλλον Εργασίας PubMed" %}</div>
+    <br>
+    {% if pub_tobjs %}
+        <div class="view_title" style="width:50%" >{% trans "Άρθρα σχετικά με το παρόν σενάριο" %}</div>
+        <br>
+        <br>
+
+        {% for pto in pub_tobjs %}
+            <div class="row report-citation">
+                <span>[{{ forloop.counter }}]. </span>
+                <span>{{ pto.authors }}. </span>
+                <span>({{ pto.pubdate|str_to_date|date:"Y, M d" }}). </span>
+                <span><em>{{ pto.title }}. </em></span>
+                <a href="{{ pto.url }}" target="_blank">{{ pto.url }}</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if pub_nobjs %}
+        <div class="tg" style="padding-top:50px;">
+            <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+            <br>
+            <br>
+            <div class="notes_content">
+                <table class="notes-tbl">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Τίτλος" %} </th>
+                            <th>{% trans "Σημειώσεις" %} </th>
+                        </tr>
+
+
+                    </thead>
+                    <tbody>
+                        {% for pno in pub_nobjs %}
+                            <tr>
+                                <td>{{ pno.title }}</td>
+                                <td>{{ pno.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <br>
+        </div>
+    {% endif %}
+{% endif %}
+<!--End of PubMed Workspace-->
+
+<!--Extra-notes-->
+{% if extra_notes %}
+    <div class="final-note" >
+        {% if extra_notes != 'empty' %}
+            <div class="view_title" style="width:50%">-{% trans "Συγκεντρωτικές σημειώσεις για την αναφορά" %}</div>
+        <br>
+        <br>
+          <div class="details"> {{ extra_notes }} </div>
+        {% endif %}
+    </div>
+{% else %}
+    <textarea id="editFnote" placeholder='{% trans "Κρατήστε εδώ τις σημειώσεις σας..." %}'></textarea>
+{% endif %}
+<!--End of extra_notes-->
+</div>
+</body>
+</html>

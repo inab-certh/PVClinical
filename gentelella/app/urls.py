@@ -1,3 +1,5 @@
+from django.conf.urls.static import static
+from django.conf import settings
 from django.urls import path, re_path, include
 from app import views
 from django.views.generic.base import RedirectView
@@ -37,6 +39,7 @@ urlpatterns = [
     path('ajax/conds-nodes-ids', views.get_conditions_nodes_ids, name='conds_nodes_ids'),
     path('ajax/get-note-content', views.get_note_content, name='get_note_content'),
     path('ajax/get-note', views.get_note, name='get_note'),
+    path('ajax/openfda-screenshots-exist', views.openfda_screenshots_exist, name='openfda-screenshots-exist'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('ohdsi-workspace/<int:scenario_id>', views.ohdsi_workspace, name='ohdsi_workspace'),
@@ -57,6 +60,33 @@ urlpatterns = [
     path("notes/dashboard", views.allnotes, name='allnotes'),
     path("social-media/<int:sc_id>", views.social_media, name='social_media_workspace'),
 
+    path("final_report", views.final_report, name='final_report'),
+    path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
+    path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
+    path("report_pdf/<int:scenario_id>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>/<str:pub_titles>", views.report_pdf,
+         name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>/<str:pub_titles>/<str:pub_notes>",
+         views.report_pdf, name='report_pdf'),
+    path("ajax/print_report", views.print_report, name='ajax_print_report'),
+    path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
+    path("patient_management_workspace/new_case", views.new_case, name='new_case'),
+    path("patient_management_workspace/new_case/<int:quest_id>/<str:patient_id>/<int:sc_id>/", views.new_case, name='new_case'),
+    path("patient_management_workspace/new_case/questionnaire", views.questionnaire, name='questionnaire'),
+    path("patient_management_workspace/new_case/questionnaire/<str:patient_id>/<int:sc_id>/", views.questionnaire, name='questionnaire'),
+
+    path("patient_management_workspace/new_case/questionnaire/<int:pk>/<int:scen_id>/<str:pat_id>/", views.answers_detail, name='answers_detail'),
+    path("ajax/new_case", views.new_case, name='ajax_new_case'),
+    path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
+    path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history, name='patient_history'),
+
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

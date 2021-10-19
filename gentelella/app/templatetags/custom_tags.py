@@ -3,7 +3,7 @@ Created on Dec 14, 2018
 
 @author: b.dimitriadis
 '''
-
+import datetime
 from django import template
 
 
@@ -29,5 +29,22 @@ def remove_char(string, char):
     return string.replace(char, "")
 
 @register.filter
+def get_elmnt_by_val(lst, val):
+    return (list(filter(lambda el: el.get("id") == val, lst)) + [None])[0]
+
+@register.filter
+def get_elmnt_by_index(lst, indx):
+    return lst[indx]
+
+@register.filter
 def underscore_char(string, char):
     return string.replace(char, "_")
+
+@register.filter
+def hexdigest_in_dict(dic):
+    import string
+    return len(list(filter(lambda el: all(c in string.hexdigits for c in el) and len(el) == 32, dic.keys()))) > 0
+
+@register.filter
+def str_to_date(dt):
+    return datetime.datetime.strptime(dt.replace(" ", ""), "%Y-%m-%d").date()

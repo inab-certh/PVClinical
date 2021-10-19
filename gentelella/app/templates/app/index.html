@@ -38,6 +38,7 @@
                     <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                     <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
                     <th>{% trans "Επεξεργασία" %}</th>
+                    <th>{% trans "Αναφορά" %}</th>
                     <th>{% trans "Διαγραφή" %}</th>
                   </tr>
                 </thead>
@@ -140,7 +141,13 @@
                       </td>
 
                       <td>
-                        <button class="btn btn-outline delete-sc-btn" data-toggle="modal" data-target="#scDeleteConfirmModal" data-scid="{{ scenario.id }}" type="button">
+                        <button class="btn btn-outline report-btn" data-href="{% url 'final_report' scenario.id %}">
+                          <i class="fas fa-file-pdf"></i>
+                        </button>
+                      </td>
+
+                      <td>
+                        <button class="btn btn-outline delete-sc-btn" data-scid="{{ scenario.id }}" type="button">
                           <i class="fa fa-trash"></i>
                         </button>
                       </td>
@@ -153,6 +160,7 @@
           </div>
         <a href="{% url 'add_scenario' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i> {% trans "Προσθήκη σεναρίου" %}</a>
         </div>
+
     </div>
   </div>
 
@@ -168,7 +176,8 @@
       $("#aggrNotesBtn").attr("data-url", url);
 
 
-      $(".delete-sc-btn").on("click", function () {
+      $(document).on("click", ".delete-sc-btn", function () {
+        $("#scDeleteConfirmModal").modal("show");
         // On trash can button click, pass record id to modal confirm btn
         $("#confirmBtn").data("record", $(this).data("scid"));
 
@@ -181,3 +190,11 @@
 
 {% endblock javascripts %}
 
+{% block modals %}
+  {{ block.super }}
+  {% trans "Επιβεβαίωση τροφοδότησης αναφοράς" as mod_title %}
+  {% trans "Η διαδικασία αυτή μπορεί να έχει μεγάλη διάρκεια! Είστε σίγουροι ότι επιθυμείτε να προχωρήσετε;" as mod_body%}
+  {% trans "Επιβεβαίωση" as main_lbl%}
+  {% trans "Ακύρωση" as dismiss_lbl %}
+  {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="genReportConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl %}
+{% endblock modals%}

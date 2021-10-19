@@ -90,4 +90,27 @@ $(function() {
             location.reload();
         }
     });
+
+
+
+
+    $(document).on("click", "button.report-btn", function (){
+        $("#genReportConfirmModal").modal("show");
+        var new_location = $(this).attr("data-href");
+        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
+            $("#genReportConfirmModal").modal("hide");
+            $("#loaderOverlay").fadeIn();
+            window.location = new_location;
+        }
+        )
+    });
 });
+
+
+// document.onreadystatechange = function() {
+//     if (document.readyState !== "complete") {
+//         $("#loaderOverlay").fadeIn();
+//     } else {
+//         $("#loaderOverlay").fadeOut();
+//     }
+// };

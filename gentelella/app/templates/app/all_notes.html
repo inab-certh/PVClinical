@@ -42,7 +42,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for note in notesforexample %}
+                        {% for note in notesforscenario %}
                         {% if note.workspace != PubMed %}
                         <tr>
                             <td>{{ note.scenario_title }}</td>
@@ -63,7 +63,7 @@
                         {% endif%}
                         {% endfor %}
 
-                        {% for note in pubmedexample %}
+                        {% for note in notespubmed %}
                         <tr>
                             <td>{{ note.scenario_title }}</td>
 
@@ -82,7 +82,7 @@
                         </tr>
                         {% endfor %}
 
-                        {% for note in notesforexample1 %}
+                        {% for note in notesfornonescen %}
                         <tr>
                             <td>{{ note.scenario }}</td>
 
@@ -90,11 +90,9 @@
 
                             <td class="cen">{{ note.workspace }}</td>
 
-                            <td>{{ note.wsview_title }}</td>
+                            <td><p class="notesellipsis">{{ note.wsview_title }}</p></td>
 
-                            <td class="notesellipsis" >
-                                {{ note.content|striptags }}
-                            </td>
+                            <td ><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
 
                             <td class="cen">
                                 <button class="btn notes-btn btn-white" type="button" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}", data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
@@ -103,6 +101,7 @@
                             </td>
                         </tr>
                         {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
