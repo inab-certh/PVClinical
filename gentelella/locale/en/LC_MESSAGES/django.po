@@ -804,29 +804,6 @@ msgstr ""
 "Choose the piece of information you would like to include to the final "
 "report from OHDSI workspace"
 
-#: app/templates/app/final_report.html:103
-#: app/templates/app/final_report.html:106
-#: app/templates/app/ohdsi_workspace.html:54
-#: app/templates/app/ohdsi_workspace.html:127
-#: app/templates/app/report_pdf.html:77 app/views.py:1273
-msgid "Ρυθμός Επίπτωσης"
-msgstr "Incidence Rate"
-
-#: app/templates/app/final_report.html:117
-#: app/templates/app/final_report.html:120
-#: app/templates/app/ohdsi_workspace.html:65
-#: app/templates/app/ohdsi_workspace.html:138
-#: app/templates/app/report_pdf.html:48 app/views.py:663 app/views.py:1273
-msgid "Χαρακτηρισμός Πληθυσμού"
-msgstr "Cohort Characterization"
-
-#: app/templates/app/final_report.html:131
-#: app/templates/app/final_report.html:134
-#: app/templates/app/ohdsi_workspace.html:158
-#: app/templates/app/pathways.html:130 app/views.py:1274
-msgid "Μονοπάτι Ακολουθίας Συμβάντων"
-msgstr "Cohort Pathways"
-
 #: app/templates/app/final_report.html:154
 msgid "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας,"
 msgstr " If you want to include something from OpenFDA in your report,"
