@@ -885,24 +885,11 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = '/dashboard'
-
-
+            url = '/'
             return redirect(url)
 
-
     else:
-
-        client_id = 8886
-        redirect_uri = "http://127.0.0.1:8000/"
-        client_secret = "75nLSO6SJtSD8um3"
-        mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-
-        auth = mendeley.start_implicit_grant_flow()
-
-        login_url = auth.get_login_url()
-
-        url = '/dashboard'
+        url = '/'
 
         return redirect(url)
 
