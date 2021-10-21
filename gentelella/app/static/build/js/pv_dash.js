@@ -78,6 +78,8 @@ $(function() {
         var iframe_cnts = modal_iframe.contents();
         iframe_cnts.find(".alert-geninfo").hide();
         iframe_cnts.find(".scenario-details").hide();
+        iframe_cnts.find("#breadcrumbNav").hide();
+
     });
 
     $(".viewModal").on('hidden.bs.modal', function () {
@@ -86,8 +88,9 @@ $(function() {
     });
 
     $("#pubMedNotesModal, .notesModal").on('hidden.bs.modal', function () {
-        if(window.location.href.indexOf("/notes/dashboard")!==-1){
+        if(window.location.href.indexOf("/notes")!==-1){
             location.reload();
         }
     });
+
 });
