@@ -25,6 +25,12 @@ $(function() {
         }
     });
 
+    $(".ws-menu.btn-group>ul>li>a").on("click", function(){
+        if(!$(this).attr("href").endsWith("#")) {
+            $("#loaderOverlay").fadeIn();
+        }
+    });
+
     $("div.scenario-info a.has-popover").on('click',function(e){
         e.preventDefault();
     });
@@ -72,6 +78,8 @@ $(function() {
         var iframe_cnts = modal_iframe.contents();
         iframe_cnts.find(".alert-geninfo").hide();
         iframe_cnts.find(".scenario-details").hide();
+        iframe_cnts.find("#breadcrumbNav").hide();
+
     });
 
     $(".viewModal").on('hidden.bs.modal', function () {
@@ -80,8 +88,9 @@ $(function() {
     });
 
     $("#pubMedNotesModal, .notesModal").on('hidden.bs.modal', function () {
-        if(window.location.href.indexOf("/notes/dashboard")!==-1){
+        if(window.location.href.indexOf("/notes")!==-1){
             location.reload();
         }
     });
+
 });
