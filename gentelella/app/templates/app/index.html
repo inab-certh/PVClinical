@@ -44,9 +44,9 @@
                 <tbody>
                   {% for scenario in scenarios %}
                     <tr>
-                      <td><a href="{% url 'OpenFDAWorkspace' scenario.id %}">{{ forloop.counter }}</a></td>
+                      <td><a href={% url 'edit_scenario' scenario.id %}>{{ forloop.counter }}</a></td>
                       <td>
-                        <a class="has-popover" href="{% url 'OpenFDAWorkspace' scenario.id %}" data-html="true" data-content="
+                        <a class="has-popover" href="{% url 'edit_scenario' scenario.id %}" data-html="true" data-content="
                           <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
                                   <thead>
                                     <tr>
@@ -96,21 +96,19 @@
                         <table>
                           <tr>
                             <td>
+                              <a href="{% url 'OpenFDAWorkspace' scenario.id %}">
+                                <!--<i class="fa fa-eye"></i>-->
+                                  <img class="img-icon" src="{% static 'images/openFDA.png' %}">
+                              </a>
+                            </td>
+                            <td>
                               <a href="{% url 'ohdsi_workspace' scenario.id %}">
                                 <!--<i class="fa fa-eye"></i>-->
                                 <!--<span class="badge">-->
                                   <img class="img-icon" src="{% static 'images/ohdsi.png' %}">
                                 <!--</span>-->
-
                               </a>
-                            </td>
-                            <td>
-                              <a href="{% url 'OpenFDAWorkspace' scenario.id %}">
-                                <!--<i class="fa fa-eye"></i>-->
-
-                                  <img class="img-icon" src="{% static 'images/openFDA.png' %}">
-                              </a>
-                            </td>
+                           </td>
                           </tr>
                           <tr>
                             <td>
