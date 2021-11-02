@@ -1138,7 +1138,7 @@ msgstr "Send To"
 
 #: app/templatetags/custom_tags.py:42
 msgid "Αρχική Σελίδα"
-msgstr ""
+msgstr "Dashboard"
 
 #: app/templatetags/custom_tags.py:50
 msgid "Περιβάλλον Εργασίας OpenFDA"
