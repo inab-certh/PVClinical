@@ -1322,9 +1322,10 @@ geturlquery <- reactive({
   # q$t2<-"10003239"
   # # q$t1<-"G01AE10"
   # q$t2<-"10079622"
+  # q$t1<-"A02BC01"
+  # q$t2<-"10021015"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<- FALSE
-  # browser()
+  # q$concomitant<-FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2) 
@@ -1493,24 +1494,24 @@ observeEvent(input$sourceEventDataReportUI,{
       }
     }
 })
-
-observeEvent(input$date1, {
-  
-  if (abs(input$date2-input$date1)>365){
-    updateDateInput(session, "date2",
-                    value=input$date1+365
-    )
-  }
-})
-
-observeEvent(input$date2, {
-  
-  if (abs(input$date2-input$date1)>365){
-    updateDateInput(session, "date1",
-                    value=input$date1-365
-    )
-  }
-})
+# 
+# observeEvent(input$date1, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date2",
+#                     value=input$date1+365
+#     )
+#   }
+# })
+# 
+# observeEvent(input$date2, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date1",
+#                     value=input$date1-365
+#     )
+#   }
+# })
 
 
 output$infoquery_counts2<-renderUI({

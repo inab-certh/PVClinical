@@ -160,8 +160,10 @@ def get_conditions_nodes_ids(request):
         medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
+    # rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+    #     "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
+        "{0}___llt[\S]+?|{0}___pt[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
 
     rel_conds_lst = list(chain.from_iterable(rel_conds_lst))
 
@@ -802,8 +804,22 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
     # ac_token = requests.get('access_token')
 
-    all_combs = list(product([d.name for d in drugs] or [""],
-                             [c.name for c in conditions] or [""]))
+    all_combs = list(product([d.name.upper() for d in drugs] or [""],
+                             [c.name.upper() for c in conditions] or [""]))
+
+    #Create query string for PubMed with all combinations
+    if len(all_combs) > 1 and drugs and conditions:
+        string_list = [' AND '.join(item) for item in all_combs]
+        final_string = ') OR ('.join(map(str, string_list))
+        query = '(' + final_string + ')'
+    elif drugs and not conditions:
+        query = ' AND '.join(map(str, drugs))
+    elif conditions and not drugs:
+        query = ' OR '.join(map(str, conditions))
+    else:
+        query = all_combs[0]
+
+    # print(all_combs)
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
@@ -811,6 +827,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
+                "title": sc.title,
                 "timestamp": sc.timestamp
                 }
 
@@ -839,36 +856,47 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if page_id == None:
                 page_id = 1
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
+                # print(results[1])
+                # print(records)
             else:
 
                 start = 10*page_id - 10
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
 
-            pages_no = ceil(total_results/10)
+            pages_no = ceil(total_results/10) + 1
+            # pages_no = (total_results / 10) + 1
             pages = list(range(1, pages_no))
             if first != None and end != None:
                 dates = [str(first), str(end)]
@@ -877,7 +905,6 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
-
 
             return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results, 'dates':dates})
 
