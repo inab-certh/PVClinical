@@ -1067,3 +1067,45 @@ def name_entities_group(entities_names, domain="", owner="", sid=""):
     return "{}{}{}{}".format(domain if domain not in name_sec_part else "",
                              "s" if len(entities_names) > 1 and domain not in ["ir", "char", "cp"] else "",
                          " - " if domain not in name_sec_part else "", name_sec_part)
+
+
+def generate_ir_analysis(ir_id, **options):
+    """ Helper function for generating ir analysis
+    :param ir_id: the id of the incidence rate analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if ir_id:
+        response = requests.get("{}/ir/{}/execute/{}".format(settings.OHDSI_ENDPOINT, ir_id, settings.OHDSI_CDM_NAME),
+                                headers=headers)
+
+    return response.status_code if response else 400
+
+
+def delete_ir_analysis(ir_id, **options):
+    """ Helper function for deleting ir analysis
+    :param ir_id: the id of the incidence rate analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if ir_id:
+        response = requests.delete("{}/ir/{}/info/{}".format(settings.OHDSI_ENDPOINT, ir_id, settings.OHDSI_CDM_NAME),
+                                headers=headers)
+
+    return response.status_code if response else 400
