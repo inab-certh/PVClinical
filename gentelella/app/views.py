@@ -8,7 +8,7 @@ from itertools import chain
 from itertools import product
 
 from django.conf import settings
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -114,9 +114,32 @@ def filter_whole_set(request):
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
     data={}
-    data["results"]=[{"id":elm, "text":elm} for elm in subset]
+    data["results"] = [{"id":elm, "text":elm} for elm in subset]
 
     return JsonResponse(data)
+
+# @csrf_exempt
+def gen_ir_analysis(request):
+    """ Generate ir analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.generate_ir_analysis(ir_id)
+
+    return JsonResponse({}, status=resp_status)
+
+
+def del_ir_analysis(request):
+    """ Delete ir analysis callback
+    :param request:
+    :return: the response from the deletion attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.delete_ir_analysis(ir_id)
+    return JsonResponse({"status": resp_status})
 
 
 def get_all_drugs(request):
@@ -470,6 +493,7 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
                     "results_url": results_url,
                     "read_only": read_only,
                     "form": irform,
+
                     "title": _("Ανάλυση Ρυθμού Επίπτωσης")
                 }
                 return render(request, 'app/ir.html', context, status=500)
@@ -539,6 +563,8 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
         "read_only": read_only,
         "form": irform,
         "add_info": additional_info,
+        "ohdsi_endpoint": settings.OHDSI_ENDPOINT,
+        "ohdsi_cdm_name": settings.OHDSI_CDM_NAME,
         "title": _("Ανάλυση Ρυθμού Επίπτωσης")
     }
 
@@ -652,7 +678,8 @@ def drug_exposure(request):
 
     context = {
         "de_url": de_url,
-        "title": _("Έκθεση σε φάρμακα")
+        "title": _("Έκθεση σε φάρμακα"),
+        "ohdsi_atlas": settings.OHDSI_ATLAS
     }
 
     return render(request, 'app/drug_exposure.html', context)

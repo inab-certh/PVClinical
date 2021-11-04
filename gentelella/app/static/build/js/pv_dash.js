@@ -93,4 +93,13 @@ $(function() {
         }
     });
 
+    $(window).load(function() {
+        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
+            // $("ol.breadcrumb li.breadcrumb-item.active");
+        var prev_active_bc_a=prev_active_breadcrumb.find("a");
+        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
+            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
+        }
+    });
+
 });
