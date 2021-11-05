@@ -1087,7 +1087,7 @@ def generate_ir_analysis(ir_id, **options):
         response = requests.get("{}/ir/{}/execute/{}".format(settings.OHDSI_ENDPOINT, ir_id, settings.OHDSI_CDM_NAME),
                                 headers=headers)
 
-    return response.status_code if response else 400
+    return response.status_code if response else 500
 
 
 def delete_ir_analysis(ir_id, **options):
@@ -1109,3 +1109,47 @@ def delete_ir_analysis(ir_id, **options):
                                 headers=headers)
 
     return response.status_code if response else 400
+
+
+def generate_char_analysis(char_id, **options):
+    """ Helper function for generating ir analysis
+    :param char_id: the id of the characterization analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if char_id:
+        response = requests.post("{}/cohort-characterization/{}/generation/{}".format(settings.OHDSI_ENDPOINT, char_id,
+                                                                                      settings.OHDSI_CDM_NAME),
+                                 headers=headers)
+
+    return response.status_code if response else 500
+
+
+def generate_cp_analysis(cp_id, **options):
+    """ Helper function for generating ir analysis
+    :param cp_id: the id of the pathway analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if cp_id:
+        response = requests.post("{}/pathway-analysis/{}/generation/{}".format(settings.OHDSI_ENDPOINT, cp_id,
+                                                                                      settings.OHDSI_CDM_NAME),
+                                 headers=headers)
+
+    return response.status_code if response else 500

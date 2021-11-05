@@ -142,6 +142,28 @@ def del_ir_analysis(request):
     return JsonResponse({"status": resp_status})
 
 
+def gen_char_analysis(request):
+    """ Generate char analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    char_id = json.loads(request.GET.get("char_id", None))
+    resp_status = ohdsi_wrappers.generate_char_analysis(char_id)
+    return JsonResponse({}, status=resp_status)
+
+
+def gen_cp_analysis(request):
+    """ Generate pathway analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    cp_id = json.loads(request.GET.get("cp_id", None))
+    resp_status = ohdsi_wrappers.generate_cp_analysis(cp_id)
+    return JsonResponse({}, status=resp_status)
+
+
 def get_all_drugs(request):
     """ Get all cached drugs
     :param request:
@@ -606,7 +628,18 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
     if view_type == "quickview":
         char_options["features"] = char_options.get("features", []) + list(map(lambda el: el.get("id"), filter(
             lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
-    #     print(char_options)
+        rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
+
+        # if rstatus == 200:
+        #     messages.success(
+        #         request,
+        #         _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+        #     return HttpResponseRedirect(reverse('edit_char', args=(sc_id, char_id,)))
+        # else:
+        #     messages.error(
+        #         request,
+        #         _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+        #     status_code = 500
 
     # delete_switch = "enabled" if ir_exists else "disabled"
 
