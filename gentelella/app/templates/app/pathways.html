@@ -11,6 +11,9 @@
 
 	<!-- Select 2 css -->
 	{{ form.media.js }}
+    <script type="text/javascript">
+        var cp_id = "{{ cp_id }}";
+    </script>
     <script src='{% static "build/js/pathways.js" %}'></script>
     {% if read_only == 0 %}
         <script>
@@ -90,7 +93,7 @@
                 </span>
             </button>
 
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisCpModal" type="button">
+            <button id="cpAnalysisBtn" class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisCpModal" type="button">
                     <i class="fa fa-bar-chart"></i>
                     <span class="visible-lg">
                         {% trans "Ανάλυση" %}
