@@ -41,7 +41,7 @@
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" name="drugCheckBox" value="{{ drug.name }}-{{ drug.code }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" data-code = "{{drug.code}}" name="drugCheckBox" value="{{ drug.name }}-{{ drug.code }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ drug.name }} ({{ drug.code }})</label>
                                                 </div>
@@ -768,7 +768,7 @@
                  var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
@@ -794,7 +794,7 @@
                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
