@@ -8,7 +8,9 @@
 
 {% block javascripts %}
     {{ block.super }}
-
+    <script type="text/javascript">
+        var ir_id = "{{ ir_id }}";
+    </script>
 	<!-- Select 2 css -->
 	{{ form.media.js }}
     <script src='{% static "build/js/ir.js" %}'></script>
@@ -138,7 +140,7 @@
                 </span>
             </button>
 
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
+            <button id="irAnalysisBtn" class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
                     <i class="fa fa-bar-chart"></i>
                     <span class="visible-lg">
                         {% trans "Ανάλυση" %}

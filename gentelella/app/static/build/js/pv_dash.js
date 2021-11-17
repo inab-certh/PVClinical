@@ -93,4 +93,28 @@ $(function() {
         }
     });
 
+    $(window).load(function() {
+        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
+        var prev_active_bc_a=prev_active_breadcrumb.find("a");
+        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
+            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
+        }
+    });
+
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
