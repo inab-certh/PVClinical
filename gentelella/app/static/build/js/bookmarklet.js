@@ -51598,9 +51598,7 @@ module.exports = function (modules) {
             }
         }
     }() : function nonStandardBrowserEnv() {
-                console.log("nnnnnndfsdfsfs");
         return {
-
             write: function write() {
             }, read: function read() {
                 return null
@@ -51639,7 +51637,7 @@ module.exports = function (modules) {
                 pathname: urlParsingNode.pathname.charAt(0) === "/" ? urlParsingNode.pathname : "/" + urlParsingNode.pathname
             }
         }
-        console.log("fdfdfdfdfdf");
+
         originURL = resolveURL(window.location.href);
         return function isURLSameOrigin(requestURL) {
             var parsed = utils.isString(requestURL) ? resolveURL(requestURL) : requestURL;
