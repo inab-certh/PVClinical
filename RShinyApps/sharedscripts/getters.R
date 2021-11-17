@@ -179,7 +179,7 @@ getcounts999 <- function( session, v, t, count, limit=10,
   #     browser()
   #   }
   #   mydf <- mylist$result
-  browser()
+  # browser()
   # Refactor
   if ( v[2] == "patient.reaction.reactionmeddrapt.exact"){
     # con <- mongo("fda", url = "mongodb://127.0.0.1:27017/medical_db")

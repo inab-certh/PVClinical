@@ -160,8 +160,10 @@ def get_conditions_nodes_ids(request):
         medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
+    # rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+    #     "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
+        "{0}___llt[\S]+?|{0}___pt[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
 
     rel_conds_lst = list(chain.from_iterable(rel_conds_lst))
 
@@ -190,7 +192,7 @@ def index(request):
     # print(request.META.get('HTTP_REFERER'))
 
     scenarios = []
-    for sc in Scenario.objects.order_by('-timestamp').all():
+    for sc in Scenario.objects.filter(owner=request.user).order_by('-timestamp').all():
         scenarios.append({
             "id": sc.id,
             "title": sc.title,
@@ -345,30 +347,33 @@ def ohdsi_workspace(request, scenario_id=None):
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + [conditions_cohort])), "ir")
+                                                              [drugs_cohort] + [conditions_cohort])),
+                                                     domain="ir", owner=sc.owner, sid=sc.id)
         ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
         if ir_ent:
             ir_id = ir_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+            res_st, res_json = ohdsi_wrappers.create_ir(sc.owner, sc.id, [drugs_cohort], [conditions_cohort])
             ir_id = res_json.get("id")
 
         cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + conditions_distinct_cohorts)), "cp")
+                                                              [drugs_cohort] + conditions_distinct_cohorts)),
+                                                     domain="cp", owner=sc.owner, sid=sc.id)
         cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
 
         if cp_ent:
             cp_id = cp_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_cp([drugs_cohort], conditions_distinct_cohorts)
+            res_st, res_json = ohdsi_wrappers.create_cp(sc.owner, sc.id, [drugs_cohort], conditions_distinct_cohorts)
             cp_id = res_json.get("id")
 
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
-                                                                filter(None,[drugs_cohort, conditions_cohort]))), "char")
+                                                                filter(None,[drugs_cohort, conditions_cohort]))),
+                                                       domain="char", owner=sc.owner, sid=sc.id)
 
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
@@ -376,7 +381,8 @@ def ohdsi_workspace(request, scenario_id=None):
             char_id = char_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
+            res_st, res_json = ohdsi_wrappers.create_char(sc.owner, sc.id,
+                                                          list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
 
     all_drugs_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All drugs cohort") or {}
@@ -798,8 +804,22 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
     # ac_token = requests.get('access_token')
 
-    all_combs = list(product([d.name for d in drugs] or [""],
-                             [c.name for c in conditions] or [""]))
+    all_combs = list(product([d.name.upper() for d in drugs] or [""],
+                             [c.name.upper() for c in conditions] or [""]))
+
+    #Create query string for PubMed with all combinations
+    if len(all_combs) > 1 and drugs and conditions:
+        string_list = [' AND '.join(item) for item in all_combs]
+        final_string = ') OR ('.join(map(str, string_list))
+        query = '(' + final_string + ')'
+    elif drugs and not conditions:
+        query = ' AND '.join(map(str, drugs))
+    elif conditions and not drugs:
+        query = ' OR '.join(map(str, conditions))
+    else:
+        query = all_combs[0]
+
+    # print(all_combs)
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
@@ -807,6 +827,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
+                "title": sc.title,
                 "timestamp": sc.timestamp
                 }
 
@@ -835,36 +856,47 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if page_id == None:
                 page_id = 1
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
+                # print(results[1])
+                # print(records)
             else:
 
                 start = 10*page_id - 10
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
 
-            pages_no = ceil(total_results/10)
+            pages_no = ceil(total_results/10) + 1
+            # pages_no = (total_results / 10) + 1
             pages = list(range(1, pages_no))
             if first != None and end != None:
                 dates = [str(first), str(end)]
@@ -874,31 +906,17 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
 
-
             return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results, 'dates':dates})
 
         except Exception as e:
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = '/dashboard'
-
-
+            url = '/'
             return redirect(url)
 
-
     else:
-
-        client_id = 8886
-        redirect_uri = "http://127.0.0.1:8000/"
-        client_secret = "75nLSO6SJtSD8um3"
-        mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-
-        auth = mendeley.start_implicit_grant_flow()
-
-        login_url = auth.get_login_url()
-
-        url = '/dashboard'
+        url = '/'
 
         return redirect(url)
 
@@ -1484,8 +1502,8 @@ def social_media(request, sc_id):
         # Retrieve scenario conditions
         conditions = sc.conditions.all()
 
-        all_combs = list(product(sorted([d.name for d in drugs]) or [""],
-                                 sorted([c.name for c in conditions]) or [""]))
+        all_combs = list(product(sorted(set([d.name for d in drugs])) or [""],
+                                 sorted(set([c.name for c in conditions])) or [""]))
 
         all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
         twitter_query = " OR ".join(all_combs)

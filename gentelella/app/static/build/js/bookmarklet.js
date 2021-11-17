@@ -51585,8 +51585,11 @@ module.exports = function (modules) {
                 }
                 if (secure === true) {
                     cookie.push("secure")
+                    cookie.push("SameSite=None")
                 }
+
                 document.cookie = cookie.join("; ")
+
             }, read: function read(name) {
                 var match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
                 return match ? decodeURIComponent(match[3]) : null
@@ -51595,7 +51598,9 @@ module.exports = function (modules) {
             }
         }
     }() : function nonStandardBrowserEnv() {
+                console.log("nnnnnndfsdfsfs");
         return {
+
             write: function write() {
             }, read: function read() {
                 return null
@@ -51634,7 +51639,7 @@ module.exports = function (modules) {
                 pathname: urlParsingNode.pathname.charAt(0) === "/" ? urlParsingNode.pathname : "/" + urlParsingNode.pathname
             }
         }
-
+        console.log("fdfdfdfdfdf");
         originURL = resolveURL(window.location.href);
         return function isURLSameOrigin(requestURL) {
             var parsed = utils.isString(requestURL) ? resolveURL(requestURL) : requestURL;

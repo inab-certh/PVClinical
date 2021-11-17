@@ -25,95 +25,98 @@
                 <div>
                     <div class="tab-content" style="margin-left: 20px;">
                         <div class="tab-pane active" role="tabpanel" id="tab-1">
-                            <div class="row drug-events-selection-row">
-                                <div class="col drugSelectionCol">
-                                    <div id="drugCheckBoxes">
-                                        <fieldset>
-                                            <legend class="legend-margins">
-                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>
-                                                <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
-                                            </legend>
-                                            {% for drug in scenario.drugs %}
-                                                <div class="custom-control custom-checkbox custom-control-inline"
-                                                     href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input drugchkBox {{ drug.name }}" name="drugCheckBox" value="{{ drug.name }}" checked>
-                                                    <label class="custom-control-label"
-                                                           for="customCheck1">{{ drug.name }}</label>
-                                                </div>
-                                            {% endfor %}
+                             <legend class="legend-margins">
+                                <p class="DrugEventParameter">{{ scenario.title }}</p>
+                             </legend>
+<!--                            <div class="row drug-events-selection-row">-->
+<!--                                <div class="col drugSelectionCol">-->
+<!--                                    <div id="drugCheckBoxes">-->
+<!--                                        <fieldset>-->
+<!--                                            <legend class="legend-margins">-->
+<!--                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>-->
+<!--                                                <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>-->
+<!--                                            </legend>-->
+<!--                                            {% for drug in scenario.drugs %}-->
+<!--                                                <div class="custom-control custom-checkbox custom-control-inline"-->
+<!--                                                     href="#tab-1">-->
+<!--                                                    <input type="checkbox" id="customCheck1" class="custom-control-input drugchkBox {{ drug.name }}" name="drugCheckBox" value="{{ drug.name }}" checked>-->
+<!--                                                    <label class="custom-control-label"-->
+<!--                                                           for="customCheck1">{{ drug.name }}</label>-->
+<!--                                                </div>-->
+<!--                                            {% endfor %}-->
 
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row drug-events-selection-row mt-2">
-                                <div class="col eventSelectionCol">
-                                    <div id="eventCheckBoxes">
-                                        <fieldset>
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="row drug-events-selection-row mt-2">-->
+<!--                                <div class="col eventSelectionCol">-->
+<!--                                    <div id="eventCheckBoxes">-->
+<!--                                        <fieldset>-->
 
-                                            <legend class="legend-margins">
-                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>
-                                                <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
-                                            </legend>
-                                            {% for condition in scenario.conditions %}
-                                                <div class="custom-control custom-checkbox custom-control-inline"
-                                                     href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input conditionchkBox" name="eventCheckBox" value="{{ condition.name }}" checked>
-                                                    <label class="custom-control-label"
-                                                           for="customCheck1">{{ condition.name }}</label>
-                                                </div>
-                                            {% endfor %}
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" role="tabpanel" id="tab-2">
-                            <div class="row drug-events-selection-row">
-                                <div class="col drugSelectionCol">
-                                    <div id="drugRadios">
-                                        <fieldset>
+<!--                                            <legend class="legend-margins">-->
+<!--                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>-->
+<!--                                                <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>-->
+<!--                                            </legend>-->
+<!--                                            {% for condition in scenario.conditions %}-->
+<!--                                                <div class="custom-control custom-checkbox custom-control-inline"-->
+<!--                                                     href="#tab-1">-->
+<!--                                                    <input type="checkbox" id="customCheck1" class="custom-control-input conditionchkBox" name="eventCheckBox" value="{{ condition.name }}" checked>-->
+<!--                                                    <label class="custom-control-label"-->
+<!--                                                           for="customCheck1">{{ condition.name }}</label>-->
+<!--                                                </div>-->
+<!--                                            {% endfor %}-->
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="tab-pane" role="tabpanel" id="tab-2">-->
+<!--                            <div class="row drug-events-selection-row">-->
+<!--                                <div class="col drugSelectionCol">-->
+<!--                                    <div id="drugRadios">-->
+<!--                                        <fieldset>-->
 
-                                        <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
-                                                     href="#tab-2">
-                                        <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
-                                            {% for drug in scenario.drugs %}
-                                                   <div class="float-left drug-event-radio ml-2">
-                                                    <input type="radio" id="drugRadioInline{{ drug.id }}"
-                                                           class="custom-control-input {{ drug.name }}" name="drugRadio"
-                                                           value="{{ drug.name }}" checked/>
-                                                    <span class="custom-control-label"
-                                                           for="customRadioInline1">{{ drug.name }}</span>
-                                                   </div>
-                                                {% endfor %}
+<!--                                        <div  class="custom-control custom-checkbox custom-control-inline drugs-div"-->
+<!--                                                     href="#tab-2">-->
+<!--                                        <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>-->
+<!--                                            {% for drug in scenario.drugs %}-->
+<!--                                                   <div class="float-left drug-event-radio ml-2">-->
+<!--                                                    <input type="radio" id="drugRadioInline{{ drug.id }}"-->
+<!--                                                           class="custom-control-input {{ drug.name }}" name="drugRadio"-->
+<!--                                                           value="{{ drug.name }}" checked/>-->
+<!--                                                    <span class="custom-control-label"-->
+<!--                                                           for="customRadioInline1">{{ drug.name }}</span>-->
+<!--                                                   </div>-->
+<!--                                                {% endfor %}-->
 
-                                        </div>
+<!--                                        </div>-->
 
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row drug-events-selection-row mt-1">
-                                <div class="col eventSelectionCol">
-                                    <div id="eventRadios">
-                                        <fieldset>
-                                            <div  class="custom-control custom-checkbox custom-control-inline drugs-div"
-                                                     href="#tab-2">
-                                            <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
-                                            {% for condition in scenario.conditions %}
-                                                <div class="float-left drug-event-radio">
-                                                    <input type="radio" id="eventRadioInline{{ condition.id }}"
-                                                           class="custom-control-input" name="eventRadio"
-                                                           value="{{ condition.name }}" checked/>
-                                                    <span class="custom-control-label"
-                                                           for="customRadioInline1">{{ condition.name }}</span>
-                                                </div>
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="row drug-events-selection-row mt-1">-->
+<!--                                <div class="col eventSelectionCol">-->
+<!--                                    <div id="eventRadios">-->
+<!--                                        <fieldset>-->
+<!--                                            <div  class="custom-control custom-checkbox custom-control-inline drugs-div"-->
+<!--                                                     href="#tab-2">-->
+<!--                                            <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>-->
+<!--                                            {% for condition in scenario.conditions %}-->
+<!--                                                <div class="float-left drug-event-radio">-->
+<!--                                                    <input type="radio" id="eventRadioInline{{ condition.id }}"-->
+<!--                                                           class="custom-control-input" name="eventRadio"-->
+<!--                                                           value="{{ condition.name }}" checked/>-->
+<!--                                                    <span class="custom-control-label"-->
+<!--                                                           for="customRadioInline1">{{ condition.name }}</span>-->
+<!--                                                </div>-->
 
-                                            {% endfor %}
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
+<!--                                            {% endfor %}-->
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
                 {% if dates|length > 0 %}
                         <div style="float: left; width: 300px; pointer-events: none;" class="input-group in-daterange">
@@ -152,7 +155,7 @@
                                                 <tbody>
                                                 {% for _, rec in records.items %}
 
-                                                 <tr style="display:none;" id="row_{{ forloop.counter0 }}" name="row_{{ forloop.counter0 }}" class="{{ rec.drug }}_{{ rec.condition }}">
+                                                 <tr  id="row_{{ forloop.counter0 }}" name="row_{{ forloop.counter0 }}" class="{{ rec.drug }}_{{ rec.condition }}">
                                 <td  name="add_{{ forloop.counter0 }}"><i class="glyphicon glyphicon-plus add_button" name="icon"></i></td>
                                                      <td style="display: none" name="drug_{{ forloop.counter0 }}">{{ rec.drug }}</td>
                                                      <td style="display: none" name="condition_{{ forloop.counter0 }}">{{ rec.condition }}</td>
@@ -384,9 +387,29 @@
                                             </tbody>
                                           </table>
                     {% if dates|length == 0 %}
-                        {% if pages|length > 3 %}
-                            {% if pages|length > page_id %}
-                                 {% if page_id > 1 %}
+                        {% if pages|length >= 3 %}
+                            {% if pages|length >= page_id %}
+                                {% if page_id == pages|length %}
+
+                                            <ul class="pagination justify-content-center mb-4 float-right">
+
+                                                    <li class="page-item">
+                                                      <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                      <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                                    </li>
+        <!--                                            <li class="page-item">-->
+        <!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+        <!--                                            </li>-->
+        <!--                                            <li class="page-item">-->
+        <!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+        <!--                                            </li>-->
+                                                     <li class="page-item disabled">
+                                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                                      </li>
+                                             </ul>
+                                 {% elif page_id > 1 %}
 
                                         <ul class="pagination justify-content-center mb-4" >
                                             <li class="page-item">
@@ -395,33 +418,17 @@
                                             <li class="page-item">
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                            </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
                                              <li class="page-item">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
                                               </li>
                                             </ul>
-                                {% elif page_id == pages|length %}
 
-                                    <ul class="pagination justify-content-center mb-4 float-right">
-
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
-                                            </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                            </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                            </li>
-                                             <li class="page-item disabled">
-                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
-                                              </li>
-                                     </ul>
 
                                 {% else %}
 
@@ -432,12 +439,12 @@
                                             <li class="page-item">
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
                                             </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                            </li>
-                                            <li class="page-item">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
                                              <li class="page-item">
                                                   <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
                                               </li>
@@ -477,9 +484,26 @@
 
                     {% endif %}
                   {% if dates|length > 0 %}
-                    {% if pages|length > 3 %}
+                    {% if pages|length >= 3 %}
                         {% if pages|length > page_id %}
-                             {% if page_id > 1 %}
+                            {% if page_id == pages|length %}
+
+                                    <ul class="pagination justify-content-center mb-4 float-right">
+
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
+                                             <li class="page-item disabled">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                     </ul>
+                             {% elif page_id > 1 %}
 
                                     <ul class="pagination justify-content-center mb-4" >
                                         <li class="page-item">
@@ -488,33 +512,17 @@
                                         <li class="page-item">
                                           <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{ page_id }}'>{{ page_id }}</a>
                                         </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                        </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                        </li>
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                        </li>-->
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                        </li>-->
                                          <li class="page-item">
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
                                           </li>
                                         </ul>
-                            {% elif page_id == pages|length %}
 
-                                <ul class="pagination justify-content-center mb-4 float-right">
-
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
-                                        </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                        </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                        </li>
-                                         <li class="page-item disabled">
-                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
-                                          </li>
-                                 </ul>
 
                             {% else %}
 
@@ -525,12 +533,12 @@
                                         <li class="page-item">
                                           <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
                                         </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
-                                        </li>
-                                        <li class="page-item">
-                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>
-                                        </li>
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                        </li>-->
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                        </li>-->
                                          <li class="page-item">
                                               <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
                                           </li>
@@ -581,7 +589,7 @@
 {% block javascripts %}
     {{ block.super }}
     <!-- jQuery custom content scroller -->
-   <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+<!--   <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>-->
      <script src="/static/build/js/pv_literature.js"></script>
     <script>
         var language = $('#curLang').attr('data-lang');
@@ -598,37 +606,37 @@
         var scenarioDrugs = '{{ scenario.drugs }}';
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
-        var shinnyAppsUrl = '{{ shiny_endpoint }}';
-        var shinnyAppsQueryUrl = '';
-        var app = 'QuickViewDrugEvent';
+        // var shinnyAppsUrl = '{{ shiny_endpoint }}';
+        // var shinnyAppsQueryUrl = '';
+        // var app = 'QuickViewDrugEvent';
         var drug = '';
         var event = '';
         var drugsChecked = [];
         var eventsChecked = [];
-        getCheckedElementOfRadios();
-        var AppParametersDict = {
-            "QuickViewDrugEvent": ["Drug", "Event"],
-            "QuickViewDrug": ["Drug"],
-            "QuickViewEvent": ["Event"],
-            "Dash": ["Drug"],
-            "RR_D": ["Drug"],
-            "RR_E": ["Event"],
-            "LabelView": ["Drug", "Event"],
-            "DynPRR": ["Drug", "Event"],
-            "ChangePoint": ["Drug", "Event"],
-            "ReportView": ["Drug"],
-            "LabelView": ["Drug"],
-            "LrTest": ["Drug"],
-            "LrTest_E": ["Event"],
-            "DrugEnforceView": ["Event"]
-        };
-        var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest", "ReportView"];
-        var OnlyEventApplications = ["QuickViewEvent", "RR_E", "LrTest_E"];
-        var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint", "ReportView"];
-        var activeParameters = []
-        scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
-        scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
-        var sessionAppId = app; //sessionStorage.getItem("shinnyAppId");
+        // getCheckedElementOfRadios();
+        // var AppParametersDict = {
+        //     "QuickViewDrugEvent": ["Drug", "Event"],
+        //     "QuickViewDrug": ["Drug"],
+        //     "QuickViewEvent": ["Event"],
+        //     "Dash": ["Drug"],
+        //     "RR_D": ["Drug"],
+        //     "RR_E": ["Event"],
+        //     "LabelView": ["Drug", "Event"],
+        //     "DynPRR": ["Drug", "Event"],
+        //     "ChangePoint": ["Drug", "Event"],
+        //     "ReportView": ["Drug"],
+        //     "LabelView": ["Drug"],
+        //     "LrTest": ["Drug"],
+        //     "LrTest_E": ["Event"],
+        //     "DrugEnforceView": ["Event"]
+        // };
+        // var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest", "ReportView"];
+        // var OnlyEventApplications = ["QuickViewEvent", "RR_E", "LrTest_E"];
+        // var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint", "ReportView"];
+        // var activeParameters = []
+        // scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
+        // scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        // var sessionAppId = app; //sessionStorage.getItem("shinnyAppId");
         // if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
         // {
         //     app='QuickViewDrugEvent';
@@ -662,502 +670,20 @@
         //         document.getElementById(app).className += " active";
         //     }
         // }
-        var sessionSelectedEvent = eventsChecked.join("|||");  //sessionStorage.getItem("shinnySelectedEvent");
-        var sessionSelectedDrug = drugsChecked.join("|||"); //sessionStorage.getItem("shinnySelectedDrug");
-
-
-        if(sessionSelectedDrug!=null){
-
-            var checkboxes = document.getElementsByName("drugCheckBox");
-            for (var i=0; i<checkboxes.length; i++) {
-                  checkboxes[i].checked = false;
-            }
-            drugsChecked=sessionSelectedDrug.split('|||');
-            for(var index in drugsChecked) {
-                var drugRadio=$("input[value='"+drugsChecked[index]+"'][Type=checkbox] ");
-                if (drugRadio.length > 0) {
-                    drugRadio[0].checked = true;
-                }
-            }
-            // disableSingleCheckBoxes()
-        }
-      if(sessionSelectedEvent!=null) {
-          var checkboxes = document.getElementsByName("eventCheckBox");
-            for (var i=0; i<checkboxes.length; i++) {
-                  checkboxes[i].checked = false;
-            }
-          eventsChecked=sessionSelectedEvent.split('|||');
-          for(var index in eventsChecked){
-            var eventRadio=$("input[value='"+eventsChecked[index]+"'][Type=checkbox] ");
-            if(eventRadio.length>0)
-            {
-                eventRadio[0].checked=true;
-            }
-          }
-          // disableSingleCheckBoxes()
-
-      }
-
-
-
-
-
-        // keepAppropriateAppsBasedOnParameters();
-
-        // buildUrl(app);
-
-        showProperAnalyticDEDivs();
-        keepAppropriateAccordionAppsBasedOnParameters();
-        //keepButtonsBasedOnApp(app);
-        // initializeDropdowns();
-
-        function groupChckBoxVal(chckbxType) {
-            // Get the type of boxes belonging to the group (removing sAll)
-            var boxesType = chckbxType.replace("sAll", "");
-            var allBoxesLength = $("input[name='"+boxesType+"']").length;
-            var checkedBoxes = $("input[name='"+boxesType+"']:checked");
-            var checkedBoxesLength = checkedBoxes.length;
-
-            // switch (allBoxesLength - checkedBoxesLength) {
-            //     case 0:
-            //         $("[name='"+chckbxType+"']").attr("checked", true);
-            //         console.log("checked");
-            //         break;
-            //     default:
-            //         $("[name='"+chckbxType+"']").attr("indeterminate", true);
-            //         console.log("indeterminate");
-            // }
-            if (allBoxesLength === checkedBoxesLength) {
-                $("input[name='"+chckbxType+"']").prop("indeterminate", false);
-                $("input[name='"+chckbxType+"']").prop("checked", true);
-            } else {
-                $("input[name='"+chckbxType+"']").prop("indeterminate", true);
-                $("input[name='"+chckbxType+"']").prop("checked", false);
-            }
-        }
-
-        groupChckBoxVal("drugsAllCheckBox");
-        disableSingleCheckBox("drugCheckBox");
-        groupChckBoxVal("eventsAllCheckBox");
-        disableSingleCheckBox("eventCheckBox");
-
-        function allCombinations(array1, array2) {
-            var combos = [] //or combos = new Array(2);
-
-            for(var i = 0; i < array1.length; i++)
-            {
-                 for(var j = 0; j < array2.length; j++)
-                 {
-                    combos.push(array1.eq(i).val() +" - "+ array2.eq(j).val())
-                 }
-            }
-            return combos
-        }
-
-        function showProperAnalyticDEDivs() {
-            var drugCheckedBoxes = $("input[name='drugCheckBox']:checked");
-            var drugUncheckedBoxes = $("input[name='drugCheckBox']:not(:checked)");
-
-            var eventCheckedBoxes = $("input[name='eventCheckBox']:checked");
-            var eventUncheckedBoxes = $("input[name='eventCheckBox']:not(:checked)");
-
-            for (i=0; i<drugCheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
-            }
-
-            for (i=0; i<eventCheckedBoxes.length; i++) {
-                $("#analytic div[id$='"+eventCheckedBoxes.eq(i).val()+"']").show();
-            }
-
-            for (i=0; i<drugUncheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
-            }
-
-            for (i=0; i<eventUncheckedBoxes.length; i++) {
-                $("#analytic div[id$='"+eventUncheckedBoxes.eq(i).val()+"']").hide();
-            }
-            // var previouslyOpenPanelId = $("#analytic .panel-collapse").hasClass(
-            //     "in").attr("id").replace("collapse", "");
-            // $("#analytic .panel-collapse").addClass('collapse').removeClass("in");
-            $("#analytic .panel-collapse").collapse("hide");
-            // var firstVisibleCollapse = $("#analytic .panel-default:visible").first().find(
-            //     ".panel-collapse");
-            // console.log($("#analytic .panel-default:visible").first());
-            // console.log(firstVisibleCollapse);
-            // firstVisibleCollapseLink.trigger("click");
-            // console.log(firstVisibleCollapseLink);
-            // var firstVisibleCollapseId = firstVisibleCollapse.attr("id").replace("collapse", "");
-            // if (previouslyOpenPanelId != firstVisibleCollapseId) {
-            //     $("[id='shinnyAppsTabsComb"+firstVisibleCollapseId+"'] a").first().trigger("click");
-            // }
-            // firstVisibleCollapse.removeClass('collapse').addClass("in");
-            // firstVisibleCollapse.collapse("show");
-        }
-
-        // $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        //     var target = $(e.target).attr("href") // activated tab
-        //     // alert(target);
-        //     if(target==="#analytic") {
-        //         console.log("shoooooooooooooooowwwwn");
-        //         showProperAnalyticDEDivs();
-        //         keepAppropriateAccordionAppsBasedOnParameters();
-        //     } else if(target==="#aggregated") {
-        //         keepAppropriateAppsBasedOnParameters();
-        //     }
-        //
-        // });
-
-        $("#aggregatedli").click(function (){
-            keepAppropriateAppsBasedOnParameters();
-        });
-
-        $("#analyticli").click(function (){
-            showProperAnalyticDEDivs();
-            keepAppropriateAccordionAppsBasedOnParameters();
-        });
-
-
-
-        $(".custom-checkbox input").change(function () {
-            groupChckBoxVal($(this).attr("name").replace("CheckBox", "sAllCheckBox"));
-            disableSingleCheckBox($(this).attr("name"));
-            showProperAnalyticDEDivs();
-
-            // var checkedCombs = allCombinations(drugCheckedBoxes, eventCheckedBoxes);
-            // var unCheckedCombs = allCombinations(drugUncheckedBoxes, eventUncheckedBoxes);
-            // unCheckedCombs.push(allCombinations(drugUncheckedBoxes, eventCheckedBoxes));
-            // unCheckedCombs.push(allCombinations(drugCheckedBoxes, eventUncheckedBoxes));
-            // console.log(checkedCombs);
-            // console.log(unCheckedCombs);
-            // for(i=0; i<checkedCombs.length; i++) {
-            //     $("#"+checkedCombs[i]).show();
-            // }
-            // for(i=0; i<unCheckedCombs.length; i++) {
-            //     console.log("dddddddddddddddddddd");
-            //     console.log(unCheckedCombs[i]);
-            //     $("#"+unCheckedCombs[i]).hide();
-            // }
-
-        });
-
-        function disableSingleCheckBox(chkbxType) {
-            var checkedBoxes = $("input[name='"+chkbxType+"']:checked");
-            if(checkedBoxes.length === 1) {
-                checkedBoxes.first().prop("disabled", true);
-            } else {
-                checkedBoxes.prop("disabled", false);
-            }
-        }
-        function toggleAllDECheckboxes(chckbxType) {
-            // chckbxType refers to the group checkbox
-            var boxesType = chckbxType.replace("sAll", "");
-            var checkedBoxes = $("input[name='"+boxesType+"']:checked");
-
-            if ($("input[name='"+chckbxType+"']").prop("checked")) {
-                // $("input[name='"+chckbxType+"']").prop("indeterminate", false);
-                $("input[name='"+boxesType+"']").prop("checked", true);
-                $("input[name='"+boxesType+"']").trigger("change");
-            } else {
-                // $("input[name='"+chckbxType+"']").prop("indeterminate", true);
-                // $("input[name='"+chckbxType+"']").prop("checked", false).trigger("true");
-                checkedBoxes.prop("checked", false);
-                checkedBoxes.first().prop("checked", true);
-                checkedBoxes.first().trigger("change");
-            }
-
-
-            // if($("input[name='"+chckbxType+"']").prop("checked") == false){
-            //     first_chkd = checkedBoxes.first()
-            //     first_chkd.prop("checked", true).trigger("change");
-            // }
-        }
-
-        function closeProgressIndicator() {
-            $("#first").hide();
-        }
-        function openProgressIndicator() {
-            $("#first").show();
-        }
-
-
-
-
-
-
-
-        $('.drugSelectionCol input').click(function (e) {
-            var checkbox=e.target;
-            var drug = checkbox.value;
-            if(checkbox.checked)
-            {
-                drugsChecked.push(drug);
-            }
-            else {
-                drugsChecked=arrayRemove(drugsChecked,drug)
-            }
-            // disableSingleCheckBoxes()
-            // sessionStorage.setItem("shinnySelectedDrug", drugsChecked);
-            sessionSelectedDrug = drugsChecked.join("|||");
-            // buildUrl(app);
-        })
-        $('.eventSelectionCol input').click(function (e) {
-
-            var checkbox=e.target;
-            var event = checkbox.value;
-            if(checkbox.checked)
-            {
-                eventsChecked.push(event);
-            }
-            else {
-                eventsChecked=arrayRemove(eventsChecked,event)
-            }
-            // disableSingleCheckBoxes()
-            // sessionStorage.setItem("shinnySelectedEvent", eventsChecked);
-            sessionSelectedEvent = eventsChecked.join("|||");
-
-            // buildUrl(app);
-
-        })
-        function disableSingleCheckBoxes() {
-
-            // // Fix zero boxes selected
-            // if(eventsChecked.length===0) {
-            //     document.getElementsByName("eventCheckBox")[0].checked = true;
-            // }
-
-            if(eventsChecked.length===1)
-            {
-               var checkedBox=getCheckedBoxes("eventCheckBox")[0];
-               checkedBox.disabled = true;
-            }
-            else{
-                var checkboxes = document.getElementsByName("eventCheckBox");
-                for (var i=0; i<checkboxes.length; i++) {
-                      checkboxes[i].disabled = false;
-                }
-            }
-
-            // if(drugsChecked.length===0) {
-            //     document.getElementsByName("drugCheckBox")[0].checked = true;
-            // }
-
-            if(drugsChecked.length===1)
-            {
-               var checkedBox=getCheckedBoxes("drugCheckBox")[0];
-               checkedBox.disabled = true;
-            }
-            else{
-                var checkboxes = document.getElementsByName("drugCheckBox");
-                for (var i=0; i<checkboxes.length; i++) {
-                      checkboxes[i].disabled = false;
-                }
-            }
-        }
-        function getCheckedBoxes(chkboxName) {
-          var checkboxes = document.getElementsByName(chkboxName);
-          var checkboxesChecked = [];
-          // loop over them all
-          for (var i=0; i<checkboxes.length; i++) {
-             // And stick the checked ones onto an array...
-             if (checkboxes[i].checked) {
-                checkboxesChecked.push(checkboxes[i]);
-             }
-          }
-          // Return the array if it is non-empty, or null
-          return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-        }
-        function arrayRemove(arr, value) {
-            return arr.filter(function(ele){
-                return ele != value;
-            });
-        }
-        function getCheckedElementOfRadios() {
-            if (app != 'QuickView2') {
-                drugsChecked=[];
-                eventsChecked=[];
-                var ele = document.getElementsByName('drugCheckBox');
-                for (i = 0; i < ele.length; i++) {
-                    if (ele[i].checked) {
-                        drugsChecked.push(ele[i].value);
-                    }
-                }
-                var ele = document.getElementsByName('eventCheckBox');
-                for (i = 0; i < ele.length; i++) {
-                    if (ele[i].checked) {
-                        eventsChecked.push(ele[i].value);
-                    }
-                }
-            }
-
-        }
-
-        function initializeDropdowns() {
-            document.getElementById("appsBtn").innerText = app;
-            document.getElementById("drugBtn").innerText = drug;
-            document.getElementById("eventBtn").innerText = event;
-        }
-
-
-
-
-        function keepAppropriateAppsBasedOnParameters() {
-            var shinnyAppsTabs = document.getElementById("shinnyAppsTabs").getElementsByTagName('li');
-            for (var i = 0; i < shinnyAppsTabs.length; i++) {
-                var shinnyAppsTab = shinnyAppsTabs[i];
-                shinnyAppsTab.style.display = "none";
-            }
-
-            if (activeParameters.length == 2) {
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "block";
-                document.getElementById("eventRadios").style.display = "block";
-                document.getElementById("drugRadios").style.display = "block";
-                for (var i = 0; i < DrugEventApplications.length; i++) {
-                    document.getElementById(DrugEventApplications[i]).style.display = "block";
-                }
-            } else if (activeParameters.includes('Drug')) {
-                document.getElementById("eventCheckBoxes").style.display = "none";
-                document.getElementById("drugCheckBoxes").style.display = "block";
-                document.getElementById("eventRadios").style.display = "none";
-                document.getElementById("drugRadios").style.display = "block";
-                for (var i = 0; i < OnlyDrugApplications.length; i++) {
-                    document.getElementById(OnlyDrugApplications[i]).style.display = "block";
-
-                }
-            } else if (activeParameters.includes('Event')) {
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "none";
-                document.getElementById("eventRadios").style.display = "block";
-                document.getElementById("drugRadios").style.display = "none";
-                for (var i = 0; i < OnlyEventApplications.length; i++) {
-                    document.getElementById(OnlyEventApplications[i]).style.display = "block";
-                }
-            }
-        }
-
-        function keepAppropriateAccordionAppsBasedOnParameters() {
-            var shinnyAccordionAppsTabs = $("[id^='shinnyAppsTabsComb'] li");
-            // for (var i = 0; i < shinnyAccordionAppsTabs.length; i++) {
-            //     var shinnyAccordionAppsTab = shinnyAccordionAppsTabs[i];
-            //     shinnyAccordionAppsTab.style.display = "none";
-            // }
-            shinnyAccordionAppsTabs.css("display", "none");
-
-            if (activeParameters.length == 2) {
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "block";
-                document.getElementById("eventRadios").style.display = "block";
-                document.getElementById("drugRadios").style.display = "block";
-                for (var i = 0; i < DrugEventApplications.length; i++) {
-                    // document.getElementById(DrugEventApplications[i]).style.display = "block";
-                    $("[id^="+DrugEventApplications[i]+"Comb").css("display", "block");
-                }
-            } else if (activeParameters.includes('Drug')) {
-                document.getElementById("eventCheckBoxes").style.display = "none";
-                document.getElementById("drugCheckBoxes").style.display = "block";
-                document.getElementById("eventRadios").style.display = "none";
-                document.getElementById("drugRadios").style.display = "block";
-                for (var i = 0; i < OnlyDrugApplications.length; i++) {
-                    // document.getElementById(OnlyDrugApplications[i]).style.display = "block";
-                    $("[id^="+OnlyDrugApplications[i]+"Comb").css("display", "block");
-
-                }
-            } else if (activeParameters.includes('Event')) {
-                document.getElementById("eventCheckBoxes").style.display = "block";
-                document.getElementById("drugCheckBoxes").style.display = "none";
-                document.getElementById("eventRadios").style.display = "block";
-                document.getElementById("drugRadios").style.display = "none";
-                for (var i = 0; i < OnlyEventApplications.length; i++) {
-                    // document.getElementById(OnlyEventApplications[i]).style.display = "block";
-                    $("[id^="+OnlyEventApplications[i]+"Comb").css("display", "block");
-                }
-            }
-        }
 
     </script>
+    <script>
+        $(document).ready(function() {
+            $(".page-link").click(function(){
+                $("#loaderOverlay").fadeIn();
+            });
+            $( window ).load(function() {
+                $("#loaderOverlay").fadeOut();
+            });
 
-<script>
-    $(document).ready( function () {
-        var recordslength = '{{ records|length }}'
+        });
 
-        for (var i = 0; i < recordslength; i++) {
-            var conditions =  $('.conditionchkBox:checked').map(function() {
-                return $(this).val();
-            }).get();
-            var drugs = $('.drugchkBox:checked').map(function() {
-                    return $(this).val();
-                }).get();
-            var drug = $("td[name^='drug_" + i + "']").text();
-            var condition = $("td[name^='condition_" + i + "']").text();
-            var row = 'row_' + i;
-            if (String(condition) === ""){
-                checkBoxDrugFilter(drug, condition, row, drugs, conditions);
-            } else {
-                checkBoxConditionFilter(drug, condition,row, drugs, conditions);
-            }
-        }
-                    $(".drugchkBox").change(function(){
-                        for (var i = 0; i < recordslength; i++) {
-                            var conditions =  $('.conditionchkBox:checked').map(function() {
-                                return $(this).val();
-                            }).get();
-                            var drugs = $('.drugchkBox:checked').map(function() {
-                                    return $(this).val();
-                                }).get();
-                            var drug = $("td[name^='drug_" + i + "']").text();
-                            var condition = $("td[name^='condition_" + i + "']").text();
-                            var row = 'row_' + i;
-                             if(String(condition) === ""){
-                                    checkBoxDrugFilter(drug, condition, row, drugs, conditions);
-                                } else {
-                                    checkBoxConditionFilter(drug, condition,row, drugs, conditions);
-                                }
-                        }
-                    });
-                    $(".conditionchkBox").change(function(){
-                        for (var i = 0; i < recordslength; i++) {
-                             var conditions =  $('.conditionchkBox:checked').map(function() {
-                                return $(this).val();
-                            }).get();
-                            var drugs = $('.drugchkBox:checked').map(function() {
-                                    return $(this).val();
-                                }).get();
-                            var drug = $("td[name^='drug_" + i + "']").text();
-                            var condition = $("td[name^='condition_" + i + "']").text();
-                            var row = 'row_' + i;
-                            checkBoxConditionFilter(drug, condition,row, drugs, conditions);
-
-                        }
-                    });
-
-         });
-
-    function checkBoxDrugFilter (drug, condition,row, drugs, conditions) {
-
-        if (drugs.includes(drug)) {
-            $('#' + row).show();
-
-
-        } else {
-
-            $('#' + row).hide();
-
-        }
-    }
-
-
-     function checkBoxConditionFilter(drug, condition, row, drugs, conditions) {
-
-         if (drugs.includes(drug) && conditions.includes(condition)) {
-             $('#' + row).show();
-
-         } else {
-             $('#' + row).hide();
-         }
-
-     }
-</script>
-
+    </script>
     <script>
          $(document).ready(function() {
 
@@ -1237,8 +763,18 @@
         }
            $('input[name^="relevance_"]').click(function () {
                var loop_it = $(this).attr('name').replace("relevance_", "");
-               $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
-               $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
+               var reltype = $(this).attr('id').split("_");
+               if (reltype[0] == 'Relevant') {
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#32CD32');
+               } else if (reltype[0] == 'Irrelevant'){
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
+               } else {
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#FFA500');
+               }
+
            });
         });
      </script>

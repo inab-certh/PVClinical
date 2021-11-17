@@ -446,23 +446,23 @@ shinyServer(function(input, output, session) {
     return(mydf)
   }
   
-  observeEvent(input$date1, {
-    
-    if (abs(input$date2-input$date1)>365){
-      updateDateInput(session, "date2",
-                      value=input$date1+365
-      )
-    }
-  })
-  
-  observeEvent(input$date2, {
-    
-    if (abs(input$date2-input$date1)>365){
-      updateDateInput(session, "date1",
-                      value=input$date1-365
-      )
-    }
-  })
+  # observeEvent(input$date1, {
+  #   
+  #   if (abs(input$date2-input$date1)>365){
+  #     updateDateInput(session, "date2",
+  #                     value=input$date1+365
+  #     )
+  #   }
+  # })
+  # 
+  # observeEvent(input$date2, {
+  #   
+  #   if (abs(input$date2-input$date1)>365){
+  #     updateDateInput(session, "date1",
+  #                     value=input$date1-365
+  #     )
+  #   }
+  # })
 
   getts <- reactive({
     data <-  getquerydata()$mydfin$result
@@ -1078,8 +1078,10 @@ shinyServer(function(input, output, session) {
     # q$t2<-"10021015"
     # q$t1<-"G01AE10"
     # q$t2<-"10079622"
+    # q$t1<-"A02BC01"
+    # q$t2<-"10021015"
     # q$hash <- "ksjdhfksdhfhsk"
-    # q$concomitant <- FALSE
+    # q$concomitant<-FALSE
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
@@ -2050,7 +2052,7 @@ shinyServer(function(input, output, session) {
       foundtermslist <- mydf[,1]
       foundtermslist <- paste('"', foundtermslist, '"', sep='')
       foundtermslist <- gsub(' ', '%20',foundtermslist, fixed=TRUE )
-      browser()
+      # browser()
       all <- data.frame(term=rep(URL='u', 'a', length(foundtermslist)), count=0L,  stringsAsFactors = FALSE)
       for (i in seq_along(foundtermslist))
       {
