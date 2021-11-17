@@ -6,10 +6,9 @@ settings.py
 RShinyApps/QuickView/rsconnect/shinyapps.io/
 *.pyc
 *.RData
-gentelella/app/templatetags/__pycache__/*.pyc
-gentelella/app/__pycache__/*.pyc
-gentelella/app/migrations/__pycache__/*.pyc
-gentelella/*.sqlite3
+app/templatetags/__pycache__/*.pyc
+*/*/*/*.pyc
+*/gentelella/*.sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
 RShinyApps/.RData
 RShinyApps/.Rhistory
