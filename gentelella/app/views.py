@@ -2901,7 +2901,7 @@ def patient_management_workspace(request):
     return render(request, 'app/patient_management_workspace.html', context)
 
 
-def new_case(request):
+def new_pmcase(request):
     """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
     complete the questionnaire.
     :param request: request
@@ -2950,7 +2950,7 @@ def new_case(request):
             "timestamp": sc.timestamp
         })
 
-    return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no': new_scen_id_no,
+    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no': new_scen_id_no,
                                                  'scenarios': scenarios})
 
 

@@ -1,6 +1,6 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 
 {% block title %} Patient Management Workspace {% endblock title %}
 
@@ -96,7 +96,7 @@
 
             </div>
           </div>
-        <a id="newCaseButton" href="{% url 'new_case' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρησης ασθενούς" %}</span></a>
+        <a id="newCaseButton" href="{% url 'new_pmcase' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρησης ασθενούς" %}</span></a>
       </div>
 
     </div>

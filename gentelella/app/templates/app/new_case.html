@@ -1,6 +1,6 @@
 {% extends 'app/base_site.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load custom_tags %}
 
@@ -211,7 +211,7 @@
 
 
 		if( patient_id && sc_id != 'None'){
-			var url='http://127.0.0.1:8000/patient_management_workspace/new_case/questionnaire/'+patient_id+'/'+sc_id+'/'
+			var url='http://127.0.0.1:8000/patient_management_workspace/new_pmcase/questionnaire/'+patient_id+'/'+sc_id+'/'
 			console.log(new_scen_id)
 			$('#iframe_quest').attr('src', url);
 
@@ -223,7 +223,7 @@
 
 
         $.ajax({
-                url: "/ajax/new_case",
+                url: "/ajax/new_pmcase",
                 data: {"patient_id":patient_id,"sc_id":sc_id },
                 dataType: "html",
                 success: function (res) {

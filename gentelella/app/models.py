@@ -249,7 +249,7 @@ class Questionnaire(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
                                             "q6", "q7", "q8", "q9", "q10"],
-                                    name="unique_patientcase")
+                                    name="unique_questionnaire")
         ]
 
 class PatientCase(models.Model):
@@ -282,7 +282,7 @@ class CaseToScenario(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["scenario", "pcase"],
-                                    name="unique_casetogether")
+                                    name="unique_pcase_scenario")
         ]
 
 class CaseToQuestionnaire(models.Model):
@@ -292,7 +292,7 @@ class CaseToQuestionnaire(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["questionnaire", "pcaseq"],
-                                    name="unique_casetogetherq")
+                                    name="unique_questionnaire_pcaseq")
         ]
 
 # class Questionnaire(models.Model):

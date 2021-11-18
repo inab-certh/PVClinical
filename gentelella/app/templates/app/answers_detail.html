@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 
 {% block stylesheets %}
 <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
@@ -266,7 +266,7 @@ var scen_id = {{ scen_id }};
 var pat_id = {{ pat_id }};
 
         $.ajax({
-                url: "/ajax/new_case",
+                url: "/ajax/new_pmcase",
                 data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },
                 dataType: "html",
                 success: function (res) {
