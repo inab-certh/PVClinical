@@ -328,7 +328,7 @@ msgstr "Notes"
 #: app/templates/app/all_notes.html:129
 #: app/templates/app/characterizations.html:122
 #: app/templates/app/form_base.html:96 app/templates/app/ir.html:162
-#: app/templates/app/new_case.html:134 app/templates/app/notes.html:48
+#: app/templates/app/new_pmcase.html:134 app/templates/app/notes.html:48
 #: app/templates/app/notes_aggregated.html:137
 #: app/templates/app/pathways.html:114
 msgid "Αποθήκευση"
@@ -955,7 +955,7 @@ msgstr ""
 
 #: app/templates/app/form_base.html:53 app/templates/app/index.html:55
 #: app/templates/app/modals/parametric_modal.html:18
-#: app/templates/app/new_case.html:62 app/templates/app/patient_history.html:40
+#: app/templates/app/new_pmcase.html:62 app/templates/app/patient_history.html:40
 #: app/templates/app/patient_management_workspace.html:41
 #: app/templates/app/social_media_workspace.html:47
 msgid "Φάρμακο/Φάρμακα"
@@ -963,7 +963,7 @@ msgstr "Drug/Drugs"
 
 #: app/templates/app/form_base.html:54 app/templates/app/index.html:56
 #: app/templates/app/modals/parametric_modal.html:19
-#: app/templates/app/new_case.html:63 app/templates/app/patient_history.html:41
+#: app/templates/app/new_pmcase.html:63 app/templates/app/patient_history.html:41
 #: app/templates/app/patient_management_workspace.html:42
 #: app/templates/app/social_media_workspace.html:48
 msgid "Πάθηση/Παθήσεις"
@@ -1181,57 +1181,57 @@ msgstr ""
 msgid "Επιλογή"
 msgstr "Choice"
 
-#: app/templates/app/new_case.html:26
+#: app/templates/app/new_pmcase.html:26
 msgid ""
 "*Εάν θέλετε να προσθέσετε μία νέα περίπτωση ασθενούς, ακολουθήστε τα επόμενα "
 "βήματα:"
 msgstr "If you want to add a new patient case, follow the next steps:"
 
-#: app/templates/app/new_case.html:30
+#: app/templates/app/new_pmcase.html:30
 msgid "Βήμα 1:"
 msgstr "Step 1:"
 
-#: app/templates/app/new_case.html:30
+#: app/templates/app/new_pmcase.html:30
 msgid "Συμπληρώστε το πεδίο 'Ταυτότητα Ασθενούς',"
 msgstr "Fill in the 'Patient Id' field,"
 
-#: app/templates/app/new_case.html:31
+#: app/templates/app/new_pmcase.html:31
 msgid "Βήμα 2:"
 msgstr "Step 2:"
 
-#: app/templates/app/new_case.html:31
+#: app/templates/app/new_pmcase.html:31
 msgid "Επιλέξτε ένα Σενάριο Διερεύνισης,"
 msgstr "Select an Investigation Scenario,"
 
-#: app/templates/app/new_case.html:32
+#: app/templates/app/new_pmcase.html:32
 msgid "Βήμα 3:"
 msgstr "Step 3:"
 
-#: app/templates/app/new_case.html:32
+#: app/templates/app/new_pmcase.html:32
 msgid "Συμπληρώστε το ερωτηματολόγιο,"
 msgstr "Complete the Questionnaire,"
 
-#: app/templates/app/new_case.html:33
+#: app/templates/app/new_pmcase.html:33
 msgid "Βήμα 4:"
 msgstr "Step 4:"
 
-#: app/templates/app/new_case.html:33
+#: app/templates/app/new_pmcase.html:33
 msgid "Πατήστε 'Αποθήκευση' για να αποθηκεύσετε τη νέα Υπόθεση Ασθενούς."
 msgstr "Press 'Save', to save your new patient case."
 
-#: app/templates/app/new_case.html:46
+#: app/templates/app/new_pmcase.html:46
 msgid "Επέλεξε ένα από τα υπάρχοντα σενάρια"
 msgstr "Select from existing scenarios"
 
-#: app/templates/app/new_case.html:50
+#: app/templates/app/new_pmcase.html:50
 msgid "Αναζήτηση..."
 msgstr "Search..."
 
-#: app/templates/app/new_case.html:102
+#: app/templates/app/new_pmcase.html:102
 msgid "*Εάν το σενάριο με το οποίο θέλετε να συσχετίσετε"
 msgstr "*If the scenario you want to associate"
 
-#: app/templates/app/new_case.html:103
+#: app/templates/app/new_pmcase.html:103
 msgid ""
 "τον ασθενή, δεν υπάρχει στη λίστα των σεναρίων, δημιουργήστε νέο Σενάριο "
 "Διερεύνησης,"
@@ -1239,36 +1239,36 @@ msgstr ""
 "the patient with, is not already in your list of scenarios, create a new "
 "investigation scenario,"
 
-#: app/templates/app/new_case.html:104
+#: app/templates/app/new_pmcase.html:104
 msgid "συμπληρώστε την Ταυτότητα Ασθενούς και επιλέξτε το σενάριο που μόλις"
 msgstr "set the patient's id and check the scenario you just"
 
-#: app/templates/app/new_case.html:105
+#: app/templates/app/new_pmcase.html:105
 msgid "δημιουργήσατε από τη λίστα σεναρίων."
 msgstr "create from the dropdown list of existing scenarios."
 
-#: app/templates/app/new_case.html:107
+#: app/templates/app/new_pmcase.html:107
 msgid "Προσθέστε νέο Σενάριο Διερεύνησης"
 msgstr "Add new Investigation Scenario"
 
-#: app/templates/app/new_case.html:115
+#: app/templates/app/new_pmcase.html:115
 msgid "Ερωτηματολόγιο"
 msgstr "Questionnaire"
 
-#: app/templates/app/new_case.html:124
+#: app/templates/app/new_pmcase.html:124
 msgid ""
 "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα"
 msgstr ""
 "Υou have just completed the questionnaire! If you want to save your new "
 
-#: app/templates/app/new_case.html:125
+#: app/templates/app/new_pmcase.html:125
 msgid ""
 "Υπόθεση Ασθενούς σας, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν "
 "αλλάξετε σελίδα!"
 msgstr ""
 "Patient Case, do not forget to press 'Save' button before page changes!"
 
-#: app/templates/app/new_case.html:143
+#: app/templates/app/new_pmcase.html:143
 #: app/templates/app/patient_history.html:90
 #: app/templates/app/patient_management_workspace.html:25
 #: app/templates/app/sidebar.html:66
