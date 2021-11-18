@@ -41,7 +41,7 @@
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" name="drugCheckBox" value="{{ drug.code }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" data-code = "{{drug.code}}" name="drugCheckBox" value="{{ drug.name }}-{{ drug.code }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ drug.name }} ({{ drug.code }})</label>
                                                 </div>
@@ -245,7 +245,8 @@
                                                 <div class="col">
                                                     <div id="divFrameComb{{ forloop.counter }}">
                                                         <div id="firstComb{{ forloop.counter }}"  class="loader"></div>
-                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator('firstComb{{ forloop.counter }}')" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+<!--                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator('firstComb{{ forloop.counter }}')" src="" width="100%" height="700" style=" border: none;overflow: hidden;" frameborder="0"></iframe>-->
+                                                            <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" src="" width="100%" height="700" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
                                                     </div>
                                                 </div>
                                             </div>
@@ -447,7 +448,9 @@
             var eventUncheckedBoxes = $("input[name='eventCheckBox']:not(:checked)");
 
             for (i=0; i<drugCheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
+                // $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
+                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).attr("data-idname")+"']").show();
+
             }
 
             for (i=0; i<eventCheckedBoxes.length; i++) {
@@ -455,7 +458,8 @@
             }
 
             for (i=0; i<drugUncheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
+                // $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
+                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).attr("data-idname")+"']").hide();
             }
 
             for (i=0; i<eventUncheckedBoxes.length; i++) {
@@ -502,7 +506,7 @@
         });
 
         $("#analytic").on("show.bs.collapse", function (e) {
-            console.log(e.target.id.replace("collapse", ""));
+            // console.log(e.target.id.replace("collapse", ""));
             $("[id='shinnyAppsTabsComb"+e.target.id.replace("collapse", "")+"'] a"
             ).first().trigger("click");
         });
@@ -764,7 +768,7 @@
                  var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
@@ -790,7 +794,7 @@
                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
 
                 if (scenarioDrugsLength>0){
-                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("value")
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
                 }
                 if (scenarioConditionsLength>0){
                     var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
@@ -800,7 +804,7 @@
                     var condition =  $("input[name='eventCheckBox']").attr("data-code")
                 }
 
-                console.log(condition)
+                // console.log(condition)
                 // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
                 // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
                 var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
@@ -811,7 +815,7 @@
                 } else {
                     tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
                 }
-                console.log(tmpQueryUrl);
+                // console.log(tmpQueryUrl);
                 document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
             }
 

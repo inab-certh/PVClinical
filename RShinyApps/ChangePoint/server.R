@@ -681,23 +681,23 @@ anychanged <- reactive({
   }
 })
 
-observeEvent(input$date1, {
-  
-  if (abs(input$date2-input$date1)>365){
-    updateDateInput(session, "date2",
-                    value=input$date1+365
-    )
-  }
-})
-
-observeEvent(input$date2, {
-  
-  if (abs(input$date2-input$date1)>365){
-    updateDateInput(session, "date1",
-                    value=input$date1-365
-    )
-  }
-})
+# observeEvent(input$date1, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date2",
+#                     value=input$date1+365
+#     )
+#   }
+# })
+# 
+# observeEvent(input$date2, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date1",
+#                     value=input$date1-365
+#     )
+#   }
+# })
 
 #SETTERS
 output$mymodal <- renderText({
@@ -1748,10 +1748,10 @@ geturlquery <- reactive({
   # q$t2<-"10013654"
   # q$t1<-"Omeprazole"
   # q$t2<-"Hypokalaemia"
-  # q$t1<-"G01AE10"
-  # q$t2<-"10079622"
+  # q$t1<-"A02BC01"
+  # q$t2<-"10021015"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<- FALSE
+  # q$concomitant<-FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2)   

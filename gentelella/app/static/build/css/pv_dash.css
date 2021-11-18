@@ -929,3 +929,8 @@ iframe.social-iframe {
 .scenario-info a {
 	color: white;
 }
+
+.breadcrumb-item.active>a {
+	color: grey;
+    pointer-events: none;
+}
