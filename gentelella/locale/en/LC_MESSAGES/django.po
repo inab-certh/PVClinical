@@ -122,6 +122,7 @@ msgid "ΕΕΕΕ-ΜΜ-ΗΗ"
 msgstr "YYYY-MM-DD"
 
 #: app/forms.py:237 app/views.py:614
+#: app/views.py:614
 msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
 msgstr "No specific gender criterion has been appointed!"
 
@@ -1417,10 +1418,6 @@ msgstr "Last Name:"
 msgid "Ημερομηνία Έκδοσης:"
 msgstr "Date Issued:"
 
-#: app/templates/app/report_pdf.html:42
-msgid "Περιβάλλον Εργασίας OHDSI"
-msgstr "OHDSI Workspace"
-
 #: app/templates/app/report_pdf.html:62
 msgid "Σημειώσεις για Χαρακτηρισμό Πληθυσμού"
 msgstr "Notes for Cohort Characterization"
@@ -1438,7 +1435,7 @@ msgid "Σημειώσεις για Ανάλυση Μονοπατιού"
 msgstr "Notes for Pathway Analysis"
 
 #: app/templates/app/report_pdf.html:151 app/templates/app/report_pdf.html:178
-#: app/templates/app/report_pdf.html:367
+#: app/templates/app/report_pdf.html:367 app/templatetags/custom_tags.py:66
 msgid "Περιβάλλον Εργασίας OpenFDA"
 msgstr "OpenFDA Workspace"
 
@@ -1561,10 +1558,6 @@ msgid ""
 msgstr ""
 "Frequency table for events found in selected reports. Event name is linked "
 "to PRR results for drug-event combinations."
-
-#: app/templates/app/report_pdf.html:636
-msgid "Περιβάλλον Εργασίας PubMed"
-msgstr "PubMed Workspace"
 
 #: app/templates/app/report_pdf.html:639
 msgid "Άρθρα σχετικά με το παρόν σενάριο"
@@ -1719,15 +1712,13 @@ msgstr "Send To"
 msgid "Αρχική Σελίδα"
 msgstr "Dashboard"
 
-#: app/templatetags/custom_tags.py:66
-msgid "Περιβάλλον Εργασίας OpenFDA"
-msgstr "OpenFDA Workspace"
-
 #: app/templatetags/custom_tags.py:67
+#: app/templates/app/report_pdf.html:42
 msgid "Περιβάλλον Εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
 #: app/templatetags/custom_tags.py:68
+#: app/templates/app/report_pdf.html:636
 msgid "Περιβάλλον Εργασίας PubMed"
 msgstr "PubMed Workspace"
 
@@ -1805,10 +1796,6 @@ msgstr "No specific age criterion has been appointed!"
 #: app/views.py:613
 msgid "Κριτήριο φύλου:"
 msgstr "Gender criterion:"
-
-#: app/views.py:614
-msgid "Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"
-msgstr "No specific gender criterion has been appointed!"
 
 #: app/views.py:665
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
