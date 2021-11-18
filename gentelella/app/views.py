@@ -19,7 +19,7 @@ from itertools import product
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -149,9 +149,54 @@ def filter_whole_set(request):
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
     data={}
-    data["results"]=[{"id":elm, "text":elm} for elm in subset]
+    data["results"] = [{"id":elm, "text":elm} for elm in subset]
 
     return JsonResponse(data)
+
+# @csrf_exempt
+def gen_ir_analysis(request):
+    """ Generate ir analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.generate_ir_analysis(ir_id)
+
+    return JsonResponse({}, status=resp_status)
+
+
+def del_ir_analysis(request):
+    """ Delete ir analysis callback
+    :param request:
+    :return: the response from the deletion attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.delete_ir_analysis(ir_id)
+    return JsonResponse({"status": resp_status})
+
+
+def gen_char_analysis(request):
+    """ Generate char analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    char_id = json.loads(request.GET.get("char_id", None))
+    resp_status = ohdsi_wrappers.generate_char_analysis(char_id)
+    return JsonResponse({}, status=resp_status)
+
+
+def gen_cp_analysis(request):
+    """ Generate pathway analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    cp_id = json.loads(request.GET.get("cp_id", None))
+    resp_status = ohdsi_wrappers.generate_cp_analysis(cp_id)
+    return JsonResponse({}, status=resp_status)
 
 
 def get_all_drugs(request):
@@ -195,8 +240,10 @@ def get_conditions_nodes_ids(request):
         medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
+    # rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+    #     "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
+        "{0}___llt[\S]+?|{0}___pt[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
 
     rel_conds_lst = list(chain.from_iterable(rel_conds_lst))
 
@@ -507,6 +554,7 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
                     "results_url": results_url,
                     "read_only": read_only,
                     "form": irform,
+
                     "title": _("Ανάλυση Ρυθμού Επίπτωσης")
                 }
                 return render(request, 'app/ir.html', context, status=500)
@@ -576,6 +624,8 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
         "read_only": read_only,
         "form": irform,
         "add_info": additional_info,
+        "ohdsi_endpoint": settings.OHDSI_ENDPOINT,
+        "ohdsi_cdm_name": settings.OHDSI_CDM_NAME,
         "title": _("Ανάλυση Ρυθμού Επίπτωσης")
     }
 
@@ -617,7 +667,18 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
     if view_type == "quickview":
         char_options["features"] = char_options.get("features", []) + list(map(lambda el: el.get("id"), filter(
             lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
-    #     print(char_options)
+        rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
+
+        # if rstatus == 200:
+        #     messages.success(
+        #         request,
+        #         _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+        #     return HttpResponseRedirect(reverse('edit_char', args=(sc_id, char_id,)))
+        # else:
+        #     messages.error(
+        #         request,
+        #         _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+        #     status_code = 500
 
     # delete_switch = "enabled" if ir_exists else "disabled"
 
@@ -689,7 +750,8 @@ def drug_exposure(request):
 
     context = {
         "de_url": de_url,
-        "title": _("Έκθεση σε φάρμακα")
+        "title": _("Έκθεση σε φάρμακα"),
+        "ohdsi_atlas": settings.OHDSI_ATLAS
     }
 
     return render(request, 'app/drug_exposure.html', context)
@@ -841,8 +903,22 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
     # ac_token = requests.get('access_token')
 
-    all_combs = list(product([d.name for d in drugs] or [""],
-                             [c.name for c in conditions] or [""]))
+    all_combs = list(product([d.name.upper() for d in drugs] or [""],
+                             [c.name.upper() for c in conditions] or [""]))
+
+    #Create query string for PubMed with all combinations
+    if len(all_combs) > 1 and drugs and conditions:
+        string_list = [' AND '.join(item) for item in all_combs]
+        final_string = ') OR ('.join(map(str, string_list))
+        query = '(' + final_string + ')'
+    elif drugs and not conditions:
+        query = ' AND '.join(map(str, drugs))
+    elif conditions and not drugs:
+        query = ' OR '.join(map(str, conditions))
+    else:
+        query = all_combs[0]
+
+    # print(all_combs)
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
@@ -850,6 +926,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
+                "title": sc.title,
                 "timestamp": sc.timestamp
                 }
 
@@ -878,36 +955,47 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if page_id == None:
                 page_id = 1
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
+                # print(results[1])
+                # print(records)
             else:
 
                 start = 10*page_id - 10
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
 
-            pages_no = ceil(total_results/10)
+            pages_no = ceil(total_results/10) + 1
+            # pages_no = (total_results / 10) + 1
             pages = list(range(1, pages_no))
             if first != None and end != None:
                 dates = [str(first), str(end)]
@@ -917,31 +1005,17 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
 
-
             return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario, 'records': records, 'pages': pages, 'page_id': page_id, 'results': total_results, 'dates':dates})
 
         except Exception as e:
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = '/dashboard'
-
-
+            url = '/'
             return redirect(url)
 
-
     else:
-
-        client_id = 8886
-        redirect_uri = "http://127.0.0.1:8000/"
-        client_secret = "75nLSO6SJtSD8um3"
-        mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-
-        auth = mendeley.start_implicit_grant_flow()
-
-        login_url = auth.get_login_url()
-
-        url = '/dashboard'
+        url = '/'
 
         return redirect(url)
 

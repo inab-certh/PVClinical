@@ -5,6 +5,7 @@ Created on Dec 14, 2018
 '''
 import datetime
 from django import template
+from django.utils.translation import gettext_lazy as _
 
 
 register = template.Library()
@@ -48,3 +49,34 @@ def hexdigest_in_dict(dic):
 @register.filter
 def str_to_date(dt):
     return datetime.datetime.strptime(dt.replace(" ", ""), "%Y-%m-%d").date()
+@register.filter()
+def is_numeric(value):
+    return value.isdigit()
+
+@register.simple_tag(takes_context=True)
+def breadcrumb_label(context, name, *args, **kwargs):
+    names_to_labels = {"index": _("Αρχική Σελίδα"),
+                       "add-scenario": _("Σενάριο"),
+                       "edit-scenario": _("Σενάριο"),
+                       "drug-exposure": _("Έκθεση σε Φάρμακα"),
+                       "condition-occurrence": _("Εκδήλωση Κατάστασης"),
+                       "ir": _("Ρυθμός Επίπτωσης"),
+                       "char": _("Χαρακτηρισμός Πληθυσμού"),
+                       "cp": _("Μονοπάτι Ακολουθίας Συμβάντων"),
+                       "OpenFDAWorkspace": _("Περιβάλλον Εργασίας OpenFDA"),
+                       "ohdsi-workspace": _("Περιβάλλον Εργασίας OHDSI"),
+                       "LiteratureWorkspace": _("Περιβάλλον Εργασίας PubMed"),
+                       "paper_notes_view": _("Σημειώσεις Βιβλιογραφίας"),
+                       "notes": _("Σημειώσεις"),
+                       "aggr-notes": _("Συγκεντρωτικές Σημειώσεις"),
+                       "social-media": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"),}
+
+    return names_to_labels.get(name)
+
+@register.filter()
+def next(lst, arg):
+    try:
+        return lst[int(arg)+1]
+    except:
+        return None
+

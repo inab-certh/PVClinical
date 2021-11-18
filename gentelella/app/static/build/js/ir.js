@@ -153,6 +153,42 @@ $(function() {
     //     window.location.reload();
     // });
 
+    $("#irAnalysisBtn").on("click", function(){
+        const csrftoken = getCookie('csrftoken');
+        var exec_url = '/ajax/gen-ir-analysis';
+
+        $.ajax({
+            url: exec_url,
+            data: {'ir_id': ir_id},
+            contentType:'application/json',
+            headers: {"X-CSRFToken": csrftoken},
+            dataType: 'json',
+            cache: false,
+            success: function(data){
+                // console.log("OK!");
+            },
+            error: function (error) {
+                console.log("Error!");
+                // var exec_url = '/ajax/del-ir-analysis';
+
+                // $.ajax({
+                //     url: exec_url,
+                //     data: {'ir_id': ir_id},
+                //     contentType:'application/json',
+                //     headers: {"X-CSRFToken": csrftoken},
+                //     dataType: 'json',
+                //     cache: false,
+                //     success: function(data){
+                //         console.log("OK!");
+                //     },
+                //     error: function (error) {
+                //         console.log("Error!");
+                //     }
+                // });
+            }
+        });
+    });
+
 
     function show_hide_study_fields(std_chkbx) {
         if(std_chkbx.checked === false) {
@@ -225,4 +261,5 @@ $(function() {
 //         //     });
 //     });
 // }
+
 

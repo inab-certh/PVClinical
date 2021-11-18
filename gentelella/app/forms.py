@@ -113,8 +113,9 @@ class ScenarioForm(forms.Form):
 
         if selected_drugs:
             # Split each one of selected drugs, find ATC part with Regexp and check if it is in valid ATC codes
+            # Free text drugs are accepted, only if they have a valid ATC code. Rejected otherwise
             valid_drugs = list(filter(lambda sd: list(filter(
-                lambda d: re.findall("[A-Z]\d{2}[A-Z]{2}\d{2}", d),
+                lambda d: re.findall("[A-Z]\d{2}[A-Z]{2}\d{2}", d) or [None],
                 sd.split(" - "))).pop() in drugs_codes, selected_drugs))
 
             if 'drugs_fld' in self._errors:
@@ -123,12 +124,14 @@ class ScenarioForm(forms.Form):
             self.cleaned_data["drugs_fld"] = valid_drugs
 
         selected_conditions = dict(self.data).get("conditions_fld")
+        print(self.all_conditions[0].type)
+
         conditions_names = list(map(lambda el: el.name, self.all_conditions))
         conditions_codes = list(map(lambda el: el.code, self.all_conditions))
 
         if selected_conditions:
             # If not found index is -1, max is used to assure that in case one of the two splitted parts
-            # was found, then this part was chosen to find suspected drug
+            # was found, then this part was chosen to find suspected condition/event
             conditions_indexes = [(max(list(map(lambda el: conditions_names.index(el) if el in conditions_names \
                 else conditions_codes.index(el) if el in conditions_codes else -1, sd.split(" - ")
                                                 )))) for sd in selected_conditions]

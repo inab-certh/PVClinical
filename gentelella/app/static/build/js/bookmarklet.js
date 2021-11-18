@@ -51585,8 +51585,11 @@ module.exports = function (modules) {
                 }
                 if (secure === true) {
                     cookie.push("secure")
+                    cookie.push("SameSite=None")
                 }
+
                 document.cookie = cookie.join("; ")
+
             }, read: function read(name) {
                 var match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
                 return match ? decodeURIComponent(match[3]) : null

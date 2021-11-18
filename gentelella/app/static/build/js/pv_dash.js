@@ -78,6 +78,8 @@ $(function() {
         var iframe_cnts = modal_iframe.contents();
         iframe_cnts.find(".alert-geninfo").hide();
         iframe_cnts.find(".scenario-details").hide();
+        iframe_cnts.find("#breadcrumbNav").hide();
+
     });
 
     $(".viewModal").on('hidden.bs.modal', function () {
@@ -86,31 +88,33 @@ $(function() {
     });
 
     $("#pubMedNotesModal, .notesModal").on('hidden.bs.modal', function () {
-        if(window.location.href.indexOf("/notes/dashboard")!==-1){
+        if(window.location.href.indexOf("/notes")!==-1){
             location.reload();
         }
     });
 
-
-
-
-    $(document).on("click", "button.report-btn", function (){
-        $("#genReportConfirmModal").modal("show");
-        var new_location = $(this).attr("data-href");
-        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
-            $("#genReportConfirmModal").modal("hide");
-            $("#loaderOverlay").fadeIn();
-            window.location = new_location;
+    $(window).load(function() {
+        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
+        var prev_active_bc_a=prev_active_breadcrumb.find("a");
+        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
+            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
         }
-        )
     });
+
 });
 
-
-// document.onreadystatechange = function() {
-//     if (document.readyState !== "complete") {
-//         $("#loaderOverlay").fadeIn();
-//     } else {
-//         $("#loaderOverlay").fadeOut();
-//     }
-// };
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
