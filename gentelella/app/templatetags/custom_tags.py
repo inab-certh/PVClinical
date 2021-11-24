@@ -68,6 +68,8 @@ def breadcrumb_label(context, name, *args, **kwargs):
                        "LiteratureWorkspace": _("Περιβάλλον Εργασίας PubMed"),
                        "paper_notes_view": _("Σημειώσεις Βιβλιογραφίας"),
                        "notes": _("Σημειώσεις"),
+                       "patient_management_workspace": _("Περιβάλλον Διαχείρισης Ασθενών"),
+                       "new_pmcase": _("Νέα Καταχώριση Ασθενούς"),
                        "aggr-notes": _("Συγκεντρωτικές Σημειώσεις"),
                        "social-media": _("Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"),}
 

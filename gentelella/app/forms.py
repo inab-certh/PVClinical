@@ -3,6 +3,7 @@ import re
 from datetime import date
 
 from django import forms
+from django_select2.forms import Select2Widget
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
@@ -29,6 +30,18 @@ class CustomSelect2TagWidget(Select2TagWidget):
         self.attrs.setdefault('data-tags', 'true')
         self.attrs.setdefault('data-url', '')
         self.attrs.setdefault('data-minimum-input-length', 2)
+        return super().build_attrs(*args, **kwargs)
+
+
+class PMSelect2TagWidget(Select2TagWidget):
+    """ Class allowing data-tokens with spaces"""
+
+    def build_attrs(self, *args, **kwargs):
+        self.attrs.setdefault('data-token-separators', [","])
+        # self.attrs.setdefault('data-width', '50%')
+        self.attrs.setdefault('data-tags', 'true')
+        self.attrs.setdefault('data-url', '')
+        self.attrs.setdefault('data-minimum-input-length', 0)
         return super().build_attrs(*args, **kwargs)
 
 
@@ -124,7 +137,6 @@ class ScenarioForm(forms.Form):
             self.cleaned_data["drugs_fld"] = valid_drugs
 
         selected_conditions = dict(self.data).get("conditions_fld")
-        print(self.all_conditions[0].type)
 
         conditions_names = list(map(lambda el: el.name, self.all_conditions))
         conditions_codes = list(map(lambda el: el.code, self.all_conditions))
@@ -289,6 +301,7 @@ class CharForm(forms.Form):
             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
 
+
 class PathwaysForm(forms.Form):
     combination_window = forms.ChoiceField(choices=[(i,i) for i in [1, 3, 5, 7, 10, 14, 30]], initial=0, required=False,
                                            label=_("Χρονικό παράθυρο σύμπτωσης:"))
@@ -343,11 +356,19 @@ class NotesForm(forms.ModelForm):
         model = Notes
         fields = ['content']
 
+
 class PatientForm(forms.ModelForm):
-    scenarios = forms.ModelMultipleChoiceField(
-        queryset=Scenario.objects.all(),
-        widget=forms.CheckboxSelectMultiple, label=''
+    # drugs_fld = forms.MultipleChoiceField(choices=[],
+    #                                       required=False,
+    #                                       label=_("Φάρμακο/Φάρμακα:"),
+    #                                       widget=CustomSelect2TagWidget)
+    scenarios = forms.MultipleChoiceField(
+        choices=[],
+        required=True,
+        widget=PMSelect2TagWidget, label=''
     )
+    # scenarios = forms.ChoiceField(choices=Scenario.objects.all(), required=True,
+    #                                    label=_("Σενάριο:"), widget=Select2Widget)
 
     questionnaires = forms.ModelMultipleChoiceField(
         queryset=Questionnaire.objects.all(),
@@ -358,15 +379,14 @@ class PatientForm(forms.ModelForm):
         fields = ['patient_id', 'scenarios', 'questionnaires']
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super(PatientForm, self).__init__(*args, **kwargs)
-        scenarios = Scenario.objects.all()
+        scenarios = Scenario.objects.filter(owner=self.user)
         self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς')
 
         self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in scenarios]
         questionnaires = Questionnaire.objects.all()
         self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
-
-
 
 
 class QuestionnaireForm(forms.ModelForm):
