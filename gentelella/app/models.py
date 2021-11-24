@@ -229,6 +229,7 @@ class Notes(models.Model):
                                     name="unique_note")
         ]
 
+
 class Questionnaire(models.Model):
 
     q1= models.BooleanField(null=True,default=None)
@@ -252,6 +253,7 @@ class Questionnaire(models.Model):
                                     name="unique_questionnaire")
         ]
 
+
 class PatientCase(models.Model):
     """ PatientCase for user's patients for Patient Management Workspace
     """
@@ -262,7 +264,7 @@ class PatientCase(models.Model):
     scenarios = models.ManyToManyField(Scenario, through= "CaseToScenario", default=None,
                                         verbose_name="scenarios", related_name="scenarios")
 
-    questionnaires =  models.ManyToManyField(Questionnaire, through= "CaseToQuestionnaire", default=None,
+    questionnaires = models.ManyToManyField(Questionnaire, through= "CaseToQuestionnaire", default=None,
                                         verbose_name="questionnaires", related_name="questionnaires")
     #ena questionnaire mporoun na to exoun polloi astheneis, alla kai enas asthenis mporei na exei polla questionnaire,
     #ara h arxiki skepsi tou vlasi mou fainetai swsth, oxi foreignkey, alla pali manytomany
@@ -276,6 +278,7 @@ class PatientCase(models.Model):
                                     name="unique_patientcase")
         ]
 
+
 class CaseToScenario(models.Model):
     scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
     pcase = models.ForeignKey(PatientCase, on_delete=models.CASCADE)
@@ -284,6 +287,7 @@ class CaseToScenario(models.Model):
             models.UniqueConstraint(fields=["scenario", "pcase"],
                                     name="unique_pcase_scenario")
         ]
+
 
 class CaseToQuestionnaire(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)

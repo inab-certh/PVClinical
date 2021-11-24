@@ -86,6 +86,7 @@ urlpatterns = [
     path("ajax/new_pmcase", views.new_pmcase, name='ajax_new_pmcase'),
     path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
     path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history, name='patient_history'),
+    path("ajax/get-popover-content", views.get_popover_content, name='get_popover_content'),
 
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),

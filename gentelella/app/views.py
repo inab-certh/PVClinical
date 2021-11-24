@@ -266,6 +266,29 @@ def get_note_content(request):
     return JsonResponse(data)
 
 
+def get_popover_content(request):
+    """ Get the content for popover
+    :param request: The request from which the popover scenario content is asked
+    :return: The popover content
+    """
+    data = {}
+    try:
+        sc = Scenario.objects.get(id=request.GET.get("sc_id", None))
+        drugs_rows = "\n".join(["<tr><td>{}</td></tr>".format(d.name or d.code) for d in sc.drugs.all()])
+        conditions_rows = "\n".join(["<tr><td>{}</td></tr>".format(c.name or c.code) for c in sc.conditions.all()])
+        data = """<table class ='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+        <thead><tr><th>{}</th><th>{}</th></tr></thead>
+        <tbody>
+            <tr><td><table>{}</table></td>
+                <td><table>{}</table></td>
+            </tr>
+        </tbody></table>""".format(_("Φάρμακο/Φάρμακα"), _("Πάθηση/Παθήσεις"), drugs_rows, conditions_rows)
+
+    except Notes.DoesNotExist:
+        data = ""
+    return HttpResponse(data)
+
+
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
@@ -2975,6 +2998,8 @@ def patient_management_workspace(request):
     return render(request, 'app/patient_management_workspace.html', context)
 
 
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def new_pmcase(request):
     """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
     complete the questionnaire.
@@ -2997,8 +3022,10 @@ def new_pmcase(request):
 
     tmp_user = User.objects.get(username=request.user)
 
+    instance = PatientCase
+
     if request.method == "POST":
-        form = PatientForm(request.POST)
+        form = PatientForm(request.POST, user=request.user)
 
         if form.is_valid():
             case = form.save(commit=False)
@@ -3010,7 +3037,8 @@ def new_pmcase(request):
             return redirect('patient_management_workspace')
     else:
         form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
-                                    "questionnaires": Questionnaire.objects.filter(id=quest_id).first()})
+                                    "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
+                           user=request.user)
 
     scenarios = []
     for sc in Scenario.objects.order_by('-timestamp').all():
