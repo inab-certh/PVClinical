@@ -362,6 +362,7 @@ class PatientForm(forms.ModelForm):
     #                                       required=False,
     #                                       label=_("Φάρμακο/Φάρμακα:"),
     #                                       widget=CustomSelect2TagWidget)
+
     scenarios = forms.MultipleChoiceField(
         choices=[],
         required=True,
@@ -382,7 +383,7 @@ class PatientForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super(PatientForm, self).__init__(*args, **kwargs)
         scenarios = Scenario.objects.filter(owner=self.user)
-        self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς')
+        self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς:')
 
         self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in scenarios]
         questionnaires = Questionnaire.objects.all()

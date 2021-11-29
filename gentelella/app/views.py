@@ -3040,17 +3040,17 @@ def new_pmcase(request):
                                     "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
                            user=request.user)
 
-    scenarios = []
-    for sc in Scenario.objects.order_by('-timestamp').all():
-        scenarios.append({
-            "id": sc.id,
-            "title": sc.title,
-            "drugs": sc.drugs.all(),
-            "conditions": sc.conditions.all(),
-            "owner": sc.owner.username,
-            "status": dict(sc.status.status_choices).get(sc.status.status),
-            "timestamp": sc.timestamp
-        })
+    scenarios = Scenario.objects.order_by('-timestamp').all() #[]
+    # for sc in Scenario.objects.order_by('-timestamp').all():
+    #     scenarios.append({
+    #         "id": sc.id,
+    #         "title": sc.title,
+    #         "drugs": sc.drugs.all(),
+    #         "conditions": sc.conditions.all(),
+    #         "owner": sc.owner.username,
+    #         "status": dict(sc.status.status_choices).get(sc.status.status),
+    #         "timestamp": sc.timestamp
+    #     })
 
     return render(request, 'app/new_pmcase.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no': new_scen_id_no,
                                                  'scenarios': scenarios})
