@@ -1455,7 +1455,7 @@ def allnotes(request):
         wsview_title = ""
         scenario_title = ""
 
-        for n in Notes.objects.order_by('-note_datetime').all():
+        for n in Notes.objects.filter(user=tmp_user).order_by('-note_datetime'):
             if n.scenario_id != None:
                 if n.workspace == 1:
                     work = 'OHDSI'
@@ -1490,7 +1490,7 @@ def allnotes(request):
                 })
                 pubmedexample = []
                 if PubMed.objects.filter(user=tmp_user) != "":
-                    for p in PubMed.objects.order_by('-pubdate').all():
+                    for p in PubMed.objects.filter(user=tmp_user).order_by('-pubdate'):
                         for key in dictpub_sc_id_title:
                              if p.scenario_id_id == key:
                                 scenario_title = dictpub_sc_id_title[key]
