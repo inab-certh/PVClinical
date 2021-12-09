@@ -45,7 +45,7 @@ from app.models import PubMed
 from app.models import Scenario
 # from app.ohdsi_wrappers import update_ir
 # from app.ohdsi_wrappers import create_ir
-from app.entrezpy.entrezpylib import conduit
+from app.entrezpy import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
 from app.pubmed import PubmedAnalyzer
 
@@ -950,7 +950,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 #         results = pubmed_search(query, start, 10, access_token, begin, last)
                 #         records.update(results[0])
                 #         total_results = results[1]
-                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                results = pubmed_search(query, start, 10, access_token, begin, last)
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
@@ -1026,7 +1026,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
     fetch_pubmed = w.new_pipeline()
     q = query
     if start==None and end==None:
-        sid = fetch_pubmed.add_search(
+        fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released',
              'datetype': 'pdat'})
 
@@ -1034,9 +1034,9 @@ def pubmed_search(query, begin, max, access_token, start, end):
         qres = s.get_result()
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
-            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max,
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max,
              'datetype': 'pdat'})
-        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
+        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta',  'retmax' : 10, 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
 
 
@@ -1052,7 +1052,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
         qres = s.get_result()
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
-            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max, 'mindate': start, 'maxdate':end,
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max, 'mindate': start, 'maxdate':end,
              'datetype': 'pdat'})
         fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
