@@ -173,32 +173,6 @@ class Scenario(models.Model):
         ]
 
 
-class PubMed(models.Model):
-    """
-        PubMed articles and user notes
-    """
-    CHOICES = [(True, 'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    pid = models.CharField(max_length=70, blank=False, default='')
-    title = models.CharField(max_length=500, blank=False, default='')
-    pubdate = models.CharField(max_length=400, blank=False, default='')
-    abstract = models.TextField(null=True, blank=True)
-    authors = models.CharField(max_length=400, blank=False, default='')
-    url = models.CharField(max_length=100, blank=False, default='')
-    relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
-    notes = models.TextField(null=True, blank=True)
-
-    scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["pid", "user", "scenario_id"], name="unique_article")
-        ]
-
-    # created = models.DateTimeField(auto_now_add=True)
-
-
 class Notes(models.Model):
     """ Notes for users for the various workspaces of a scenario
     """
@@ -229,3 +203,28 @@ class Notes(models.Model):
                                     name="unique_note")
         ]
 
+
+class PubMed(models.Model):
+    """
+        PubMed articles and user notes
+    """
+    CHOICES = [(True, 'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    pid = models.CharField(max_length=70, blank=False, default='')
+    title = models.CharField(max_length=500, blank=False, default='')
+    pubdate = models.CharField(max_length=400, blank=False, default='')
+    abstract = models.TextField(null=True, blank=True)
+    authors = models.CharField(max_length=400, blank=False, default='')
+    url = models.CharField(max_length=100, blank=False, default='')
+    relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
+    notes = models.ForeignKey(Notes, null=True, on_delete=models.CASCADE)
+
+    scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["pid", "user", "scenario_id"], name="unique_article")
+        ]
+
+    # created = models.DateTimeField(auto_now_add=True)

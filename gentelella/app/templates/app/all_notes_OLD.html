@@ -1,7 +1,6 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
 {% load static %}
-{% load custom_tags %}
 
 
 {% block title %} AllNotes {% endblock title %}
@@ -43,29 +42,64 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for note in user_notes %}
-                        {% firstof  ohdsi_views|get_item:note.wsview note.wsview as note_wsview %}
+                        {% for note in notesforexample %}
+                        {% if note.workspace != PubMed %}
                         <tr>
-                        {% trans note_wsview as trans_note_wsview %}
-                            <td>{% if note.scenario %}{{ note.scenario.title }}{% else %}{% trans "Ανεξάρτητο Σεναρίου" %}{% endif %}</td>
+                            <td>{{ note.scenario_title }}</td>
 
                             <td>{{ note.note_datetime}}</td>
 
                             <td class="cen">{{ note.workspace }}</td>
 
-                            <td ><p class="notesellipsis">{{ note_wsview }}</p></td>
+                            <td ><p class="notesellipsis">{{ note.wsview_title }}</p></td>
 
                             <td><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
                             <td class="cen">
-                                {% if note.scenario %}
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
+                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                {% else %}
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
+                            </td>
+                        </tr>
+                        {% endif%}
+                        {% endfor %}
+
+                        {% for note in pubmedexample %}
+                        <tr>
+                            <td>{{ note.scenario_title }}</td>
+
+                            <td>{{ note.created }}</td>
+
+                            <td class="cen">{{ note.workspace }}</td>
+
+                            <td><p class="notesellipsis"> {{ note.title }} </p></td>
+
+                            <td><p class="notesellipsis"> {{ note.notes}}  </p></td>
+
+                            <td class="cen">
+                                <button  class="btn pm-notes-btn btn-white" type="button" name="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}"  id="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}" data-toggle="modal" data-target="#pubMedNotesModal">
+                                    <i class="fa fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for note in notesforexample1 %}
+                        <tr>
+                            <td>{{ note.scenario }}</td>
+
+                            <td>{{ note.note_datetime}}</td>
+
+                            <td class="cen">{{ note.workspace }}</td>
+
+                            <td>{{ note.wsview_title }}</td>
+
+                            <td class="notesellipsis" >
+                                {{ note.content|striptags }}
+                            </td>
+
+                            <td class="cen">
+                                <button class="btn notes-btn btn-white" type="button" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}", data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
