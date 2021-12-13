@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-10 10:51+0200\n"
+"POT-Creation-Date: 2021-12-13 12:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -313,21 +313,19 @@ msgstr "Relevance"
 #: app/templates/app/OpenFDAWorkspace.html:201
 #: app/templates/app/OpenFDAWorkspace.html:203
 #: app/templates/app/OpenFDAWorkspace.html:208
-#: app/templates/app/all_notes.html:118
-#: app/templates/app/all_notes_improved.html:82
+#: app/templates/app/all_notes.html:84 app/templates/app/all_notes_OLD.html:118
 #: app/templates/app/base_site.html:168
 #: app/templates/app/characterizations.html:38
 #: app/templates/app/condition_occurrence.html:24
 #: app/templates/app/drug_exposure.html:23 app/templates/app/ir.html:37
 #: app/templates/app/pathways.html:38 app/templates/app/sidebar.html:61
 #: app/templates/app/social_media_workspace.html:23
-#: app/templatetags/custom_tags.py:54 app/views.py:1301
+#: app/templatetags/custom_tags.py:57 app/views.py:1301
 msgid "Σημειώσεις"
 msgstr "Notes"
 
 #: app/templates/app/LiteratureWorkspace.html:152
-#: app/templates/app/all_notes.html:130
-#: app/templates/app/all_notes_improved.html:94
+#: app/templates/app/all_notes.html:96 app/templates/app/all_notes_OLD.html:130
 #: app/templates/app/characterizations.html:125
 #: app/templates/app/form_base.html:96 app/templates/app/ir.html:164
 #: app/templates/app/notes.html:48 app/templates/app/notes_aggregated.html:137
@@ -336,8 +334,7 @@ msgid "Αποθήκευση"
 msgstr "Save"
 
 #: app/templates/app/LiteratureWorkspace.html:287
-#: app/templates/app/all_notes.html:124
-#: app/templates/app/all_notes_improved.html:88
+#: app/templates/app/all_notes.html:90 app/templates/app/all_notes_OLD.html:124
 msgid "Προσθέστε τις σημειώσεις σας εδώ"
 msgstr "Enter your notes here"
 
@@ -506,13 +503,11 @@ msgstr "Enter conditions"
 msgid "Ιεραρχική απεικόνιση κατά MedDRA:"
 msgstr "MedDRA hierarchy view"
 
-#: app/templates/app/all_notes.html:25
-#: app/templates/app/all_notes_improved.html:26
+#: app/templates/app/all_notes.html:26 app/templates/app/all_notes_OLD.html:25
 msgid "Προσωπικές Σημειώσεις Σεναρίων"
 msgstr "Personal Scenario Notes"
 
-#: app/templates/app/all_notes.html:30
-#: app/templates/app/all_notes_improved.html:31
+#: app/templates/app/all_notes.html:31 app/templates/app/all_notes_OLD.html:30
 msgid ""
 "Στον ακόλουθο πίνακα μπορείτε να δείτε τις σημειώσεις που έχετε ήδη "
 "δημιουργήσει. Επίσης, μπορείτε να επεξεργαστείετε μια σημείωση επιλέγοντας "
@@ -522,44 +517,39 @@ msgstr ""
 "also edit a note, by selecting the 'Edit' button at the last column in each "
 "row of this table."
 
-#: app/templates/app/all_notes.html:36
-#: app/templates/app/all_notes_improved.html:37
+#: app/templates/app/all_notes.html:37 app/templates/app/all_notes_OLD.html:36
 #: app/templates/app/form_base.html:47 app/templates/app/index.html:35
 #: app/templates/app/modals/parametric_modal.html:12
 #: app/templates/app/social_media_workspace.html:41
-#: app/templatetags/custom_tags.py:43 app/templatetags/custom_tags.py:44
+#: app/templatetags/custom_tags.py:46 app/templatetags/custom_tags.py:47
 #: app/views.py:317
 msgid "Σενάριο"
 msgstr "Scenario"
 
-#: app/templates/app/all_notes.html:37
-#: app/templates/app/all_notes_improved.html:38 app/templates/app/index.html:38
+#: app/templates/app/all_notes.html:38 app/templates/app/all_notes_OLD.html:37
+#: app/templates/app/index.html:38
 msgid "Ημ/νία καταχώρισης"
 msgstr "Creation Date"
 
-#: app/templates/app/all_notes.html:38
-#: app/templates/app/all_notes_improved.html:39
+#: app/templates/app/all_notes.html:39 app/templates/app/all_notes_OLD.html:38
 msgid "Περιβάλλον Εργασίας"
 msgstr "Workspace"
 
-#: app/templates/app/all_notes.html:39
-#: app/templates/app/all_notes_improved.html:40
+#: app/templates/app/all_notes.html:40 app/templates/app/all_notes_OLD.html:39
 msgid "Φόρμα"
 msgstr "View"
 
-#: app/templates/app/all_notes.html:40
-#: app/templates/app/all_notes_improved.html:41
+#: app/templates/app/all_notes.html:41 app/templates/app/all_notes_OLD.html:40
 msgid "Περιεχομενο"
 msgstr "Content"
 
-#: app/templates/app/all_notes.html:41
-#: app/templates/app/all_notes_improved.html:42
+#: app/templates/app/all_notes.html:42 app/templates/app/all_notes_OLD.html:41
 #: app/templates/app/characterizations.html:100 app/templates/app/index.html:40
 #: app/templates/app/ir.html:139 app/templates/app/pathways.html:92
 msgid "Επεξεργασία"
 msgstr "Edit"
 
-#: app/templates/app/all_notes_improved.html:48
+#: app/templates/app/all_notes.html:50
 msgid "Ανεξάρτητο Σεναρίου"
 msgstr "Scenario Independent"
 
@@ -689,7 +679,7 @@ msgstr ""
 
 #: app/templates/app/condition_occurrence.html:43
 #: app/templates/app/ohdsi_workspace.html:107
-#: app/templatetags/custom_tags.py:46 app/views.py:1331
+#: app/templatetags/custom_tags.py:49 app/views.py:1331
 #: gentelella/settings.py:278
 msgid "Εκδήλωση Κατάστασης"
 msgstr "Condition Occurrence"
@@ -721,7 +711,7 @@ msgstr ""
 "drugs."
 
 #: app/templates/app/drug_exposure.html:43
-#: app/templates/app/ohdsi_workspace.html:89 app/templatetags/custom_tags.py:45
+#: app/templates/app/ohdsi_workspace.html:89 app/templatetags/custom_tags.py:48
 #: app/views.py:1330 gentelella/settings.py:278
 msgid "Έκθεση σε Φάρμακα"
 msgstr "Drug Exposure"
@@ -973,14 +963,14 @@ msgstr "Detailed View"
 
 #: app/templates/app/ohdsi_workspace.html:54
 #: app/templates/app/ohdsi_workspace.html:127
-#: app/templatetags/custom_tags.py:47 app/views.py:1329
+#: app/templatetags/custom_tags.py:50 app/views.py:1329
 #: gentelella/settings.py:278
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
 #: app/templates/app/ohdsi_workspace.html:65
 #: app/templates/app/ohdsi_workspace.html:138
-#: app/templatetags/custom_tags.py:48 app/views.py:694 app/views.py:1329
+#: app/templatetags/custom_tags.py:51 app/views.py:694 app/views.py:1329
 #: gentelella/settings.py:279
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort Characterization"
@@ -997,7 +987,7 @@ msgstr ""
 "covariate data."
 
 #: app/templates/app/ohdsi_workspace.html:158
-#: app/templates/app/pathways.html:133 app/templatetags/custom_tags.py:49
+#: app/templates/app/pathways.html:133 app/templatetags/custom_tags.py:52
 #: app/views.py:1330 gentelella/settings.py:279
 msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
@@ -1155,31 +1145,31 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/templatetags/custom_tags.py:42
+#: app/templatetags/custom_tags.py:45
 msgid "Αρχική Σελίδα"
 msgstr "Dashboard"
 
-#: app/templatetags/custom_tags.py:50
+#: app/templatetags/custom_tags.py:53
 msgid "Περιβάλλον Εργασίας OpenFDA"
 msgstr "OpenFDA Workspace"
 
-#: app/templatetags/custom_tags.py:51
+#: app/templatetags/custom_tags.py:54
 msgid "Περιβάλλον Εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/templatetags/custom_tags.py:52
+#: app/templatetags/custom_tags.py:55
 msgid "Περιβάλλον Εργασίας PubMed"
 msgstr "PubMed Workspace"
 
-#: app/templatetags/custom_tags.py:53
+#: app/templatetags/custom_tags.py:56
 msgid "Σημειώσεις Βιβλιογραφίας"
 msgstr "Paper Notes"
 
-#: app/templatetags/custom_tags.py:55
+#: app/templatetags/custom_tags.py:58
 msgid "Συγκεντρωτικές Σημειώσεις"
 msgstr "Aggregated Notes"
 
-#: app/templatetags/custom_tags.py:56 app/views.py:1670
+#: app/templatetags/custom_tags.py:59 app/views.py:1671
 msgid "Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"
 msgstr "Social Media Workspace"
 
@@ -1275,6 +1265,10 @@ msgstr "Greek"
 #: gentelella/settings.py:175
 msgid "Αγγλικά"
 msgstr "English"
+
+#: gentelella/settings.py:280
+msgid "Μέσα Κοινωνικής Δικτύωσης"
+msgstr "Social Media"
 
 #~ msgid ""
 #~ "Έναρξη διαδικασίας εξόρυξης δεδομένων από το twitter για το προς "
