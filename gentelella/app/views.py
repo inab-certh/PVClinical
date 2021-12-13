@@ -1627,7 +1627,7 @@ def allnotes(request):
     #
     # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
 
-    context = {"user_notes": user_notes, "ohdsi_views": settings.OHDSI_VIEWS}
+    context = {"user_notes": user_notes, "abbrv_views": settings.ABBRV_VIEWS}
     return render(request, 'app/all_notes.html', context)
 
 

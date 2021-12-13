@@ -44,7 +44,7 @@
                         </thead>
                         <tbody>
                         {% for note in user_notes %}
-                        {% firstof  ohdsi_views|get_item:note.wsview note.wsview as note_wsview %}
+                        {% firstof  abbrv_views|get_item:note.wsview note.wsview as note_wsview %}
                         <tr>
                         {% trans note_wsview as trans_note_wsview %}
                             <td>{% if note.scenario %}{{ note.scenario.title }}{% else %}{% trans "Ανεξάρτητο Σεναρίου" %}{% endif %}</td>
