@@ -51589,7 +51589,7 @@ module.exports = function (modules) {
                 }
 
                 document.cookie = cookie.join("; ")
-                console.log(document.cookie)
+
             }, read: function read(name) {
                 var match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
                 return match ? decodeURIComponent(match[3]) : null
