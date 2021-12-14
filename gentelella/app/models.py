@@ -183,7 +183,7 @@ class Notes(models.Model):
     scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
     workspace = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                              MaxValueValidator(5)])
-    wsview = models.CharField(max_length=32, default='')  # Workspace specific view
+    wsview = models.CharField(max_length=120, default='')  # Workspace specific view
     note_datetime = models.DateTimeField(auto_now_add=True, blank=True)
 
     def save(self, *args, **kwargs):
