@@ -48,7 +48,7 @@ $(function() {
     $("[data-toggle='popover']").popover();
     $("body").on("click", ".notes-btn", function () {
         var mod_url = $(this).data("url");
-        var mod_id = $(this).data("id");
+        var mod_id = $(this).data("id").replace(/\W/g, '');
         $(".notesModal").attr("id", mod_id);
         $(".notesModal iframe").attr("src", mod_url);
         $("#" + mod_id).modal("show");

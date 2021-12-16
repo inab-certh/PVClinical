@@ -6,6 +6,9 @@ Created on Dec 14, 2018
 import datetime
 from django import template
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
+from django.utils import translation
+from django.template import Node,  Variable, TemplateSyntaxError
 
 
 register = template.Library()
@@ -82,3 +85,21 @@ def next(lst, arg):
     except:
         return None
 
+
+class TransNode(Node):
+    def __init__(self, value, lc):
+        self.value = Variable(value)
+        self.lc = lc
+
+    def render(self, context):
+        translation.activate(self.lc)
+        val = _(self.value.resolve(context))
+        translation.deactivate()
+        return val
+
+
+@register.filter()
+def trans_to(token, lang):
+    with translation.override(lang):
+        val = gettext(token)
+    return val

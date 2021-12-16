@@ -78,8 +78,12 @@
 
 }
 
-#abstract {
+.abstract {
   text-align: justify;
+}
+
+.authors{
+  word-break: break-all;
 }
 
 #pdf-frame {
