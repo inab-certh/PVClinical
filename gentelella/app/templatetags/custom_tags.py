@@ -48,7 +48,7 @@ def breadcrumb_label(context, name, *args, **kwargs):
                        "drug-exposure": _("Έκθεση σε Φάρμακα"),
                        "condition-occurrence": _("Εκδήλωση Κατάστασης"),
                        "ir": _("Ρυθμός Επίπτωσης"),
-                       "char": _("Χαρακτηρισμός Πληθυσμού"),
+                       "char": _("Χαρακτηρισμός Ομάδας Ασθενών"),
                        "cp": _("Μονοπάτι Ακολουθίας Συμβάντων"),
                        "OpenFDAWorkspace": _("Περιβάλλον Εργασίας OpenFDA"),
                        "ohdsi-workspace": _("Περιβάλλον Εργασίας OHDSI"),

@@ -691,7 +691,7 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
         "view_type": view_type,
         "read_only": read_only,
         "form": char_form,
-        "title": _("Χαρακτηρισμός Πληθυσμού")
+        "title": _("Χαρακτηρισμός Ομάδας Ασθενών")
     }
 
     return render(request, 'app/characterizations.html', context, status=status_code)
@@ -1326,7 +1326,7 @@ def aggregated_notes(request, lang):
 
         # List of structured notes in form {<scenario>:{<workspace>:{<worskpace_view>: <note>, ...}, ...}
         struct_notes = []
-        views_dict = {"ir": _("Ρυθμός Επίπτωσης"), "char": _("Χαρακτηρισμός Πληθυσμού"),
+        views_dict = {"ir": _("Ρυθμός Επίπτωσης"), "char": _("Χαρακτηρισμός Ομάδας Ασθενών"),
                       "pathways": _("Μονοπάτι Ακολουθίας Συμβάντων"), "de": _("Έκθεση σε Φάρμακα"),
                       "co": _("Εκδήλωση Κατάστασης")}
         rev_avail_workspaces = dict(map(reversed, settings.WORKSPACES.items()))
