@@ -10,6 +10,7 @@
   color: #2A3F54;
   height: 1.2em;
   width: 1em;
+  top: 9px;
 
 }
 .glyphicon {
@@ -96,6 +97,17 @@
   overflow: initial !important;
   position: initial !important;
 
+}
+
+/*.modal {*/
+/*  position: relative;*/
+/*}*/
+
+.modal-dialog {
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
 }
 
 
