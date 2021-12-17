@@ -1639,8 +1639,8 @@ geturlquery <- reactive({
    # q<-NULL
    # q$v1<-"patient.drug.openfda.generic_name"
    # q$v2<-"patient.reaction.reactionmeddrapt"
-   # # q$t1<-"Omeprazole"
-   # # q$t2<-"Hypokalaemia"
+   # q$t1<-"Omeprazole"
+   # q$t2<-"Hypokalaemia"
    # q$t1<-"A02BC01"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"

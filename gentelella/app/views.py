@@ -1202,7 +1202,7 @@ def save_pubmed_input(request):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def paper_notes_view(request):
+def paper_notes_view(request, scenario_id=None, first=None, end=None, page_id=None):
     """ Save the notes and the relevance of a paper that user chose.
     :param request: request
     :return: redirect to paper_notes view where user can review the paper
