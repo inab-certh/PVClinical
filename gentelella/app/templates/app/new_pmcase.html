@@ -57,6 +57,27 @@
 
             });
 
+            var patient_id = $("[name='patient_id']").val();
+            var sc_id = $("[name='scenarios']").val();
+            if(patient_id && sc_id){
+                $("#questModalBtn").attr("disabled", false);
+            } else {
+                $("#questModalBtn").attr("disabled", true);
+            }
+
+            $("[name='patient_id'], [name='scenarios']").on("change", function () {
+                var patient_id = $("[name='patient_id']").val();
+                var sc_id = $("[name='scenarios']").val();
+                console.log(patient_id);
+                console.log(sc_id);
+
+                if(patient_id && sc_id) {
+                    $("#questModalBtn").attr("disabled", false);
+                } else {
+                    $("#questModalBtn").attr("disabled", true);
+                }
+            });
+
             $('#questModalBtn').on("click", function(){
                 var patient_id = $("#id_patient_id").val();
                 new_scen_id= '{{ new_scen_id_no }}'
@@ -146,8 +167,8 @@
 
                         <div style="margin-top:40px"></div>
 
-                      <a id="questModalBtn" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" ></i>&nbsp
-                          {% trans "Ερωτηματολόγιο" %}</span></a>
+                      <button id="questModalBtn" type="button" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" ></i>&nbsp
+                          {% trans "Ερωτηματολόγιο" %}</span></button>
 
                     <br>
                         <div style="display:none;" class="mt-3">{{ form.questionnaires|as_crispy_field }}</div>

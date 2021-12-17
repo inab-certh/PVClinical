@@ -3195,7 +3195,7 @@ def new_pmcase(request):
                                     "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
                            user=request.user)
 
-    scenarios = Scenario.objects.order_by('-timestamp').all() #[]
+    scenarios = Scenario.objects.filter(owner=request.user).order_by('-timestamp').all() #[]
     # for sc in Scenario.objects.order_by('-timestamp').all():
     #     scenarios.append({
     #         "id": sc.id,

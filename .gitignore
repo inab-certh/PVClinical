@@ -11,6 +11,7 @@ RShinyApps/QuickView/rsconnect/shinyapps.io/
 gentelella/app/migrations/__pycache__
 gentelella/users/migrations/__pycache__
 gentelella/db_b.sqlite3
+db_b.sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
 RShinyApps/.RData
 RShinyApps/.Rhistory
