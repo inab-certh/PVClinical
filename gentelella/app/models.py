@@ -15,6 +15,7 @@ from ckeditor.fields import RichTextField
 # from tinymce.models import HTMLField
 
 from app.helper_modules import choices_max_length
+from app.validators import pat_id_validator
 
 
 # Create your models here.
@@ -256,7 +257,7 @@ class Questionnaire(models.Model):
 class PatientCase(models.Model):
     """ PatientCase for user's patients for Patient Management Workspace
     """
-    patient_id = models.CharField(max_length=500, blank=False, default='')
+    patient_id = models.CharField(max_length=500, blank=False, default='', validators=[pat_id_validator])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     #ena scenario mporei na to exoun polloi astheneis, alla kai 1 asthenis mporei na exei polla senaria
