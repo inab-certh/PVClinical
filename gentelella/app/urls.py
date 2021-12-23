@@ -80,9 +80,9 @@ urlpatterns = [
     path("patient_management_workspace/new_pmcase", views.new_pmcase, name='new_pmcase'),
     path("patient_management_workspace/new_pmcase/<int:quest_id>/<str:patient_id>/<int:sc_id>/", views.new_pmcase, name='new_pmcase'),
     path("patient_management_workspace/new_pmcase/questionnaire", views.questionnaire, name='questionnaire'),
-    path("patient_management_workspace/new_pmcase/questionnaire/<str:patient_id>/<int:sc_id>/", views.questionnaire, name='questionnaire'),
+    # path("patient_management_workspace/new_pmcase/questionnaire/<str:patient_id>/<int:sc_id>/", views.questionnaire, name='questionnaire'),
 
-    path("patient_management_workspace/new_pmcase/questionnaire/<int:pk>/<int:scen_id>/<str:pat_id>/", views.answers_detail, name='answers_detail'),
+    path("patient_management_workspace/new_pmcase/answers_detail/<int:pk>/<int:scen_id>/<str:pat_id>/", views.answers_detail, name='answers_detail'),
     path("ajax/new_pmcase", views.new_pmcase, name='ajax_new_pmcase'),
     path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
     path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history, name='patient_history'),

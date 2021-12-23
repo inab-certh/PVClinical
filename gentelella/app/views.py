@@ -350,9 +350,6 @@ def add_edit_scenario(request, scenario_id=None):
 
         if scform.is_valid():
             sc=scform.save()
-            #aprosthiki apo nadia gia to patient_management_workspace
-            request.session['new_scen_id'] = sc.id
-
 
             messages.success(
                 request,
@@ -3117,13 +3114,17 @@ def patient_management_workspace(request):
     :param request: request
     :return: the form view
     """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
     request.session['quest_id'] = None
     request.session['scen_id'] = None
     request.session['pat_id'] = None
 
     patient_cases = []
 
-    for case in PatientCase.objects.order_by('-timestamp').all():
+    for case in PatientCase.objects.filter(user=request.user).order_by('-timestamp').all():
         for scs in case.scenarios.all():
             for quests in case.questionnaires.all():
 
@@ -3161,39 +3162,44 @@ def new_pmcase(request):
     :param request: request
     :return: the form view
     """
-    quest_id = request.session.get('quest_id')
-    patient_id = request.session.get('pat_id')
-    sc_id = request.session.get('scen_id')
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
-    new_scen_id = request.session.get('new_scen_id') \
+    quest_ids = request.session.get('quest_ids', [])
+    patient_id = request.session.get('pat_id')
+    sc_ids = request.session.get('scen_ids', [])
+
+    new_scen_ids = request.session.get('new_scen_ids') \
         if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
         else None
 
-    new_scen_id_no = 'None'
-
-    if new_scen_id != None and sc_id == None:
-        sc_id = new_scen_id
-        new_scen_id_no = new_scen_id
+    # new_scen_id_no = 'None'
+    #
+    # if new_scen_id != None and sc_id == None:
+    #     sc_id = new_scen_id
+    #     new_scen_id_no = new_scen_id
 
     tmp_user = User.objects.get(username=request.user)
 
-    instance = PatientCase
+    # instance = PatientCase
+    request.session["svbtn_disable"] = True
+
+    form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id__in=sc_ids),
+                                "questionnaires": Questionnaire.objects.filter(id__in=quest_ids)},
+                       user=request.user)
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user)
-
         if form.is_valid():
             case = form.save(commit=False)
             case.user = tmp_user
             case = form.save(commit=False)
             case.save()
             form.save_m2m()
+            request.session["svbtn_disable"] = False
 
             return redirect('patient_management_workspace')
-    else:
-        form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
-                                    "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
-                           user=request.user)
+
 
     scenarios = Scenario.objects.filter(owner=request.user).order_by('-timestamp').all() #[]
     # for sc in Scenario.objects.order_by('-timestamp').all():
@@ -3207,8 +3213,8 @@ def new_pmcase(request):
     #         "timestamp": sc.timestamp
     #     })
 
-    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no': new_scen_id_no,
-                                                 'scenarios': scenarios})
+    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_ids':quest_ids, 'scenarios': scenarios,
+                                                   "svbtn_disable": request.session.get("svbtn_disable")})
 
 
 def questionnaire(request, patient_id=None, sc_id=None):
@@ -3220,11 +3226,14 @@ def questionnaire(request, patient_id=None, sc_id=None):
     :return: the form view
     """
 
+    patient_id = request.GET.get("patient_id", None)
+    sc_ids = request.GET.get("sc_ids", None)
+
     if request.method == "POST":
 
         form = QuestionnaireForm(request.POST)
         pat_id = form.data["patient_id"]
-        scen_id = form.data["sc_id"]
+        scen_ids = form.data["sc_ids"]
 
         if form.is_valid():
             answers = form.save(commit=False)
@@ -3237,7 +3246,6 @@ def questionnaire(request, patient_id=None, sc_id=None):
                                                            q9=answers.q9, q10=answers.q10)
                 existing_pk = existing_quest.pk
 
-                return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
             else:
 
                 answers.save()
@@ -3256,10 +3264,17 @@ def questionnaire(request, patient_id=None, sc_id=None):
 
                 existing_pk = answers.pk
 
-                return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
+            request.session['quest_ids'] = [existing_pk]
+            request.session['scen_ids'] = scen_ids
+            request.session['pat_id'] = pat_id
+
+            return redirect('answers_detail', pk= existing_pk, scen_ids=scen_ids, pat_id=pat_id)
 
     else:
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_ids": sc_ids})
+        request.session['quest_ids'] = []
+        request.session['scen_ids'] = sc_ids
+        request.session['pat_id'] = patient_id
 
     return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
 
@@ -3275,9 +3290,6 @@ def answers_detail(request, pk, scen_id, pat_id):
 
     scen_title = Scenario.objects.get(id=scen_id).title
     quest = Questionnaire.objects.get(id=pk)
-    request.session['quest_id'] = pk
-    request.session['scen_id'] = scen_id
-    request.session['pat_id'] = pat_id
 
     return render(request, 'app/answers_detail.html', {'quest': quest, 'scen_id': scen_id, 'pat_id': pat_id,
                                                        'scen_title': scen_title})
