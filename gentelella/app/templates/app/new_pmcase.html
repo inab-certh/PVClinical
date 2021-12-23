@@ -87,20 +87,20 @@
                 console.log(sc_ids)
 
                 if(patient_id && sc_ids){
-                    {#var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_ids;#}
-                    {#$('#iframe_quest').attr('src', url);#}
-                    {##}
-                    {#$.ajax({#}
-                    {#    url: "/ajax/new_pmcase",#}
-                    {#    data: {"patient_id":patient_id,"sc_ids":sc_ids },#}
-                    {#    dataType: "html",#}
-                    {#    success: function (res) {#}
-                    {#        $('#questionnaireModal').modal('show');#}
-                    {#      },#}
-                    {#      error: function (res) {#}
-                    {#        console.log("error "+res);#}
-                    {#    }#}
-                    {#});#}
+                    var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_ids;
+                    $('#iframe_quest').attr('src', url);
+
+                    $.ajax({
+                        url: "/ajax/new_pmcase",
+                        data: {"patient_id":patient_id,"sc_ids":sc_ids },
+                        dataType: "html",
+                        success: function (res) {
+                            $('#questionnaireModal').modal('show');
+                          },
+                          error: function (res) {
+                            console.log("error "+res);
+                        }
+                    });
 
                 }else{
                     {#location.reload();#}
