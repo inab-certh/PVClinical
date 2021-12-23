@@ -389,6 +389,18 @@ class PatientForm(forms.ModelForm):
         questionnaires = Questionnaire.objects.all()
         self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
 
+    def is_valid(self):
+        """ Overriding-extending is_valid module
+        """
+
+        super(PatientForm, self).is_valid()
+
+        if (not self.cleaned_data.get("patient_id")) or not self.cleaned_data.get("scenarios"):
+            self.add_error(None, _("Τα πεδία που αφορούν την ταυτότητα ασθενούς και το συσχετιζόμενο σενάριο "
+                                   "πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"))
+
+        return not self._errors
+
 
 class QuestionnaireForm(forms.ModelForm):
     q1 = forms.ChoiceField(
