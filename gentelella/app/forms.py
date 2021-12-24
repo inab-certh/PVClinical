@@ -453,8 +453,8 @@ class QuestionnaireForm(forms.ModelForm):
         widget=forms.RadioSelect(), required=False,
         label="10. Has the event previously been reported with this drug?"
     )
-    patient_id = forms.CharField(widget=forms.HiddenInput(), required=False)
-    sc_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    # patient_id = forms.CharField(widget=forms.HiddenInput(), required=False)
+    # sc_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
 
     class Meta:
