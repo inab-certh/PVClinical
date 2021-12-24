@@ -42,8 +42,8 @@
 
             $('input[name="scenarios"]').on("change", function() {
                       if($('input[name="scenarios"]:checked').length == 1) {
-                        sc_ids = $(this).val();
-                        console.log(sc_ids)
+                        sc_id = $(this).val();
+                        console.log(sc_id)
                       }
             });
 
@@ -63,8 +63,8 @@
             });
 
             var patient_id = $("[name='patient_id']").val();
-            var sc_ids = $("[name='scenarios']").val();
-            if(patient_id && sc_ids){
+            var sc_id = $("[name='scenarios']").val();
+            if(patient_id && sc_id){
                 $("#questModalBtn").attr("disabled", false);
             } else {
                 $("#questModalBtn").attr("disabled", true);
@@ -72,9 +72,9 @@
 
             $("[name='patient_id'], [name='scenarios']").on("change", function () {
                 var patient_id = $("[name='patient_id']").val();
-                var sc_ids = $("[name='scenarios']").val();
+                var sc_id = $("[name='scenarios']").val();
 
-                if(patient_id && sc_ids) {
+                if(patient_id && sc_id) {
                     {#$(".save.btn").click();#}
                     $(".ma-form").submit();
                 }
@@ -82,17 +82,17 @@
 
             $('#questModalBtn').on("click", function(){
                 var patient_id = $("[name='patient_id']").val();
-                var sc_ids = $("[name='scenarios']").val();
-                console.log(patient_id)
-                console.log(sc_ids)
+                var sc_id = $("[name='scenarios']").val();
+                {#console.log(patient_id)#}
+                {#console.log(sc_id)#}
 
-                if(patient_id && sc_ids){
-                    var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_ids;
+                if(patient_id && sc_id){
+                    var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_id;
                     $('#iframe_quest').attr('src', url);
 
                     $.ajax({
                         url: "/ajax/new_pmcase",
-                        data: {"patient_id":patient_id,"sc_ids":sc_ids },
+                        data: {"patient_id":patient_id,"sc_id":sc_id },
                         dataType: "html",
                         success: function (res) {
                             $('#questionnaireModal').modal('show');
@@ -108,7 +108,7 @@
                 };
 
                 {#console.log(patient_id)#}
-                {#console.log(sc_ids)#}
+                {#console.log(sc_id)#}
                 {#console.log(url)#}
             });
                 });
@@ -172,7 +172,7 @@
                     <br>
                     <br>
                     <br>
-                    {% if quest_id != None %}
+                    {% if quest_id %}
                         <div style="margin: auto; width: 70%; color:red;"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
                             {% trans "Υπόθεση Ασθενούς σας, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν αλλάξετε σελίδα!" %}
                         </b></div>

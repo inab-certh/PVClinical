@@ -3165,13 +3165,13 @@ def new_pmcase(request):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    quest_ids = request.session.get('quest_ids', [])
-    patient_id = request.session.get('pat_id')
-    sc_ids = request.session.get('scen_ids', [])
+    quest_id = request.session.get('quest_id', None)
+    patient_id = request.session.get('pat_id') or request.GET.get("patient_id", None)
+    sc_id = request.session.get('scen_id', None) or request.GET.get("sc_id", None)
 
-    new_scen_ids = request.session.get('new_scen_ids') \
-        if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
-        else None
+    # new_scen_id = request.session.get('new_scen_id') \
+    #     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
+    #     else None
 
     # new_scen_id_no = 'None'
     #
@@ -3184,8 +3184,8 @@ def new_pmcase(request):
     # instance = PatientCase
     request.session["svbtn_disable"] = True
 
-    form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id__in=sc_ids),
-                                "questionnaires": Questionnaire.objects.filter(id__in=quest_ids)},
+    form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
+                                "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
                        user=request.user)
 
     if request.method == "POST":
@@ -3213,7 +3213,7 @@ def new_pmcase(request):
     #         "timestamp": sc.timestamp
     #     })
 
-    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_ids':quest_ids, 'scenarios': scenarios,
+    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_id':quest_id, 'scenarios': scenarios,
                                                    "svbtn_disable": request.session.get("svbtn_disable")})
 
 
@@ -3222,18 +3222,14 @@ def questionnaire(request, patient_id=None, sc_id=None):
     is actually due to the drug rather than the result of other factors.
     :param request: request
     :param patient_id: the specific patient's id or None
-    :param sc_id: scenario's id that is correlated with this patient's case or None
+    :param sc_id: scenario ids that are correlated with this patient's case or None
     :return: the form view
     """
-
-    patient_id = request.GET.get("patient_id", None)
-    sc_ids = request.GET.get("sc_ids", None)
-
     if request.method == "POST":
 
         form = QuestionnaireForm(request.POST)
-        pat_id = form.data["patient_id"]
-        scen_ids = form.data["sc_ids"]
+        pat_id = request.session.get('pat_id')
+        scen_id = request.session.get('scen_id')
 
         if form.is_valid():
             answers = form.save(commit=False)
@@ -3264,16 +3260,19 @@ def questionnaire(request, patient_id=None, sc_id=None):
 
                 existing_pk = answers.pk
 
-            request.session['quest_ids'] = [existing_pk]
-            request.session['scen_ids'] = scen_ids
+            request.session['quest_id'] = existing_pk
+            request.session['scen_id'] = scen_id
             request.session['pat_id'] = pat_id
 
-            return redirect('answers_detail', pk= existing_pk, scen_ids=scen_ids, pat_id=pat_id)
+            return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
 
     else:
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_ids": sc_ids})
-        request.session['quest_ids'] = []
-        request.session['scen_ids'] = sc_ids
+        patient_id = patient_id #or request.GET.get("patient_id", None)
+        sc_id = sc_id #or request.GET.getlist("sc_id")
+
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
+        request.session['quest_id'] = None
+        request.session['scen_id'] = sc_id
         request.session['pat_id'] = patient_id
 
     return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
