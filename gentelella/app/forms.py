@@ -373,7 +373,7 @@ class PatientForm(forms.ModelForm):
 
     questionnaires = forms.ModelMultipleChoiceField(
         queryset=Questionnaire.objects.all(),
-        widget=forms.CheckboxSelectMultiple, label=''
+        widget=PMSelect2TagWidget, label=''
     )
     class Meta:
         model = PatientCase
@@ -382,12 +382,8 @@ class PatientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(PatientForm, self).__init__(*args, **kwargs)
-        scenarios = Scenario.objects.filter(owner=self.user)
         self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς:')
-
-        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in scenarios]
-        questionnaires = Questionnaire.objects.all()
-        self.fields['questionnaires'].choices = [(sc.pk, sc.pk) for sc in questionnaires]
+        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user)]
 
     def is_valid(self):
         """ Overriding-extending is_valid module

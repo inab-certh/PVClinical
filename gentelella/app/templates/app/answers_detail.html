@@ -219,7 +219,7 @@ a:hover {
      <i> *Click to see the flowchart of Liverpool Algorithm </i>
       <br>
       <br>
-      <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">Fowchart</button>
+      <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">Flowchart</button>
 
 
 <!-- Modal -->
@@ -255,32 +255,32 @@ a:hover {
 {% endblock content %}
 
 
-{% block javascripts %}
+<!--{% block javascripts %}-->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
 
-<script>
-$(document).ready(function(){
-var quest_id = {{ quest.pk }};
-var scen_id = {{ scen_id }};
-var pat_id = {{ pat_id }};
+<!--<script>-->
+<!--$(document).ready(function(){-->
+<!--        var quest_id = {{ quest.pk }};-->
+<!--        var scen_id = {{ scen_id }};-->
+<!--        var pat_id = {{ pat_id }};-->
 
-        $.ajax({
-                url: "/ajax/new_pmcase",
-                data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },
-                dataType: "html",
-                success: function (res) {
-                    console.log(quest_id);
-                    console.log(patient_id);
-                    console.log(sc_id);
+<!--        $.ajax({-->
+<!--                url: "/ajax/new_pmcase",-->
+<!--                data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },-->
+<!--                dataType: "html",-->
+<!--                success: function (res) {-->
+<!--                    console.log(quest_id);-->
+<!--                    console.log(patient_id);-->
+<!--                    console.log(sc_id);-->
 
-                  },
-                  error: function (res) {
-                    console.log("error "+res);
-                }
-            });
+<!--                  },-->
+<!--                  error: function (res) {-->
+<!--                    console.log("error "+res);-->
+<!--                }-->
+<!--            });-->
 
 
-            });
-</script>
-{% endblock javascripts %}
+<!--            });-->
+<!--</script>-->
+<!--{% endblock javascripts %}-->

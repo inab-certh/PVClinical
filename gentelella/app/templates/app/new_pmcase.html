@@ -14,13 +14,16 @@
     <link href='{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}' rel="stylesheet">
     <link href='{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}' rel="stylesheet">
     <link href='{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}' rel="stylesheet">
+
+    <link href='{% static "build/css/pmcase.css" %}' rel="stylesheet">
+
 {% endblock stylesheets %}
 
 {% block javascripts %}
     {{ block.super }}
     <!-- Select 2 css -->
 	{{ form.media.js }}
-    <script src='{% static "build/js/patient_management.js" %}'></script>
+    <script src='{% static "build/js/new_pmcase.js" %}'></script>
 
     <script>
 
@@ -47,28 +50,62 @@
                       }
             });
 
-            $('#patientModal').on('hidden.bs.modal', function () {
-                $("#loaderOverlay").fadeIn();
-                var loc = window.location;
-                window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
-                {#location.reload();#}
+            // $('#addPatScenModal').on('hidden.bs.modal', function () {
+            //     $("#loaderOverlay").fadeIn();
+            //     // var loc = window.location;
+            //     // window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
+            //     // location.reload();
+            // });
+            //
+            // $('#questionnaireModal').on('hidden.bs.modal', function () {
+            //     $("#loaderOverlay").fadeIn();
+            //     // var loc = window.location;
+            //     // window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
+            //     // console.log(loc);
+            //     // location.reload();
+            // });
+
+            $('#questionnaireModal').on('hide.bs.modal', function () {
+                $.ajax({
+                    url: "/ajax/retr-del-session-pmcvars",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        // $("[name='patient_id']").val(data["pat_id"]).trigger("change");
+                        // $("[name='scenarios']").val(data["sc_id"]).trigger("change");
+                        $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
+                      },
+                      error: function (res) {
+                        console.log("error "+res);
+                    }
+                });
             });
 
-            $('#questionnaireModal').on('hidden.bs.modal', function () {
-                $("#loaderOverlay").fadeIn();
-                var loc = window.location;
-                window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
-                console.log(loc);
-                {#location.reload();#}
-            });
 
-            var patient_id = $("[name='patient_id']").val();
-            var sc_id = $("[name='scenarios']").val();
-            if(patient_id && sc_id){
-                $("#questModalBtn").attr("disabled", false);
+            var init_patient_id = $("[name='patient_id']").val();
+            var init_sc_id = $("[name='scenarios']").val();
+            var init_quest_id = $("[name='questionnaires']").val();
+
+            if(init_patient_id && init_sc_id && init_quest_id) {
+                $(".btn-group>.save.btn").prop("disabled", false);
             } else {
-                $("#questModalBtn").attr("disabled", true);
+                $(".btn-group>.save.btn").prop("disabled", true);
             }
+
+            $("[name='patient_id'], [name='scenarios'], [name='questionnaires']").on("change", function () {
+                var patient_id = $("[name='patient_id']").val();
+                var sc_id = $("[name='scenarios']").val();
+                var questionnaire_id = $("[name='questionnaires']").val();
+
+                console.log("questionnaire_id: ");
+                console.log(questionnaire_id);
+
+                if(patient_id && sc_id && questionnaire_id) {
+                    $(".btn-group>.save.btn").prop("disabled", false);
+                } else {
+                    $(".btn-group>.save.btn").prop("disabled", true);
+                }
+            });
 
             $("[name='patient_id'], [name='scenarios']").on("change", function () {
                 var patient_id = $("[name='patient_id']").val();
@@ -77,14 +114,14 @@
                 if(patient_id && sc_id) {
                     {#$(".save.btn").click();#}
                     $(".ma-form").submit();
+                } else {
+                    $("#questModalBtn").prop("disabled", true);
                 }
             });
 
             $('#questModalBtn').on("click", function(){
                 var patient_id = $("[name='patient_id']").val();
                 var sc_id = $("[name='scenarios']").val();
-                {#console.log(patient_id)#}
-                {#console.log(sc_id)#}
 
                 if(patient_id && sc_id){
                     var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_id;
@@ -102,14 +139,12 @@
                         }
                     });
 
-                }else{
-                    {#location.reload();#}
-                    $('#patManQuestFillInfoModal').modal('show');
-                };
+                }
+                // else{
+                //     {#location.reload();#}
+                //     $('#patManQuestFillInfoModal').modal('show');
+                // };
 
-                {#console.log(patient_id)#}
-                {#console.log(sc_id)#}
-                {#console.log(url)#}
             });
                 });
 
@@ -157,14 +192,14 @@
                                         {% trans  "συμπληρώστε την Ταυτότητα Ασθενούς και επιλέξτε το σενάριο που μόλις" %}
                                         {% trans  "δημιουργήσατε από τη λίστα σεναρίων." %}</p>
 
-                                    <a data-target="#patientModal" data-toggle="modal" class="btn btn-primary col-4"><i class="fa fa-plus-square"></i>&nbsp;{% trans "Προσθέστε νέο Σενάριο Διερεύνησης" %}</a>
+                                    <a data-target="#addPatScenModal" data-toggle="modal" class="btn btn-primary col-4"><i class="fa fa-plus-square"></i>&nbsp;{% trans "Προσθέστε νέο Σενάριο Διερεύνησης" %}</a>
                                 </div>
                             </div>
                           </div>
 
                         <div style="margin-top:40px"></div>
 
-                      <button id="questModalBtn" type="button" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" ></i>&nbsp
+                      <button id="questModalBtn" type="button" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" {% if questbtn_disable %}disabled{% endif %}></i>&nbsp
                           {% trans "Ερωτηματολόγιο" %}</span></button>
 
                     <br>
@@ -187,7 +222,7 @@
 
 {% block toolbarbuttons %}
     <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
-            <button class="save btn btn-primary col-xs-4" type="submit" {% if svbtn_disable %}disabled{% endif %}>
+            <button class="save btn btn-primary col-xs-4" type="submit" %}>
             <i class="fa fa-save"></i>
             <span class="visible-lg">
                 {% trans "Αποθήκευση" %}

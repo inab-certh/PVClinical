@@ -6,6 +6,7 @@ settings.py
 pvclinical/
 RShinyApps/QuickView/rsconnect/shinyapps.io/
 *.pyc
+gentelella/gentelella/__pycache__
 *.RData
 */*/*/*.pyc
 gentelella/app/migrations/__pycache__
@@ -15,4 +16,3 @@ db_b.sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
 RShinyApps/.RData
 RShinyApps/.Rhistory
-
