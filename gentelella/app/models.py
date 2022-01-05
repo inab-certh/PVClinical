@@ -232,18 +232,18 @@ class PubMed(models.Model):
 
 class Questionnaire(models.Model):
 
-    q1= models.BooleanField(null=True,default=None)
-    q2= models.BooleanField(null=True,default=None)
-    q3= models.BooleanField(null=True,default=None)
-    q4= models.BooleanField(null=True,default=None)
-    q5= models.BooleanField(null=True,default=None)
-    q6= models.BooleanField(null=True,default=None)
-    q7= models.BooleanField(null=True,default=None)
-    q8= models.BooleanField(null=True,default=None)
-    q9= models.BooleanField(null=True,default=None)
-    q10= models.BooleanField(null=True,default=None)
+    q1 = models.BooleanField(null=True,default=None)
+    q2 = models.BooleanField(null=True,default=None)
+    q3 = models.BooleanField(null=True,default=None)
+    q4 = models.BooleanField(null=True,default=None)
+    q5 = models.BooleanField(null=True,default=None)
+    q6 = models.BooleanField(null=True,default=None)
+    q7 = models.BooleanField(null=True,default=None)
+    q8 = models.BooleanField(null=True,default=None)
+    q9 = models.BooleanField(null=True,default=None)
+    q10 = models.BooleanField(null=True,default=None)
 
-    result= models.CharField(max_length=200)
+    result = models.CharField(max_length=200)
 
 
     class Meta:

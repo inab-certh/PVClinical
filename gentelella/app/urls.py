@@ -91,6 +91,7 @@ urlpatterns = [
          views.answers_detail, name='answers_detail'),
     path("ajax/new_pmcase", views.new_pmcase, name='ajax_new_pmcase'),
     path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
+    path("ajax/retr-del-session-pmcvars", views.retr_del_session_pmcvars, name='ajax_retr_del_ses_pmcvars'),
     path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history,
          name='patient_history'),
     path("ajax/get-popover-content", views.get_popover_content, name='get_popover_content'),

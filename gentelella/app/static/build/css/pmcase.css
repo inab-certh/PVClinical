@@ -1,0 +1,7 @@
+.popover {
+    max-width: 40%;
+}
+
+.popover.right {
+    margin-left: 20%;
+}

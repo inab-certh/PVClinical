@@ -3162,12 +3162,12 @@ def new_pmcase(request):
     :param request: request
     :return: the form view
     """
-    if not request.META.get('HTTP_REFERER'):
+    if not request.META.get("HTTP_REFERER"):
         return forbidden_redirect(request)
 
-    quest_id = request.session.get('quest_id', None)
-    patient_id = request.session.get('pat_id') or request.GET.get("patient_id", None)
-    sc_id = request.session.get('scen_id', None) or request.GET.get("sc_id", None)
+    quest_id = request.GET.get("quest_id", None)
+    patient_id = request.GET.get("patient_id", None)
+    sc_id = request.GET.get("sc_id", None)
 
     # new_scen_id = request.session.get('new_scen_id') \
     #     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
@@ -3182,11 +3182,13 @@ def new_pmcase(request):
     tmp_user = User.objects.get(username=request.user)
 
     # instance = PatientCase
-    request.session["svbtn_disable"] = True
 
-    form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
-                                "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
-                       user=request.user)
+    quest_btn_disable = True
+
+    # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
+    #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
+    #                    user=request.user)
+    form = PatientForm(user=request.user)
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user)
@@ -3196,12 +3198,18 @@ def new_pmcase(request):
             case = form.save(commit=False)
             case.save()
             form.save_m2m()
-            request.session["svbtn_disable"] = False
 
-            return redirect('patient_management_workspace')
+            return redirect("patient_management_workspace")
+        else:
+            form_errors = form.errors.as_data()
+            # If there is an error in at least one of the patient_id and scenarios fields, disable button
+            if not list(filter(lambda el: el in form_errors, ["patient_id", "scenarios"])):
+                quest_btn_disable = False
+            else:
+                quest_btn_disable = True
 
 
-    scenarios = Scenario.objects.filter(owner=request.user).order_by('-timestamp').all() #[]
+    # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]
     # for sc in Scenario.objects.order_by('-timestamp').all():
     #     scenarios.append({
     #         "id": sc.id,
@@ -3213,10 +3221,29 @@ def new_pmcase(request):
     #         "timestamp": sc.timestamp
     #     })
 
-    return render(request, 'app/new_pmcase.html', {'form': form, 'quest_id':quest_id, 'scenarios': scenarios,
-                                                   "svbtn_disable": request.session.get("svbtn_disable")})
+    return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
+                                                   "questbtn_disable": quest_btn_disable})
 
 
+def retr_del_session_pmcvars(request):
+    """ Retrieve and delete all the necessary for new pmcase, session variables
+    :param request: request
+    :return: the session variables (i.e. scenario id, patient id, questionnaire id
+    """
+    pat_id = request.session.get("pat_id")
+    sc_id = request.session.get("scen_id")
+    quest_id = request.session.get("quest_id")
+
+    data = {"sc_id": sc_id, "pat_id": pat_id, "quest_id": quest_id}
+    del request.session["pat_id"]
+    del request.session["scen_id"]
+    del request.session["quest_id"]
+
+    return JsonResponse(data)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def questionnaire(request, patient_id=None, sc_id=None):
     """ Questionnaire based on liverpool algorithm for determining the likelihood of whether an ADR
     is actually due to the drug rather than the result of other factors.
@@ -3267,8 +3294,8 @@ def questionnaire(request, patient_id=None, sc_id=None):
             return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
 
     else:
-        patient_id = patient_id #or request.GET.get("patient_id", None)
-        sc_id = sc_id #or request.GET.getlist("sc_id")
+        # patient_id = patient_id #or request.GET.get("patient_id", None)
+        # sc_id = sc_id #or request.GET.getlist("sc_id")
 
         form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
         request.session['quest_id'] = None

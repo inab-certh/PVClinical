@@ -36,12 +36,12 @@ $(function() {
         // }
     });
 
-    $(".pmselect2tagwidget option").each(function(){
+    $(".pmselect2tagwidget[name='scenarios'] option").each(function(){
         $(this).addClass("has-popover");
         $(this).attr("data-toggle", "popover");
         // $(this).attr("data-sanitize", "false");
         // $(this).attr("title", $(this).text());
-        var popover_content;
+        var popover_content="";
         var sc_id=$(this).val();
 
         $.ajax({
@@ -72,20 +72,20 @@ $(function() {
     //   alert('Popover is completely visible!');
     // });
 
-    $(".pmselect2tagwidget").on("select2:open", function(e){
+    $(".pmselect2tagwidget[name='scenarios']").on("select2:open", function(e){
         $(".pmselect2tagwidget option").popover("hide");
     });
 
-    $(".pmselect2tagwidget").on("select2:close", function(e){
+    $(".pmselect2tagwidget[name='scenarios']").on("select2:close", function(e){
         $(".pmselect2tagwidget option").popover("hide");
     });
 
     $("body").on("mouseenter", ".select2-results__option", function(e){
         var sc_id = $(this).attr("id").split("-").pop();
         // console.log($(".popover"));
-        $(".pmselect2tagwidget option").filter(function(){return this.value!==""+sc_id}).popover("hide");
+        $(".pmselect2tagwidget[name='scenarios'] option").filter(function(){return this.value!==""+sc_id}).popover("hide");
         // setTimeout(function() {
-            $(".pmselect2tagwidget option").filter(function(){return this.value==""+sc_id}).popover("show");
+            $(".pmselect2tagwidget[name='scenarios'] option").filter(function(){return this.value==""+sc_id}).popover("show");
             // }, 2000);
 
         clearInterval($(this).data("timer") );
