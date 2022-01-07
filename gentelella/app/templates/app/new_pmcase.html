@@ -46,9 +46,10 @@
             $('input[name="scenarios"]').on("change", function() {
                       if($('input[name="scenarios"]:checked').length == 1) {
                         sc_id = $(this).val();
-                        console.log(sc_id)
                       }
             });
+
+            $("#completedQuestDiv").hide();
 
             // $('#addPatScenModal').on('hidden.bs.modal', function () {
             //     $("#loaderOverlay").fadeIn();
@@ -70,7 +71,6 @@
                     url: "/ajax/retr-del-session-pmcvars",
                     dataType: "json",
                     success: function (data) {
-                        console.log(data);
                         // $("[name='patient_id']").val(data["pat_id"]).trigger("change");
                         // $("[name='scenarios']").val(data["sc_id"]).trigger("change");
                         $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
@@ -97,13 +97,12 @@
                 var sc_id = $("[name='scenarios']").val();
                 var questionnaire_id = $("[name='questionnaires']").val();
 
-                console.log("questionnaire_id: ");
-                console.log(questionnaire_id);
-
                 if(patient_id && sc_id && questionnaire_id) {
                     $(".btn-group>.save.btn").prop("disabled", false);
+                    $("#completedQuestDiv").show();
                 } else {
                     $(".btn-group>.save.btn").prop("disabled", true);
+                    $("#completedQuestDiv").hide();
                 }
             });
 
@@ -207,11 +206,9 @@
                     <br>
                     <br>
                     <br>
-                    {% if quest_id %}
-                        <div style="margin: auto; width: 70%; color:red;"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
-                            {% trans "Υπόθεση Ασθενούς σας, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν αλλάξετε σελίδα!" %}
-                        </b></div>
-                    {% endif %}
+                    <div id="completedQuestDiv" style="margin: auto; width: 70%; color:red;"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
+                        {% trans "Υπόθεση Ασθενούς σας, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν αλλάξετε σελίδα!" %}
+                    </b></div>
 
     {% trans "Ελλιπή στοιχεία" as warning_title %}
     {% trans "Εντάξει" as ok_lbl%}

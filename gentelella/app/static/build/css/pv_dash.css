@@ -281,7 +281,7 @@
 /*}*/
 
 
-#scenariosTbl td {
+#scenariosTbl td, #patCasesTbl td {
     vertical-align: middle;
     text-align: center;
 }
