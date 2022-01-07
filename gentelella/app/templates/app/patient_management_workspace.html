@@ -33,7 +33,7 @@
               {%  endblocktrans %}
           </p>
           <br>
-          <table id="scenariosTbl" class="table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
+          <table id="patCasesTbl" class="table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th>{% trans "Ασθενής" %}</th>
@@ -81,11 +81,11 @@
                     </a>
                     </td>
                     <td>
-                        <a id="returnPatientWorkspace" href="{% url 'patient_history' case.patient_id %}">  <i class="fas fa-history"></i></a>
+                        <button id="patHistBtn{{forloop.counter}}" class="btn btn-outline" data-patid="{{ case.patient_id }}"> <i class="fas fa-history fa-1x"></i></button>
                     </td>
 
                   <td>
-                      <button class="btn btn-outline delete-sc-btn patient" data-toggle="modal" data-target="#caseDeleteConfirmModal" id="case-modal{{forloop.counter}}" data-caseid="{{ case.id }}" type="button">
+                      <button class="btn btn-outline delete-sc-btn patient" data-toggle="modal" data-target="#caseDeleteConfirmModal" id="delPatCase{{forloop.counter}}" data-caseid="{{ case.id }}" type="button">
                       <i class="fa fa-trash"></i>
                     </button>
                   </td>
@@ -97,7 +97,8 @@
 
         </div>
       </div>
-    <a id="newCaseButton" href="{% url 'new_pmcase' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρισης ασθενούς" %}</span></a>
+      <a id="resetPatCases" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fas fa-layer-group"></i>&nbsp {% trans "Επαναφορά περιστατικών ασθενών" %}</span></a>
+      <a id="newCaseButton" href="{% url 'new_pmcase' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρισης ασθενούς" %}</span></a>
   </div>
 
 </div>
@@ -115,12 +116,26 @@
 <!--edw prosoxi sto on.click, ean den to ekana etsi den fortwne th jquery otan to table htan se anadiplwsh-->
 
 $(document).ready(function(){
+    $("#resetPatCases").hide();
 
-<!--    $("[id*=case-modal]").click(function(){-->
-    $('html').on('click', "[id*=case-modal]", function() {
+    $("#resetPatCases").on("click", function () {
+        $(".dataTables_filter input").val("").trigger( "keyup" );
+        $("#resetPatCases").hide();
+        $("#newCaseButton").show();
+    });
+
+    $("#patCasesTbl").on("click", "[id*=patHistBtn]", function () {
+        $("#resetPatCases").show();
+        $("#newCaseButton").hide();
+        $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
+    });
+
+
+<!--    $("[id*=delPatCase]").click(function(){-->
+    $("#patCasesTbl").on("click", "[id*=delPatCase]", function() {
         var patient_id= $(this).data("caseid");
 
-        $('#caseDeleteConfirmModal #confirmBtn').click(function() {
+        $("#caseDeleteConfirmModal #confirmBtn").click(function() {
 
 
             $.ajax({
