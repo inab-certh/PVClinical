@@ -39,8 +39,6 @@
                 <th>{% trans "Ασθενής" %}</th>
                 <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                 <th>{% trans "Τίτλος Σεναρίου" %}</th>
-                <th>{% trans "Φάρμακο/Φάρμακα" %}</th>
-                <th>{% trans "Πάθηση/Παθήσεις" %}</th>
                 <th>{% trans "Αποτελέσματα Ερωτηματολογίου" %}</th>
                 <th>{% trans "Ιστορικό Ασθενή" %}</th>
                 <th>{% trans "Διαγραφή" %}</th>
@@ -54,31 +52,50 @@
                     <td>
                       {{ case.timestamp }}
                   </td>
-                  <td>
-                    {{ case.scenario_title }}
-                  </td>
-                  <td>
-                     <table>
-                        {% for d in case.drugs %}
-                          <tr>
-                            <td style="text-align: left;">{% firstof d.name d.code %}</td>
-                          </tr>
-                        {% endfor %}
-                      </table>
-                  </td>
-                  <td>
-                      <table>
-                        {% for c in case.conditions %}
-                          <tr>
-                            <td style="text-align: left;">{% firstof c.name c.code %}</td>
-                          </tr>
-                        {% endfor %}
-                      </table>
-                  </td>
                     <td>
-                         <a id="answersDetails" href="{% url 'answers_detail' case.questionnaire_id case.scenario_id case.patient_id %}">
+                        <div class="has-popover" data-html="true" data-content="
+                          <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+                                  <thead>
+                                    <tr>
+
+                                      <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>
+                                      <th>{% trans 'Πάθηση/Παθήσεις' %}</th>
+
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>
+                                        <table>
+                                          {% for d in case.scenario.drugs.all %}
+                                            <tr>
+                                              <td>{% firstof d.name d.code %}</td>
+                                            </tr>
+                                          {% endfor %}
+                                        </table>
+                                      </td>
+
+                                      <td>
+                                        <table>
+                                          {% for c in case.scenario.conditions.all %}
+                                            <tr>
+                                              <td>{% firstof c.name c.code %}</td>
+                                            </tr>
+                                          {% endfor %}
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                          </table>
+                        " data-placement="auto" data-container="body" data-width="100%">
+                          {{ case.scenario.title }}
+                        </div>
+                      </td>
+
+                    <td>
+                         <button id="answersDetailsBtn{{ case.id }}" class="btn btn-outline" data-url="{% url 'answers_detail' case.questionnaire_id case.scenario.id case.patient_id %}" data-id="answersModal{{ case.id }}">
                       <i class="fas fa-notes-medical fa-1x"></i>
-                    </a>
+                    </button>
                     </td>
                     <td>
                         <button id="patHistBtn{{forloop.counter}}" class="btn btn-outline" data-patid="{{ case.patient_id }}"> <i class="fas fa-history fa-1x"></i></button>
@@ -104,7 +121,7 @@
 </div>
 </div>
 
-{% include 'app/modals/scenario_patient_modal.html'%}
+{% include 'app/modals/patient_management_modals.html'%}
 
 {% endblock content %}
 
@@ -130,6 +147,19 @@ $(document).ready(function(){
         $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
     });
 
+    $("body").on("click", "[id^='answersDetailsBtn']", function () {
+        var mod_url = $(this).data("url");
+        var mod_id = $(this).data("id").replace(/\W/g, '');
+        console.log(mod_url);
+        $("#questionnaireModal").attr("id", mod_id);
+        $("#" + mod_id + " #iframe_quest").attr("src", mod_url);
+        $("#" + mod_id).modal("show");
+    });
+    // $("[id^='#answersDetailsBtn']").click(function () {
+    //     var mod_url = $(this).data("url");
+    //     console.log(mod_url);
+    //     $("#questionnaireModal #iframe_quest").attr("src", mod_url);
+    // });
 
 <!--    $("[id*=delPatCase]").click(function(){-->
     $("#patCasesTbl").on("click", "[id*=delPatCase]", function() {

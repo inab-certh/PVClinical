@@ -25,129 +25,7 @@
 	{{ form.media.js }}
     <script src='{% static "build/js/new_pmcase.js" %}'></script>
 
-    <script>
 
-         $(document).ready(function() {
-
-            var sc_id = 'None'
-            var new_scen_id = 'None'
-
-             $("#myInput").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("#collapseScen a").filter(function() {
-                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-              });
-
-            $(document).on('click', 'input[type="checkbox"]', function() {
-            $('input[type="checkbox"]').not(this).prop('checked', false);
-                });
-
-            $('input[name="scenarios"]').on("change", function() {
-                      if($('input[name="scenarios"]:checked').length == 1) {
-                        sc_id = $(this).val();
-                      }
-            });
-
-            $("#completedQuestDiv").hide();
-
-            // $('#addPatScenModal').on('hidden.bs.modal', function () {
-            //     $("#loaderOverlay").fadeIn();
-            //     // var loc = window.location;
-            //     // window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
-            //     // location.reload();
-            // });
-            //
-            // $('#questionnaireModal').on('hidden.bs.modal', function () {
-            //     $("#loaderOverlay").fadeIn();
-            //     // var loc = window.location;
-            //     // window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
-            //     // console.log(loc);
-            //     // location.reload();
-            // });
-
-            $('#questionnaireModal').on('hide.bs.modal', function () {
-                $.ajax({
-                    url: "/ajax/retr-del-session-pmcvars",
-                    dataType: "json",
-                    success: function (data) {
-                        // $("[name='patient_id']").val(data["pat_id"]).trigger("change");
-                        // $("[name='scenarios']").val(data["sc_id"]).trigger("change");
-                        $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
-                      },
-                      error: function (res) {
-                        console.log("error "+res);
-                    }
-                });
-            });
-
-
-            var init_patient_id = $("[name='patient_id']").val();
-            var init_sc_id = $("[name='scenarios']").val();
-            var init_quest_id = $("[name='questionnaires']").val();
-
-            if(init_patient_id && init_sc_id && init_quest_id) {
-                $(".btn-group>.save.btn").prop("disabled", false);
-            } else {
-                $(".btn-group>.save.btn").prop("disabled", true);
-            }
-
-            $("[name='patient_id'], [name='scenarios'], [name='questionnaires']").on("change", function () {
-                var patient_id = $("[name='patient_id']").val();
-                var sc_id = $("[name='scenarios']").val();
-                var questionnaire_id = $("[name='questionnaires']").val();
-
-                if(patient_id && sc_id && questionnaire_id) {
-                    $(".btn-group>.save.btn").prop("disabled", false);
-                    $("#completedQuestDiv").show();
-                } else {
-                    $(".btn-group>.save.btn").prop("disabled", true);
-                    $("#completedQuestDiv").hide();
-                }
-            });
-
-            $("[name='patient_id'], [name='scenarios']").on("change", function () {
-                var patient_id = $("[name='patient_id']").val();
-                var sc_id = $("[name='scenarios']").val();
-
-                if(patient_id && sc_id) {
-                    {#$(".save.btn").click();#}
-                    $(".ma-form").submit();
-                } else {
-                    $("#questModalBtn").prop("disabled", true);
-                }
-            });
-
-            $('#questModalBtn').on("click", function(){
-                var patient_id = $("[name='patient_id']").val();
-                var sc_id = $("[name='scenarios']").val();
-
-                if(patient_id && sc_id){
-                    var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_id;
-                    $('#iframe_quest').attr('src', url);
-
-                    $.ajax({
-                        url: "/ajax/new_pmcase",
-                        data: {"patient_id":patient_id,"sc_id":sc_id },
-                        dataType: "html",
-                        success: function (res) {
-                            $('#questionnaireModal').modal('show');
-                          },
-                          error: function (res) {
-                            console.log("error "+res);
-                        }
-                    });
-
-                }
-                // else{
-                //     {#location.reload();#}
-                //     $('#patManQuestFillInfoModal').modal('show');
-                // };
-
-            });
-                });
-
-    </script>
 
 {% endblock javascripts %}
 
@@ -171,11 +49,11 @@
                         <br>
                         <br>
 
+                        <input type="number" name="saveCtrl" value="0" hidden>
+
 
                         <div id="scTitleDiv" name="scTitleDiv" style="font-size: 150%;">{{ form.patient_id|as_crispy_field }}</div>
 						<br>
-
-
 
                           <div class="scAccordion">
                             <div class="panel">
@@ -199,7 +77,7 @@
                         <div style="margin-top:40px"></div>
 
                       <button id="questModalBtn" type="button" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" {% if questbtn_disable %}disabled{% endif %}></i>&nbsp
-                          {% trans "Ερωτηματολόγιο" %}</span></button>
+                          <i class="fas fa-poll-h"></i> {% trans "Ερωτηματολόγιο" %}</span></button>
 
                     <br>
                         <div style="display:none;" class="mt-3">{{ form.questionnaires|as_crispy_field }}</div>
@@ -214,7 +92,13 @@
     {% trans "Εντάξει" as ok_lbl%}
     {% trans "Παρακαλώ συμπληρώστε το αναγνωριστικό ασθενούς και ένα σενάριο διερεύνησης για να συνεχίσετε!" as warning_body %}
     {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="patManQuestFillInfoModal" modal_title=warning_title modal_body=warning_body dismiss_btn=ok_lbl %}
-    {% include 'app/modals/scenario_patient_modal.html'%}
+
+<!--    {% trans "Ερωτηματολόγιο" as quest_mod_title %}-->
+<!--    {% url 'questionnaire' as quest_iframe_url%}-->
+<!--    {% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="questionnaireModal" modal_title=quest_mod_title modal_iframe_url=quest_iframe_url %}-->
+
+
+    {% include 'app/modals/patient_management_modals.html'%}
 {% endblock %}
 
 {% block toolbarbuttons %}

@@ -383,7 +383,8 @@ class PatientForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super(PatientForm, self).__init__(*args, **kwargs)
         self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς:')
-        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user)]
+        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
+                                                                                                ).order_by("title")]
 
     def is_valid(self):
         """ Overriding-extending is_valid module
