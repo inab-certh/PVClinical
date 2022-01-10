@@ -116,7 +116,7 @@
 {% trans "Εντάξει" as ok_lbl%}
 {% trans "Παρακαλώ συμπληρώστε το αναγνωριστικό ασθενούς και ένα σενάριο διερεύνησης για να συνεχίσετε!" as warning_body %}
 {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="patManQuestFillInfoModal" modal_title=warning_title modal_body=warning_body dismiss_btn=ok_lbl %}
-{% include 'app/modals/scenario_patient_modal.html'%}
+{% include 'app/modals/patient_management_modals.html'%}
 
 {% endblock %}
 

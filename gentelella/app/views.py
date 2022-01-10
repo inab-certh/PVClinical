@@ -3132,10 +3132,8 @@ def patient_management_workspace(request):
                         "id": case.id,
                         "patient_id": case.patient_id,
                         "timestamp": case.timestamp,
-                        "scenario_id": scs.id,
-                        "scenario_title": scs.title,
-                        "drugs": scs.drugs.all(),
-                        "conditions": scs.conditions.all(),
+                        # "scenario_id": scs.id,
+                        "scenario": scs,
                         "questionnaire_id": quests.id
                     })
 
@@ -3192,7 +3190,7 @@ def new_pmcase(request):
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user)
-        if form.is_valid():
+        if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
             case = form.save(commit=False)
