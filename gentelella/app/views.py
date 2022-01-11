@@ -126,7 +126,7 @@ def get_synonyms(request):
     knw = KnowledgeGraphWrapper()
     synonyms = knw.get_synonyms(drugs)
 
-    data={}
+    data = {}
     data["synonyms"] = synonyms
     return JsonResponse(data)
 
@@ -149,8 +149,8 @@ def filter_whole_set(request):
     subset = sorted(subset, key=lambda x: 'a' + x if\
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
-    data={}
-    data["results"] = [{"id":elm, "text":elm} for elm in subset]
+    data = {}
+    data["results"] = [{"id": elm, "text": elm} for elm in subset]
 
     return JsonResponse(data)
 
@@ -211,7 +211,7 @@ def get_all_drugs(request):
     all_drugs = ["{}{}".format(
         el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
 
-    data={}
+    data = {}
     data["drugs"] = all_drugs
     return JsonResponse(data)
 
@@ -223,7 +223,7 @@ def get_medDRA_tree(request):
     """
     knw = KnowledgeGraphWrapper()
 
-    data={}
+    data = {}
     data["medDRA_tree"] = knw.get_medDRA_tree()
     return JsonResponse(data)
 
@@ -272,7 +272,6 @@ def get_popover_content(request):
     :param request: The request from which the popover scenario content is asked
     :return: The popover content
     """
-    data = {}
     try:
         sc = Scenario.objects.get(id=request.GET.get("sc_id", None))
         drugs_rows = "\n".join(["<tr><td>{}</td></tr>".format(d.name or d.code) for d in sc.drugs.all()])
@@ -288,6 +287,19 @@ def get_popover_content(request):
     except Notes.DoesNotExist:
         data = ""
     return HttpResponse(data)
+
+
+def get_updated_scenarios_ids(request):
+    """ Get updated list of scenarios' ids
+    :param request:
+    :return: the scenarios' ids
+    """
+    data = {}
+    try:
+        data["scenarios_ids"] = list(map(lambda el: str(el.id), Scenario.objects.filter(owner=request.user)))
+    except Scenario.DoesNotExist:
+        data = {}
+    return JsonResponse(data)
 
 
 @login_required()
