@@ -39,8 +39,6 @@ $(function() {
     $(".pmselect2tagwidget[name='scenarios'] option").each(function(){
         $(this).addClass("has-popover");
         $(this).attr("data-toggle", "popover");
-        // $(this).attr("data-sanitize", "false");
-        // $(this).attr("title", $(this).text());
         var popover_content="";
         var sc_id=$(this).val();
 
@@ -62,11 +60,6 @@ $(function() {
         $(this).attr("data-width", "100%");
         $(this).attr("data-content", popover_content);
     });
-
-    // $("body").on("hover", ".select2-results__option", function () {
-    //     console.log("hovvvvvvvvvver");
-    //
-    // });
 
     // $("body").on('shown.bs.popover', function(){
     //   alert('Popover is completely visible!');
@@ -129,8 +122,45 @@ $(function() {
 
     $("#completedQuestDiv").hide();
 
+    var old_scen_options = $("[name='scenarios'] option");
+    var old_scen_opts_val_lst = $.map( old_scen_options, function( opt, index ) {
+        return opt.value;
+    });
+
     $('#addPatScenModal').on('hidden.bs.modal', function () {
-        $(".ma-form").submit();
+        // var new_scen_options = [];
+        var new_scen_opts_val_lst =[];
+
+        $.ajax({
+            url: "/ajax/get-updated-scenarios-ids",
+            dataType: "json",
+            success: function (data) {
+                new_scen_opts_val_lst = data.scenarios_ids;
+
+                var difference = new_scen_opts_val_lst.filter(x => !old_scen_opts_val_lst.includes(x));
+
+                if(difference && difference.length!=0) {
+                    // $("[name='scenarios']").val(difference);
+                    // $("[name='scenarios']").trigger("change");
+                    sessionStorage.setItem("difference", difference);
+                    sessionStorage.setItem("pat_id", $("[name='patient_id']").val());
+                    sessionStorage.setItem("questionnaires", $("[name='questionnaires']").val());
+
+                    $("#loaderOverlay").fadeIn();
+                    var loc = window.location;
+                    window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
+                    // $(".ma-form").submit();
+                }
+              },
+            error: function (res) {
+                console.log("error "+res);
+            }
+        });
+
+        // var new_scen_opts_val_lst = $.map( new_scen_options, function( opt, index ) {
+        //     return opt.value;
+        // });
+
         // $("#loaderOverlay").fadeIn();
         // var loc = window.location;
         // window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
@@ -152,10 +182,12 @@ $(function() {
             success: function (data) {
                 // $("[name='patient_id']").val(data["pat_id"]).trigger("change");
                 // $("[name='scenarios']").val(data["sc_id"]).trigger("change");
-                $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
-                $(".ma-form").submit();
+                if(data["quest_id"] && data["quest_id"].length!=0) {
+                    $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
+                    $(".ma-form").submit();
+                }
               },
-              error: function (res) {
+            error: function (res) {
                 console.log("error "+res);
             }
         });
@@ -188,6 +220,18 @@ $(function() {
     // });
 
     $(window).load(function () {
+        var difference = sessionStorage.getItem("difference");
+        sessionStorage.removeItem("difference");
+
+        if(difference && difference.length!=0) {
+            $("[name='scenarios']").val(difference).trigger("change");
+            $("[name='patient_id']").val(sessionStorage.getItem("pat_id"))
+            $("[name='questionnaires']").val(sessionStorage.getItem("questionnaires")).trigger("change");
+            sessionStorage.removeItem("pat_id");
+            sessionStorage.removeItem("questionnaires");
+            $("[name='patient_id']").trigger("change");
+        }
+
         var patient_id = $("[name='patient_id']").val();
         var sc_id = $("[name='scenarios']").val();
         var questionnaire_id = $("[name='questionnaires']").val();
@@ -241,14 +285,14 @@ $(function() {
     });
 
 
-
-    $("#addPatScenModal").on("shown.bs.modal", function(){
-        var iframe_cnts = $(this).find("iframe").contents();
+    $("#addPatScenModal iframe").on("load", function(){
+        var iframe_cnts = $(this).contents();
         iframe_cnts.find("a#topPVLogo").hide();
         iframe_cnts.find("form#languageForm").hide();
         iframe_cnts.find("div.container.body div.main_container div.alert-geninfo").hide();
         iframe_cnts.find("div.container.body div.main_container div.top_nav").hide();
         iframe_cnts.find("div.container.body div.main_container div.x_panel .btn-group.ws-menu").hide();
+        iframe_cnts.find("div.container.body div.main_container div.x_panel .btn-group>a.btn-dark").hide();
         iframe_cnts.find("footer").hide();
     });
 
@@ -258,24 +302,5 @@ $(function() {
        $(".ma-form").submit();
     });
 
-
-
-    // $('body').on('mouseleave', '.select2-results__option', function(e){
-    //     var sc_id = $(this).attr("id").split("-").pop();
-    //     $(".pmselect2tagwidget option").filter(function(){return this.value==""+sc_id}).popover("hide");
-    //     clearInterval($(this).data('timer') );
-    // });
-
-
-    // $(".pmselect2tagwidget").on('select2:open', function (e) {
-    //     var data = e.params.data;
-    //     console.log(data);
-    //     console.log(data.id);
-    //     console.log($("option#"+data.id));
-    //     // $('[data-toggle="popover"]').popover("show");
-    // });
-    //
-
-    // $('[data-toggle="popover"]').popover();
 });
 
