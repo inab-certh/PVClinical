@@ -149,11 +149,12 @@ $(document).ready(function(){
 
     $("body").on("click", "[id^='answersDetailsBtn']", function () {
         var mod_url = $(this).data("url");
-        var mod_id = $(this).data("id").replace(/\W/g, '');
-        console.log(mod_url);
-        $("#questionnaireModal").attr("id", mod_id);
-        $("#" + mod_id + " #iframe_quest").attr("src", mod_url);
-        $("#" + mod_id).modal("show");
+        // var mod_id = $(this).data("id").replace(/\W/g, '').replace("answersDetailsBtn", "answersDetailsModal");
+        // console.log(mod_id);
+
+        // $("#questionnaireModal").attr("id", mod_id);
+        $("#questionnaireModal #iframe_quest").attr("src", mod_url);
+        $("#questionnaireModal").modal("show");
     });
     // $("[id^='#answersDetailsBtn']").click(function () {
     //     var mod_url = $(this).data("url");
