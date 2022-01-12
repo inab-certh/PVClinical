@@ -1,0 +1,284 @@
+{% load i18n %}
+{% load static %}
+
+{% block stylesheets %}
+<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome 5.15.1 -->
+<link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
+<!-- Font Awesome -->
+<link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Style the body */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+
+/* Header/logo Title */
+.header {
+  padding: 20px;
+  text-align: center;
+  background: #2A3F54;
+  color: white;
+}
+
+/* Column container */
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+}
+
+/* Create two unequal columns that sits next to each other */
+/* Sidebar/left column */
+.side {
+  -ms-flex: 10%; /* IE10 */
+  flex: 10%;
+  background-color: #f1f1f1;
+  padding: 20px;
+}
+
+/* Main column */
+.main {
+  -ms-flex: 70%; /* IE10 */
+  flex: 70%;
+  background-color: white;
+  padding: 20px;
+}
+a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 14px 16px;
+}
+
+a:hover {
+  background-color: #ddd;
+  color: black;
+}
+.previous {
+  background-color: #f1f1f1;
+  color: black;
+}
+.round {
+  border-radius: 50%;
+}
+</style>
+{% endblock stylesheets %}
+
+
+{% block content %}
+
+<div class="header">
+  <h1>Answers of Liverpool Algorithm for " {{pat_id}} "</h1>
+  <p>The following questions based on liverpool algorithm for determining the likelihood of whether an ADR (adverse drug reaction) is actually due to the drug rather than the result of other factors.</p>
+</div>
+
+<div class="row">
+  <div class="side">
+    <h3>Patient Name:&nbsp {{pat_id}}</h3>
+    <h3>Related with scenario:&nbsp {{scen_title}}</h3>
+
+  <div class="main">
+{% if quest.q1 == False %}
+1. Do you suspect an adverse drug reaction?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q1 == True %}
+1. Do you suspect an adverse drug reaction?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q2 == False %}
+2. Did the event appear after the drug was administered or dose increased ?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q2 == True %}
+2. Did the event appear after the drug was administered or dose increased ?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q3 == False %}
+3. Were pre-existing symptoms exacerbated by the drug ?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q3 == True %}
+3. Were pre-existing symptoms exacerbated by the drug ?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q4 == False %}
+4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced ?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q4 == True %}
+4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced ?
+<h3>Yes or Unassessable</h3>
+<br>
+{% endif %}
+
+{% if quest.q5 == False %}
+5. Was the event associated with long-lasting disability or impairment ?
+<h3>{{ quest.q5 }}</h3>
+<br>
+{% endif %}
+{% if quest.q5 == True %}
+5. Was the event associated with long-lasting disability or impairment ?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q6 == False %}
+6. What is the probability that the event was due to an underlying disease ?
+<h3>High or Unsure</h3>
+<br>
+{% endif %}
+{% if quest.q6 == True %}
+6. What is the probability that the event was due to an underlying disease ?
+<h3>Low</h3>
+<br>
+{% endif %}
+
+{% if quest.q7 == False %}
+7. Is there any objective evidence supportive of the casual ADR mechanism ?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q7 == True %}
+7. Is there any objective evidence supportive of the casual ADR mechanism ?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q8 == False %}
+8. Was there a positive rechallenge?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q8 == True %}
+8. Was there a positive rechallenge?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q9 == False %}
+9. Is there a past history of the same event with this drug in this patient?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q9 == True %}
+9. Is there a past history of the same event with this drug in this patient?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+{% if quest.q10 == False %}
+10. Has the event previously been reported with this drug?
+<h3>No</h3>
+<br>
+{% endif %}
+{% if quest.q10 == True %}
+10. Has the event previously been reported with this drug?
+<h3>Yes</h3>
+<br>
+{% endif %}
+
+<br>
+
+<h2>Result:</h2>
+<h3>&nbsp {{quest.result}}</h3>
+      <br>
+      <br>
+
+     <i> *Click to see the flowchart of Liverpool Algorithm </i>
+      <br>
+      <br>
+      <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">Flowchart</button>
+
+
+<!-- Modal -->
+<div class="modal fade right" id="liverpoolimg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog-full-width modal-dialog momodel modal-fluid" role="document">
+        <div class="modal-content-full-width modal-content ">
+            <div class="modal-header">
+                Liverpool ADR causality assessment tool
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" >&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <h1 class="section-heading text-center wow fadeIn my-5 pt-3">
+                    <img  class="patient-work-img" src="{% static 'images/liverpool_img.png' %}" id="liverpollimg"  style="width:100%;">
+
+                </h1>
+            </div>
+            <div class="modal-footer-full-width  modal-footer">
+                <div style="text-align: left;"><b>doi:</b>10.1371/journal.pone.0028096.g002</div>
+                <button type="button" class="btn  btn-md btn-rounded" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+  </div>
+
+</div>
+
+
+{% endblock content %}
+
+
+<!--{% block javascripts %}-->
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<!--<script>-->
+<!--$(document).ready(function(){-->
+<!--        var quest_id = {{ quest.pk }};-->
+<!--        var scen_id = {{ scen_id }};-->
+<!--        var pat_id = {{ pat_id }};-->
+
+<!--        $.ajax({-->
+<!--                url: "/ajax/new_pmcase",-->
+<!--                data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },-->
+<!--                dataType: "html",-->
+<!--                success: function (res) {-->
+<!--                    console.log(quest_id);-->
+<!--                    console.log(patient_id);-->
+<!--                    console.log(sc_id);-->
+
+<!--                  },-->
+<!--                  error: function (res) {-->
+<!--                    console.log("error "+res);-->
+<!--                }-->
+<!--            });-->
+
+
+<!--            });-->
+<!--</script>-->
+<!--{% endblock javascripts %}-->

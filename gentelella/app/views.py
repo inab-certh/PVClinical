@@ -25,6 +25,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template import loader
@@ -3325,10 +3326,28 @@ def answers_detail(request, pk, scen_id, pat_id):
     """
 
     scen_title = Scenario.objects.get(id=scen_id).title
-    quest = Questionnaire.objects.get(id=pk)
+    quest = model_to_dict(Questionnaire.objects.get(id=pk))
 
-    return render(request, 'app/answers_detail.html', {'quest': quest, 'scen_id': scen_id, 'pat_id': pat_id,
-                                                       'scen_title': scen_title})
+    # The table containing tuples of the questions and answers of Liverpool algorithm
+    algo_tbl = [(_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;"), _("Όχι"), _("Ναί")),
+                (_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;"), _("Όχι"), _("Ναί")),
+                (_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;"), _("Όχι"), _("Ναί")),
+                (_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;"),
+                 _("Όχι"), _("Ναί ή Μη προσδιορίσιμο")),
+                (_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"), _("Όχι"), _("Ναί")),
+                (_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"),
+                 _("Υψηλή ή Αβέβαιο"), _("Χαμηλή")),
+                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν αιτιολογικό μηχανισμό ΑΔΦ;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Υπήρξε εκ νέου θετική επαναπρόκληση;"), _("Όχι"), _("Ναί")),
+                (_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;"),
+                 _("Όχι"), _("Ναί")),
+                ]
+
+    return render(request, "app/answers_detail.html", {"quest": quest, "scen_id": scen_id, "pat_id": pat_id,
+                                                       "scen_title": scen_title, "algo_tbl": algo_tbl})
 
 
 def patient_history(request, patient_pk=None):
