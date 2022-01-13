@@ -32,8 +32,8 @@
 
 <div class="row">
     <div class="side">
-        <h3>{% trans "Όνομα ασθενούς" %}:{{pat_id}}</h3>
-        <h3>{% trans "Συσχετιζόμενο σενάριο" %}: {{scen_title}}</h3>
+        <h3>{% trans "Αναγνωριστικό ασθενούς" %}: {{ pat_id }}</h3>
+        <h3>{% trans "Συσχετιζόμενο σενάριο" %}: {{ scen_title }}</h3>
 
         <div class="main">
             {% for field in quest.items %}
@@ -59,7 +59,8 @@
             <i> *{% trans "Πατήστε για να δείτε το διάγραμμα ροής του αλγορίθμου Liverpool" %} </i>
             <br>
             <br>
-            <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button"><i class="fas fa-project-diagram"></i> {% trans "Διάγραμμα ροής" %}</button>
+            <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">
+                <i class="fas fa-project-diagram"></i>{% trans "Διάγραμμα ροής" %}</button>
 
 
             <!-- Modal -->

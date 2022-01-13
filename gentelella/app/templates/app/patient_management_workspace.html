@@ -28,7 +28,7 @@
         <div class="x_content">
           <p class="text-muted font-13 m-b-30">
               {% blocktrans %}
-                  Στον ακόλουθο πίνακα, μπορείτε να δείτε τις αναφορές ασθενών σχετικά με την πιθανότητα ανεπιθύμητης ενέργειας φαρμάκου και τη συσχέτιση της κάθε μιας από αυτές με πιθανά  σενάρια διερεύνησης.
+                  Στον ακόλουθο πίνακα, μπορείτε να δείτε τις αναφορές ασθενών σχετικά με την πιθανότητα ανεπιθύμητης ενέργειας φαρμάκου και τη συσχέτιση της κάθε μιας από αυτές με πιθανά σενάρια διερεύνησης.
                   Επίσης, μπορείτε να προσθέσετε μία νέα καταχώριση επιλέγοντας το κουμπί προσθήκης νέας καταχώρισης, που βρίσκεται κάτω από τον πίνακα αναφορών ασθενών.
               {%  endblocktrans %}
           </p>
@@ -114,8 +114,8 @@
 
         </div>
       </div>
-      <a id="resetPatCases" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fas fa-layer-group"></i>&nbsp {% trans "Επαναφορά περιστατικών ασθενών" %}</span></a>
-      <a id="newCaseButton" href="{% url 'new_pmcase' %}" class="btn btn-primary pull-right"style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρισης ασθενούς" %}</span></a>
+      <a id="resetPatCases" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fas fa-layer-group"></i>&nbsp {% trans "Επαναφορά περιστατικών ασθενών" %}</a>
+      <a id="newCaseButton" href="{% url 'new_pmcase' %}" class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-plus-square"></i>&nbsp {% trans "Προσθήκη νέας καταχώρισης ασθενούς" %}</a>
   </div>
 
 </div>
@@ -125,94 +125,93 @@
 
 {% endblock content %}
 
-
 {% block javascripts %}
-{{ block.super }}
+    {{ block.super }}
 
-<script>
-<!--edw prosoxi sto on.click, ean den to ekana etsi den fortwne th jquery otan to table htan se anadiplwsh-->
+    <script>
+    <!--edw prosoxi sto on.click, ean den to ekana etsi den fortwne th jquery otan to table htan se anadiplwsh-->
 
-$(document).ready(function(){
-    $("#resetPatCases").hide();
-
-    $("#resetPatCases").on("click", function () {
-        $(".dataTables_filter input").val("").trigger( "keyup" );
+    $(document).ready(function(){
         $("#resetPatCases").hide();
-        $("#newCaseButton").show();
-    });
 
-    $("#patCasesTbl").on("click", "[id*=patHistBtn]", function () {
-        $("#resetPatCases").show();
-        $("#newCaseButton").hide();
-        $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
-    });
+        $("#resetPatCases").on("click", function () {
+            $(".dataTables_filter input").val("").trigger( "keyup" );
+            $("#resetPatCases").hide();
+            $("#newCaseButton").show();
+        });
 
-    $("body").on("click", "[id^='answersDetailsBtn']", function () {
-        var mod_url = $(this).data("url");
-        // var mod_id = $(this).data("id").replace(/\W/g, '').replace("answersDetailsBtn", "answersDetailsModal");
-        // console.log(mod_id);
+        $("#patCasesTbl").on("click", "[id*=patHistBtn]", function () {
+            $("#resetPatCases").show();
+            $("#newCaseButton").hide();
+            $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
+        });
 
-        // $("#questionnaireModal").attr("id", mod_id);
-        $("#questionnaireModal #iframe_quest").attr("src", mod_url);
-        $("#questionnaireModal").modal("show");
-    });
-    // $("[id^='#answersDetailsBtn']").click(function () {
-    //     var mod_url = $(this).data("url");
-    //     console.log(mod_url);
-    //     $("#questionnaireModal #iframe_quest").attr("src", mod_url);
-    // });
+        $("body").on("click", "[id^='answersDetailsBtn']", function () {
+            var mod_url = $(this).data("url");
+            // var mod_id = $(this).data("id").replace(/\W/g, '').replace("answersDetailsBtn", "answersDetailsModal");
+            // console.log(mod_id);
 
-<!--    $("[id*=delPatCase]").click(function(){-->
-    $("#patCasesTbl").on("click", "[id*=delPatCase]", function() {
-        var patient_id= $(this).data("caseid");
+            // $("#questionnaireModal").attr("id", mod_id);
+            $("#questionnaireModal #iframe_quest").attr("src", mod_url);
+            $("#questionnaireModal").modal("show");
+        });
+        // $("[id^='#answersDetailsBtn']").click(function () {
+        //     var mod_url = $(this).data("url");
+        //     console.log(mod_url);
+        //     $("#questionnaireModal #iframe_quest").attr("src", mod_url);
+        // });
 
-        $("#caseDeleteConfirmModal #confirmBtn").click(function() {
+    <!--    $("[id*=delPatCase]").click(function(){-->
+        $("#patCasesTbl").on("click", "[id*=delPatCase]", function() {
+            var patient_id= $(this).data("caseid");
+
+            $("#caseDeleteConfirmModal #confirmBtn").click(function() {
 
 
-            $.ajax({
-                    url: "{{ request.path }}",
-                    data: {"patient_id": patient_id },
-                    method: 'DELETE',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
-                    }
+                $.ajax({
+                        url: "{{ request.path }}",
+                        data: {"patient_id": patient_id },
+                        method: 'DELETE',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
+                        }
 
-                }) 	.always(function(){
-                        $('#caseDeleteConfirmModal').modal('hide');
-                    })
-                    .done(function(data) {
-                        $('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
-                        $('[class="modal-body"]').text(data);
-
-                        /* Info modal is already open */
-                        $('#caseDeleteConfirmModal').on('hidden.bs.modal', function (e) {
-                            window.location.replace("{% url 'patient_management_workspace' %}");
-                            //location.reload();
-                        });
-
-                        $("#dismissBtn").on("click", function () {
+                    }) 	.always(function(){
                             $('#caseDeleteConfirmModal').modal('hide');
+                        })
+                        .done(function(data) {
+                            $('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
+                            $('[class="modal-body"]').text(data);
+
+                            /* Info modal is already open */
+                            $('#caseDeleteConfirmModal').on('hidden.bs.modal', function (e) {
+                                window.location.replace("{% url 'patient_management_workspace' %}");
+                                //location.reload();
+                            });
+
+                            $("#dismissBtn").on("click", function () {
+                                $('#caseDeleteConfirmModal').modal('hide');
+                            });
+
+                        })
+                        .fail(function(resp){
+                            $('[class="modal-title"]').text("{% trans 'Αποτυχία διαγραφής!'%}");
+                            $('[class="modal-body"]').text(resp.responseText);
+                            $('#scDeleteInfoModal').on('hidden.bs.modal', function (e) {
+                                location.reload();
+
                         });
 
-                    })
-                    .fail(function(resp){
-                        $('[class="modal-title"]').text("{% trans 'Αποτυχία διαγραφής!'%}");
-                        $('[class="modal-body"]').text(resp.responseText);
-                        $('#scDeleteInfoModal').on('hidden.bs.modal', function (e) {
-                            location.reload();
-
-                    });
+                });
 
             });
-
         });
+
+
     });
+    </script>
 
-
-});
-</script>
-
-<script src="/static/build/js/pv_literature.js"></script>
+    <script src="/static/build/js/pv_literature.js"></script>
 {% endblock javascripts %}
 
 

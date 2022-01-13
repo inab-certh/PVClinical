@@ -934,3 +934,7 @@ iframe.social-iframe {
 	color: grey;
     pointer-events: none;
 }
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
+	color: white;
+}

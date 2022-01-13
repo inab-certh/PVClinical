@@ -351,7 +351,6 @@ class NotesForm(forms.ModelForm):
     #     )
     # )
 
-
     class Meta:
         model = Notes
         fields = ['content']
@@ -382,7 +381,7 @@ class PatientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(PatientForm, self).__init__(*args, **kwargs)
-        self.fields['patient_id'].label = _('Ταυτότητα Ασθενούς:')
+        self.fields['patient_id'].label = _('Αναγνωριστικό Ασθενούς:')
         self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
                                                                                                 ).order_by("title")]
 
@@ -393,7 +392,7 @@ class PatientForm(forms.ModelForm):
         super(PatientForm, self).is_valid()
 
         if (not self.cleaned_data.get("patient_id")) or not self.cleaned_data.get("scenarios"):
-            self.add_error(None, _("Τα πεδία που αφορούν την ταυτότητα ασθενούς και το συσχετιζόμενο σενάριο "
+            self.add_error(None, _("Τα πεδία που αφορούν το αναγνωριστικό ασθενούς και το συσχετιζόμενο σενάριο "
                                    "πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"))
 
         return not self._errors
@@ -401,68 +400,67 @@ class PatientForm(forms.ModelForm):
 
 class QuestionnaireForm(forms.ModelForm):
     q1 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="1. Do you suspect an adverse drug reaction?"
+        label=_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;")
     )
     q2 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="2. Did the event appear after the drug was administered or dose increased?"
+        label=_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;")
     )
     q3 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="3. Were pre-existing symptoms exacerbated by the drug?"
+        label=_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;")
     )
     q4 = forms.ChoiceField(
-        choices=((True, 'Yes or Unassessable'), (False, 'No')),
+        choices=((True, _("Ναί ή Μη προσδιορίσιμο")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced?"
+        label=_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;")
     )
     q5 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="5. Was the event associated with long-lasting disability or impairment?"
+        label=_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;")
     )
     q6 = forms.ChoiceField(
-        choices=((True, 'Low'), (False, 'High or Unsure')),
+        choices=((True, _("Χαμηλή")), (False, _("Υψηλή ή Αβέβαιο"))),
         widget=forms.RadioSelect(), required=False,
-        label="6. What is the probability that the event was due to an underlying disease?"
+        label=_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;")
     )
     q7 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="7. Is there any objective evidence supportive of the casual ADR mechanism?"
+        label=_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;")
     )
     q8 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="8. Was there a positive rechallenge?"
+        label=_("Υπήρξε εκ νέου θετική επαναπρόκληση;")
     )
     q9 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="9. Is there a past history of the same event with this drug in this patient?"
+        label=_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;")
     )
     q10 = forms.ChoiceField(
-        choices=((True, 'Yes'), (False, 'No')),
+        choices=((True, _("Ναί")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label="10. Has the event previously been reported with this drug?"
+        label=_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;")
     )
-    # patient_id = forms.CharField(widget=forms.HiddenInput(), required=False)
-    # sc_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-
 
     class Meta:
         model = Questionnaire
 
-        fields = ('q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10')
+        fields = ("q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10")
 
+    def __init__(self, *args, **kwargs):
+        super(QuestionnaireForm, self).__init__(*args, **kwargs)
+        for i in range(1, 11):
+            self.fields["q{}".format(i)].label = "{}. {}".format(i, self.fields["q{}".format(i)].label)
 
     def save(self, commit=True):
-        # print(self.cleaned_data)
-        # self.cleaned_data['patient_id']=""
         return super(QuestionnaireForm, self).save(commit=commit)
 
 
