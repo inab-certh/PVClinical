@@ -3199,10 +3199,10 @@ def new_pmcase(request):
     # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
     #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
     #                    user=request.user)
-    form = PatientForm(user=request.user)
+    form = PatientForm(user=request.user, label_suffix='')
 
     if request.method == "POST":
-        form = PatientForm(request.POST, user=request.user)
+        form = PatientForm(request.POST, user=request.user, label_suffix='')
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
@@ -3265,7 +3265,7 @@ def questionnaire(request, patient_id=None, sc_id=None):
     """
     if request.method == "POST":
 
-        form = QuestionnaireForm(request.POST)
+        form = QuestionnaireForm(request.POST, label_suffix='')
         pat_id = request.session.get('pat_id')
         scen_id = request.session.get('scen_id')
 
@@ -3308,7 +3308,7 @@ def questionnaire(request, patient_id=None, sc_id=None):
         # patient_id = patient_id #or request.GET.get("patient_id", None)
         # sc_id = sc_id #or request.GET.getlist("sc_id")
 
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix='')
         request.session['quest_id'] = None
         request.session['scen_id'] = sc_id
         request.session['pat_id'] = patient_id
@@ -3337,7 +3337,7 @@ def answers_detail(request, pk, scen_id, pat_id):
                 (_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"), _("Όχι"), _("Ναί")),
                 (_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"),
                  _("Υψηλή ή Αβέβαιο"), _("Χαμηλή")),
-                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν αιτιολογικό μηχανισμό ΑΔΦ;"),
+                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;"),
                  _("Όχι"), _("Ναί")),
                 (_("Υπήρξε εκ νέου θετική επαναπρόκληση;"), _("Όχι"), _("Ναί")),
                 (_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;"),
