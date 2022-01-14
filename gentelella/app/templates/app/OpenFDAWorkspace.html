@@ -8,7 +8,9 @@
     {{ block.super }}
     <!-- jQuery custom content scroller -->
     <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+    <link href="/static/build/css/openfda.css" rel="stylesheet">
 {% endblock stylesheets %}
+
 
 {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
 
@@ -27,13 +29,21 @@
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>
                                                 <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>
+
+                                                <label class="switch">
+                                                  <input type="checkbox" id="concomitant" checked>
+                                                  <span class="slider round"></span>
+                                                </label>
+                                                <span class="DrugEventParameter" id="ctitle">{% trans "Συγχορηγούμενα" %}</span>
+
                                             </legend>
+
                                             {% for drug in scenario.drugs %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="drugCheckBox" value="{{ drug.name }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" data-idname = "{{ drug.name }}" data-code = "{{drug.code}}" name="drugCheckBox" value="{{ drug.name }}-{{ drug.code }}" checked>
                                                     <label class="custom-control-label"
-                                                           for="customCheck1">{{ drug.name }}</label>
+                                                           for="customCheck1">{{ drug.name }} ({{ drug.code }})</label>
                                                 </div>
                                             {% endfor %}
 
@@ -49,11 +59,20 @@
                                             <legend class="legend-margins">
                                                 <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>
                                                 <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>
+
+                                                 {% if scenario.drugs|length == 0 %}
+                                                    <label class="switch">
+                                                      <input type="checkbox" id="concomitantd" checked>
+                                                      <span class="slider round"></span>
+                                                    </label>
+                                                    <span class="DrugEventParameter" id="ctitle">Concomitant</span>
+                                                 {% endif %}
+
                                             </legend>
                                             {% for condition in scenario.conditions %}
                                                 <div class="custom-control custom-checkbox custom-control-inline"
                                                      href="#tab-1">
-                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="eventCheckBox" value="{{ condition.name }}" checked>
+                                                    <input type="checkbox" id="customCheck1" class="custom-control-input" name="eventCheckBox" data-code = "{{ condition.code }}" value="{{ condition.name }}" checked>
                                                     <label class="custom-control-label"
                                                            for="customCheck1">{{ condition.name }}</label>
                                                 </div>
@@ -226,7 +245,8 @@
                                                 <div class="col">
                                                     <div id="divFrameComb{{ forloop.counter }}">
                                                         <div id="firstComb{{ forloop.counter }}"  class="loader"></div>
-                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator()" src="" width="100%" height="360" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
+<!--                                                        <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" onload="closeProgressIndicator('firstComb{{ forloop.counter }}')" src="" width="100%" height="700" style=" border: none;overflow: hidden;" frameborder="0"></iframe>-->
+                                                            <iframe id="shinnyAppsCombIFrame{{ forloop.counter }}" src="" width="100%" height="700" style=" border: none;overflow: hidden;" frameborder="0"></iframe>
                                                     </div>
                                                 </div>
                                             </div>
@@ -261,6 +281,7 @@
         var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
         var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
         var scenarioDrugs = '{{ scenario.drugs }}';
+        // console.log(scenarioDrugs);
         var scenarioConditions = '{{ scenario.conditions }}';
         //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
         var shinnyAppsUrl = '{{ openfda_shiny_endpoint }}';
@@ -427,7 +448,9 @@
             var eventUncheckedBoxes = $("input[name='eventCheckBox']:not(:checked)");
 
             for (i=0; i<drugCheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
+                // $("#analytic div[id^='"+drugCheckedBoxes.eq(i).val()+"']").show();
+                $("#analytic div[id^='"+drugCheckedBoxes.eq(i).attr("data-idname")+"']").show();
+
             }
 
             for (i=0; i<eventCheckedBoxes.length; i++) {
@@ -435,7 +458,8 @@
             }
 
             for (i=0; i<drugUncheckedBoxes.length; i++) {
-                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
+                // $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).val()+"']").hide();
+                $("#analytic div[id^='"+drugUncheckedBoxes.eq(i).attr("data-idname")+"']").hide();
             }
 
             for (i=0; i<eventUncheckedBoxes.length; i++) {
@@ -482,7 +506,7 @@
         });
 
         $("#analytic").on("show.bs.collapse", function (e) {
-            console.log(e.target.id.replace("collapse", ""));
+            // console.log(e.target.id.replace("collapse", ""));
             $("[id='shinnyAppsTabsComb"+e.target.id.replace("collapse", "")+"'] a"
             ).first().trigger("click");
         });
@@ -541,8 +565,8 @@
             // }
         }
 
-        function closeProgressIndicator() {
-            $("#first").hide();
+        function closeProgressIndicator(elid) {
+            $('#'+elid).hide();
         }
         function openProgressIndicator() {
             $("#first").show();
@@ -579,6 +603,7 @@
         $('.drugSelectionCol input').click(function (e) {
             var checkbox=e.target;
             var drug = checkbox.value;
+            // var drug = checkbox.attr("data-code");
             if(checkbox.checked)
             {
                 drugsChecked.push(drug);
@@ -595,6 +620,7 @@
 
             var checkbox=e.target;
             var event = checkbox.value;
+            // var event = checkbox.attr("data-code");
             if(checkbox.checked)
             {
                 eventsChecked.push(event);
@@ -688,6 +714,33 @@
             document.getElementById("eventBtn").innerText = event;
         }
 
+        // function buildUrl(app) {
+        //
+        //
+        //     if (document.getElementById('concomitant').checked) {
+        //         shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+        //         if (activeParameters.length == 2) {
+        //         shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' +  drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name&' + 't2=' + eventsChecked.join("+") + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+        //         } else if (activeParameters.includes('Drug')) {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name' + '&concomitant=TRUE';
+        //         } else {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + eventsChecked.join("+") + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+        //         }
+        //         document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
+        //     } else {
+        //         shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+        //         if (activeParameters.length == 2) {
+        //         shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' +  drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name&' + 't2=' + eventsChecked.join("+") + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+        //         } else if (activeParameters.includes('Drug')) {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + drugsChecked.join("+") + '&v1=patient.drug.openfda.generic_name' + '&concomitant=FALSE';
+        //         } else {
+        //             shinnyAppsQueryUrl = shinnyAppsQueryUrl + 't1=' + eventsChecked.join("+") + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+        //         }
+        //         document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
+        //     }
+        //
+        // }
+
         function buildUrl(app) {
             shinnyAppsQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
             if (activeParameters.length == 2) {
@@ -700,20 +753,72 @@
             document.getElementById("shinnyAppsIFrame").src = shinnyAppsQueryUrl;
         }
 
+
         function buildUrlComb(app, indx) {
-            var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
-            var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
-            var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
-            var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
-            if (drug && condition) {
-                tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt';
-            } else if (drug) {
-                tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name';
+            if (document.getElementById('concomitantd') != null){
+                if ( document.getElementById('concomitantd').checked){
+                    econcomitant = true;
+                } else {
+                    econcomitant = false;
+                }
             } else {
-                tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt';
+                econcomitant = true;
             }
-            console.log(tmpQueryUrl);
-            document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
+            if (document.getElementById('concomitant').checked &&  econcomitant){
+                 var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
+
+                if (scenarioDrugsLength>0){
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
+                }
+                if (scenarioConditionsLength>0){
+                    var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
+                }
+                if (condition  === undefined){
+                    var condition =  $("input[name='eventCheckBox']").attr("data-code")
+                }
+
+
+                // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
+                // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
+                var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+                if (drug && condition) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+                } else if (drug) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name' + '&concomitant=TRUE';
+                } else {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=TRUE';
+                }
+
+                document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
+            } else {
+                var drug_condition = $("a[href='#collapse"+indx+"']").text().split(" - ");
+
+                if (scenarioDrugsLength>0){
+                    var drug = $("input[type=checkbox][data-idname='"+drug_condition[0]+"']").attr("data-code")
+                }
+                if (scenarioConditionsLength>0){
+                    var condition = $("input[type=checkbox][value='"+drug_condition[1]+"']").attr("data-code")
+                }
+
+                if (condition  === undefined){
+                    var condition =  $("input[name='eventCheckBox']").attr("data-code")
+                }
+
+                // console.log(condition)
+                // var drug = scenarioDrugsLength>0?drug_condition[0].replace(/^\s+|\s+$/g, ''):null;
+                // var condition = scenarioConditionsLength>0?(scenarioDrugsLength>0?drug_condition[1].replace(/^\s+|\s+$/g, ''):drug_condition[0].replace(/^\s+|\s+$/g, '')):null;
+                var tmpQueryUrl = shinnyAppsUrl + app + '/?lang='+lang+'&';
+                if (drug && condition) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' +  drug + '&v1=patient.drug.openfda.generic_name&' + 't2=' + condition + '&v2=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+                } else if (drug) {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + drug + '&v1=patient.drug.openfda.generic_name' + '&concomitant=FALSE';
+                } else {
+                    tmpQueryUrl = tmpQueryUrl + 't1=' + condition + '&v1=patient.reaction.reactionmeddrapt' + '&concomitant=FALSE';
+                }
+                // console.log(tmpQueryUrl);
+                document.getElementById("shinnyAppsCombIFrame"+indx).src = tmpQueryUrl;
+            }
+
         }
 
         function keepAppropriateAppsBasedOnParameters() {

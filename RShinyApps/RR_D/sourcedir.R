@@ -16,6 +16,8 @@ source( paste0( SOURCEDIR, 'uihelpers.R') )
 source( paste0( SOURCEDIR, 'getters.R') )
 source( paste0( SOURCEDIR, 'jstats.R') )
 source( paste0( SOURCEDIR, 'LRTShare.R') )
+source( paste0( SOURCEDIR, 'mongoQueries.R') )
+
 
 getwhich <- function() {
   return('D')

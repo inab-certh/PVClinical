@@ -61,12 +61,21 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                       HTML( tt('eventname1') ), tt('eventname2'),
                                       placement='left')
                  ),
-                 dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
-                 #uiOutput("daterange"),
-                 uiOutput("dtlocator"),
+                 # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to", startview="year" ),
+                 fluidRow( useShinyjs(),
+                 style="margin-bottom: 0.3rem",
+                 column(width=2, dateInput("date1", "", value = '1989-6-30') ),
+                 column(width=1, p("to"),
+                        style="margin-top: 2.45rem; text-align: center;"),
+                 column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                 
+                 ),
+                 uiOutput("daterange"),
+                 # uiOutput("dtlocator"),
                           
                  tabsetPanel(
-                   tabPanel(uiOutput('PRROverTime'),  
+                   tabPanel(uiOutput('PRROverTime'),
+                            uiOutput("sourcePlotReport"),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
@@ -74,7 +83,8 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             withSpinner(plotOutput_p( 'prrplot'))
                             
                    ),
-                   tabPanel(uiOutput('ReportCountsandPRR'), 
+                   tabPanel(uiOutput('ReportCountsandPRR'),
+                            uiOutput("sourceInDataReport"),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
@@ -82,6 +92,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             withSpinner(makeDataTableOutput( 'query_counts2' ))
                    ),
                    tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
+                            uiOutput('sourceConcomReport'),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
@@ -91,6 +102,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                             
                    ),
                    tabPanel(uiOutput('CountsForEventsInSelectedReports'),
+                            uiOutput('sourceEventDataReport'),
                             wellPanel(
                               column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")

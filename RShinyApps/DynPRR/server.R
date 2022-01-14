@@ -28,6 +28,12 @@ source('sourcedir.R')
 #*********************************************
 shinyServer(function(input, output, session) {
   
+  cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
+  
+  values<-reactiveValues(urlQuery=NULL)
+  ckbx <- reactiveValues(cb1=FALSE)
+  
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
     selectedLang = tail(query[['lang']], 1)
@@ -150,32 +156,32 @@ getexactaevar <- function(){
 }
 
 getbestdrugvar <- function(){
-  exact <-   ( getquery_d()$exact)
-  if (exact){
-    return( getexactdrugvar() )
-  } else {
+  # exact <-   ( getquery_d()$exact)
+  # if (exact){
+  #   return( getexactdrugvar() )
+  # } else {
     return( getdrugvar() )
-  }
+  # }
 }
 
 getbestaevar <- function(){
-  exact <-   ( getquery_e()$exact)
-  if (exact){
-    return( getexactaevar() )
-  } else {
+  # exact <-   ( getquery_e()$exact)
+  # if (exact){
+  #   return( getexactaevar() )
+  # } else {
     return( getaevar() )
-  }
+  # }
 }
 
 
 getbestterm1 <- function(quote=TRUE){
-  quote <-   ( getquery_d()$exact)
-  return( getterm1( session, quote))
+  # quote <-   ( getquery_d()$exact)
+  return( getterm1( session))
 }
 
 getbestterm2 <- function(quote=TRUE){
-  quote <-   ( getquery_e()$exact)
-  return( getterm2( session, quote))
+  # quote <-   ( getquery_e()$exact)
+  return( getterm2( session))
 }
 
 gettimerange <- reactive({
@@ -191,10 +197,19 @@ gettimerange <- reactive({
 
 #Build a time series vector rolled up to month 
 gettstable <- function(tmp){
+  q <- geturlquery()
   if (!is.null(tmp) )
     {
-    mydf <- data.frame(count=tmp$count, 
-                       date= as.character( floor_date( ymd( (tmp[,1]) ), 'month' ) ), stringsAsFactors = FALSE )
+
+    if (q$concomitant == TRUE){
+      mydf <- data.frame(count=tmp$count, 
+                         date= as.character( floor_date( ymd( (tmp[,1]) ), 'month' ) ), stringsAsFactors = FALSE )
+    } else {
+      mydf <- data.frame(count=tmp$count, 
+                         date= as.character( floor_date( ymd( as.Date(as.POSIXct(tmp[,1], origin="1970-01-01")) ), 'month' ) ), stringsAsFactors = FALSE )
+    }
+    
+    # browser()
     mydaterange <- getstartend()
     mydf2 <- seq( as.Date(  mydf$date[1] ), as.Date( mydaterange[2] ), 'months' )
     mydf2 <-data.frame(date=as.character(mydf2), count=0L)
@@ -236,70 +251,121 @@ return(mydf)
 
 #Queries for drug, drug-event, event and all
 getquery_de <- reactive({
-  geturlquery()
+  q <- geturlquery()
   getquery_d()
   getquery_e()
-  v <- c( '_exists_', '_exists_', getbestdrugvar(), getbestaevar() , gettimevar() )
-  t <- c(getdrugvar(), getaevar(), getbestterm1(), getbestterm2(), gettimerange() ) 
-  myurl <- buildURL(v, t, count=gettimevar() )
-  mylist <- fda_fetch_p( session, myurl)
+  if (q$concomitant == TRUE) {
+    v <- c( '_exists_', '_exists_', getbestdrugvar(), getbestaevar() , gettimevar() )
+    t <- c(getdrugvar(), getaevar(), getbestterm1(), getbestterm2(), gettimerange() ) 
+    t[3] <- toupper(q$dename)
+    t[4] <- toupper(q$ename)
+    myurl <- buildURL(v, t, count=gettimevar() )
+    mylist <- fda_fetch_p( session, myurl)
+  }
+  
   return( list( mydf=mylist, myurl=myurl) )
 })  
   
 
 getquery_d <- reactive({
-  geturlquery()
-  exactD <- input$useexactD
-  if ( exactD=='exact' )
-  {
-    exact <- TRUE
-    v <- c( '_exists_', '_exists_', getexactdrugvar(),  gettimevar() )
-    t <- c( getdrugvar(), getaevar(), getterm1( session, quote=TRUE ), gettimerange() )   
-    myurl <- buildURL(v, t, count=gettimevar() )
-    mylist <- fda_fetch_p( session, myurl)
-  } else {
-    exact <- FALSE
-    v <- c( '_exists_', '_exists_', getdrugvar(),  gettimevar() )
-    t <- c( getdrugvar(), getaevar(), getterm1( session, quote=FALSE ), gettimerange() )   
-    myurl <- buildURL(v, t, count=gettimevar())
-    mylist <- fda_fetch_p( session, myurl)
+  q <- geturlquery()
+
+  if (q$concomitant == TRUE) {
+    exactD <- input$useexactD
+    if ( exactD=='exact' )
+    {
+      exact <- TRUE
+      v <- c( '_exists_', '_exists_', getexactdrugvar(),  gettimevar() )
+      t <- c( getdrugvar(), getaevar(), getterm1( session, quote=TRUE ), gettimerange() )
+      t[3] <- toupper(q$dename)
+      myurl <- buildURL(v, t, count=gettimevar() )
+      mylist <- fda_fetch_p( session, myurl)
+    } else {
+      exact <- FALSE
+      v <- c( '_exists_', '_exists_', getdrugvar(),  gettimevar() )
+      t <- c( getdrugvar(), getaevar(), getterm1( session, quote=FALSE ), gettimerange() )
+      t[3] <- toupper(q$dename)
+      myurl <- buildURL(v, t, count=gettimevar())
+      mylist <- fda_fetch_p( session, myurl)
     }
-  return( list( mydf=mylist, myurl=myurl, exact=exact) )
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2, q$dename)
+    timedResult <- con$aggregate(timed)
+    colnames(timedResult)[1]<-"time"
+    mylist<-timedResult
+    con$disconnect()
+    # Redone
+  }
+ 
+  return( list( mydf=mylist) )
 }) 
 
 
 
 getquery_e <- reactive({
-  geturlquery()
-  exactE <- input$useexactE
-  if ( exactE=='exact' )
-  {
-    exact <- TRUE
-    v <- c( '_exists_', '_exists_', getexactaevar() , gettimevar() )
-    t <- c( getaevar(), getdrugvar(), getterm2( session, quote=TRUE ), gettimerange() )  
-    myurl <- buildURL(v, t, count=gettimevar() )
+  q <- geturlquery()
+  if (q$concomitant == TRUE) {
+    exactE <- input$useexactE
+    if ( exactE=='exact' )
+    {
+      exact <- TRUE
+      v <- c( '_exists_', '_exists_', getexactaevar() , gettimevar() )
+      t <- c( getaevar(), getdrugvar(), getterm2( session, quote=TRUE ), gettimerange() )  
+      t[3] <- toupper(q$ename)
+      myurl <- buildURL(v, t, count=gettimevar() )
+    } else {
+      exact <- FALSE
+      exact <- FALSE
+      v <- c( '_exists_', '_exists_', getaevar(),  gettimevar() )
+      t <- c( getaevar(), getdrugvar(), getterm2( session, quote=FALSE ), gettimerange() )
+      t[3] <- toupper(q$ename)
+      myurl <- buildURL(v, t, count=gettimevar() )
+    }
+    mylist <- fda_fetch_p( session, myurl)
   } else {
-    exact <- FALSE
-    exact <- FALSE
-    v <- c( '_exists_', '_exists_', getaevar(),  gettimevar() )
-    t <- c( getaevar(), getdrugvar(), getterm2( session, quote=FALSE ), gettimerange() )   
-    myurl <- buildURL(v, t, count=gettimevar() )
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    timev<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
+    timevResult <- con$aggregate(timev)
+    colnames(timevResult)[1]<-"time"
+    mylist<-timevResult
+    con$disconnect()
+    # Redone
   }
-  mylist <- fda_fetch_p( session, myurl)
-  return( list( mydf=mylist, myurl=myurl, exact=exact) )
+ 
+  return( list( mydf=mylist) )
 })    
 
 getquery_all <- reactive({
-  geturlquery()
-  v <- c( '_exists_', '_exists_', gettimevar() )
-  t <- c(getdrugvar(), getaevar(), gettimerange() )  
-  myurl <- buildURL(v, t, count=gettimevar() )
-  print(myurl)
-  mydf <- fda_fetch_p( session, myurl)
-  meta <- mydf$meta
-  tmp <- mydf$result
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    v <- c( '_exists_', '_exists_', gettimevar() )
+    t <- c(getdrugvar(), getaevar(), gettimerange() )
+    myurl <- buildURL(v, t, count=gettimevar() )
+    print(myurl)
+    mydf <- fda_fetch_p( session, myurl)
+    meta <- mydf$meta
+    tmp <- mydf$result
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    timeall<-TimeseriesForTotalReports(input$date1, input$date2)
+    timeallResult <- con$aggregate(timeall)
+    colnames(timeallResult)[1]<-"time"
+    tmp<-timeallResult
+    con$disconnect()
+    # Redone
+  }
+  
+  
   mydfin <- gettstable(tmp)
-  mydf <- list(result=mydfin$result, display=mydfin$display, url=myurl, meta=meta, total= mydfin$total)
+  mydf <- list(result=mydfin$result, display=mydfin$display, total= mydfin$total)
   return(mydf)
 })    
 
@@ -308,52 +374,103 @@ getquery_all <- reactive({
 #*******************************************************
 
 getvars_de <- reactive({
-  mylist <- getquery_de()
-  meta <- mylist$mydf$meta
-  tmp <- mylist$mydf$result
-  myurl <- mylist$myurl
+  
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    mylist <- getquery_de()
+    meta <- mylist$mydf$meta
+    tmp <- mylist$mydf$result
+    myurl <- mylist$myurl
+  }  else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    # browser()
+    timede<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
+    timedeResult <- con$aggregate(timede)
+    colnames(timedeResult)[1]<-"time"
+    tmp<-timedeResult
+    con$disconnect()
+    # Redone
+  }
+
+  
   mydfin <- gettstable(tmp)
-  mydf <- list(result=mydfin$result, display=mydfin$display, 
-               url=myurl, meta=meta, total= mydfin$total)
+  mydf <- list(result=mydfin$result, display=mydfin$display, total= mydfin$total)
   return(mydf)
 }) 
 
 getvars_e <- reactive({
-  mylist <- getquery_e()
-  meta <- mylist$mydf$meta
-  tmp <- mylist$mydf$result
-  myurl <- mylist$myurl
+  
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    mylist <- getquery_e()
+    meta <- mylist$mydf$meta
+    tmp <- mylist$mydf$result
+    myurl <- mylist$myurl
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    timee<-TimeseriesForEventReports(q$t2, input$date1, input$date2)
+    timeeResult <- con$aggregate(timee)
+    colnames(timeeResult)[1]<-"time"
+    tmp<-timeeResult
+    con$disconnect()
+    # Redone
+  }
   mydfin <- gettstable(tmp)
-  mydf <- list(result=mydfin$result, display=mydfin$display, 
-               url=myurl, meta=meta, total= mydfin$total)
+  mydf <- list(result=mydfin$result, display=mydfin$display, total= mydfin$total)
   return(mydf)
 }) 
 
 getvars_d <- reactive({
-  mylist <- getquery_d()
-  meta <- mylist$mydf$meta
-  tmp <- mylist$mydf$result
-  myurl <- mylist$myurl
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    mylist <- getquery_d()
+    meta <- mylist$mydf$meta
+    tmp <- mylist$mydf$result
+    myurl <- mylist$myurl
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    timed<-TimeseriesForDrugReports(q$t1, input$date1, input$date2, q$dename)
+    timedResult <- con$aggregate(timed)
+    colnames(timedResult)[1]<-"time"
+    tmp<-timedResult
+    con$disconnect()
+    # Redone
+  }
+  
+  
   mydfin <- gettstable(tmp)
-  mydf <- list(result=mydfin$result, display=mydfin$display, 
-               url=myurl, meta=meta, total= mydfin$total)
+  mydf <- list(result=mydfin$result, display=mydfin$display, total= mydfin$total)
   return(mydf)
 })   
 
 #Timerange string from 1 December 1999 to present
 getstartend <- reactive({
   geturlquery()
-  start <- ('1989-06-30')
-  end <- as.character( Sys.Date() ) 
+  # start <- ('1989-06-30')
+  # end <- as.character( Sys.Date() ) 
+  start <- input$date1
+  end <- input$date2
   return( c(start, end))
 })
 
 #Merger time series vectors
 buildmergedtable <- reactive({
+  q<- geturlquery()
+  
   mydf1 <- getvars_de()$result
   mydf2 <- getvars_d()$result
   mydf3 <-getvars_e()$result
   mydf4 <- getquery_all()$result
+  # browser()
+  
   if ( length(mydf1)*length(mydf2)*length(mydf3)*length(mydf4)> 0 )
     { 
     mydf_d <- merge(mydf1[, c(1,3)], mydf2[, c(1,3)], by.x='Date', by.y='Date')
@@ -409,27 +526,67 @@ buildmergedtable <- reactive({
 })
 
 getcodruglist <- reactive({
-  v <- c(getbestdrugvar(), getbestaevar())
-  t <- c( getbestterm1(),  getbestterm2())
-  myurl <- buildURL( v, t, 
-                     count= getexactdrugvar(), limit=999 )
-  mydf <- fda_fetch_p( session, myurl)
-  mydf <- mydf$result[1:999,]
+  
+  
+  q<- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    v <- c(getbestdrugvar(), getbestaevar())
+    t <- c( getbestterm1(),  getbestterm2())
+    t[1] <- toupper(q$dename)
+    t[2] <- toupper(q$ename)
+    myurl <- buildURL( v, t,
+                       count= getexactdrugvar(), limit=999 )
+    mydf <- fda_fetch_p( session, myurl)
+    mydf <- mydf$result[1:999,]
+    
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    coco<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
+    cocoResult <- con$aggregate(coco)
+    colnames(cocoResult)[1]<-"term"
+    mydf<-cocoResult
+    mydf <- mydf[1:999,]
+    # Redone
+  }
+  
   mydf <- mydf[!is.na(mydf[,2]), ]
   mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
-  return( list( mydf=mydf, myurl=myurl) )
+  return( list( mydf=mydf) )
 })
 
 getcoeventlist <- reactive({
-  v <- c(getbestdrugvar(), getbestaevar())
-  t <- c( getbestterm1(),  getbestterm2())
-  myurl <- buildURL( v, t, 
-                     count= getexactaevar(), limit=999 )
-  mydf <- fda_fetch_p( session, myurl)
-  mydf <- mydf$result[1:999,]
+ 
+  
+  q<- geturlquery()
+  
+  if (q$concomitant == TRUE) {
+    v <- c(getbestdrugvar(), getbestaevar())
+    t <- c( getbestterm1(),  getbestterm2())
+    t[1] <- toupper(q$dename)
+    t[2] <- toupper(q$ename)
+    myurl <- buildURL( v, t,
+                       count= getexactaevar(), limit=999 )
+    mydf <- fda_fetch_p( session, myurl)
+    mydf <- mydf$result[1:999,]
+    
+  } else {
+    # Refactor
+    con <- mongo("dict_fda", url = mongoConnection())
+    
+    react<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dename)
+    reactResult <- con$aggregate(react)
+    colnames(reactResult)[1]<-"term"
+    mydf<-reactResult
+    mydf <- mydf[1:999,]
+    # Redone
+  }
+  
   mydf <- mydf[!is.na(mydf[,2]), ]
   mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
-  return( list( mydf=mydf, myurl=myurl) )
+  return( list( mydf=mydf) )
 })
 
 getcocountsE <- reactive({
@@ -444,24 +601,30 @@ getcocountsD <- reactive({
 #**************************
 # Concomitant drug table
 getcocounts <- function(whichcount = 'D'){
-  geturlquery()
+  q<-geturlquery()
   if ( is.null( getterm1( session) ) ){
     return(data.frame( c(paste('Please enter a drug and event name'), '') ) )
   }
+  # browser()
   if( whichcount=='D')
   {
     mylist <- getcodruglist()
-  } else (
+   
+  } else {
     mylist <- getcoeventlist()
-  )
+    
+  }
+  # con$disconnect()
   mydf <- mylist$mydf
+
   if(is.null(mydf) || length(mydf$cumsum)==0)
   {
     return(NULL)
   }
-  myurl <- mylist$myurl
+  # myurl <- mylist$myurl
   sourcedf <- mydf
   #    print(names(mydf))
+  # browser()
 #Drug Table
   if (whichcount =='D'){
     colname <- i18n()$t("Drug")
@@ -502,7 +665,8 @@ getcocounts <- function(whichcount = 'D'){
   mydf[,'term'] <- coltohyper(mydf[,'term'], whichcount , mybaseurl = getcururl(), 
                               append= paste0( "&v1=", input$v1) )
   names(mydf) <- mynames
-  return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
+
+  return( list( mydf=mydf, sourcedf=sourcedf ) )
 }   
 
 
@@ -636,6 +800,7 @@ output$coquery2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlcoquery2xlsrow")
     hide(id = "infocoquery2")
+    hide(id = 'sourceConcomReport')
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -649,17 +814,40 @@ output$coquery2 <- DT::renderDT({
     codedrugsIndatatable=codrugs
   } else  {
     codedrugsIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
-  datatable(
-    codedrugsIndatatable,
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1))),
-      language = list(
-        url = ifelse(selectedLang=='gr', 
-                     'datatablesGreek.json',
-                     'datatablesEnglish.json')
-      )
-    ),  escape=FALSE,rownames= FALSE)
+  if (!is.null(input$sourceConcomReportUI)){
+    if (input$sourceConcomReportUI){
+      write.csv(codrugs,paste0(cacheFolder,values$urlQuery$hash,"_concocounts.csv"))
+    }
+    
+    
+  }
+  if(!is.null(values$urlQuery$hash)){
+    return(datatable(
+      codedrugsIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        dom = 't',
+        columnDefs = list(list(className = 'dt-right', targets = c(1))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ),  escape=FALSE,rownames= FALSE)
+    )
+  } else {
+    return ( datatable(
+      codedrugsIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(className = 'dt-right', targets = c(1))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ),  escape=FALSE,rownames= FALSE))
+  }
 },
   escape=FALSE)
 
@@ -710,6 +898,7 @@ output$coqueryE2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlcoqueryE2xlsrow")
     hide(id = "infocoqueryE2")
+    hide(id = 'sourceEventDataReport')
     return(NULL)
   }
   
@@ -725,20 +914,48 @@ output$coqueryE2 <- DT::renderDT({
     codedrugsIndatatable=codrugs
   } else  {
     codedrugsIndatatable= data.frame(Term=paste( 'No Events for', getterm1( session) ) ) }
-  datatable(
-    codedrugsIndatatable,
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1))),
-      language = list(
-        url = ifelse(selectedLang=='gr', 
-                     grlang,
-                     enlang)
-        # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
-        # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+  if (!is.null(input$sourceEventDataReportUI)){
+    if (input$sourceEventDataReportUI){
+      write.csv(codrugs,paste0(cacheFolder,values$urlQuery$hash,"_eventcounts.csv"))
+    }
+    
+    
+  }
+  if(!is.null(values$urlQuery$hash)){
+    return(datatable(
+      codedrugsIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        dom = 't',
+        columnDefs = list(list(className = 'dt-right', targets = c(1))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       grlang,
+                       enlang)
+          # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
+          # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+        )
       )
+      ,  escape=FALSE,rownames= FALSE)
     )
-    ,  escape=FALSE,rownames= FALSE)},  escape=FALSE)
+  } else {
+    return ( datatable(
+      codedrugsIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(className = 'dt-right', targets = c(1))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       grlang,
+                       enlang)
+          # fromJSON(file = '../sharedscripts/datatablesGreek.json'), 
+          # fromJSON(file = '../sharedscripts/datatablesEnglish.json'))
+        )
+      )
+      ,  escape=FALSE,rownames= FALSE))
+  }
+  
+  },  escape=FALSE)
 
 
 output$cloudcoquery <- renderPlot({  
@@ -790,7 +1007,8 @@ output$query_counts <- renderTable({
   if ( is.data.frame(mydf) )
     {
     return( mydf) 
-    } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
+  } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
+    
   }, include.rownames = FALSE, sanitize.text.function = (function(x) x) )
 
 # output$query_counts2 <- renderDataTable({  
@@ -822,6 +1040,7 @@ output$query_counts2 <- DT::renderDT({
     hide(id = "maintabs")
     hide(id = "dlquery_counts2xlsrow")
     hide(id = "infoquery_counts2")
+    hide(id = 'sourceInDataReport')
     return(NULL)
   }
   query <- parseQueryString(session$clientData$url_search)
@@ -835,18 +1054,43 @@ output$query_counts2 <- DT::renderDT({
     mydfIndatatable=mydf
   } else  {
     mydfIndatatable= data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0) }
-  datatable(
-    mydfIndatatable,
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
-      language = list(
-        url = ifelse(selectedLang=='gr', 
-                     'datatablesGreek.json',
-                     'datatablesEnglish.json')
-      )
-    ),  escape=FALSE,rownames= FALSE
+  if (!is.null(input$sourceInDataReportUI)){
+    if (input$sourceInDataReportUI){
+      write.csv(mydfIndatatable,paste0(cacheFolder,values$urlQuery$hash,"_prrcounts.csv"))
+    }
+    
+    
+  }
+  if(!is.null(values$urlQuery$hash)){
+    return(datatable(
+      mydfIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        dom = 't',
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ),  escape=FALSE,rownames= FALSE
     )
+    )
+  } else {
+    return ( datatable(
+      mydfIndatatable,
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ),  escape=FALSE,rownames= FALSE
+    ))
+  }
+  
 },  escape=FALSE)
 
 
@@ -931,6 +1175,7 @@ output$prrplot <- renderPlot ({
     hide(id = "maintabs")
     hide(id = "dlprrxlsrow")
     hide(id = "infoprrplot")
+    hide(id = 'sourcePlotReport')
     return(NULL)
   }
   mydf <- mydf[ is.finite(mydf[ , 'SD' ] ) , ]  
@@ -953,9 +1198,11 @@ output$prrplot <- renderPlot ({
   
   if ( !is.null(mydf) & getterm1( session, FALSE)!='' & getterm2( session, FALSE)!='' )
     {
+    ckbx$cb1 <- TRUE
     if ( nrow(mydf) >0 )
       {
-      showdates <- seq( as.Date( input$daterange[1] ), as.Date( input$daterange[2] ), 'months' )
+      showdates <- seq( as.Date( input$date1 ), as.Date( input$date2 ), 'months' )
+      # browser()
       showdates <- substr(showdates, 1, 7)
       mydf <- mydf[mydf[ , i18n()$t('Date') ] %in% showdates,]
       myylim <- c( min(.5, min(mydf$LB)), max(2, max(mydf$UB) ) )
@@ -987,21 +1234,49 @@ output$prrplot <- renderPlot ({
             xlab='', las=2, xaxt='n', bg='red', cex=0.7, cex.main=1, cex.lab=1,cex.axis=1,  main=mytitle, pch=21,col.lab="#929292", col="#929292",col.axis="#929292",col.main="#929292",font.main = 1)
       
       axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2, col.lab="#929292",col="#929292" ,col.axis="#929292",col.main="#929292"  )
+      
       if( ! isTRUE( all.equal(mydf$PRR, mydf$LB) ) )
-        {
+      {
         arrows(x0=xloc[ mydf$PRR!=mydf$LB ], x1=xloc[ mydf$PRR!=mydf$LB ],
-             y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025,col="#929292")
+               y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025,col="#929292")
         arrows(x0=xloc[ mydf$PRR!=mydf$UB ], x1=xloc[ mydf$PRR!=mydf$UB ],
-             y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025,col="#929292")
-        }
+               y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025,col="#929292")
+      }
       abline(h=1, col="#ff7f0e")
       grid()
-    } 
+      
+      #save plot
+      if (!is.null(input$sourcePlotReportUI)){
+        if (input$sourcePlotReportUI){
+          png(filename = paste0(cacheFolder,values$urlQuery$hash,"_prrplot.png"),width = 900, height = 500, units = "px", pointsize = 12,)
+          mytitle <- stri_enc_toutf8(i18n()$t("PRR Plot"))
+          plot( xloc, mydf$PRR, ylim=myylim, ylab=i18n()$t("95% Confidence Interval for PRR"),lwd = 0.2,
+                xlab='', las=2, xaxt='n', bg='red', cex=0.7, cex.main=1, cex.lab=1,cex.axis=1,  main=mytitle, pch=21,col.lab="#929292", col="#929292",col.axis="#929292",col.main="#929292",font.main = 1)
+          
+          axis(1, at=xloc[index(xloc)%%6==0], labels=labs[index(labs)%%6==0], las=2, col.lab="#929292",col="#929292" ,col.axis="#929292",col.main="#929292"  )
+          
+          if( ! isTRUE( all.equal(mydf$PRR, mydf$LB) ) )
+          {
+            arrows(x0=xloc[ mydf$PRR!=mydf$LB ], x1=xloc[ mydf$PRR!=mydf$LB ],
+                   y0=lbgap[ mydf$PRR!=mydf$LB ], y1=mydf$LB[ mydf$PRR!=mydf$LB ], angle=90, length=.025,col="#929292")
+            arrows(x0=xloc[ mydf$PRR!=mydf$UB ], x1=xloc[ mydf$PRR!=mydf$UB ],
+                   y1=mydf$UB[ mydf$PRR!=mydf$UB ], y0=ubgap[ mydf$PRR!=mydf$UB ], angle=90, length=.025,col="#929292")
+          }
+          abline(h=1, col="#ff7f0e")
+          grid()
+          dev.off()
+        }
+        
+      }
+      
+    }
   } else  {
     mytitle <-  i18n()$t("Please select a drug and event") 
     plot( c(0,1), c(0,1),  main=mytitle )
     text(.5, .5, i18n()$t("Please select a drug and event"))
   }
+  
+  
 }
 else{
   # s1 <- calccpmean()
@@ -1030,30 +1305,61 @@ output$applinks <- renderText({
   return( makeapplinks(  getcururl(), getqueryvars() )  )
 })
 
-output$date1 <- renderText({ 
-  l <- getdaterange()
-  paste( '<b>Reports from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
-})
+# output$date1 <- renderText({
+#   l <- getdaterange()
+# 
+#   paste( '<b>Reports from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
+# })
+
+
+
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
+  # q<-NULL
+  # q$v1<-"patient.drug.openfda.generic_name"
+  # q$v2<-"patient.reaction.reactionmeddrapt"
+  # q$t1<-"L04AB02"
+  # q$t2<-"10003239"
+  # # q$t1<-"G01AE10"
+  # q$t2<-"10079622"
+  # q$t1<-"A02BC01"
+  # q$t2<-"10021015"
+  # q$hash <- "ksjdhfksdhfhsk"
+  # q$concomitant<-FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2) 
   updateTextInput(session, "drugname", value=q$term1)
   updateTextInput(session,"eventname", value=q$term2) 
-  updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange',  start = input$date1, end = input$date2)
+  # updateDateInput(session, 'date1', value = q$start)
+  # updateDateInput(session, 'date2', value = q$end)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateTextInput(session, "t1", value=q$t1)
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2)
-  updateDateRangeInput(session,'daterange',  start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange',  start = input$date1, end = input$date2)
+  # updateDateInput(session, 'date1', value = q$start)
+  # updateDateInput(session, 'date2', value = q$end)
   updateRadioButtons(session, 'useexact',
                      selected = if(length(q$useexact)==0) "exact" else q$useexact)
   updateRadioButtons(session, 'useexactD',
                      selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
+  con_atc <- mongo("atc", url = mongoConnection())
+  drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
+  con_atc$disconnect()
+  
+  q$dename <- drug$names[[1]][1]
+  
+  con_medra <- mongo("medra", url = mongoConnection())
+  event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
+  con_medra$disconnect()
+  
+  q$ename <- event$names[[1]][1]
+  values$urlQuery<-q
   return( q )
 })
 
@@ -1110,12 +1416,103 @@ i18n <- reactive({
   translator
 })
 
+# output$to <- renderText({ 
+#  'to'
+# })
+
 output$infoprrplot<-renderUI({
   addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
              content=paste(i18n()$t("prr explanation"),"<br><br>",i18n()$t("dynprr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
   return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
+
+output$sourceInDataReport<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceInDataReportUI", "Save data")
+})
+
+observeEvent(input$sourceInDataReportUI,{
+  
+  if (!is.null(input$sourceInDataReportUI))
+    if (!input$sourceInDataReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_prrcounts.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceConcomReport<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceConcomReportUI", "Save data")
+})
+
+observeEvent(input$sourceConcomReportUI,{
+  
+  if (!is.null(input$sourceConcomReportUI))
+    if (!input$sourceConcomReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_concocounts.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourcePlotReport<-renderUI({
+  if ((!is.null(values$urlQuery$hash)) &&  ckbx$cb1)
+    checkboxInput("sourcePlotReportUI", "Save plot")
+})
+
+observeEvent(input$sourcePlotReportUI,{
+  
+  if (!is.null(input$sourcePlotReportUI))
+    if (!input$sourcePlotReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_prrplot.png")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceEventDataReport<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceEventDataReportUI", "Save data")
+})
+
+observeEvent(input$sourceEventDataReportUI,{
+  
+  if (!is.null(input$sourceEventDataReportUI))
+    if (!input$sourceEventDataReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_eventcounts.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+# 
+# observeEvent(input$date1, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date2",
+#                     value=input$date1+365
+#     )
+#   }
+# })
+# 
+# observeEvent(input$date2, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date1",
+#                     value=input$date1-365
+#     )
+#   }
+# })
+
 
 output$infoquery_counts2<-renderUI({
   addPopover(session=session, id="infoquery_counts2", title=i18n()$t("Time Series"), 
