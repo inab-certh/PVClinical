@@ -117,6 +117,16 @@ $(function() {
     });
 });
 
+    $(window).load(function() {
+        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
+        var prev_active_bc_a=prev_active_breadcrumb.find("a");
+        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
+            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
+        }
+    });
+
+});
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -133,12 +143,3 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
-
-// document.onreadystatechange = function() {
-//     if (document.readyState !== "complete") {
-//         $("#loaderOverlay").fadeIn();
-//     } else {
-//         $("#loaderOverlay").fadeOut();
-//     }
-// };
