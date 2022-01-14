@@ -103,35 +103,35 @@
 
 {% endblock content %}
 
-                {% block javascripts %}
-                {{ block.super }}
-                <script src="/static/build/js/all_notes.js"></script>
-                <script>
-                    $(function() {
-                        $(".delete-sc-btn").on("click", function () {
-                            // On trash can button click, pass record id to modal confirm btn
-                            $("#confirmBtn").data("record", $(this).data("scid"));
+{% block javascripts %}
+{{ block.super }}
+<script src="/static/build/js/all_notes.js"></script>
+<script>
+    $(function() {
+        $(".delete-sc-btn").on("click", function () {
+            // On trash can button click, pass record id to modal confirm btn
+            $("#confirmBtn").data("record", $(this).data("scid"));
 
-                        })
-                    });
-                </script>
+        })
+    });
+</script>
 
-                <script src="/static/build/js/pv_literature.js"></script>
-                <script>
-                    var acc = document.getElementsByClassName("accordion");
-                    var i;
+<script src="/static/build/js/pv_literature.js"></script>
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
 
-                    for (i = 0; i < acc.length; i++) {
-                        acc[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var panel = this.nextElementSibling;
-                            if (panel.style.display === "block") {
-                                panel.style.display = "none";
-                            } else {
-                                panel.style.display = "block";
-                            }
-                        });
-                    }
-                </script>
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
 
-                {% endblock javascripts %}
+{% endblock javascripts %}
