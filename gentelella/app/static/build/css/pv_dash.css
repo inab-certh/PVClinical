@@ -669,15 +669,15 @@ button.close {
 /*}*/
 
 .popover{
-	min-width:100px;
-	width:100%;
-	max-width: 60%;
+	min-width:10%;
+	width:50%;
+	max-width: 50%;
 	text-align: justify;
 }
 
 .popover-content {
 	max-height: 50rem;
-	padding: 1.5rem;
+	padding: 1.7rem;
 	overflow-y: auto;
 }
 
@@ -928,6 +928,11 @@ iframe.social-iframe {
 
 .scenario-info a {
 	color: white;
+}
+
+.breadcrumb-item.active>a {
+	color: grey;
+    pointer-events: none;
 }
 
 div#OpenFDA .panel .panel-body strong {

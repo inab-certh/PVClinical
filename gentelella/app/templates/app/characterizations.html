@@ -11,6 +11,9 @@
 
 	<!-- Select 2 css -->
 	{{ form.media.js }}
+    <script type="text/javascript">
+        var char_id = "{{ char_id }}";
+    </script>
     <script src='{% static "build/js/characterizations.js" %}'></script>
     {% if read_only == 0 %}
         <script>
@@ -98,7 +101,7 @@
                 </span>
             </button>
 
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisCharModal" type="button">
+            <button id="charAnalysisBtn" class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisCharModal" type="button">
                     <i class="fa fa-bar-chart"></i>
                     <span class="visible-lg">
                         {% trans "Ανάλυση" %}

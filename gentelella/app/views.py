@@ -1,3 +1,4 @@
+import datetime
 import ast
 import concurrent.futures
 import hashlib
@@ -19,7 +20,7 @@ from itertools import product
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -71,7 +72,7 @@ from app.models import CaseToQuestionnaire
 
 # from app.ohdsi_wrappers import update_ir
 # from app.ohdsi_wrappers import create_ir
-from app.entrezpy.entrezpylib import conduit
+from app.entrezpy import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
 from app.pubmed import PubmedAnalyzer
 
@@ -89,8 +90,12 @@ import webbrowser
 
 
 @login_required()
-@user_passes_test(lambda u: is_doctor(u) or is_pv_expert(u))
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def OpenFDAWorkspace(request, scenario_id=None):
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
     template = loader.get_template('app/OpenFDAWorkspace.html')
     scenario = {}
     sc = Scenario.objects.get(id=scenario_id)
@@ -107,8 +112,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "sc_id": scenario_id
                 }
 
-    return HttpResponse(template.render({"scenario": scenario, "openfda_shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
-
+    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
 
 
 def get_synonyms(request):
@@ -146,9 +150,54 @@ def filter_whole_set(request):
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
     data={}
-    data["results"]=[{"id":elm, "text":elm} for elm in subset]
+    data["results"] = [{"id":elm, "text":elm} for elm in subset]
 
     return JsonResponse(data)
+
+# @csrf_exempt
+def gen_ir_analysis(request):
+    """ Generate ir analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.generate_ir_analysis(ir_id)
+
+    return JsonResponse({}, status=resp_status)
+
+
+def del_ir_analysis(request):
+    """ Delete ir analysis callback
+    :param request:
+    :return: the response from the deletion attempt
+    """
+
+    ir_id = json.loads(request.GET.get("ir_id", None))
+    resp_status = ohdsi_wrappers.delete_ir_analysis(ir_id)
+    return JsonResponse({"status": resp_status})
+
+
+def gen_char_analysis(request):
+    """ Generate char analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    char_id = json.loads(request.GET.get("char_id", None))
+    resp_status = ohdsi_wrappers.generate_char_analysis(char_id)
+    return JsonResponse({}, status=resp_status)
+
+
+def gen_cp_analysis(request):
+    """ Generate pathway analysis callback
+    :param request:
+    :return: the response from the generation attempt
+    """
+
+    cp_id = json.loads(request.GET.get("cp_id", None))
+    resp_status = ohdsi_wrappers.generate_cp_analysis(cp_id)
+    return JsonResponse({}, status=resp_status)
 
 
 def get_all_drugs(request):
@@ -192,8 +241,10 @@ def get_conditions_nodes_ids(request):
         medDRA_tree_str = fp.read()
 
     # Find in json string all conditions with ids relevant to conditions' requested
+    # rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
+    #     "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
     rel_conds_lst = [list(map(lambda c: c.replace("\",", ""), re.findall(
-        "{}___[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
+        "{0}___llt[\S]+?|{0}___pt[\S]+?,".format(condition.split(" - ").pop()), medDRA_tree_str))) for condition in req_conditions]
 
     rel_conds_lst = list(chain.from_iterable(rel_conds_lst))
 
@@ -222,7 +273,7 @@ def index(request):
     # print(request.META.get('HTTP_REFERER'))
 
     scenarios = []
-    for sc in Scenario.objects.order_by('-timestamp').all():
+    for sc in Scenario.objects.filter(owner=request.user).order_by('-timestamp').all():
         scenarios.append({
             "id": sc.id,
             "title": sc.title,
@@ -381,37 +432,42 @@ def ohdsi_workspace(request, scenario_id=None):
 
     if drugs_cohort and conditions_cohort:
         ir_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + [conditions_cohort])), "ir")
+                                                              [drugs_cohort] + [conditions_cohort])),
+                                                     domain="ir", owner=sc.owner, sid=sc.id)
         ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
 
         if ir_ent:
             ir_id = ir_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_ir([drugs_cohort], [conditions_cohort])
+            res_st, res_json = ohdsi_wrappers.create_ir(sc.owner, sc.id, [drugs_cohort], [conditions_cohort])
             ir_id = res_json.get("id")
 
         cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name"),
-                                                              [drugs_cohort] + conditions_distinct_cohorts)), "cp")
+                                                              [drugs_cohort] + conditions_distinct_cohorts)),
+                                                     domain="cp", owner=sc.owner, sid=sc.id)
         cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
 
         if cp_ent:
             cp_id = cp_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_cp([drugs_cohort], conditions_distinct_cohorts)
+            res_st, res_json = ohdsi_wrappers.create_cp(sc.owner, sc.id, [drugs_cohort], conditions_distinct_cohorts)
             cp_id = res_json.get("id")
 
     if drugs_cohort or conditions_cohort:
         char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c.get("name", ""),
-                                                                filter(None,[drugs_cohort, conditions_cohort]))), "char")
+                                                                filter(None,[drugs_cohort, conditions_cohort]))),
+                                                       domain="char", owner=sc.owner, sid=sc.id)
+
         char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
 
         if char_ent:
             char_id = char_ent.get("id")
         #     ohdsi_wrappers.update_ir(ir_ent.get("id"))
         else:
-            res_st, res_json = ohdsi_wrappers.create_char(list(filter(None, [drugs_cohort, conditions_cohort])))
+            res_st, res_json = ohdsi_wrappers.create_char(sc.owner, sc.id,
+                                                          list(filter(None, [drugs_cohort, conditions_cohort])))
             char_id = res_json.get("id")
 
     all_drugs_coh = ohdsi_wrappers.get_entity_by_name("cohortdefinition", "All drugs cohort") or {}
@@ -568,6 +624,8 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
         "read_only": read_only,
         "form": irform,
         "add_info": additional_info,
+        "ohdsi_endpoint": settings.OHDSI_ENDPOINT,
+        "ohdsi_cdm_name": settings.OHDSI_CDM_NAME,
         "title": _("Ανάλυση Ρυθμού Επίπτωσης")
     }
 
@@ -609,7 +667,18 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
     if view_type == "quickview":
         char_options["features"] = char_options.get("features", []) + list(map(lambda el: el.get("id"), filter(
             lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
-    #     print(char_options)
+        rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
+
+        # if rstatus == 200:
+        #     messages.success(
+        #         request,
+        #         _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+        #     return HttpResponseRedirect(reverse('edit_char', args=(sc_id, char_id,)))
+        # else:
+        #     messages.error(
+        #         request,
+        #         _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
+        #     status_code = 500
 
     # delete_switch = "enabled" if ir_exists else "disabled"
 
@@ -681,7 +750,8 @@ def drug_exposure(request):
 
     context = {
         "de_url": de_url,
-        "title": _("Έκθεση σε φάρμακα")
+        "title": _("Έκθεση σε φάρμακα"),
+        "ohdsi_atlas": settings.OHDSI_ATLAS
     }
 
     return render(request, 'app/drug_exposure.html', context)
@@ -823,6 +893,8 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
     """
     data = {}
 
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
     sc = Scenario.objects.get(id=scenario_id)
     drugs = [d for d in sc.drugs.all()]
@@ -831,8 +903,22 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
     # ac_token = requests.get('access_token')
 
-    all_combs = list(product([d.name for d in drugs] or [""],
-                             [c.name for c in conditions] or [""]))
+    all_combs = list(product([d.name.upper() for d in drugs] or [""],
+                             [c.name.upper() for c in conditions] or [""]))
+
+    #Create query string for PubMed with all combinations
+    if len(all_combs) > 1 and drugs and conditions:
+        string_list = [' AND '.join(item) for item in all_combs]
+        final_string = ') OR ('.join(map(str, string_list))
+        query = '(' + final_string + ')'
+    elif drugs and not conditions:
+        query = ' AND '.join(map(str, drugs))
+    elif conditions and not drugs:
+        query = ' OR '.join(map(str, conditions))
+    else:
+        query = all_combs[0]
+
+    # print(all_combs)
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
@@ -840,6 +926,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 "all_combs": all_combs,
                 "owner": sc.owner.username,
                 "status": sc.status.status,
+                "title": sc.title,
                 "timestamp": sc.timestamp
                 }
 
@@ -868,36 +955,47 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if page_id == None:
                 page_id = 1
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, 0, 10, access_token, begin, last)
-                        if results != {}:
-                            records.update(results[0])
-                            total_results = total_results + results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
+                #         if results != {}:
+                #             records.update(results[0])
+                #             total_results = total_results + results[1]
+                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
+                # print(results[1])
+                # print(records)
             else:
 
                 start = 10*page_id - 10
 
-                for j in all_combs:
-                    if j[1]:
-                        query = j[0] +' AND '+ j[1]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
-                    else:
-                        query = j[0]
-                        results = pubmed_search(query, start, 10, access_token, begin, last)
-                        records.update(results[0])
-                        total_results = results[1]
+                # for j in all_combs:
+                #     if j[1]:
+                #         query = j[0] +' AND '+ j[1]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                #     else:
+                #         query = j[0]
+                #         results = pubmed_search(query, start, 10, access_token, begin, last)
+                #         records.update(results[0])
+                #         total_results = results[1]
+                results = pubmed_search(query, start, 10, access_token, begin, last)
+                if results != {}:
+                    records.update(results[0])
+                    total_results = total_results + results[1]
 
-            pages_no = ceil(total_results/10)
+            pages_no = ceil(total_results/10) + 1
+            # pages_no = (total_results / 10) + 1
             pages = list(range(1, pages_no))
             if first != None and end != None:
                 dates = [str(first), str(end)]
@@ -913,24 +1011,11 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             print(e)
             # previous_url = request.META.get('HTTP_REFERER')
 
-            url = '/dashboard'
-
-
+            url = '/'
             return redirect(url)
 
-
     else:
-
-        client_id = 8886
-        redirect_uri = "http://127.0.0.1:8000/"
-        client_secret = "75nLSO6SJtSD8um3"
-        mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-
-        auth = mendeley.start_implicit_grant_flow()
-
-        login_url = auth.get_login_url()
-
-        url = '/dashboard'
+        url = '/'
 
         return redirect(url)
 
@@ -980,7 +1065,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
     fetch_pubmed = w.new_pipeline()
     q = query
     if start==None and end==None:
-        sid = fetch_pubmed.add_search(
+        fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released',
              'datetype': 'pdat'})
 
@@ -988,9 +1073,9 @@ def pubmed_search(query, begin, max, access_token, start, end):
         qres = s.get_result()
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
-            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max,
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max,
              'datetype': 'pdat'})
-        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
+        fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta',  'retmax' : 10, 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
 
 
@@ -1006,7 +1091,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
         qres = s.get_result()
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
-            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retmax': max, 'mindate': start, 'maxdate':end,
+            {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max, 'mindate': start, 'maxdate':end,
              'datetype': 'pdat'})
         fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
@@ -1014,6 +1099,11 @@ def pubmed_search(query, begin, max, access_token, start, end):
         a = w.run(fetch_pubmed)
 
         res = a.get_result()
+
+    if res == 500:
+        url = 'app/errors/500.html'
+        return render( url, status=500)
+
 
     try:
 
@@ -1116,7 +1206,6 @@ def save_pubmed_input(request):
 
     scenario_id = request.GET.get('scenario_id', None)
     relevance = request.GET.get('relevance', None)
-    notes = request.GET.get('notes', None)
     pid = request.GET.get("pmid", None)
     title = request.GET.get("title", None)
     abstract = request.GET.get("abstract", None)
@@ -1126,6 +1215,10 @@ def save_pubmed_input(request):
     user = request.user
 
     scenario = Scenario.objects.get(id=scenario_id)
+
+    notes, created = Notes.objects.update_or_create(
+        content=request.GET.get('notes', None), user=user, scenario=scenario,
+        workspace=settings.WORKSPACES.get('PubMed'), wsview=title, note_datetime=datetime.datetime.now())
 
     try:
         pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
@@ -1263,6 +1356,7 @@ def aggregated_notes(request, lang):
     try:
         user = User.objects.get(username=request.user)
         user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+
         # Get scenarios that the user's notes concern
         scenarios = Scenario.objects.filter(
             id__in=map(lambda el: el.scenario.id, filter(lambda elm: elm.scenario!=None, user_notes))
@@ -1315,6 +1409,178 @@ def aggregated_notes(request, lang):
     return render(request, 'app/notes_aggregated.html', context)
 
 
+# @login_required()
+# @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+# def allnotes(request):
+#     """ Add, edit or view aggregated the notes kept for user's scenarios (version in use)
+#     :param request: request
+#     :return: the form view
+#     """
+#
+#     if not request.META.get('HTTP_REFERER'):
+#         return forbidden_redirect(request)
+#
+#     tmp_user = User.objects.get(username=request.user)
+#
+#     lista_scenarios=[]
+#     scenarios = {'id': 14}
+#     try:
+#         for scenario in scenarios:
+#             scenarios[scenario] = Scenario.objects.filter(owner_id=tmp_user)
+#             lista_scenarios = list(scenarios['id'])
+#     except Scenario.DoesNotExist:
+#         lista_scenarios = None
+#
+#     list_pub_scenarios = []
+#     pub_scenarios = {'id': 14}
+#     try:
+#         for sc in pub_scenarios:
+#             pub_scenarios[sc] = PubMed.objects.filter(user=tmp_user)
+#             list_pub_scenarios = list(pub_scenarios['id'])
+#     except PubMed.DoesNotExist:
+#         list_pub_scenarios = None
+#
+#
+#     lista_id_scenarios = []
+#     lista_title_scenarios = []
+#     for i in range(len(lista_scenarios)):
+#         lista_id_scenarios.append(lista_scenarios[i].id)
+#         lista_title_scenarios.append(lista_scenarios[i].title)
+#
+#     list_pubscen_title = []
+#     list_pubscen_sc = []
+#     for i in range(len(list_pub_scenarios)):
+#         for j in range(len(lista_scenarios)):
+#             if list_pub_scenarios[i].scenario_id_id == lista_scenarios[j].id:
+#                 list_pubscen_title.append(lista_scenarios[j].title)
+#                 list_pubscen_sc.append(lista_scenarios[j].id)
+#
+#     dictpub_sc_id_title = {}
+#     dictpub_sc_id_title = dict(zip(list_pubscen_sc, list_pubscen_title))
+#
+#     notesforexample1 = []
+#     notesforexample = []
+#     pubmedexample = []
+#
+#     if Notes.objects.filter(user=tmp_user) != "":
+#
+#         lista_notes = []
+#         notes = {'id': 14}
+#         for note in notes:
+#             notes[note] = Notes.objects.filter(user=tmp_user)
+#             lista_notes = list(notes['id'])
+#
+#         lista_notes_scid = []
+#         lista_notes_workspace = []
+#         lista_notes_view = []
+#
+#         for i in range(len(lista_notes)):
+#             lista_notes_scid.append(lista_notes[i].scenario_id)
+#
+#         lista_notes_scid_without = []
+#         lista_title_scenarios_without = []
+#         lista_notes_content_without = []
+#
+#         for i in range(len(lista_id_scenarios)):
+#             for j in range(len(lista_notes_scid)):
+#                 if lista_id_scenarios[i] == lista_notes_scid[j]:
+#                     lista_notes_view.append(lista_notes[j].wsview)
+#                     lista_notes_content_without.append(lista_notes[j].content)
+#                     lista_notes_scid_without.append(lista_notes[j].scenario_id)
+#                     lista_title_scenarios_without.append(lista_scenarios[i].title)
+#                     lista_notes_workspace.append(lista_notes[j].workspace)
+#
+#         dict_sc_id_title = dict(zip(lista_notes_scid_without, lista_title_scenarios_without))
+#
+#         notesforexample = []
+#         work = ""
+#         wsview_title = ""
+#         scenario_title = ""
+#
+#         for n in Notes.objects.filter(user=tmp_user).order_by('-note_datetime'):
+#             if n.scenario_id != None:
+#                 work = {v: k for k, v in settings.WORKSPACES.items()}.get(n.workspace)
+#                 # if n.workspace == 1:
+#                 #     work = 'OHDSI'
+#                 # if n.workspace == 2:
+#                 #     work = 'OpenFDA'
+#                 # if n.workspace == 3:
+#                 #     work = 'PubMed'
+#                 if n.wsview == 'ir':
+#                     wsview_title = 'Incidence Rate'
+#                 elif n.wsview == 'char':
+#                     wsview_title = 'Cohort Caracterization'
+#                 elif n.wsview == 'pathways':
+#                     wsview_title = 'Cohort Pathways'
+#                     # edw prepei na mpoun kai ta onomata twn wsview tou OpenFDA analoga me to pws apofasisoume na ta emfanizoume
+#                 else:
+#                     wsview_title = n.wsview
+#
+#
+#                 for key in dict_sc_id_title:
+#                     if n.scenario_id == key:
+#
+#                         scenario_title = dict_sc_id_title[key]
+#
+#                 notesforexample.append({
+#                     "workspace": work,
+#                     "content": n.content,
+#                     "wsview": n.wsview,
+#                     "wsview_title": wsview_title,
+#                     "scenario": n.scenario_id,
+#                     "scenario_title": scenario_title,
+#                     "note_datetime": n.note_datetime,
+#                 })
+#                 pubmedexample = []
+#                 if PubMed.objects.filter(user=tmp_user) != "":
+#                     for p in PubMed.objects.filter(user=tmp_user).order_by('-pubdate'):
+#                         for key in dictpub_sc_id_title:
+#                              if p.scenario_id_id == key:
+#                                 scenario_title = dictpub_sc_id_title[key]
+#                         pubmedexample.append({
+#                             "workspace": 'PubMed',
+#                             "notes": p.notes,
+#                             "wsview": p.title,
+#                             "title": p.title,
+#                             "scenario_id": p.scenario_id_id,
+#                             "scenario_title": scenario_title,
+#                             "pubmeddate": p.pubdate,
+#                             "abstract": p.abstract,
+#                             "pmid": p.pid,
+#                             "authors": p.authors,
+#                             "created": p.created
+#                         })
+#
+#                 notesforexample1 = []
+#                 for n in Notes.objects.order_by('-note_datetime').all():
+#                     if n.scenario_id == None:
+#                         if n.workspace == 1:
+#                             work = 'OHDSI'
+#                         if n.workspace == 2:
+#                             work = 'OpenFDA'
+#                         if n.workspace == 3:
+#                             work = 'PubMed'
+#                         if n.wsview == 'de':
+#                             wsview_title = 'Drug Exposure'
+#                         elif n.wsview == 'co':
+#                             wsview_title = 'Condition Occurence'
+#
+#                         notesforexample1.append({
+#                             "scenario": None,
+#                             "note_datetime": n.note_datetime,
+#                             "workspace": work,
+#                             "content": n.content,
+#                             "wsview": n.wsview,
+#                             "wsview_title": wsview_title
+#
+#                         })
+#
+#         # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample , 'pubmedexample': pubmedexample}
+#         # return render(request, 'app/all_notes_OLD.html', context)
+#
+#     context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
+#     return render(request, 'app/all_notes_OLD.html', context)
+
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def allnotes(request):
@@ -1326,101 +1592,80 @@ def allnotes(request):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    try:
-        user = User.objects.get(username=request.user)
+    tmp_user = User.objects.get(username=request.user)
 
-        if Notes.objects.filter(user=user) != "":
-            user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+    rev_workspaces = {v: k for k, v in settings.WORKSPACES.items()}
 
-            lista_notes_scid_without = list(map(lambda el: el.scenario.id, filter(lambda elm: elm.scenario != None, user_notes)))
-            lista_title_scenarios_without = list(map(lambda el: el.scenario.title, filter(lambda elm: elm.scenario != None, user_notes)))
-            dict_sc_id_title = dict(zip(lista_notes_scid_without, lista_title_scenarios_without))
+    user_notes = [{
+        "scenario": unote.scenario, "note_datetime": unote.note_datetime,
+        "workspace": rev_workspaces.get(unote.workspace),
+        "wsview": unote.wsview, "content": unote.content
+    } for unote in Notes.objects.filter(user=tmp_user).order_by('-note_datetime')]
 
-            notesforscenario = []
-            notesfornonescen = []
 
-            for n in Notes.objects.order_by('-note_datetime').all():
-                if n.scenario_id != None:
-                    if n.workspace == 1:
-                        work = 'OHDSI'
-                    if n.workspace == 2:
-                        work = 'OpenFDA'
-                    if n.wsview == 'ir':
-                        wsview_title = 'Incidence Rate'
-                    elif n.wsview == 'char':
-                        wsview_title = 'Cohort Caracterization'
-                    elif n.wsview == 'pathways':
-                        wsview_title = 'Cohort Pathways'
 
-                    else:
-                        wsview_title = n.wsview
+    # for n in user_notes:
 
-                    for key in dict_sc_id_title:
-                        if n.scenario_id == key:
-                            scenario_title = dict_sc_id_title[key]
 
-                    notesforscenario.append({
-                        "workspace": work,
-                        "content": n.content,
-                        "wsview": n.wsview,
-                        "wsview_title": wsview_title,
-                        "scenario": n.scenario_id,
-                        "scenario_title": scenario_title,
-                        "note_datetime": n.note_datetime,
-                    })
-                else:
+    #             notesforexample.append({
+    #                 "workspace": work,
+    #                 "content": n.content,
+    #                 "wsview": n.wsview,
+    #                 "wsview_title": wsview_title,
+    #                 "scenario": n.scenario_id,
+    #                 "scenario_title": scenario_title,
+    #                 "note_datetime": n.note_datetime,
+    #             })
+    #             pubmedexample = []
+    #             if PubMed.objects.filter(user=tmp_user) != "":
+    #                 for p in PubMed.objects.filter(user=tmp_user).order_by('-pubdate'):
+    #                     for key in dictpub_sc_id_title:
+    #                          if p.scenario_id_id == key:
+    #                             scenario_title = dictpub_sc_id_title[key]
+    #                     pubmedexample.append({
+    #                         "workspace": 'PubMed',
+    #                         "notes": p.notes,
+    #                         "wsview": p.title,
+    #                         "title": p.title,
+    #                         "scenario_id": p.scenario_id_id,
+    #                         "scenario_title": scenario_title,
+    #                         "pubmeddate": p.pubdate,
+    #                         "abstract": p.abstract,
+    #                         "pmid": p.pid,
+    #                         "authors": p.authors,
+    #                         "created": p.created
+    #                     })
+    #
+    #             notesforexample1 = []
+    #             for n in Notes.objects.order_by('-note_datetime').all():
+    #                 if n.scenario_id == None:
+    #                     if n.workspace == 1:
+    #                         work = 'OHDSI'
+    #                     if n.workspace == 2:
+    #                         work = 'OpenFDA'
+    #                     if n.workspace == 3:
+    #                         work = 'PubMed'
+    #                     if n.wsview == 'de':
+    #                         wsview_title = 'Drug Exposure'
+    #                     elif n.wsview == 'co':
+    #                         wsview_title = 'Condition Occurence'
+    #
+    #                     notesforexample1.append({
+    #                         "scenario": None,
+    #                         "note_datetime": n.note_datetime,
+    #                         "workspace": work,
+    #                         "content": n.content,
+    #                         "wsview": n.wsview,
+    #                         "wsview_title": wsview_title
+    #
+    #                     })
+    #
+    #     # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample , 'pubmedexample': pubmedexample}
+    #     # return render(request, 'app/all_notes_OLD.html', context)
+    #
+    # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
 
-                    work = 'OHDSI'
-                    if n.wsview == 'de':
-                        wsview_title = 'Drug Exposure'
-                    elif n.wsview == 'co':
-                        wsview_title = 'Condition Occurence'
-
-                    notesfornonescen.append({
-                        "scenario": None,
-                        "note_datetime": n.note_datetime,
-                        "workspace": work,
-                        "content": n.content,
-                        "wsview": n.wsview,
-                        "wsview_title": wsview_title
-
-                    })
-        else:
-            notesfornonescen = []
-            notesforscenario = []
-
-        notespubmed = []
-        if PubMed.objects.filter(user=user) != "":
-
-            user_pubmed_notes = PubMed.objects.filter(user=user).order_by("scenario_id", "title", "notes")
-            list_pubscen_sc = list(map(lambda el: el.scenario_id.id, filter(lambda elm: elm.scenario_id != None, user_pubmed_notes)))
-            list_pubscen_title = list(map(lambda el: el.scenario_id.title,filter(lambda elm: elm.scenario_id != None, user_pubmed_notes)))
-            dictpub_sc_id_title = dict(zip(list_pubscen_sc, list_pubscen_title))
-
-            for p in PubMed.objects.order_by('-pubdate').all():
-                for key in dictpub_sc_id_title:
-                    scenario_title = dictpub_sc_id_title[key]
-                notespubmed.append({
-                    "workspace": 'PubMed',
-                    "notes": p.notes,
-                    "wsview": p.title,
-                    "title": p.title,
-                    "scenario_id": p.scenario_id_id,
-                    "scenario_title": scenario_title,
-                    "pubmeddate": p.pubdate,
-                    "abstract": p.abstract,
-                    "pmid": p.pid,
-                    "authors": p.authors,
-                    "created": p.created
-                })
-        else:
-            notespubmed = []
-
-        status_code = 200
-    except Exception as e:
-        status_code = 500
-
-    context = {'notesfornonescen': notesfornonescen, 'notesforscenario': notesforscenario , 'notespubmed': notespubmed, "status": status_code}
+    context = {"user_notes": user_notes, "abbrv_views": settings.ABBRV_VIEWS}
     return render(request, 'app/all_notes.html', context)
 
 
@@ -3061,8 +3306,8 @@ def social_media(request, sc_id):
         # Retrieve scenario conditions
         conditions = sc.conditions.all()
 
-        all_combs = list(product(sorted([d.name for d in drugs]) or [""],
-                                 sorted([c.name for c in conditions]) or [""]))
+        all_combs = list(product(sorted(set([d.name for d in drugs])) or [""],
+                                 sorted(set([c.name for c in conditions])) or [""]))
 
         all_combs = list(map(lambda el: " ".join(filter(None, el)), all_combs))
         twitter_query = " OR ".join(all_combs)

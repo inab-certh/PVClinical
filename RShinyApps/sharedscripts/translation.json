@@ -138,6 +138,11 @@
         "gr":"Ένδειξη"
       },
       {
+        "def":"Medication",
+        "en":"Medication",
+        "gr":"Χορήγηση φαρμάκων"
+      },
+      {
         "def":"Other Apps",
         "en":"Other Apps",
         "gr":"Άλλες εφαρμογές"
@@ -923,14 +928,14 @@
         "gr":"Ασθενής"
       },
       {
-        "def":"Patient.Reaction",
-        "en":"Patient.Reaction",
-        "gr":"Ασθενής.Αντίδραση"
+        "def":"Reactions",
+        "en":"Reactions",
+        "gr":"Αντιδράσεις"
       },
       {
-        "def":"Patient.Drug",
-        "en":"Patient.Drug",
-        "gr":"Ασθενής.Φάρμακο"
+        "def":"Drugs",
+        "en":"Drugs",
+        "gr":"Φάρμακα"
       },
       {
         "def":"Patient.Drug.OpenFDA",
