@@ -281,7 +281,7 @@
 /*}*/
 
 
-#scenariosTbl td {
+#scenariosTbl td, #patCasesTbl td {
     vertical-align: middle;
     text-align: center;
 }
@@ -987,4 +987,8 @@ input[type='checkbox']+span {
 
 .table-light {
 	background-color: #f9f9f9;
+}
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
+	color: white;
 }

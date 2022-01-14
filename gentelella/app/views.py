@@ -1,9 +1,9 @@
-import datetime
 import ast
 import concurrent.futures
 import hashlib
 import html
 
+import datetime
 import json
 import os
 import re
@@ -25,6 +25,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template import loader
@@ -126,7 +127,7 @@ def get_synonyms(request):
     knw = KnowledgeGraphWrapper()
     synonyms = knw.get_synonyms(drugs)
 
-    data={}
+    data = {}
     data["synonyms"] = synonyms
     return JsonResponse(data)
 
@@ -149,8 +150,8 @@ def filter_whole_set(request):
     subset = sorted(subset, key=lambda x: 'a' + x if\
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
-    data={}
-    data["results"] = [{"id":elm, "text":elm} for elm in subset]
+    data = {}
+    data["results"] = [{"id": elm, "text": elm} for elm in subset]
 
     return JsonResponse(data)
 
@@ -211,7 +212,7 @@ def get_all_drugs(request):
     all_drugs = ["{}{}".format(
         el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
 
-    data={}
+    data = {}
     data["drugs"] = all_drugs
     return JsonResponse(data)
 
@@ -223,7 +224,7 @@ def get_medDRA_tree(request):
     """
     knw = KnowledgeGraphWrapper()
 
-    data={}
+    data = {}
     data["medDRA_tree"] = knw.get_medDRA_tree()
     return JsonResponse(data)
 
@@ -264,6 +265,41 @@ def get_note_content(request):
         data["note_content"] = Notes.objects.get(id=request.GET.get("note_id", None)).content
     except Notes.DoesNotExist:
         data["note_content"] = ""
+    return JsonResponse(data)
+
+
+def get_popover_content(request):
+    """ Get the content for popover
+    :param request: The request from which the popover scenario content is asked
+    :return: The popover content
+    """
+    try:
+        sc = Scenario.objects.get(id=request.GET.get("sc_id", None))
+        drugs_rows = "\n".join(["<tr><td>{}</td></tr>".format(d.name or d.code) for d in sc.drugs.all()])
+        conditions_rows = "\n".join(["<tr><td>{}</td></tr>".format(c.name or c.code) for c in sc.conditions.all()])
+        data = """<table class ='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+        <thead><tr><th>{}</th><th>{}</th></tr></thead>
+        <tbody>
+            <tr><td><table>{}</table></td>
+                <td><table>{}</table></td>
+            </tr>
+        </tbody></table>""".format(_("Φάρμακο/Φάρμακα"), _("Πάθηση/Παθήσεις"), drugs_rows, conditions_rows)
+
+    except Notes.DoesNotExist:
+        data = ""
+    return HttpResponse(data)
+
+
+def get_updated_scenarios_ids(request):
+    """ Get updated list of scenarios' ids
+    :param request:
+    :return: the scenarios' ids
+    """
+    data = {}
+    try:
+        data["scenarios_ids"] = list(map(lambda el: str(el.id), Scenario.objects.filter(owner=request.user)))
+    except Scenario.DoesNotExist:
+        data = {}
     return JsonResponse(data)
 
 
@@ -327,9 +363,6 @@ def add_edit_scenario(request, scenario_id=None):
 
         if scform.is_valid():
             sc=scform.save()
-            #aprosthiki apo nadia gia to patient_management_workspace
-            request.session['new_scen_id'] = sc.id
-
 
             messages.success(
                 request,
@@ -555,6 +588,7 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
                     "results_url": results_url,
                     "read_only": read_only,
                     "form": irform,
+
                     "title": _("Ανάλυση Ρυθμού Επίπτωσης")
                 }
                 return render(request, 'app/ir.html', context, status=500)
@@ -3093,13 +3127,17 @@ def patient_management_workspace(request):
     :param request: request
     :return: the form view
     """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
     request.session['quest_id'] = None
     request.session['scen_id'] = None
     request.session['pat_id'] = None
 
     patient_cases = []
 
-    for case in PatientCase.objects.order_by('-timestamp').all():
+    for case in PatientCase.objects.filter(user=request.user).order_by('-timestamp').all():
         for scs in case.scenarios.all():
             for quests in case.questionnaires.all():
 
@@ -3107,10 +3145,8 @@ def patient_management_workspace(request):
                         "id": case.id,
                         "patient_id": case.patient_id,
                         "timestamp": case.timestamp,
-                        "scenario_id": scs.id,
-                        "scenario_title": scs.title,
-                        "drugs": scs.drugs.all(),
-                        "conditions": scs.conditions.all(),
+                        # "scenario_id": scs.id,
+                        "scenario": scs,
                         "questionnaire_id": quests.id
                     })
 
@@ -3129,73 +3165,109 @@ def patient_management_workspace(request):
     return render(request, 'app/patient_management_workspace.html', context)
 
 
-def new_case(request):
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def new_pmcase(request):
     """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
     complete the questionnaire.
     :param request: request
     :return: the form view
     """
-    quest_id = request.session.get('quest_id')
-    patient_id = request.session.get('pat_id')
-    sc_id = request.session.get('scen_id')
+    if not request.META.get("HTTP_REFERER"):
+        return forbidden_redirect(request)
 
-    new_scen_id = request.session.get('new_scen_id') \
-        if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
-        else None
+    quest_id = request.GET.get("quest_id", None)
+    patient_id = request.GET.get("patient_id", None)
+    sc_id = request.GET.get("sc_id", None)
 
-    new_scen_id_no = 'None'
+    # new_scen_id = request.session.get('new_scen_id') \
+    #     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
+    #     else None
 
-    if new_scen_id != None and sc_id == None:
-        sc_id = new_scen_id
-        new_scen_id_no = new_scen_id
+    # new_scen_id_no = 'None'
+    #
+    # if new_scen_id != None and sc_id == None:
+    #     sc_id = new_scen_id
+    #     new_scen_id_no = new_scen_id
 
     tmp_user = User.objects.get(username=request.user)
 
-    if request.method == "POST":
-        form = PatientForm(request.POST)
+    # instance = PatientCase
 
-        if form.is_valid():
+    quest_btn_disable = True
+
+    # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
+    #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
+    #                    user=request.user)
+    form = PatientForm(user=request.user, label_suffix='')
+
+    if request.method == "POST":
+        form = PatientForm(request.POST, user=request.user, label_suffix='')
+        if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
             case = form.save(commit=False)
             case.save()
             form.save_m2m()
 
-            return redirect('patient_management_workspace')
-    else:
-        form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
-                                    "questionnaires": Questionnaire.objects.filter(id=quest_id).first()})
-
-    scenarios = []
-    for sc in Scenario.objects.order_by('-timestamp').all():
-        scenarios.append({
-            "id": sc.id,
-            "title": sc.title,
-            "drugs": sc.drugs.all(),
-            "conditions": sc.conditions.all(),
-            "owner": sc.owner.username,
-            "status": dict(sc.status.status_choices).get(sc.status.status),
-            "timestamp": sc.timestamp
-        })
-
-    return render(request, 'app/new_case.html', {'form': form, 'quest_id':quest_id, 'new_scen_id_no': new_scen_id_no,
-                                                 'scenarios': scenarios})
+            return redirect("patient_management_workspace")
+        else:
+            form_errors = form.errors.as_data()
+            # If there is an error in at least one of the patient_id and scenarios fields, disable button
+            if not list(filter(lambda el: el in form_errors, ["patient_id", "scenarios"])):
+                quest_btn_disable = False
+            else:
+                quest_btn_disable = True
 
 
+    # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]
+    # for sc in Scenario.objects.order_by('-timestamp').all():
+    #     scenarios.append({
+    #         "id": sc.id,
+    #         "title": sc.title,
+    #         "drugs": sc.drugs.all(),
+    #         "conditions": sc.conditions.all(),
+    #         "owner": sc.owner.username,
+    #         "status": dict(sc.status.status_choices).get(sc.status.status),
+    #         "timestamp": sc.timestamp
+    #     })
+
+    return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
+                                                   "questbtn_disable": quest_btn_disable})
+
+
+def retr_del_session_pmcvars(request):
+    """ Retrieve and delete all the necessary for new pmcase, session variables
+    :param request: request
+    :return: the session variables (i.e. scenario id, patient id, questionnaire id
+    """
+    pat_id = request.session.get("pat_id")
+    sc_id = request.session.get("scen_id")
+    quest_id = request.session.get("quest_id")
+
+    data = {"sc_id": sc_id, "pat_id": pat_id, "quest_id": quest_id}
+    del request.session["pat_id"]
+    del request.session["scen_id"]
+    del request.session["quest_id"]
+
+    return JsonResponse(data)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def questionnaire(request, patient_id=None, sc_id=None):
     """ Questionnaire based on liverpool algorithm for determining the likelihood of whether an ADR
     is actually due to the drug rather than the result of other factors.
     :param request: request
     :param patient_id: the specific patient's id or None
-    :param sc_id: scenario's id that is correlated with this patient's case or None
+    :param sc_id: scenario ids that are correlated with this patient's case or None
     :return: the form view
     """
-
     if request.method == "POST":
 
-        form = QuestionnaireForm(request.POST)
-        pat_id = form.data["patient_id"]
-        scen_id = form.data["sc_id"]
+        form = QuestionnaireForm(request.POST, label_suffix='')
+        pat_id = request.session.get('pat_id')
+        scen_id = request.session.get('scen_id')
 
         if form.is_valid():
             answers = form.save(commit=False)
@@ -3208,7 +3280,6 @@ def questionnaire(request, patient_id=None, sc_id=None):
                                                            q9=answers.q9, q10=answers.q10)
                 existing_pk = existing_quest.pk
 
-                return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
             else:
 
                 answers.save()
@@ -3227,10 +3298,20 @@ def questionnaire(request, patient_id=None, sc_id=None):
 
                 existing_pk = answers.pk
 
-                return redirect('answers_detail', pk= existing_pk, scen_id=scen_id, pat_id=pat_id)
+            request.session['quest_id'] = existing_pk
+            request.session['scen_id'] = scen_id
+            request.session['pat_id'] = pat_id
+
+            return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
 
     else:
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id})
+        # patient_id = patient_id #or request.GET.get("patient_id", None)
+        # sc_id = sc_id #or request.GET.getlist("sc_id")
+
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix='')
+        request.session['quest_id'] = None
+        request.session['scen_id'] = sc_id
+        request.session['pat_id'] = patient_id
 
     return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
 
@@ -3245,13 +3326,28 @@ def answers_detail(request, pk, scen_id, pat_id):
     """
 
     scen_title = Scenario.objects.get(id=scen_id).title
-    quest = Questionnaire.objects.get(id=pk)
-    request.session['quest_id'] = pk
-    request.session['scen_id'] = scen_id
-    request.session['pat_id'] = pat_id
+    quest = model_to_dict(Questionnaire.objects.get(id=pk))
 
-    return render(request, 'app/answers_detail.html', {'quest': quest, 'scen_id': scen_id, 'pat_id': pat_id,
-                                                       'scen_title': scen_title})
+    # The table containing tuples of the questions and answers of Liverpool algorithm
+    algo_tbl = [(_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;"), _("Όχι"), _("Ναί")),
+                (_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;"), _("Όχι"), _("Ναί")),
+                (_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;"), _("Όχι"), _("Ναί")),
+                (_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;"),
+                 _("Όχι"), _("Ναί ή Μη προσδιορίσιμο")),
+                (_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"), _("Όχι"), _("Ναί")),
+                (_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"),
+                 _("Υψηλή ή Αβέβαιο"), _("Χαμηλή")),
+                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Υπήρξε εκ νέου θετική επαναπρόκληση;"), _("Όχι"), _("Ναί")),
+                (_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;"),
+                 _("Όχι"), _("Ναί")),
+                ]
+
+    return render(request, "app/answers_detail.html", {"quest": quest, "scen_id": scen_id, "pat_id": pat_id,
+                                                       "scen_title": scen_title, "algo_tbl": algo_tbl})
 
 
 def patient_history(request, patient_pk=None):

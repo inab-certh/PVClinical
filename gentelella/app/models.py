@@ -15,6 +15,7 @@ from ckeditor.fields import RichTextField
 # from tinymce.models import HTMLField
 
 from app.helper_modules import choices_max_length
+from app.validators import pat_id_validator
 
 
 # Create your models here.
@@ -203,40 +204,67 @@ class Notes(models.Model):
                                     name="unique_note")
         ]
 
+
+class PubMed(models.Model):
+    """
+        PubMed articles and user notes
+    """
+    CHOICES = [(True, 'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    pid = models.CharField(max_length=70, blank=False, default='')
+    title = models.CharField(max_length=500, blank=False, default='')
+    pubdate = models.CharField(max_length=400, blank=False, default='')
+    abstract = models.TextField(null=True, blank=True)
+    authors = models.CharField(max_length=400, blank=False, default='')
+    url = models.CharField(max_length=100, blank=False, default='')
+    relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
+    notes = models.ForeignKey(Notes, null=True, on_delete=models.CASCADE)
+
+    scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["pid", "user", "scenario_id"], name="unique_article")
+        ]
+
+    # created = models.DateTimeField(auto_now_add=True)
+
 class Questionnaire(models.Model):
 
-    q1= models.BooleanField(null=True,default=None)
-    q2= models.BooleanField(null=True,default=None)
-    q3= models.BooleanField(null=True,default=None)
-    q4= models.BooleanField(null=True,default=None)
-    q5= models.BooleanField(null=True,default=None)
-    q6= models.BooleanField(null=True,default=None)
-    q7= models.BooleanField(null=True,default=None)
-    q8= models.BooleanField(null=True,default=None)
-    q9= models.BooleanField(null=True,default=None)
-    q10= models.BooleanField(null=True,default=None)
+    q1 = models.BooleanField(null=True,default=None)
+    q2 = models.BooleanField(null=True,default=None)
+    q3 = models.BooleanField(null=True,default=None)
+    q4 = models.BooleanField(null=True,default=None)
+    q5 = models.BooleanField(null=True,default=None)
+    q6 = models.BooleanField(null=True,default=None)
+    q7 = models.BooleanField(null=True,default=None)
+    q8 = models.BooleanField(null=True,default=None)
+    q9 = models.BooleanField(null=True,default=None)
+    q10 = models.BooleanField(null=True,default=None)
 
-    result= models.CharField(max_length=200)
+    result = models.CharField(max_length=200)
 
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
                                             "q6", "q7", "q8", "q9", "q10"],
-                                    name="unique_patientcase")
+                                    name="unique_questionnaire")
         ]
+
 
 class PatientCase(models.Model):
     """ PatientCase for user's patients for Patient Management Workspace
     """
-    patient_id = models.CharField(max_length=500, blank=False, default='')
+    patient_id = models.CharField(max_length=500, blank=False, default='', validators=[pat_id_validator])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     #ena scenario mporei na to exoun polloi astheneis, alla kai 1 asthenis mporei na exei polla senaria
     scenarios = models.ManyToManyField(Scenario, through= "CaseToScenario", default=None,
                                         verbose_name="scenarios", related_name="scenarios")
 
-    questionnaires =  models.ManyToManyField(Questionnaire, through= "CaseToQuestionnaire", default=None,
+    questionnaires = models.ManyToManyField(Questionnaire, through= "CaseToQuestionnaire", default=None,
                                         verbose_name="questionnaires", related_name="questionnaires")
     #ena questionnaire mporoun na to exoun polloi astheneis, alla kai enas asthenis mporei na exei polla questionnaire,
     #ara h arxiki skepsi tou vlasi mou fainetai swsth, oxi foreignkey, alla pali manytomany
@@ -250,14 +278,16 @@ class PatientCase(models.Model):
                                     name="unique_patientcase")
         ]
 
+
 class CaseToScenario(models.Model):
     scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
     pcase = models.ForeignKey(PatientCase, on_delete=models.CASCADE)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["scenario", "pcase"],
-                                    name="unique_casetogether")
+                                    name="unique_pcase_scenario")
         ]
+
 
 class CaseToQuestionnaire(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
@@ -266,7 +296,7 @@ class CaseToQuestionnaire(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["questionnaire", "pcaseq"],
-                                    name="unique_casetogetherq")
+                                    name="unique_questionnaire_pcaseq")
         ]
 
 # class Questionnaire(models.Model):
@@ -296,28 +326,3 @@ class CaseToQuestionnaire(models.Model):
 
 
 
-
-class PubMed(models.Model):
-    """
-        PubMed articles and user notes
-    """
-    CHOICES = [(True, 'Relevant'), (False, 'Irrelevant'), ('Not sure', 'Not sure')]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    pid = models.CharField(max_length=70, blank=False, default='')
-    title = models.CharField(max_length=500, blank=False, default='')
-    pubdate = models.CharField(max_length=400, blank=False, default='')
-    abstract = models.TextField(null=True, blank=True)
-    authors = models.CharField(max_length=400, blank=False, default='')
-    url = models.CharField(max_length=100, blank=False, default='')
-    relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
-    notes = models.ForeignKey(Notes, null=True, on_delete=models.CASCADE)
-
-    scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["pid", "user", "scenario_id"], name="unique_article")
-        ]
-
-    # created = models.DateTimeField(auto_now_add=True)
