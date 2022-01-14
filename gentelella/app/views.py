@@ -1,12 +1,23 @@
+import ast
+import concurrent.futures
+import hashlib
+import html
+
 import datetime
 import json
 import os
 import re
 import requests
+import tempfile
+import uuid
+import glob
+import shutil
 
+from collections import namedtuple
 from math import ceil
 from itertools import chain
 from itertools import product
+from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -14,9 +25,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template import loader
+from django.http import FileResponse
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.http import QueryDict
@@ -27,12 +40,18 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from app import ohdsi_wrappers
+from app import ohdsi_shot
+
 from app.errors_redirects import forbidden_redirect
 from app.forms import ScenarioForm
 from app.forms import IRForm
 from app.forms import CharForm
 from app.forms import NotesForm
 from app.forms import PathwaysForm
+from app.forms import PatientForm
+from app.forms import QuestionnaireForm
+
+
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
@@ -44,6 +63,14 @@ from app.helper_modules import mendeley_pdf
 from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
+from app.models import PatientCase
+from app.models import Questionnaire
+from app.models import CaseToScenario
+from app.models import CaseToQuestionnaire
+
+
+
+
 # from app.ohdsi_wrappers import update_ir
 # from app.ohdsi_wrappers import create_ir
 from app.entrezpy import conduit
@@ -52,6 +79,15 @@ from app.pubmed import PubmedAnalyzer
 
 from Bio import Entrez
 from mendeley import Mendeley
+
+from selenium.common.exceptions import TimeoutException
+
+import urllib
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import pdfkit
+import webbrowser
 
 
 @login_required()
@@ -91,7 +127,7 @@ def get_synonyms(request):
     knw = KnowledgeGraphWrapper()
     synonyms = knw.get_synonyms(drugs)
 
-    data={}
+    data = {}
     data["synonyms"] = synonyms
     return JsonResponse(data)
 
@@ -114,8 +150,8 @@ def filter_whole_set(request):
     subset = sorted(subset, key=lambda x: 'a' + x if\
         x.lower().startswith(term.lower().strip()) else 'b' + x)
 
-    data={}
-    data["results"] = [{"id":elm, "text":elm} for elm in subset]
+    data = {}
+    data["results"] = [{"id": elm, "text": elm} for elm in subset]
 
     return JsonResponse(data)
 
@@ -176,7 +212,7 @@ def get_all_drugs(request):
     all_drugs = ["{}{}".format(
         el.name, " - {}".format(el.code) if el.code else "") for el in all_drugs]
 
-    data={}
+    data = {}
     data["drugs"] = all_drugs
     return JsonResponse(data)
 
@@ -188,7 +224,7 @@ def get_medDRA_tree(request):
     """
     knw = KnowledgeGraphWrapper()
 
-    data={}
+    data = {}
     data["medDRA_tree"] = knw.get_medDRA_tree()
     return JsonResponse(data)
 
@@ -229,6 +265,41 @@ def get_note_content(request):
         data["note_content"] = Notes.objects.get(id=request.GET.get("note_id", None)).content
     except Notes.DoesNotExist:
         data["note_content"] = ""
+    return JsonResponse(data)
+
+
+def get_popover_content(request):
+    """ Get the content for popover
+    :param request: The request from which the popover scenario content is asked
+    :return: The popover content
+    """
+    try:
+        sc = Scenario.objects.get(id=request.GET.get("sc_id", None))
+        drugs_rows = "\n".join(["<tr><td>{}</td></tr>".format(d.name or d.code) for d in sc.drugs.all()])
+        conditions_rows = "\n".join(["<tr><td>{}</td></tr>".format(c.name or c.code) for c in sc.conditions.all()])
+        data = """<table class ='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+        <thead><tr><th>{}</th><th>{}</th></tr></thead>
+        <tbody>
+            <tr><td><table>{}</table></td>
+                <td><table>{}</table></td>
+            </tr>
+        </tbody></table>""".format(_("Φάρμακο/Φάρμακα"), _("Πάθηση/Παθήσεις"), drugs_rows, conditions_rows)
+
+    except Notes.DoesNotExist:
+        data = ""
+    return HttpResponse(data)
+
+
+def get_updated_scenarios_ids(request):
+    """ Get updated list of scenarios' ids
+    :param request:
+    :return: the scenarios' ids
+    """
+    data = {}
+    try:
+        data["scenarios_ids"] = list(map(lambda el: str(el.id), Scenario.objects.filter(owner=request.user)))
+    except Scenario.DoesNotExist:
+        data = {}
     return JsonResponse(data)
 
 
@@ -292,6 +363,7 @@ def add_edit_scenario(request, scenario_id=None):
 
         if scform.is_valid():
             sc=scform.save()
+
             messages.success(
                 request,
                 _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
@@ -1629,6 +1701,1682 @@ def allnotes(request):
 
     context = {"user_notes": user_notes, "abbrv_views": settings.ABBRV_VIEWS}
     return render(request, 'app/all_notes.html', context)
+
+
+def openfda_screenshots_exist(request):
+    """ An ajax callback checking if there is at least one screenshot for the specific user, scenario pair (hashes
+    parameter corresponds to that drug-condition combinations' hashes for that pair) on the server hosting the
+    screenshots for openfda workspace
+    :param request: The request from which hashes are retrieved and this function is called
+    :return: true or false, depending on whether the specific screenshot files were found or not on server
+    """
+    # r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    # soup = BeautifulSoup(r.text, 'html.parser')
+    # existing_files = filter(lambda lnk: "." in lnk, map(lambda link: link['href'], soup.find_all('a', href=True)))
+
+    ls_resp = requests.get("{}list-media-files".format(settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS))
+    existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
+
+    hashes = ast.literal_eval(html.unescape(request.GET.get("hashes", None)))
+
+    found_files = list(filter(lambda fname: re.match("^[a-z0-9]*", fname).group() in hashes, existing_files))
+    ret = {}
+    ret["exist"] = (len(found_files) != 0)
+
+    return JsonResponse(ret)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def final_report(request, scenario_id=None):
+    """ Create a final report that contains every information that you
+    select from OHDSI and OpedFDA workspace
+    :param scenario_id: the specific scenario, new scenario or None
+    :return: the form view
+    """
+
+    ir_table = ""
+    ir_all = ""
+    path_all = ""
+    pre_table = ""
+    pre_chart = ""
+    drug_table = ""
+    drug_chart = ""
+    demograph_table = ""
+    demograph_chart = ""
+    charlson_table = ""
+    charlson_chart = ""
+    gen_table = ""
+    gen_chart = ""
+
+
+    ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
+    try:
+        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+
+    try:
+        sc = Scenario.objects.get(id=scenario_id)
+    except Exception as e:
+        error_response = HttpResponse(content=str(e), status=500)
+        return error_response
+
+    drugs = [d for d in sc.drugs.all()]
+    conditions = [c for c in sc.conditions.all()]
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
+
+    scenario_open = sc.id
+
+    drug_condition_hash = []
+
+    for i in range(len(all_combs)):
+        p = sc.title+str(sc.owner)+str(i)
+        h = hashlib.md5(repr(p).encode('utf-8'))
+        hash = h.hexdigest()
+
+        drug_condition_hash.append(list(all_combs[i])+[hash])
+
+    hashes = list(map(lambda dch: dch[2], drug_condition_hash))
+
+    if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
+        # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
+        del_resp = requests.delete("{}delete-media-files".format(
+            settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+            auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+            params={"hashes": hashes})
+
+    user = sc.owner
+
+    pub_dict = {}
+    pub_objs = PubMed.objects.filter(scenario_id=scenario_open, relevance=True)
+    # pub_objs_titles = list(map(lambda el: el.title, pub_objs))
+
+    # for i in pub_objs:
+    #     pub_dict[i.title] = i.notes
+
+    notes_openfda1 = {}
+    if Notes.objects.filter(user=user) != "":
+        user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
+        notes_wsview_openfda = list(map(lambda el: el.wsview, filter(lambda elm: elm.workspace == 2, user_notes)))
+        dict_openfda_notes = {}
+        for i in notes_wsview_openfda:
+            notes_content_openfda = list(map(lambda el: el.content, filter(lambda elm: elm.wsview == i, user_notes)))
+            dict_openfda_notes[i] = notes_content_openfda[0]
+        for i, j, k in drug_condition_hash:
+            for key in dict_openfda_notes:
+                if i + ' - ' + j == key:
+                    notes_openfda1[k] = dict_openfda_notes[key]
+                if i == key and j == "":
+                    notes_openfda1[k] = dict_openfda_notes[key]
+                if j == key and i == "":
+                    notes_openfda1[k] = dict_openfda_notes[key]
+
+
+    # ir table and heatmap
+
+    drugs_cohort_name = None
+    conditions_cohort_name = None
+    sc_drugs = sc.drugs.all()
+    sc_conditions = sc.conditions.all()
+
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
+        sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    else:
+        ir_id = None
+
+    char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
+                                                   "char")
+    char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
+    if char_ent:
+        char_id = char_ent.get("id")
+    else:
+        char_id = None
+
+    conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
+    cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
+                                                 "cp")
+    cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
+    if cp_ent:
+        cp_id = cp_ent.get("id")
+    else:
+        cp_id = None
+
+    try:
+        files = glob.glob(os.path.join(ohdsi_tmp_img_path, '*.png'))
+        for f in files:
+            os.remove(f)
+    except:
+        pass
+
+    ir_notes = ""
+    try:
+        ir_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='ir')
+        ir_notes = ir_notes.content
+    except:
+        pass
+    char_notes = ""
+    try:
+        char_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='char')
+        char_notes = char_notes.content
+    except:
+        pass
+    pathways_notes = ""
+    try:
+        pathways_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=1, wsview='pathways')
+        pathways_notes = pathways_notes.content
+    except:
+        pass
+
+    ohdsi_sh = ohdsi_shot.OHDSIShot()
+    char_generate = "no"
+    cp_generate = "no"
+    ir_generate = "no"
+    img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
+
+    try:
+        os.mkdir(img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+
+    intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
+    entries = os.listdir(img_path)
+
+    # pre_table = None
+    # pre_chart = None
+    # drug_table = None
+    # drug_chart = None
+    # demograph_table = None
+    # demograph_chart = None
+    # charlson_table = None
+    # charlson_chart = None
+    # gen_table = None
+    # gen_chart = None
+    path_all = None
+    ir_table = None
+    ir_all = None
+
+    from time import time
+    start = time()
+
+    # Prepare lists for threading functions, parameters and results
+    threads_funcs = []
+    threads_shot_urls = []
+    threads_fnames = []
+    threads_shoot_elms = []
+    threads_tbls_len = []
+    threads_store_path = []
+    threads_results = []
+
+    if char_id != None:
+        response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
+        resp_number = response.json()
+
+        if resp_number != []:
+            resp_num_id = resp_number[0]['id']
+            if resp_num_id == [] or resp_number[0]['status'] != "COMPLETED":
+                char_generate = "no"
+            else:
+                char_generate = "yes"
+                # if "pre_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["pre_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("All prevalence covariates", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("pre_table",
+                                       os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
+                #     pre_table = os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+                # if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("All prevalence covariates", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("pre_chart",
+                                        os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
+                #     pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+                # if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["drug_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DRUG / Drug Group Era Long Term", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("drug_table",
+                                        os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DRUG / Drug Group Era Long Term", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("drug_chart",
+                                        os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Age Group", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("demograph_table",
+                                        os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Age Group", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("demograph_chart",
+                                        os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("CONDITION / Charlson Index", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("charlson_table",
+                                        os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
+                #     charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("CONDITION / Charlson Index", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("charlson_chart",
+                                        os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
+                #     charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+
+                # if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["gen_table_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Gender", "table")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("gen_table",
+                                        os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
+                #         store_path=img_path)
+                #     gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+                # if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.cc_shot)
+                threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, char_id, resp_num_id))
+                threads_fnames.append(["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)])
+                threads_shoot_elms.append([("DEMOGRAPHICS / Demographics Gender", "chart")])
+                threads_tbls_len.append(10)
+                threads_store_path.append(img_path)
+                threads_results.append(("gen_chart",
+                                        os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.cc_shot(
+                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
+                #         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
+                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
+                #         store_path=img_path)
+                #     gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+    if cp_id != None:
+        response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
+        resp_number_cp = response.json()
+        if resp_number_cp != []:
+            resp_num_id_cp = resp_number_cp[0]['id']
+
+            if resp_num_id_cp == [] or resp_number_cp[0]['status'] != "COMPLETED":
+                cp_generate = "no"
+            else:
+                cp_generate = "yes"
+                # if "pw_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+                threads_funcs.append(ohdsi_sh.pathways_shot)
+                threads_shot_urls.append("{}/#/pathways/{}/results/{}".format(
+                    settings.OHDSI_ATLAS, cp_id, resp_num_id_cp))
+                threads_fnames.append("pw_{}_{}.png".format(sc.owner_id, sc.id))
+                threads_shoot_elms.append("all")
+                threads_tbls_len.append(None)
+                threads_store_path.append(img_path)
+                threads_results.append(("path_all",
+                                        os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))))
+
+                # try:
+                #     ohdsi_sh.pathways_shot(
+                #         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
+                #         "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+                #     path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
+                # except TimeoutException:
+                #     pass
+
+    try:
+        if ir_id != None:
+            ir_generate = "yes"
+
+            # if "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+            threads_funcs.append(ohdsi_sh.ir_shot)
+            threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
+            threads_fnames.append("irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            threads_shoot_elms.append("table")
+            threads_tbls_len.append(None)
+            threads_store_path.append(img_path)
+            threads_results.append(("ir_table",
+                                    os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))))
+
+            # try:
+            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+            #                      "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
+            #     ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
+            # except TimeoutException:
+            #     pass
+            # if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+            threads_funcs.append(ohdsi_sh.ir_shot)
+            threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
+            threads_fnames.append("irall_{}_{}.png".format(sc.owner_id, sc.id))
+            threads_shoot_elms.append("all")
+            threads_tbls_len.append(None)
+            threads_store_path.append(img_path)
+            threads_results.append(("ir_all",
+                                    os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))))
+
+            # try:
+            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
+            #                      "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
+            #     ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
+            # except TimeoutException:
+            #     pass
+    except:
+        ir_generate = "no"
+
+    str_to_var = {}
+    with concurrent.futures.ThreadPoolExecutor(13) as executor:
+        futures = []
+        for i in range(len(threads_funcs)):
+            args = [arg for arg in [threads_shot_urls[i], threads_fnames[i], threads_shoot_elms[i],
+                                    threads_tbls_len[i], threads_store_path[i]] if arg]
+            futures.append(
+                executor.submit(
+                    threads_funcs[i], *args
+                )
+            )
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                for res in future.result():
+                    if res[0]:
+                        str_to_var.update(dict(filter(lambda el: el[1] in res[1], threads_results)))
+            except (requests.ConnectTimeout, TimeoutException):
+                pass
+
+    end = time()
+    # print(f'OHDSI shots took {end - start} seconds!')
+
+    cc_shots_labels = {"pre_table": "All prevalence covariates table",
+                       "pre_chart": "All prevalence covariates chart",
+                       "drug_table": "Drug Group Era Long Term table",
+                       "drug_chart": "Drug Group Era Long Term chart",
+                       "demograph_table": "Demographics Age Group table",
+                       "demograph_chart": "Demographics Age Group chart",
+                       "charlson_table": "Charlson Index table",
+                       "charlson_chart": "Charlson Index chart",
+                       "gen_table": "Demographics Gender table",
+                       "gen_chart": "Demographics Gender chart"}
+
+    # str_to_var = {"pre_table": pre_table,
+    #               "pre_chart": pre_chart,
+    #               "drug_table": drug_table,
+    #               "drug_chart": drug_chart,
+    #               "demograph_table": demograph_table,
+    #               "demograph_chart": demograph_chart,
+    #               "charlson_table": charlson_table,
+    #               "charlson_chart": charlson_chart,
+    #               "gen_table": gen_table,
+    #               "gen_chart": gen_chart}
+
+    cc_shots_paths_labels = [(cc_shot, str_to_var.get(cc_shot), cc_shots_labels.get(cc_shot)
+                              ) for cc_shot in cc_shots_labels.keys() if str_to_var.get(cc_shot)]
+
+
+    context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
+               "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
+               "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
+               "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
+               "ir_generate": ir_generate, "pub_objs": pub_objs, "cc_shots_paths_labels": cc_shots_paths_labels,
+               "hashes": hashes}
+
+    # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
+    context.update(str_to_var)
+
+    return render(request, "app/final_report.html", context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pub_notes=None, extra_notes=None):
+    """ Generate the preview of final report that contains every information that you
+    have chosen from OHDSI and OpedFDA workspace and give you the opportunity to
+    return to the final report and change your options and add some extra notes
+    to your final report
+    :param scenario_id: the specific scenario, new scenario or None
+    :param report_notes: notes for every view
+    :param pub_titles: selected article titles from pubmed
+    :param pub_notes: selected notes from pubmed
+    :param extra_notes: last notes in final report
+    :return: the form view
+     """
+
+    scenario_id = scenario_id or request.GET.get("scenario_id", None)
+    sc = Scenario.objects.get(id=scenario_id)
+    drugs_cohort_name = None
+    conditions_cohort_name = None
+    sc_drugs = sc.drugs.all()
+    sc_conditions = sc.conditions.all()
+
+    # Get drugs concept set id
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
+        sc_drugs) != 1 \
+        else "Drug - {}".format(sc_drugs[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
+        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
+    if ir_ent:
+        ir_id = ir_ent.get("id")
+    else:
+        ir_id = None
+
+    char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
+                                                   "char")
+    char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
+    if char_ent:
+        char_id = char_ent.get("id")
+    else:
+        char_id = None
+
+    conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
+    cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
+                                                 "cp")
+    cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
+    if cp_ent:
+        cp_id = cp_ent.get("id")
+    else:
+        cp_id = None
+
+    kin = 0
+    lin = 0
+
+    img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
+
+    # ir_table_rep=0 if not selected or 1 if user selected
+    ir_table_rep = request.GET.get("ir_table_rep", None)
+    ir_all_rep = request.GET.get("ir_all_rep", None)
+    pre_table_rep = request.GET.get("pre_table_rep", None)
+    pre_chart_rep = request.GET.get("pre_chart_rep", None)
+    drug_table_rep = request.GET.get("drug_table_rep", None)
+    drug_chart_rep = request.GET.get("drug_chart_rep", None)
+    demograph_chart_rep = request.GET.get("demograph_chart_rep", None)
+    demograph_table_rep = request.GET.get("demograph_table_rep", None)
+    charlson_table_rep = request.GET.get("charlson_table_rep", None)
+    charlson_chart_rep = request.GET.get("charlson_chart_rep", None)
+    gen_table_rep = request.GET.get("gen_table_rep", None)
+    gen_chart_rep = request.GET.get("gen_chart_rep", None)
+    cp_all_rep = request.GET.get("cp_all_rep", None)
+
+    pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", "{}"))
+    pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", "{}"))
+    report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", "{}"))
+
+    report_notes = "" if report_notes == "-" else report_notes
+    extra_notes = "" if extra_notes == "-" else extra_notes
+    pub_titles = "" if pub_titles == "-" else pub_titles
+    pub_notes = "" if pub_notes == "-" else pub_notes
+
+    # pub_value = list(pub_titles.values())
+    # PubObj = namedtuple("PubObj", ["title", "notes"])
+    # pub_objs = [PubObj(po.title, po.notes, po.authors, po.pubdate if po.id in pub_notes.values() else "") for po
+    #             in PubMed.objects.filter(id__in=pub_titles.values())]
+
+    pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
+    pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
+    # pub_zero_notes = pub_objs.exclude(id__in=pub_notes.values())
+    # for po in pub_objs:
+    #     if po.notes not in
+
+    pub_exist = len(pub_tobjs) + len(pub_nobjs)
+    # for i in pub_value:
+    #     if i != '' and i != "''":
+    #         pub_exist = 1
+    #
+    # pub_dict_authors = {}
+    # pub_dict_urls = {}
+    # n = 0
+    # print(pub_titles)
+    # for i in pub_value:
+    #     if i != '' and i != "''":
+    #         n = n+1
+    #         pub_obj = PubMed.objects.filter(scenario_id=scenario_id, title=i, relevance=True)
+    #         pub_dict_authors['{}'.format(n)] = list(map(lambda el: el.authors, pub_obj))
+    #         pub_dict_urls['{}'.format(n)] = list(map(lambda el: el.url, pub_obj))
+    #         print(pub_dict_authors)
+    #         print(pub_dict_urls)
+
+    if char_id != None:
+        response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
+        resp_number = response.json()
+        if resp_number != []:
+            resp_num_id = resp_number[0]['id']
+    if cp_id != None:
+        response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
+        resp_number_cp = response.json()
+        if resp_number_cp != []:
+            resp_num_id_cp = resp_number_cp[0]['id']
+
+    entries = os.listdir(img_path)
+
+    ir_dict_t = {}
+    ir_dict_a = {}
+    coh_dict = {}
+    cp_dict = {}
+    ind = 0
+
+    image_print = []
+
+    ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
+    try:
+        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+    except FileExistsError as e:
+        pass
+    # print_intro = "/static/images/ohdsi_img_print/"
+
+    image_print = os.listdir(ohdsi_tmp_img_path)
+
+    if cp_all_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "pw_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif cp_all_rep == "0" and "pw_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pw_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if ir_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "irtable_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irtable_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if ir_all_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "irall_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irall_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if pre_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "pre_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif pre_table_rep == "0" and "pre_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_table_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if pre_chart_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif pre_chart_rep == "0" and "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_chart_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if drug_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "drug_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif drug_table_rep == "0" and "drug_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_table_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if drug_chart_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif drug_chart_rep == "0" and "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_chart_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if demograph_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif demograph_table_rep == "0" and "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_table_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if demograph_chart_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif demograph_chart_rep == "0" and "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if charlson_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif charlson_table_rep == "0" and "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_table_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if charlson_chart_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif charlson_chart_rep == "0" and "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if gen_table_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "gen_table_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif gen_table_rep == "0" and "gen_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_table_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    if gen_chart_rep == "1":
+        printPath = shutil.copy(os.path.join(img_path, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id)),
+                                ohdsi_tmp_img_path)
+    elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
+        dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_chart_{}_{}.png".format(sc.owner_id, sc.id)))
+        os.remove(dok[0])
+
+    for i in image_print:
+        ind = ind + 1
+        kin = kin + 1
+        lin = lin + 1
+        if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "demograph_table_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+        if i == "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "drug_table_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+        if i == "drug_chart_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "gen_table_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+        if i == "gen_chart_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "pre_table_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Table {} - All prevalence covariates table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+        if i == "pre_chart_{}_{}.png".format(sc.owner_id, sc.id):
+            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        # case that check in first view before proceed
+        if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
+            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+        if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
+            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
+            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(
+                settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+
+    scenario = sc.title
+    drugs = [d for d in sc.drugs.all()]
+    conditions = [c for c in sc.conditions.all()]
+    all_combs = list(product([d.name for d in drugs] or [""],
+                             [c.name for c in conditions] or [""]))
+
+    drug_condition_hash = []
+
+    for i in range(len(all_combs)):
+        p = sc.title+str(sc.owner)+str(i)
+        h = hashlib.md5(repr(p).encode('utf-8'))
+        hash = h.hexdigest()
+
+        drug_condition_hash.append(list(all_combs[i])+[hash])
+
+    r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    dict_quickview = {}
+    dictpng = {}
+    dictcsv = {}
+    dict_dash_csv = {}
+    dict_rr_d = {}
+    dict_rr_e = {}
+    dict_lr = {}
+    dict_lre = {}
+    dict_dashboard_png = {}
+    dict_lrTest_png = {}
+    dict_lreTest_png = {}
+    dict1 = {}
+    dict2 = {}
+    dict3 = {}
+    dict_hash_combination = {}
+
+    for i, j, k in drug_condition_hash:
+
+        if i != '' and j != '':
+            no_comb = 'combination'
+
+            dict_hash_combination[k] = i + ' - ' + j
+            files_png = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+
+            files_csv = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_timeseries_prr".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            if files_png:
+                dict1.setdefault(k, []).append(files_png[0])
+                kin = kin + 1
+                dict1.setdefault(k, []).append("Figure {}".format(kin))
+
+            else:
+                dict1.setdefault(k, []).append('')
+                dict1.setdefault(k, []).append('')
+
+            if files_csv:
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, files_csv[0])))
+                styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict1.setdefault(k, []).append(styler1.render())
+                kin = kin + 1
+                dict1.setdefault(k, []).append("Table {}".format(kin))
+            else:
+                dict1.setdefault(k, []).append('')
+                dict1.setdefault(k, []).append('')
+
+            dynprr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_prrplot".format(k) in elm,
+                                     map(lambda el: el.get_text(), soup.find_all('a'))))
+            dynprr_csv = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrcounts".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            dynprr_csv1 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_concocounts".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            dynprr_csv2 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_eventcounts".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            if dynprr_png:
+                dict2.setdefault(k, []).append(dynprr_png[0])
+                kin = kin + 1
+                dict2.setdefault(k, []).append("Figure {}".format(kin))
+            else:
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+
+            if dynprr_csv:
+                dict2.setdefault(k, []).append('- Report counts and PRR')
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv[0])))
+                styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict2.setdefault(k, []).append(styler1.render())
+                kin = kin + 1
+                dict2.setdefault(k, []).append("Table {}".format(kin))
+
+            else:
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+
+            if dynprr_csv1:
+                dict2.setdefault(k, []).append('- Drugs in scenario reports')
+                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv1[0])))
+                styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict2.setdefault(k, []).append(styler2.render())
+                kin = kin + 1
+                dict2.setdefault(k, []).append("Table {}".format(kin))
+            else:
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+
+            if dynprr_csv2:
+                dict2.setdefault(k, []).append('- Events in scenario reports')
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv2[0])))
+                styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict2.setdefault(k, []).append(styler3.render())
+                kin = kin + 1
+                dict2.setdefault(k, []).append("Table {}".format(kin))
+            else:
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append('')
+
+            changep_png = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_cpmeanplot".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            changep_png1 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_cpvarplot".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            changep_png2 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_cpbayesplot".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            changep_png3 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_yearplot".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            changep_csv = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrugs".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            changep_csv1 = list(
+                filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_qevents".format(k) in elm,
+                       map(lambda el: el.get_text(), soup.find_all('a'))))
+            if changep_png:
+                dict3.setdefault(k, []).append('-Change in mean analysis ')
+                dict3.setdefault(k, []).append(changep_png[0])
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Figure {}".format(kin))
+
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+            if changep_png1:
+                dict3.setdefault(k, []).append('- Change in variance analysis')
+                dict3.setdefault(k, []).append(changep_png1[0])
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Figure {}".format(kin))
+
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+            if changep_png2:
+                dict3.setdefault(k, []).append('- Bayesian changepoint analysis')
+                dict3.setdefault(k, []).append(changep_png2[0])
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Figure {}".format(kin))
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+            if changep_png3:
+                dict3.setdefault(k, []).append('- Report counts by date')
+                dict3.setdefault(k, []).append(changep_png3[0])
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Figure {}".format(kin))
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+            if changep_csv:
+                dict3.setdefault(k, []).append('- Drugs in scenario reports')
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv[0])))
+                styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict3.setdefault(k, []).append(styler3.render())
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Table {}".format(kin))
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+            if changep_csv1:
+                dict3.setdefault(k, []).append('- Events in scenario reports')
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv1[0])))
+                styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+                dict3.setdefault(k, []).append(styler3.render())
+                kin = kin + 1
+                dict3.setdefault(k, []).append("Table {}".format(kin))
+            else:
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append('')
+
+    if i == '' or j == '':
+        no_comb = ""
+        files_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        files_csv = list(
+            filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_timeseries_prr".format(k) in elm,
+                   map(lambda el: el.get_text(), soup.find_all('a'))))
+        if files_png:
+            dictpng[k] = files_png[0]
+            dict_quickview.setdefault(i, []).append(files_png[0])
+            lin = lin + 1
+            dict_quickview.setdefault(i, []).append("Figure {}".format(lin))
+        else:
+            dict_quickview.setdefault(i, []).append('')
+            dict_quickview.setdefault(i, []).append('')
+
+        if files_csv:
+            dictcsv[k] = files_csv[0]
+            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dictcsv[k])))
+            styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
+            dict_quickview.setdefault(i, []).append(styler1.render())
+            lin = lin + 1
+            dict_quickview.setdefault(i, []).append("Table {}".format(lin))
+
+    #for drug only
+    if j == "":
+        dash_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_primary".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_png1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_serious".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_png2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_sexplot".format(k) in elm,
+                                  map(lambda el: el.get_text(), soup.find_all('a'))))
+        if dash_png:
+            lin = lin + 1
+            dict_dashboard_png[dash_png[0]] = "Figure {}".format(lin)
+
+        if dash_png1:
+            lin = lin + 1
+            dict_dashboard_png[dash_png1[0]] = "Figure {}".format(lin)
+
+        if dash_png2:
+            lin = lin + 1
+            dict_dashboard_png[dash_png2[0]] = "Figure {}".format(lin)
+
+        dash_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_event".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_concomitant".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        dash_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_indication".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+
+        if dash_csv:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_dash_csv.setdefault(' Events', []).append(styler1.render())
+            lin = lin+1
+            dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
+        if dash_csv1:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv1[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_dash_csv.setdefault(' Concomitant Medications', []).append(styler1.render())
+            lin = lin + 1
+            dict_dash_csv.setdefault(' Concomitant Medications', []).append("Table {}".format(lin))
+
+        if dash_csv2:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv2[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
+            lin = lin + 1
+            dict_dash_csv.setdefault(' Indications', []).append("Table {}".format(lin))
+
+        rr_d_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrug".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_d_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coquerye2".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_d_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_eventtotals".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_d_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_indquery".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_d_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prr".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_d_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        if rr_d_csv4:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv4[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' PRR and ROR Results', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
+        if rr_d_csv5:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv5[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Table {}".format(lin))
+        if rr_d_csv2:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv2[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Table {}".format(lin))
+
+        if rr_d_csv1:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv1[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Table {}".format(lin))
+
+        if rr_d_csv:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' Drugs in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
+
+        if rr_d_csv3:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv3[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_d.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_d.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+
+        lr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_histogram".format(k) in elm,
+                             map(lambda el: el.get_text(), soup.find_all('a'))))
+        if lr_png:
+            lin = lin + 1
+            dict_lrTest_png[lr_png[0]] = "Figure {}".format(lin)
+
+        lr_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_allindata".format(k) in elm,
+                             map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coqadata".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coqevdata".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_inqprr".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prrindata".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_resindata".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lr_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prres".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        if lr_csv6:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv6[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' LTR Results based on Total Events', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' LTR Results based on Total Events', []).append("Table {}".format(lin))
+        if lr_csv2:
+            df2 = pd.read_csv(r'{}'.format(
+                lr_csv2[0]))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Table {}".format(lin))
+        if lr_csv:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Table {}".format(lin))
+        if lr_csv4:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv4[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Drugs in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
+        if lr_csv5:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv5[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Event counts for drug', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Event counts for drug', []).append("Table {}".format(lin))
+        if lr_csv1:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv1[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Counts for all events', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Counts for all events', []).append("Table {}".format(lin))
+        if lr_csv3:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv3[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lr.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_lr.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+
+    #for condition only
+    if i == "":
+        rr_e_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrug".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_coquerye2".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_eventtotals".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_indquery".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prr".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
+                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        if rr_e_csv4:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv4[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
+        if rr_e_csv5:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv5[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Table {}".format(lin))
+        if rr_e_csv2:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv2[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Table {}".format(lin))
+        if rr_e_csv1:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv1[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Table {}".format(lin))
+        if rr_e_csv:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' Events in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
+        if rr_e_csv3:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv3[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_rr_e.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_rr_e.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+
+        lre_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_Ehistogram".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        if lre_png:
+            lin = lin + 1
+            dict_lreTest_png[lre_png[0]] = "Figure {}".format(lin)
+
+        lre_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eallindata".format(k) in elm,
+                              map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv1 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqadata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv2 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Ecoqevdata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv3 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Einqprr".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprrindata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eresindata".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
+                               map(lambda el: el.get_text(), soup.find_all('a'))))
+        if lre_csv6:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv6[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Table {}".format(lin))
+        if lre_csv2:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv2[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Table {}".format(lin))
+        if lre_csv:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Table {}".format(lin))
+        if lre_csv4:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv4[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Events in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
+        if lre_csv5:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv5[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Drug counts for event', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Drug counts for event', []).append("Table {}".format(lin))
+        if lre_csv1:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv1[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Counts for all drugs', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Counts for all drugs', []).append("Table {}".format(lin))
+        if lre_csv3:
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv3[0])))
+            styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
+            dict_lre.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            lin = lin + 1
+            dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+
+    empty_OpenFDA = "no" if list(
+        filter(None, list(dict1.values()) + list(dict2.values()) + list(dict3.values()))) else ""
+
+    context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
+               "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
+               "dict_dash_csv": dict_dash_csv, "dict_rr_d": dict_rr_d, "dict_lr": dict_lr,
+               "dict_lrTest_png": dict_lrTest_png, "dict_rr_e": dict_rr_e,
+               "dict_lre": dict_lre, "dict_lreTest_png": dict_lreTest_png, "dict1": dict1,
+               "dict2": dict2, "dict3": dict3, "dict_hash_combination": dict_hash_combination,
+               "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
+               "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
+               "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
+               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs}
+               # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
+               # "pub_dict_urls": pub_dict_urls}
+
+    return render(request, 'app/report_pdf.html', context)
+
+
+def print_report(request, scenario_id=None):
+    """ Generate and open in a browser the final report
+    :param request: request
+    :param scenario_id: the specific scenario, new scenario or None
+    :return: the form view
+    """
+
+    scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
+    report_notes = request.GET.get("all_notes", None)
+    report_notes = urllib.parse.urlencode(json.loads(report_notes))
+    pub_titles = request.GET.get("allPubTitles", None)
+    pub_titles = urllib.parse.urlencode(json.loads(pub_titles))
+    pub_notes = request.GET.get("allPubNotes", None)
+    pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
+
+    extra_notes = json.loads(request.GET.get("extra_notes", ""))
+
+    # if not extra_notes:
+    #     extra_notes = "empty"
+
+    cookies_dict = request.COOKIES
+
+    options = {
+        'cookie': [
+            ('csrftoken', cookies_dict['csrftoken']),
+            ('sessionid', cookies_dict['sessionid']),
+        ],
+        'page-size': 'A4',
+        'encoding': 'UTF-8',
+        'footer-right': '[page]',
+        'enable-local-file-access': None,
+        # 'disable-smart-shrinking': None,
+    }
+
+    fname = "{}.pdf".format(str(uuid.uuid4()))
+    file_path = os.path.join(tempfile.gettempdir(), fname)
+    url = "{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
+                                                          report_notes or "-", extra_notes or "-",
+                                                          pub_titles or "-", pub_notes or "-")
+
+    resp = requests.get(url, cookies=cookies_dict)
+    pdfkit.from_url(resp.url, file_path, options=options)
+
+    try:
+        return FileResponse(open(file_path, 'rb'), content_type='application/pdf', as_attachment=True)
+    except FileNotFoundError:
+        raise Http404()
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def patient_management_workspace(request):
+    """ Table of patients cases for scenarios selected on the possibility of adverse drug reactions
+    Contains patient_id,creation date,scenario title, drugs, diseases, questionnaire's result,
+    patient's history and delete options
+    :param request: request
+    :return: the form view
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
+    request.session['quest_id'] = None
+    request.session['scen_id'] = None
+    request.session['pat_id'] = None
+
+    patient_cases = []
+
+    for case in PatientCase.objects.filter(user=request.user).order_by('-timestamp').all():
+        for scs in case.scenarios.all():
+            for quests in case.questionnaires.all():
+
+                patient_cases.append({
+                        "id": case.id,
+                        "patient_id": case.patient_id,
+                        "timestamp": case.timestamp,
+                        # "scenario_id": scs.id,
+                        "scenario": scs,
+                        "questionnaire_id": quests.id
+                    })
+
+    if request.method == 'DELETE':
+        patient_id = QueryDict(request.body).get("patient_id")
+        patient = None
+        if patient_id:
+            try:
+                patient = PatientCase.objects.get(id=int(patient_id))
+            except:
+                pass
+        return delete_db_rec(patient)
+
+    context = {"patient_cases": patient_cases}
+
+    return render(request, 'app/patient_management_workspace.html', context)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def new_pmcase(request):
+    """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
+    complete the questionnaire.
+    :param request: request
+    :return: the form view
+    """
+    if not request.META.get("HTTP_REFERER"):
+        return forbidden_redirect(request)
+
+    quest_id = request.GET.get("quest_id", None)
+    patient_id = request.GET.get("patient_id", None)
+    sc_id = request.GET.get("sc_id", None)
+
+    # new_scen_id = request.session.get('new_scen_id') \
+    #     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
+    #     else None
+
+    # new_scen_id_no = 'None'
+    #
+    # if new_scen_id != None and sc_id == None:
+    #     sc_id = new_scen_id
+    #     new_scen_id_no = new_scen_id
+
+    tmp_user = User.objects.get(username=request.user)
+
+    # instance = PatientCase
+
+    quest_btn_disable = True
+
+    # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
+    #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
+    #                    user=request.user)
+    form = PatientForm(user=request.user, label_suffix='')
+
+    if request.method == "POST":
+        form = PatientForm(request.POST, user=request.user, label_suffix='')
+        if form.is_valid() and request.POST.get("saveCtrl") == "1":
+            case = form.save(commit=False)
+            case.user = tmp_user
+            case = form.save(commit=False)
+            case.save()
+            form.save_m2m()
+
+            return redirect("patient_management_workspace")
+        else:
+            form_errors = form.errors.as_data()
+            # If there is an error in at least one of the patient_id and scenarios fields, disable button
+            if not list(filter(lambda el: el in form_errors, ["patient_id", "scenarios"])):
+                quest_btn_disable = False
+            else:
+                quest_btn_disable = True
+
+
+    # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]
+    # for sc in Scenario.objects.order_by('-timestamp').all():
+    #     scenarios.append({
+    #         "id": sc.id,
+    #         "title": sc.title,
+    #         "drugs": sc.drugs.all(),
+    #         "conditions": sc.conditions.all(),
+    #         "owner": sc.owner.username,
+    #         "status": dict(sc.status.status_choices).get(sc.status.status),
+    #         "timestamp": sc.timestamp
+    #     })
+
+    return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
+                                                   "questbtn_disable": quest_btn_disable})
+
+
+def retr_del_session_pmcvars(request):
+    """ Retrieve and delete all the necessary for new pmcase, session variables
+    :param request: request
+    :return: the session variables (i.e. scenario id, patient id, questionnaire id
+    """
+    pat_id = request.session.get("pat_id")
+    sc_id = request.session.get("scen_id")
+    quest_id = request.session.get("quest_id")
+
+    data = {"sc_id": sc_id, "pat_id": pat_id, "quest_id": quest_id}
+    del request.session["pat_id"]
+    del request.session["scen_id"]
+    del request.session["quest_id"]
+
+    return JsonResponse(data)
+
+
+@login_required()
+@user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
+def questionnaire(request, patient_id=None, sc_id=None):
+    """ Questionnaire based on liverpool algorithm for determining the likelihood of whether an ADR
+    is actually due to the drug rather than the result of other factors.
+    :param request: request
+    :param patient_id: the specific patient's id or None
+    :param sc_id: scenario ids that are correlated with this patient's case or None
+    :return: the form view
+    """
+    if request.method == "POST":
+
+        form = QuestionnaireForm(request.POST, label_suffix='')
+        pat_id = request.session.get('pat_id')
+        scen_id = request.session.get('scen_id')
+
+        if form.is_valid():
+            answers = form.save(commit=False)
+
+            if Questionnaire.objects.filter(q1=answers.q1, q2=answers.q2, q3=answers.q3, q4=answers.q4,
+                                            q5=answers.q5, q6=answers.q6, q7=answers.q7, q8=answers.q8, q9=answers.q9,
+                                            q10=answers.q10).exists():
+                existing_quest = Questionnaire.objects.get(q1=answers.q1, q2=answers.q2, q3=answers.q3, q4=answers.q4,
+                                                           q5=answers.q5, q6=answers.q6, q7=answers.q7, q8=answers.q8,
+                                                           q9=answers.q9, q10=answers.q10)
+                existing_pk = existing_quest.pk
+
+            else:
+
+                answers.save()
+                Questionnaire.objects.filter(q1=False, q2=None, q3=None, q4=None, q5=None, q6=None, q7=None,
+                                             q8=None, q9=None, q10=None).update(result="Unlikely")
+                Questionnaire.objects.filter(q3=False, q4=None, q5=None, q6=None, q7=None,
+                                             q8=None, q9=None, q10=None).update(result="Unlikely")
+                Questionnaire.objects.filter(q5=False, q6=None, q7=None, q8=None, q9=None,
+                                             q10=None).update(result="Possible")
+                Questionnaire.objects.filter(q7=False, q8=None, q9=None,
+                                             q10=None).update(result="Possible")
+                Questionnaire.objects.filter(q10=False).update(result="Possible")
+                Questionnaire.objects.filter(q8=True, q9=None, q10=None).update(result="Definite")
+                Questionnaire.objects.filter(q9=True, q10=None).update(result="Definite")
+                Questionnaire.objects.filter(q10=True).update(result="Probable")
+
+                existing_pk = answers.pk
+
+            request.session['quest_id'] = existing_pk
+            request.session['scen_id'] = scen_id
+            request.session['pat_id'] = pat_id
+
+            return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
+
+    else:
+        # patient_id = patient_id #or request.GET.get("patient_id", None)
+        # sc_id = sc_id #or request.GET.getlist("sc_id")
+
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix='')
+        request.session['quest_id'] = None
+        request.session['scen_id'] = sc_id
+        request.session['pat_id'] = patient_id
+
+    return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
+
+
+def answers_detail(request, pk, scen_id, pat_id):
+    """ Questionnaire's answers for a specific patient case(unique pk)
+    :param request: request
+    :param pk: unique questionnaire's id
+    :param scen_id: scenario's id that is correlated with this patient case
+    :param pat_id: patient's id for this patient case
+    :return: the form view
+    """
+
+    scen_title = Scenario.objects.get(id=scen_id).title
+    quest = model_to_dict(Questionnaire.objects.get(id=pk))
+
+    # The table containing tuples of the questions and answers of Liverpool algorithm
+    algo_tbl = [(_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;"), _("Όχι"), _("Ναί")),
+                (_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;"), _("Όχι"), _("Ναί")),
+                (_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;"), _("Όχι"), _("Ναί")),
+                (_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;"),
+                 _("Όχι"), _("Ναί ή Μη προσδιορίσιμο")),
+                (_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"), _("Όχι"), _("Ναί")),
+                (_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"),
+                 _("Υψηλή ή Αβέβαιο"), _("Χαμηλή")),
+                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Υπήρξε εκ νέου θετική επαναπρόκληση;"), _("Όχι"), _("Ναί")),
+                (_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;"),
+                 _("Όχι"), _("Ναί")),
+                (_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;"),
+                 _("Όχι"), _("Ναί")),
+                ]
+
+    return render(request, "app/answers_detail.html", {"quest": quest, "scen_id": scen_id, "pat_id": pat_id,
+                                                       "scen_title": scen_title, "algo_tbl": algo_tbl})
+
+
+def patient_history(request, patient_pk=None):
+    """ Keep the history(answers of questionnaires) for every patient case that you create for "patient_pk"
+    :param request: request
+    :param patient_pk: patient's id
+    :return: the form view
+    """
+    patient_cases = []
+
+    for case in PatientCase.objects.order_by('-timestamp').all():
+        if case.patient_id == patient_pk:
+            for scs in case.scenarios.all():
+                for quests in case.questionnaires.all():
+
+                    patient_cases.append({
+                            "id": case.id,
+                            "patient_id": case.patient_id,
+                            "timestamp": case.timestamp,
+                            "scenario_id": scs.id,
+                            "scenario_title": scs.title,
+                            "drugs": scs.drugs.all(),
+                            "conditions": scs.conditions.all(),
+                            "questionnaire_id": quests.id
+                        })
+
+    context = {"patient_cases": patient_cases, "patient_pk": patient_pk}
+
+    return render(request, 'app/patient_history.html', context)
 
 
 @login_required()
