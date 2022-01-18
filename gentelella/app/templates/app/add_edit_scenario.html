@@ -83,7 +83,8 @@
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
-    <div id="scTitleDiv" name="scTitleDiv" class="form-h1">{{ form.title|as_crispy_field }}</div>
+    <h1 class="mb-3">{% trans "Σενάριο Διερεύνησης" %}</h1>
+    <div id="scTitleDiv" name="scTitleDiv" style="font-size: 150%;">{{ form.title|as_crispy_field }}</div>
 
     <div class="mt-3">{{ form.status|as_crispy_field }}</div>
     <div class="mt-5">

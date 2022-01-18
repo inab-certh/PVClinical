@@ -1,3 +1,5 @@
+from django.conf.urls.static import static
+from django.conf import settings
 from django.urls import path, re_path, include
 from app import views
 from django.views.generic.base import RedirectView
@@ -22,12 +24,14 @@ urlpatterns = [
     path('ohdsi-workspace/ir/<int:sc_id>/<int:ir_id>', views.incidence_rates, name='edit_ir'),
     path('ohdsi-workspace/ir/<int:sc_id>/<int:ir_id>/<int:read_only>', views.incidence_rates, name='edit_ir'),
     path('ohdsi-workspace/ir/<slug:view_type>/<int:sc_id>/<int:ir_id>', views.incidence_rates, name='edit_ir'),
-    path('ohdsi-workspace/ir/<slug:view_type>/<int:sc_id>/<int:ir_id>/<int:read_only>', views.incidence_rates, name='edit_ir'),
+    path('ohdsi-workspace/ir/<slug:view_type>/<int:sc_id>/<int:ir_id>/<int:read_only>',
+         views.incidence_rates, name='edit_ir'),
     path('ohdsi-workspace/char', views.characterizations, name='add_char'),
     path('ohdsi-workspace/char/<int:sc_id>/<int:char_id>', views.characterizations, name='edit_char'),
     path('ohdsi-workspace/char/<int:sc_id>/<int:char_id>/<int:read_only>', views.characterizations, name='edit_char'),
     path('ohdsi-workspace/char/<slug:view_type>/<int:sc_id>/<int:char_id>', views.characterizations, name='edit_char'),
-    path('ohdsi-workspace/char/<slug:view_type>/<int:sc_id>/<int:char_id>/<int:read_only>', views.characterizations, name='edit_char'),
+    path('ohdsi-workspace/char/<slug:view_type>/<int:sc_id>/<int:char_id>/<int:read_only>',
+         views.characterizations, name='edit_char'),
     path('ohdsi-workspace/cp', views.pathways, name='add_cp'),
     path('ohdsi-workspace/cp/<int:sc_id>/<int:cp_id>', views.pathways, name='edit_cp'),
     path('ohdsi-workspace/cp/<int:sc_id>/<int:cp_id>/<int:read_only>', views.pathways, name='edit_cp'),
@@ -42,6 +46,7 @@ urlpatterns = [
     path('ajax/gen-ir-analysis', views.gen_ir_analysis, name='gen_ir_analysis'),
     path('ajax/get-note-content', views.get_note_content, name='get_note_content'),
     path('ajax/get-note', views.get_note, name='get_note'),
+    path('ajax/openfda-screenshots-exist', views.openfda_screenshots_exist, name='openfda-screenshots-exist'),
     path('OpenFDAWorkspace/', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('OpenFDAWorkspace/<int:scenario_id>', views.OpenFDAWorkspace, name='OpenFDAWorkspace'),
     path('ohdsi-workspace/<int:scenario_id>', views.ohdsi_workspace, name='ohdsi_workspace'),
@@ -65,6 +70,40 @@ urlpatterns = [
     path("notes", views.allnotes, name='allnotes'),
     path("social-media/<int:sc_id>", views.social_media, name='social_media_workspace'),
 
+    path("final_report", views.final_report, name='final_report'),
+    path('final_report/<int:scenario_id>', views.final_report, name='final_report'),
+    path("ajax/report_pdf", views.report_pdf, name='ajax_report_pdf'),
+    path("report_pdf/<int:scenario_id>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>", views.report_pdf, name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>/<str:pub_titles>", views.report_pdf,
+         name='report_pdf'),
+    path("report_pdf/<int:scenario_id>/<str:report_notes>/<str:extra_notes>/<str:pub_titles>/<str:pub_notes>",
+         views.report_pdf, name='report_pdf'),
+    path("ajax/print_report", views.print_report, name='ajax_print_report'),
+    path("patient_management_workspace", views.patient_management_workspace, name='patient_management_workspace'),
+    path("patient_management_workspace/new_pmcase", views.new_pmcase, name='new_pmcase'),
+    path("patient_management_workspace/new_pmcase/<int:quest_id>/<str:patient_id>/<int:sc_id>/", views.new_pmcase,
+         name='new_pmcase'),
+    path("patient_management_workspace/new_pmcase/questionnaire", views.questionnaire, name='questionnaire'),
+    path("patient_management_workspace/new_pmcase/questionnaire/<str:patient_id>/<int:sc_id>/", views.questionnaire,
+         name='questionnaire'),
+
+    path("patient_management_workspace/new_pmcase/answers_detail/<int:pk>/<int:scen_id>/<str:pat_id>/",
+         views.answers_detail, name='answers_detail'),
+    path("ajax/new_pmcase", views.new_pmcase, name='ajax_new_pmcase'),
+    path("ajax/questionnaire", views.questionnaire, name='ajax_questionnaire'),
+    path("ajax/retr-del-session-pmcvars", views.retr_del_session_pmcvars, name='ajax_retr_del_ses_pmcvars'),
+    path("ajax/get-updated-scenarios-ids", views.get_updated_scenarios_ids, name='ajax_get_updated_scenarios_ids'),
+    path("patient_management_workspace/patient_history/<str:patient_pk>", views.patient_history,
+         name='patient_history'),
+    path("ajax/get-popover-content", views.get_popover_content, name='get_popover_content'),
+
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

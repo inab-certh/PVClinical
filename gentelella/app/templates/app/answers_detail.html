@@ -1,0 +1,127 @@
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+
+{% block stylesheets %}
+<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<!-- Font Awesome 5.15.1 -->
+<link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
+<!-- Font Awesome -->
+<link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
+<link href='{% static "build/css/answers_detail.css" %}' rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+
+<div class="header">
+    <h1>{% trans "Δοθείσες απαντήσεις στο ερωτηματολόγιο του αλγορίθμου Liverpool και σχετικό αποτέλεσμα" %}</h1>
+    <p>{% trans "Οι ακόλουθες ερωτήσεις βασίζονται στον αλγόριθμο Liverpool, προκειμένου να προσδιοριστεί η πιθανότητα, κάποια ανεπιθύμητη δράση να οφείλεται στο φάρμακο λήψης, και όχι σε κάποιον άλλο παράγοντα" %}</p>
+</div>
+
+<div class="row">
+    <div class="side">
+        <h3>{% trans "Αναγνωριστικό ασθενούς" %}: {{ pat_id }}</h3>
+        <h3>{% trans "Συσχετιζόμενο σενάριο" %}: {{ scen_title }}</h3>
+
+        <div class="main">
+            {% for field in quest.items %}
+            {% if field.0 != "id" and field.0 != "result" %}
+                {% if field.1 != None %}
+                    {% with algo_tbl|get_elmnt_by_index:forloop.counter0 as q_ans %}
+                        {{ forloop.counter0 }}. {{ q_ans.0 }}
+                        <h3>{% if field.1 == False %}{{ q_ans.1 }}{% elif field.1 == True %}{{ q_ans.2 }}{% endif %}</h3><br>
+                    {% endwith %}
+                    <br>
+                {% endif %}
+            {% endif %}
+            {% if field.0 == "result" %}
+                <h2>{% trans "Αποτέλεσμα" %}:</h2>
+                <h3>&nbsp {% trans field.1 %}</h3>
+                <br>
+                <br>
+            {% endif %}
+            {% endfor %}
+
+
+
+            <i> *{% trans "Πατήστε για να δείτε το διάγραμμα ροής του αλγορίθμου Liverpool" %} </i>
+            <br>
+            <br>
+            <button class="btn btn-primary pull-leftt" data-toggle="modal" data-target="#liverpoolimg" type="button">
+                <i class="fas fa-project-diagram"></i>{% trans "Διάγραμμα ροής" %}</button>
+
+
+            <!-- Modal -->
+            <div class="modal fade right" id="liverpoolimg" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog-full-width modal-dialog momodel modal-fluid" role="document">
+                    <div class="modal-content-full-width modal-content ">
+                        <div class="modal-header">
+                            {% trans "Εργαλείο αξιολόγησης αιτιότητας ΑΕΦ με τη χρήση του αλγορίθμου Liverpool" %}
+                            <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <h1 class="section-heading text-center wow fadeIn my-5 pt-3">
+                                <img  class="patient-work-img" src="{% static 'images/liverpool_alg.png' %}" id="liverpollimg"  style="width:100%;">
+
+                            </h1>
+                        </div>
+                        <div class="modal-footer-full-width  modal-footer">
+                            <div class="pull-left"><b>doi:</b><a target="_blank" href="https://doi.org/10.1371/journal.pone.0028096">10.1371/journal.pone.0028096.g002</a></div>
+                            <button type="button" class="btn  btn-md btn-rounded" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<!--<script>-->
+<!--$(document).ready(function(){-->
+<!--        var quest_id = {{ quest.pk }};-->
+<!--        var scen_id = {{ scen_id }};-->
+<!--        var pat_id = {{ pat_id }};-->
+
+<!--        $.ajax({-->
+<!--                url: "/ajax/new_pmcase",-->
+<!--                data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },-->
+<!--                dataType: "html",-->
+<!--                success: function (res) {-->
+<!--                    console.log(quest_id);-->
+<!--                    console.log(patient_id);-->
+<!--                    console.log(sc_id);-->
+
+<!--                  },-->
+<!--                  error: function (res) {-->
+<!--                    console.log("error "+res);-->
+<!--                }-->
+<!--            });-->
+
+
+<!--            });-->
+<!--</script>-->
+{% endblock javascripts %}

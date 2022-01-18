@@ -281,7 +281,7 @@
 /*}*/
 
 
-#scenariosTbl td {
+#scenariosTbl td, #patCasesTbl td {
     vertical-align: middle;
     text-align: center;
 }
@@ -933,4 +933,8 @@ iframe.social-iframe {
 .breadcrumb-item.active>a {
 	color: grey;
     pointer-events: none;
+}
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
+	color: white;
 }

@@ -1,6 +1,7 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 
 
 {% block title %} AllNotes {% endblock title %}
@@ -42,64 +43,29 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for note in notesforexample %}
-                        {% if note.workspace != PubMed %}
+                        {% for note in user_notes %}
+                        {% firstof  abbrv_views|get_item:note.wsview note.wsview as note_wsview %}
                         <tr>
-                            <td>{{ note.scenario_title }}</td>
+                        {% trans note_wsview as trans_note_wsview %}
+                            <td>{% if note.scenario %}{{ note.scenario.title }}{% else %}{% trans "Ανεξάρτητο Σεναρίου" %}{% endif %}</td>
 
                             <td>{{ note.note_datetime}}</td>
 
                             <td class="cen">{{ note.workspace }}</td>
 
-                            <td ><p class="notesellipsis">{{ note.wsview_title }}</p></td>
+                            <td ><p class="notesellipsis">{{ note_wsview }}</p></td>
 
                             <td><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
                             <td class="cen">
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
+                                {% if note.scenario %}
+                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                            </td>
-                        </tr>
-                        {% endif%}
-                        {% endfor %}
-
-                        {% for note in pubmedexample %}
-                        <tr>
-                            <td>{{ note.scenario_title }}</td>
-
-                            <td>{{ note.created }}</td>
-
-                            <td class="cen">{{ note.workspace }}</td>
-
-                            <td><p class="notesellipsis"> {{ note.title }} </p></td>
-
-                            <td><p class="notesellipsis"> {{ note.notes}}  </p></td>
-
-                            <td class="cen">
-                                <button  class="btn pm-notes-btn btn-white" type="button" name="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}"  id="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}" data-toggle="modal" data-target="#pubMedNotesModal">
-                                    <i class="fa fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-                        {% for note in notesforexample1 %}
-                        <tr>
-                            <td>{{ note.scenario }}</td>
-
-                            <td>{{ note.note_datetime}}</td>
-
-                            <td class="cen">{{ note.workspace }}</td>
-
-                            <td>{{ note.wsview_title }}</td>
-
-                            <td class="notesellipsis" >
-                                {{ note.content|striptags }}
-                            </td>
-
-                            <td class="cen">
-                                <button class="btn notes-btn btn-white" type="button" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}", data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
+                                {% else %}
+                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -137,35 +103,35 @@
 
 {% endblock content %}
 
-                {% block javascripts %}
-                {{ block.super }}
-                <script src="/static/build/js/all_notes.js"></script>
-                <script>
-                    $(function() {
-                        $(".delete-sc-btn").on("click", function () {
-                            // On trash can button click, pass record id to modal confirm btn
-                            $("#confirmBtn").data("record", $(this).data("scid"));
+{% block javascripts %}
+{{ block.super }}
+<script src="/static/build/js/all_notes.js"></script>
+<script>
+    $(function() {
+        $(".delete-sc-btn").on("click", function () {
+            // On trash can button click, pass record id to modal confirm btn
+            $("#confirmBtn").data("record", $(this).data("scid"));
 
-                        })
-                    });
-                </script>
+        })
+    });
+</script>
 
-                <script src="/static/build/js/pv_literature.js"></script>
-                <script>
-                    var acc = document.getElementsByClassName("accordion");
-                    var i;
+<script src="/static/build/js/pv_literature.js"></script>
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
 
-                    for (i = 0; i < acc.length; i++) {
-                        acc[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var panel = this.nextElementSibling;
-                            if (panel.style.display === "block") {
-                                panel.style.display = "none";
-                            } else {
-                                panel.style.display = "block";
-                            }
-                        });
-                    }
-                </script>
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
 
-                {% endblock javascripts %}
+{% endblock javascripts %}
