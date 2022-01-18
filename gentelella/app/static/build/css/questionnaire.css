@@ -1,0 +1,60 @@
+ul li::marker {
+  color: white;
+}
+p{
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial;
+    color: #535353;
+    padding-top:10px;
+}
+ul{
+class="form-inline"
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Arial;
+    color: #535353;
+}
+
+#info{
+    text-align: left;
+    margin-top:20px;
+}
+
+.quest_title{
+        font-size: 18px;
+        font-weight: bold;
+        font-family: Arial;
+        color: #535353;
+        margin-bottom:20px;
+    }
+    .result{
+       color: #C8C8C8;
+
+    }
+      box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+  font-size: 20px;
+
+}

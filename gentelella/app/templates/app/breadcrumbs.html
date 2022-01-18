@@ -8,7 +8,7 @@
                 {% breadcrumb_label next.name as next_label %}
                 {% if bc_label and not bc.name|is_numeric %}
                     <li class={% if not next_label %}"breadcrumb-item active"{% else %}"breadcrumb-item"{% endif %}>
-                        <a href={% if next_label and bc.name == "ohdsi-workspace" or  bc.name == "LiteratureWorkspace"  %}"{{ request.META.HTTP_REFERER }}"{% else %}"{{ bc.url }}"{% endif %}>
+                        <a href={% if bc.name == "ohdsi-workspace" or bc.name == "patient_management_workspace" and next_label %}"{{ request.META.HTTP_REFERER }}"{% else %}"{{ bc.url }}"{% endif %}>
                             {{ bc_label }}
                         </a>
                     </li>
