@@ -1387,11 +1387,30 @@ output$downloadAllData <- downloadHandler(
     if (v1[2] == "patient.reaction.reactionmeddrapt"){
       t1[2] = q$ename
     }
-    myurl <- buildURL(v1, t1, limit=100)
+    
+    # if (q$v1 == 'patient.reaction.reactionmeddrapt') {
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
+    #   ids <- con$aggregate(eventQuery)
+    #   con$disconnect()
+    # } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+    #   ids <- con$aggregate(drugeventQuery)
+    #   con$disconnect()
+    # } else {
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(),q$dename)
+    #   ids <- con$aggregate(drugQuery)
+    #   con$disconnect()
+    # }
+    
+    
+    myurl <- buildURL(v1, t1, limit=1000)
     mydf <- fda_fetch_p(session, myurl)
     
     df <- mydf
-    
+    # browser()
     if ( is.data.frame(mydf$results$patient) )
     {
       mydf <- (mydf$results$patient)    
@@ -1639,8 +1658,8 @@ geturlquery <- reactive({
    # q<-NULL
    # q$v1<-"patient.drug.openfda.generic_name"
    # q$v2<-"patient.reaction.reactionmeddrapt"
-   # # q$t1<-"Omeprazole"
-   # # q$t2<-"Hypokalaemia"
+   # q$t1<-"Omeprazole"
+   # q$t2<-"Hypokalaemia"
    # q$t1<-"A02BC01"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"

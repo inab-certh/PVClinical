@@ -21,6 +21,17 @@ body{
    width:500px!important;
 }
 
+.action-button {
+   background-color:#2A3F54;
+   border-color: :#2A3F54;
+  color: #FFFFFF;
+}
+
+.btn-info {
+  background-color:#2A3F54;
+   border-color: :#2A3F54;
+  color: #FFFFFF;
+}
 
 /* Tooltip on top */
  .tooltip-arrow {
@@ -45,6 +56,14 @@ a {
 .plotly{
   margin-top:40px;
   /*height:280px!important;*/
+}
+.loader {
+  background:#2A3F54;
+  color:#2A3F54;
+}
+
+.paneltitle {
+  font-size: 25px;
 }
 
 #cpmeanplot img{
