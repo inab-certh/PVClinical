@@ -113,7 +113,7 @@ def OpenFDAWorkspace(request, scenario_id=None):
                 "sc_id": scenario_id
                 }
 
-    return HttpResponse(template.render({"scenario": scenario, "shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
+    return HttpResponse(template.render({"scenario": scenario, "openfda_shiny_endpoint": settings.OPENFDA_SHINY_ENDPOINT}, request))
 
 
 def get_synonyms(request):
