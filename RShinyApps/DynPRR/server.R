@@ -1325,7 +1325,7 @@ geturlquery <- reactive({
   # q$t1<-"A02BC01"
   # q$t2<-"10021015"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant<-FALSE
+  # q$concomitant<-TRUE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2) 
@@ -1387,6 +1387,11 @@ output$About <- renderUI({
   HTML(stri_enc_toutf8(i18n()$t("About")))
   
 })
+output$toDate <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("to")))
+  
+})
+
 output$DataReference <- renderUI({ 
   HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
   
@@ -1424,7 +1429,7 @@ output$infoprrplot<-renderUI({
   addPopover(session=session, id="infoprrplot", title="Proportional Reporting Ratio", 
              content=paste(i18n()$t("prr explanation"),"<br><br>",i18n()$t("dynprr explanation")), placement = "left",
              trigger = "hover", options = list(html = "true"))
-  return(HTML('<button type="button" class="btn btn-info">i</button>'))
+  return(HTML('<button type="button" class="btn btn-info" style="background-color:#2A3F54; color:#FFFFFF; border-color:#2A3F54;">i</button>'))
 })
 
 output$sourceInDataReport<-renderUI({

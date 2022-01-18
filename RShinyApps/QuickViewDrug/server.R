@@ -1,4 +1,4 @@
-1require(shiny)
+require(shiny)
 
 require(shinyBS)
 
@@ -946,8 +946,8 @@ shinyServer(function(input, output, session) {
 
   geturlquery <- reactive({
     q <- parseQueryString(session$clientData$url_search)
-    print("userexact")
-    print(q$useexact)
+    # print("userexact")
+    # print(q$useexact)
 
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
