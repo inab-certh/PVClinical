@@ -929,7 +929,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 #         if results != {}:
                 #             records.update(results[0])
                 #             total_results = total_results + results[1]
-                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                results = pubmed_search(query, 0, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
@@ -950,7 +950,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 #         results = pubmed_search(query, start, 10, access_token, begin, last)
                 #         records.update(results[0])
                 #         total_results = results[1]
-                results = pubmed_search(query, start, 10, access_token, begin, last)
+                results = pubmed_search(query, start, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
@@ -961,7 +961,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if first != None and end != None:
                 dates = [str(first), str(end)]
             else:
-                dates = []
+                dates = ['1900', '2022']
 
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
@@ -1008,7 +1008,7 @@ def is_logged_in(request):
 
 
 
-def pubmed_search(query, begin, max, access_token, start, end):
+def pubmed_search(query, begin, max, access_token, start, end, user):
     """ Search for papers relevant to the scerario that user creates in PubMed library.
     :param query: query for Pubmed library search that created from combo of drug and
     reaction with the logic operator AND
@@ -1103,8 +1103,9 @@ def pubmed_search(query, begin, max, access_token, start, end):
             pmid = "PM" + res.pubmed_records[i].pmid
             handle.close()
             try:
-                if PubMed.objects.get(pid=res.pubmed_records[i].pmid):
-                    pubmed = PubMed.objects.get(pid=res.pubmed_records[i].pmid)
+
+                if PubMed.objects.get(pid=res.pubmed_records[i].pmid, user=user):
+                    pubmed = PubMed.objects.get(pid=res.pubmed_records[i].pmid, user=user)
                     res.pubmed_records[i].notes = pubmed.notes
                     res.pubmed_records[i].user = pubmed.user
                     res.pubmed_records[i].relevance = pubmed.relevance

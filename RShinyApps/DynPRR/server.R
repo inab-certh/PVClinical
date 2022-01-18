@@ -1387,6 +1387,11 @@ output$About <- renderUI({
   HTML(stri_enc_toutf8(i18n()$t("About")))
   
 })
+output$toDate <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("to")))
+  
+})
+
 output$DataReference <- renderUI({ 
   HTML(stri_enc_toutf8(i18n()$t("Data Reference")))
   
