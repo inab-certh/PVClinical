@@ -38,7 +38,7 @@
                     <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                     <th>{% trans "Περιβάλλοντα Εργασίας" %}</th>
                     <th>{% trans "Επεξεργασία" %}</th>
-<!--                    <th>{% trans "Αναφορά" %}</th>-->
+                    <th>{% trans "Αναφορά" %}</th>
                     <th>{% trans "Διαγραφή" %}</th>
                   </tr>
                 </thead>
@@ -138,11 +138,11 @@
                         </a>
                       </td>
 
-<!--                      <td>-->
-<!--                        <button class="btn btn-outline report-btn" data-href="{% url 'final_report' scenario.id %}">-->
-<!--                          <i class="fas fa-file-pdf"></i>-->
-<!--                        </button>-->
-<!--                      </td>-->
+                      <td>
+                        <button class="btn btn-outline report-btn" data-href="{% url 'final_report' scenario.id %}">
+                          <i class="fas fa-file-pdf"></i>
+                        </button>
+                      </td>
 
                       <td>
                         <button class="btn btn-outline delete-sc-btn" data-scid="{{ scenario.id }}" type="button">

@@ -102,9 +102,6 @@ $(function() {
     });
 
 
-
-
-
     $(document).on("click", "button.report-btn", function (){
         $("#genReportConfirmModal").modal("show");
         var new_location = $(this).attr("data-href");
@@ -115,16 +112,6 @@ $(function() {
         }
         )
     });
-});
-
-    $(window).load(function() {
-        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
-        var prev_active_bc_a=prev_active_breadcrumb.find("a");
-        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
-            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
-        }
-    });
-
 });
 
 function getCookie(name) {
