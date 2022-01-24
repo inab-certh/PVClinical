@@ -1105,6 +1105,7 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
 
         s = w.run(fetch_pubmed)
         qres = s.get_result()
+
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max,
@@ -1123,13 +1124,13 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
 
         s = w.run(fetch_pubmed)
         qres = s.get_result()
+
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max, 'mindate': start, 'maxdate':end,
              'datetype': 'pdat'})
         fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
-
         a = w.run(fetch_pubmed)
 
         res = a.get_result()
@@ -1174,6 +1175,7 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
                 res.pubmed_records[i].url = "http://www.ncbi.nlm.nih.gov/pubmed/" + res.pubmed_records[i].pmid
 
             pmid = "PM" + res.pubmed_records[i].pmid
+
             handle.close()
             try:
 
