@@ -314,10 +314,10 @@ $(function() {
                 }
     })
         .bind("ready.jstree", function (event, data) {
-            $("#loaderOverlay").fadeOut();
             var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
             init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
             check_open_leaves(init_sel_conditions);
+            $("#loaderOverlay").fadeOut();
         });
 
     var cur_sel_conditions = [];
@@ -388,8 +388,9 @@ $(function() {
             drugs = data.drugs;
         }).fail(function () {
             drugs = [];
+        }).always(function () {
+            return drugs;
         });
-        return drugs;
     }
 
     function get_medDRA_tree() {
@@ -405,14 +406,17 @@ $(function() {
             medDRA_tree = data.medDRA_tree;
         }).fail(function () {
             medDRA_tree = [];
+        }).always(function () {
+            return medDRA_tree;
         });
-        return medDRA_tree;
     }
 
     function get_conditions_ids(conditions) {
         /* Make an ajax call using conds-nodes-ids python callback
         to retrieve all drugs */
         var conds_nodes_ids=[];
+
+        // $("#loaderOverlay").fadeIn();
 
         conditions = conditions?conditions:[];
 
@@ -432,8 +436,9 @@ $(function() {
             conds_nodes_ids = data.conds_nodes_ids;
         }).fail(function () {
             conds_nodes_ids = [];
+        }).always(function () {
+            return conds_nodes_ids;
         });
-        return conds_nodes_ids;
     }
 
     // Function to check leaves and open the whole paths to those leaves
