@@ -132,6 +132,10 @@
     <!--edw prosoxi sto on.click, ean den to ekana etsi den fortwne th jquery otan to table htan se anadiplwsh-->
 
     $(document).ready(function(){
+        $("#newCaseButton").on("click", function () {
+            $("#loaderOverlay").fadeIn();
+        });
+
         $("#resetPatCases").hide();
 
         $("#resetPatCases").on("click", function () {
@@ -166,7 +170,7 @@
             var patient_id= $(this).data("caseid");
 
             $("#caseDeleteConfirmModal #confirmBtn").click(function() {
-
+                $("#loaderOverlay").fadeIn();
 
                 $.ajax({
                         url: "{{ request.path }}",
@@ -180,6 +184,7 @@
                             $('#caseDeleteConfirmModal').modal('hide');
                         })
                         .done(function(data) {
+                            $("#loaderOverlay").fadeOut();
                             $('[class="modal-title"]').text("{% trans 'Επιτυχής διαγραφή!'%}");
                             $('[class="modal-body"]').text(data);
 

@@ -176,6 +176,7 @@ $(function() {
     // });
 
     $('#questionnaireModal').on('hide.bs.modal', function () {
+        $("#loaderOverlay").fadeIn();
         $.ajax({
             url: "/ajax/retr-del-session-pmcvars",
             dataType: "json",
