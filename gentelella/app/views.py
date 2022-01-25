@@ -1253,20 +1253,20 @@ def save_pubmed_input(request):
 
     scenario = Scenario.objects.get(id=scenario_id)
 
-    notes, created = Notes.objects.update_or_create(
-        content=request.GET.get('notes', None), user=user, scenario=scenario,
-        workspace=settings.WORKSPACES.get('PubMed'), wsview=title, note_datetime=datetime.datetime.now())
+    req_notes = request.GET.get("notes", None)
+    notes, _ = Notes.objects.update_or_create(
+        content=req_notes, user=user, scenario=scenario, workspace=settings.WORKSPACES.get("PubMed"),
+        wsview=title, note_datetime=datetime.datetime.now()) if req_notes else (None, None)
 
     try:
         pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
+        pm.notes = notes
         if relevance:
-            pm.notes = notes
             pm.relevance = relevance
-        else:
-            pm.notes = notes
     except PubMed.DoesNotExist:
         pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
                     url=url, relevance=relevance, notes=notes, scenario_id =scenario)
+
     try:
         pm.save()
         data = {
