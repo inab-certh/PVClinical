@@ -1254,9 +1254,8 @@ def save_pubmed_input(request):
     scenario = Scenario.objects.get(id=scenario_id)
 
     req_notes = request.GET.get("notes", None)
-    notes, _ = Notes.objects.update_or_create(
-        content=req_notes, user=user, scenario=scenario, workspace=settings.WORKSPACES.get("PubMed"),
-        wsview=title, note_datetime=datetime.datetime.now()) if req_notes else (None, None)
+    notes, _ = Notes.objects.update_or_create(user=user, scenario=scenario, workspace=settings.WORKSPACES.get("PubMed"),
+                                              wsview=title) if req_notes else (None, None)
 
     try:
         pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
@@ -1268,6 +1267,10 @@ def save_pubmed_input(request):
                     url=url, relevance=relevance, notes=notes, scenario_id =scenario)
 
     try:
+        if notes:
+            notes.content = req_notes
+            notes.note_datetime = datetime.datetime.now()
+            notes.save()
         pm.save()
         data = {
             'message': 'Success'
