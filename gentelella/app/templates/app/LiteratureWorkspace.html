@@ -284,7 +284,7 @@
                                                               </div>
                                                               <div class="modal-body">
                                                                 <textarea style="width: 100%; height: 300px; resize: none;" name='notes_{{ forloop.counter0 }}'
-                                                                  placeholder='{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}'>{{ rec.notes }}</textarea>
+                                                                  placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}">{% if rec.notes %}{{ rec.notes.content }}{% endif %}</textarea>
                                                               </div>
                                                               <div class="modal-footer">
                                                                 <button data-dismiss="modal" class="glyphicon glyphicon-ok lg closemod"></button>
@@ -805,6 +805,7 @@
         $(function() {
             $('body').on('mousedown', '.modal', function() {
                 $(this).addClass('draggable').parents().on('mousemove', function(e) {
+                    e.preventDefault();
                     $('.draggable').offset({
                         top: e.pageY - $('.draggable').outerHeight() /8,
                         left: e.pageX - $('.draggable').outerWidth() /8
@@ -812,7 +813,6 @@
                         $(this).removeClass('draggable');
                     });
                 });
-                e.preventDefault();
             }).on('mouseup', function() {
                 $('.draggable').removeClass('draggable');
             });
