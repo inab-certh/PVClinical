@@ -169,7 +169,7 @@
         {% include 'app/modals/parametric_modal.html' with modal_type="notesModal" modal_title=mod_title modal_id="notesModal" modal_iframe_url=""%}
         {% trans 'Cancel' as date_lbl %}
         {% with 'Update dates' as date_title %}
-        {% include 'app/modals/date_modal.html' with modal_type="\"infoModal\"" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
+        {% include 'app/modals/date_modal.html' with modal_type="infoModal" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
         {% endwith %}
 
     {% endblock body %}
