@@ -129,7 +129,6 @@
     {{ block.super }}
 
     <script>
-    <!--edw prosoxi sto on.click, ean den to ekana etsi den fortwne th jquery otan to table htan se anadiplwsh-->
 
     $(document).ready(function(){
         $("#newCaseButton").on("click", function () {
@@ -139,6 +138,7 @@
         $("#resetPatCases").hide();
 
         $("#resetPatCases").on("click", function () {
+            $(".dataTables_filter").show();
             $(".dataTables_filter input").val("").trigger( "keyup" );
             $("#resetPatCases").hide();
             $("#newCaseButton").show();
@@ -148,6 +148,7 @@
             $("#resetPatCases").show();
             $("#newCaseButton").hide();
             $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
+            $(".dataTables_filter").hide();
         });
 
         $("body").on("click", "[id^='answersDetailsBtn']", function () {
