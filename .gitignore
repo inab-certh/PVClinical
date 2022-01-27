@@ -14,6 +14,7 @@ db_b.sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
 RShinyApps/.RData
 RShinyApps/.Rhistory
+gentelella/app/__pycache__/
 gentelella/app/migrations/__pycache__/
 gentelella/gentelella/__pycache__/
 gentelella/users/migrations/__pycache__/
