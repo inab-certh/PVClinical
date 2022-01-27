@@ -3208,7 +3208,7 @@ def new_pmcase(request):
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user, label_suffix='')
-        print(form.data)
+
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
