@@ -20,4 +20,11 @@ gentelella/gentelella/__pycache__/
 gentelella/users/migrations/__pycache__/
 gentelella/app/entrezpy/__pycache__/
 gentelella/app/templatetags/__pycache__/
-
+gentelella/staticfiles/
+app/__pycache__/
+app/migrations/__pycache__/
+gentelella/__pycache__/
+users/migrations/__pycache__/
+app/entrezpy/__pycache__/
+app/templatetags/__pycache__/
+staticfiles/
