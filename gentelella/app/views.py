@@ -3205,10 +3205,10 @@ def new_pmcase(request):
     # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
     #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
     #                    user=request.user)
-    form = PatientForm(user=request.user, label_suffix='')
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user, label_suffix='')
+        print(form.data)
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
@@ -3224,6 +3224,9 @@ def new_pmcase(request):
                 quest_btn_disable = False
             else:
                 quest_btn_disable = True
+
+    else:
+        form = PatientForm(user=request.user, label_suffix='')
 
 
     # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]

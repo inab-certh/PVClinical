@@ -186,6 +186,8 @@ $(function() {
                 if(data["quest_id"] && data["quest_id"].length!=0) {
                     $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
                     $(".ma-form").submit();
+                } else {
+                    $("#loaderOverlay").fadeOut();
                 }
               },
             error: function (res) {
