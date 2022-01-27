@@ -28,7 +28,7 @@
   	text-align: center;
   	padding-top: 25%;
   	opacity: .83;
-	display: none;
+	display: inline-block;
 }
 
 .cssload-loader {
@@ -281,7 +281,7 @@
 /*}*/
 
 
-#scenariosTbl td {
+#scenariosTbl td, #patCasesTbl td {
     vertical-align: middle;
     text-align: center;
 }
@@ -669,15 +669,15 @@ button.close {
 /*}*/
 
 .popover{
-	min-width:100px;
-	width:100%;
-	max-width: 60%;
+	min-width:10%;
+	width:50%;
+	max-width: 50%;
 	text-align: justify;
 }
 
 .popover-content {
 	max-height: 50rem;
-	padding: 1.5rem;
+	padding: 1.7rem;
 	overflow-y: auto;
 }
 
@@ -927,5 +927,14 @@ iframe.social-iframe {
 }
 
 .scenario-info a {
+	color: white;
+}
+
+.breadcrumb-item.active>a {
+	color: grey;
+    pointer-events: none;
+}
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
 	color: white;
 }

@@ -299,6 +299,7 @@ $(function() {
     $("[name='drugs_fld']").trigger("change");
 
     var medDRA_tree = get_medDRA_tree();
+    console.log(medDRA_tree);
     var refresh = true;
     $("#loaderOverlay").fadeIn();
     $("#medDRATree").jstree({
@@ -314,10 +315,10 @@ $(function() {
                 }
     })
         .bind("ready.jstree", function (event, data) {
-            $("#loaderOverlay").fadeOut();
             var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
             init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
             check_open_leaves(init_sel_conditions);
+            $("#loaderOverlay").fadeOut();
         });
 
     var cur_sel_conditions = [];
@@ -414,6 +415,8 @@ $(function() {
         to retrieve all drugs */
         var conds_nodes_ids=[];
 
+        // $("#loaderOverlay").fadeIn();
+
         conditions = conditions?conditions:[];
 
         $.ajax({
@@ -432,8 +435,9 @@ $(function() {
             conds_nodes_ids = data.conds_nodes_ids;
         }).fail(function () {
             conds_nodes_ids = [];
+        }).always(function () {
+            return conds_nodes_ids;
         });
-        return conds_nodes_ids;
     }
 
     // Function to check leaves and open the whole paths to those leaves
