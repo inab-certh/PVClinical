@@ -4,6 +4,7 @@ library(shinycssloaders)
 source('sourcedir.R')
 library(shinyalert)
 library(DT)
+library(shiny.i18n)
 
 options(encoding = 'UTF-8')
 
@@ -65,7 +66,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                  fluidRow( useShinyjs(),
                  style="margin-bottom: 0.3rem",
                  column(width=2, dateInput("date1", "", value = '1989-6-30') ),
-                 column(width=1, p("to"),
+                 column(width=1, uiOutput('toDate'),
                         style="margin-top: 2.45rem; text-align: center;"),
                  column(width=2, dateInput("date2", "", value = Sys.Date()) ),
                  

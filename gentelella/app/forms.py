@@ -299,7 +299,7 @@ class CharForm(forms.Form):
 
         for k in self.fields.keys():
             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
-            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+            self.fields[k].widget.attrs["disabled"] = bool(self.read_only)
 
 
 class PathwaysForm(forms.Form):
@@ -331,7 +331,7 @@ class PathwaysForm(forms.Form):
             ok = k.replace("_", " ").title().replace(" ", "")
             ok = ok[0].lower() + ok[1:]
             self.initial[k] = self.options.get(ok)
-            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+            self.fields[k].widget.attrs["disabled"] = bool(self.read_only)
 
 
 # class TinyMCEWidget(TinyMCE):
@@ -341,7 +341,7 @@ class PathwaysForm(forms.Form):
 
 class NotesForm(forms.ModelForm):
     content = forms.CharField(label="", required=False,
-                              widget=CKEditorWidget(attrs={'required': False,}))
+                              widget=CKEditorWidget(attrs={"required": False,}))
 
     # content = forms.CharField(
     #     label="",
@@ -353,7 +353,7 @@ class NotesForm(forms.ModelForm):
 
     class Meta:
         model = Notes
-        fields = ['content']
+        fields = ["content"]
 
 
 class PatientForm(forms.ModelForm):
@@ -370,20 +370,24 @@ class PatientForm(forms.ModelForm):
     # scenarios = forms.ChoiceField(choices=Scenario.objects.all(), required=True,
     #                                    label=_("Σενάριο:"), widget=Select2Widget)
 
-    questionnaires = forms.ModelMultipleChoiceField(
-        queryset=Questionnaire.objects.all(),
-        widget=PMSelect2TagWidget, label=''
-    )
+    questionnaires = forms.IntegerField()
+
     class Meta:
         model = PatientCase
-        fields = ['patient_id', 'scenarios', 'questionnaires']
+        fields = ["patient_id", "scenarios", "questionnaires"]
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        self.user = kwargs.pop("user", None)
         super(PatientForm, self).__init__(*args, **kwargs)
-        self.fields['patient_id'].label = _('Αναγνωριστικό Ασθενούς:')
-        self.fields['scenarios'].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
+        self.fields["patient_id"].label = _("Αναγνωριστικό Ασθενούς:")
+        self.fields["scenarios"].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
                                                                                                 ).order_by("title")]
+
+    def clean_questionnaires(self):
+        """ Overriding - extending clean_questionnaires module for questionnaires that have just been created
+        """
+
+        return Questionnaire.objects.filter(id=self.cleaned_data.get("questionnaires"))
 
     def is_valid(self):
         """ Overriding-extending is_valid module

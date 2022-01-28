@@ -1002,7 +1002,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 #         if results != {}:
                 #             records.update(results[0])
                 #             total_results = total_results + results[1]
-                results = pubmed_search(query, 0, 10, access_token, begin, last)
+                results = pubmed_search(query, 0, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
@@ -1023,7 +1023,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 #         results = pubmed_search(query, start, 10, access_token, begin, last)
                 #         records.update(results[0])
                 #         total_results = results[1]
-                results = pubmed_search(query, start, 10, access_token, begin, last)
+                results = pubmed_search(query, start, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
@@ -1034,7 +1034,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if first != None and end != None:
                 dates = [str(first), str(end)]
             else:
-                dates = []
+                dates = ['1900', '2022']
 
             if records == {}:
                 return render(request, 'app/LiteratureWorkspace.html', {"scenario": scenario})
@@ -1081,7 +1081,7 @@ def is_logged_in(request):
 
 
 
-def pubmed_search(query, begin, max, access_token, start, end):
+def pubmed_search(query, begin, max, access_token, start, end, user):
     """ Search for papers relevant to the scerario that user creates in PubMed library.
     :param query: query for Pubmed library search that created from combo of drug and
     reaction with the logic operator AND
@@ -1105,6 +1105,7 @@ def pubmed_search(query, begin, max, access_token, start, end):
 
         s = w.run(fetch_pubmed)
         qres = s.get_result()
+
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max,
@@ -1123,13 +1124,13 @@ def pubmed_search(query, begin, max, access_token, start, end):
 
         s = w.run(fetch_pubmed)
         qres = s.get_result()
+
         total_results = qres.size()
         sid = fetch_pubmed.add_search(
             {'db': 'pubmed', 'term': q, 'sort': 'Date Released', 'retstart': begin, 'retmax': max, 'mindate': start, 'maxdate':end,
              'datetype': 'pdat'})
         fetch_pubmed.add_fetch({'retmode': 'xml', 'rettype': 'fasta', 'retstart': begin}, dependency=sid,
                                analyzer=PubmedAnalyzer())
-
         a = w.run(fetch_pubmed)
 
         res = a.get_result()
@@ -1174,10 +1175,12 @@ def pubmed_search(query, begin, max, access_token, start, end):
                 res.pubmed_records[i].url = "http://www.ncbi.nlm.nih.gov/pubmed/" + res.pubmed_records[i].pmid
 
             pmid = "PM" + res.pubmed_records[i].pmid
+
             handle.close()
             try:
-                if PubMed.objects.get(pid=res.pubmed_records[i].pmid):
-                    pubmed = PubMed.objects.get(pid=res.pubmed_records[i].pmid)
+
+                if PubMed.objects.get(pid=res.pubmed_records[i].pmid, user=user):
+                    pubmed = PubMed.objects.get(pid=res.pubmed_records[i].pmid, user=user)
                     res.pubmed_records[i].notes = pubmed.notes
                     res.pubmed_records[i].user = pubmed.user
                     res.pubmed_records[i].relevance = pubmed.relevance
@@ -1250,21 +1253,24 @@ def save_pubmed_input(request):
 
     scenario = Scenario.objects.get(id=scenario_id)
 
-    notes, created = Notes.objects.update_or_create(
-        content=request.GET.get('notes', None), user=user, scenario=scenario,
-        workspace=settings.WORKSPACES.get('PubMed'), wsview=title, note_datetime=datetime.datetime.now())
+    req_notes = request.GET.get("notes", None)
+    notes, _ = Notes.objects.update_or_create(user=user, scenario=scenario, workspace=settings.WORKSPACES.get("PubMed"),
+                                              wsview=title) if req_notes else (None, None)
 
     try:
         pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
+        pm.notes = notes
         if relevance:
-            pm.notes = notes
             pm.relevance = relevance
-        else:
-            pm.notes = notes
     except PubMed.DoesNotExist:
         pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
                     url=url, relevance=relevance, notes=notes, scenario_id =scenario)
+
     try:
+        if notes:
+            notes.content = req_notes
+            notes.note_datetime = datetime.datetime.now()
+            notes.save()
         pm.save()
         data = {
             'message': 'Success'
@@ -1278,7 +1284,7 @@ def save_pubmed_input(request):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def paper_notes_view(request):
+def paper_notes_view(request, scenario_id=None, first=None, end=None, page_id=None):
     """ Save the notes and the relevance of a paper that user chose.
     :param request: request
     :return: redirect to paper_notes view where user can review the paper
@@ -3199,10 +3205,10 @@ def new_pmcase(request):
     # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
     #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
     #                    user=request.user)
-    form = PatientForm(user=request.user, label_suffix='')
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user, label_suffix='')
+
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
@@ -3218,6 +3224,9 @@ def new_pmcase(request):
                 quest_btn_disable = False
             else:
                 quest_btn_disable = True
+
+    else:
+        form = PatientForm(user=request.user, label_suffix='')
 
 
     # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]

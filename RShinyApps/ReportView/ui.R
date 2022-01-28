@@ -87,11 +87,21 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            #   img(src='l_openFDA.png', align='bottom')),
                            #renderDates()
                     ),
-                    column(width=8,
+                  
+                    column(width=8, 
                            titlePanel(
                              textOutput("paneltitle"),
                              "")) 
                     , id='titlerow'),
+                  fluidRow(useShinyjs(),
+                           style="margin-bottom: 0.3rem; float: center;",
+                           column(width=2, dateInput("date1", "", value = '1989-6-30') ),
+                           column(width=1, uiOutput('toDate'),
+                                  style="margin-top: 2.45rem; text-align: center;"),
+                           column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                           
+                  ),
+                  
 #                   img(src='l_openFDA.png'),
 #   titlePanel("Report Browser"),
 #   fluidRow(
@@ -147,11 +157,11 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
     , id='sliderrow'),
 fluidRow(column(width=2, downloadButton( 'downloadData', 'Download report', 
                                          block=TRUE) ),
-         style= " margin-bottom: 0.3rem; float:right;",
+         style= " margin-bottom: 0.3rem; float:right; color: #fffff",
          ),
 fluidRow(column(width=2, downloadButton( 'downloadAllData', 'Download all reports', 
                                          block=TRUE) ),
-         style= " margin-bottom: 0.3rem; float:right;",
+         style= " margin-bottom: 0.3rem; float:right; color: #fffff",
 ),
 fluidRow(useShinyjs(),
          hidden(column(width=3,

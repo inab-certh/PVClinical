@@ -20,7 +20,7 @@ class AppConfig(AppConfig):
     def ready(self):
         knw = KnowledgeGraphWrapper()
         knw.cache_drugs()
-        # knw.cache_conditions()
+        knw.cache_conditions()
 
         domains = ["drug", "condition"]
 
