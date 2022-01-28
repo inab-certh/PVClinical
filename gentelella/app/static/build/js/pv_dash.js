@@ -1,7 +1,9 @@
 $(function() {
-    $(window).load(function(){
-        $("#loaderOverlay").fadeOut();
+    $(window).on("load", function(){
+         $("#loaderOverlay").fadeOut();
+
     });
+
 
     $('.has-popover').popover({'trigger':'manual'
     }).on("mouseenter", function () {

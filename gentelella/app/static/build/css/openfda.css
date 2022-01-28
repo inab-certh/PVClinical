@@ -37,11 +37,11 @@
 }
 
 input:checked + .slider {
-  background-color: #1f8eed;
+  background-color: #2A3F54;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #1f8eed;
+  box-shadow: 0 0 1px #2A3F54;
 }
 
 input:checked + .slider:before {
@@ -63,4 +63,12 @@ input:checked + .slider:before {
     float: right;
     margin-right:13px;
     margin-bottom:3px;
+}
+
+input[type=checkbox]:checked{
+    background-color: #2A3F54!important;
+}
+
+input[type=radio]:checked{
+      background-color: #2A3F54;
 }

@@ -126,9 +126,9 @@
                         </div>
                  {% else %}
                          <div style="float: left; width: 300px; pointer-events: none;" class="input-group input-daterange">
-                            <input type="text" class="form-control" value="2012-04-05">
+                            <input type="text" class="form-control" value=1900>
                             <div class="input-group-addon">to</div>
-                            <input type="text" class="form-control" value="2012-04-19">
+                            <input type="text" class="form-control" value=2022>
                         </div>
                 {% endif %}
 
@@ -284,7 +284,7 @@
                                                               </div>
                                                               <div class="modal-body">
                                                                 <textarea style="width: 100%; height: 300px; resize: none;" name='notes_{{ forloop.counter0 }}'
-                                                                  placeholder='{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}'>{{ rec.notes }}</textarea>
+                                                                  placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}">{% if rec.notes %}{{ rec.notes.content }}{% endif %}</textarea>
                                                               </div>
                                                               <div class="modal-footer">
                                                                 <button data-dismiss="modal" class="glyphicon glyphicon-ok lg closemod"></button>
@@ -323,7 +323,13 @@
                                                                                 {{ rec.idlist }}</a>
 
                                                                                     <br/>
-                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' %}" class="pdf_mendeley">
+                                                                                {% if scenario.id and page_id > 1 and dates.0 != dates.1 %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id  first=dates.0 end=dates.1 page_id=page_id %}" class="pdf_mendeley">
+                                                                                {% elif scenario.id and page_id > 1 and dates.0 == dates.1 %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id page_id=page_id %}" class="pdf_mendeley">
+                                                                                {% else %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id %}" class="pdf_mendeley">
+                                                                                {% endif %}
                                                                                         {% csrf_token %}
                                                                                         <textarea style="display: none" id="abstract_{{ forloop.counter0 }}" name="abstract" form="form_{{ forloop.counter0 }}">{{ rec.abstract }}</textarea>
                                                                                         <input style="display: none" id="pmid_{{ forloop.counter0 }}" name="pmid" type="text" value="{{ rec.pmid }}">
@@ -334,7 +340,7 @@
                                                                                          <input  type="image" id="more_{{ forloop.counter0 }}" class="pdf_mendeley" value="PDF" src="{% static 'images/pdf_view.png' %}">
                                                                                     </form>
                                                                           <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
-                                                                              ><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
                                                                              {% elif rec.pmcid and rec.documents and rec.url %}
                                                                                <strong>PMCID: </strong>{{ rec.pmcid }}
                                                                                 <br/>
@@ -346,7 +352,7 @@
                                                                                 <br/>
                                                                                <a id="view_mendeley" name="view_{{ forloop.counter0 }}" href= '{{ rec.documents }}' class="btn read_button"><img src="{% static 'images/documents.png' %}" alt="Read to Mendeley"> Read</a>
                                                                                 <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
-                                                                              ><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
                                                                              {% elif rec.idlist %}
                                                                               <strong>PMID: </strong> {{ rec.pmid }}
                                                                                <br/>
@@ -355,13 +361,13 @@
                                                                                 <br/>
                                                                         <br/>
                                                                        <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
-                                                                              ><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
                                                                             {% else %}
                                                                                <strong>PMID: </strong> {{ rec.pmid }}
                                                                             <br/>
                                                                         <br/>
                                                                            <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
-                                                                              ><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                               target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
                                                                             {% endif %}
                                                                     </div>
                                                                 </div>
@@ -760,7 +766,7 @@
 
         for (var i = 0; i < recordslength; i++) {
             // $("tr[name='row_" + i + "'] input[type='radio']:checked").parent().css('color', '#B8B8B8');
-            $("tr[name='row_" + i + "'] input[id^='Relevant_']:checked").parent().css('color', '#32CD32');
+            $("tr[name='row_" + i + "'] input[id^='Relevant_']:checked").parent().css('color', '#008000');
             $("tr[name='row_" + i + "'] input[id^='Irrelevant_']:checked").parent().css('color', '#bf2b27');
 
             if(!$("tr[name='row_" + i + "'] input[id^='Relevant_']").is(':checked') && !$("tr[name='row_" + i + "'] input[id^='Irrelevant_']").is(':checked')){
@@ -773,7 +779,7 @@
                var reltype = $(this).attr('id').split("_");
                if (reltype[0] == 'Relevant') {
                    $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
-                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#32CD32');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#008000');
                } else if (reltype[0] == 'Irrelevant'){
                    $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
                    $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
@@ -795,6 +801,23 @@
                 $(this).datepicker('setDate', new Date());
             });
          });
+
+        $(function() {
+            $('body').on('mousedown', '.modal', function() {
+                $(this).addClass('draggable').parents().on('mousemove', function(e) {
+                    e.preventDefault();
+                    $('.draggable').offset({
+                        top: e.pageY - $('.draggable').outerHeight() /8,
+                        left: e.pageX - $('.draggable').outerWidth() /8
+                    }).on('mouseup', function() {
+                        $(this).removeClass('draggable');
+                    });
+                });
+            }).on('mouseup', function() {
+                $('.draggable').removeClass('draggable');
+            });
+        });
+
 
      </script>
 
