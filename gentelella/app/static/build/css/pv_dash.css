@@ -605,7 +605,6 @@ iframe.modalIframe {
   padding-left: 1.5rem;
 }
 
-
 .custom-control-inline {
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -699,8 +698,6 @@ button.close {
 	}
 }
 
-
-
 .pathways-int-fld select {
 	margin: 0 1rem;
 	direction: ltr;
@@ -721,7 +718,6 @@ button.close {
     background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
 	border-color: rgba(52, 152, 219, 0.88);
 }
-
 
 .age_crit_info {
     background-color: rgba(75, 95, 113, 0.88);  /*#4d6f80;*/
@@ -775,6 +771,7 @@ button.close {
     background-color: #738d9c;
     border-color: #5c7586
 }
+
 .btn-enlarge:hover,
 .btn-enlarge:focus,
 .btn-enlarge:active,
@@ -816,8 +813,6 @@ button.close {
     text-align: center;
     box-sizing: border-box;
 }
-
-
 
 /*@media (min-width: 768px)*/
 /*.icon-bar {*/
@@ -865,7 +860,6 @@ button.close {
 /*    white-space: nowrap;*/
 /*    overflow: hidden;*/
 /*}*/
-
 
 #notesTbl td {
 	vertical-align: middle;
@@ -991,4 +985,124 @@ input[type='checkbox']+span {
 
 .btn>span.hidden-xs, .btn>span.visible-lg {
 	color: white;
+}
+
+.bs-switch {
+	position: relative;
+	width: 50px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none
+}
+
+.bs-switch .bs-switch-checkbox {
+	display: none
+}
+
+.bs-switch .bs-switch-label {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	border: 2px solid #e4e4e4;
+	border-radius: 20px;
+	cursor: pointer
+}
+
+.bs-switch .bs-switch-inner {
+	margin-left: -100%;
+	width: 200%;
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+	-webkit-transition-duration: 0.3s;
+	-moz-transition-duration: 0.3s;
+	-o-transition-duration: 0.3s;
+	transition-duration: 0.3s;
+	-webkit-transition-property: margin;
+	-moz-transition-property: margin;
+	-o-transition-property: margin;
+	transition-property: margin
+}
+
+.bs-switch .bs-switch-inner:before,
+.bs-switch .bs-switch-inner:after {
+	float: left;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	width: 50%;
+	height: 18px;
+	color: #fff;
+	font-size: 10px;
+	line-height: 1.8
+}
+
+.bs-switch .bs-switch-inner:before {
+	padding-left: 6px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	background-color: #2e9e89;
+	color: #fff;
+	/*content: "ON";*/
+	content: '\2713';
+	-ms-border-radius: 20px;
+	-o-border-radius: 20px
+}
+
+.bs-switch .bs-switch-inner:after {
+	padding-right: 6px;
+	background-color: #eee;
+	color: #999;
+	content: '\2717';
+	/*content: "OFF";*/
+	text-align: right
+}
+
+.bs-switch .bs-switch-switch {
+	position: absolute;
+	top: 0;
+	right: 28px;
+	bottom: 0;
+	margin: 2px;
+	width: 15px;
+	border: 2px solid #e4e4e4;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	background: #fff;
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+	-webkit-transition-duration: 0.3s;
+	-moz-transition-duration: 0.3s;
+	-o-transition-duration: 0.3s;
+	transition-duration: 0.3s;
+	-webkit-transition-property: all;
+	-moz-transition-property: all;
+	-o-transition-property: all;
+	transition-property: all;
+	-ms-border-radius: 15px;
+	-o-border-radius: 15px
+}
+
+.bs-switch.bs-switch-blank .bs-switch-inner:before,
+.bs-switch.bs-switch-blank .bs-switch-inner:after { content: "" }
+.bs-switch-checkbox:checked + .bs-switch-label .bs-switch-inner {
+	margin-left: 0
+}
+
+.bs-switch-checkbox:checked + .bs-switch-label .bs-switch-switch {
+	right: 0
 }
