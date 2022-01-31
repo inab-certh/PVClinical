@@ -1769,10 +1769,14 @@ def final_report(request, scenario_id=None):
         error_response = HttpResponse(content=str(e), status=500)
         return error_response
 
-    drugs = [d for d in sc.drugs.all()]
-    conditions = [c for c in sc.conditions.all()]
-    all_combs = list(product([d.name for d in drugs] or [""],
-                             [c.name for c in conditions] or [""]))
+    drugs = sc.drugs.all()
+    conditions = sc.conditions.all()
+    print("Drugs len:", len(drugs))
+    print("Conditions len:", len(conditions))
+    all_combs = list(product([d for d in drugs] or [None],
+                             [c for c in conditions] or [None]))
+
+    print("All combs:", len(all_combs))
 
     scenario_open = sc.id
 
@@ -1785,6 +1789,7 @@ def final_report(request, scenario_id=None):
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
 
+    print("All dch:", len(drug_condition_hash))
     hashes = list(map(lambda dch: dch[2], drug_condition_hash))
 
     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
@@ -1811,14 +1816,18 @@ def final_report(request, scenario_id=None):
         for i in notes_wsview_openfda:
             notes_content_openfda = list(map(lambda el: el.content, filter(lambda elm: elm.wsview == i, user_notes)))
             dict_openfda_notes[i] = notes_content_openfda[0]
-        for i, j, k in drug_condition_hash:
-            for key in dict_openfda_notes:
-                if i + ' - ' + j == key:
-                    notes_openfda1[k] = dict_openfda_notes[key]
-                if i == key and j == "":
-                    notes_openfda1[k] = dict_openfda_notes[key]
-                if j == key and i == "":
-                    notes_openfda1[k] = dict_openfda_notes[key]
+
+        notes_openfda1 = dict([(k, dict_openfda_notes.get(" - ".join(list(filter(None, [i and i.name, j and j.name]))))
+                                ) for i,j,k in drug_condition_hash])
+
+        # for i, j, k in drug_condition_hash:
+        #     for key in dict_openfda_notes:
+        #         if i and j and i.name + ' - ' + j.name == key:
+        #             notes_openfda1[k] = dict_openfda_notes[key]
+        #         if i and i.name == key and not j:
+        #             notes_openfda1[k] = dict_openfda_notes[key]
+        #         if j and j.name == key and not i:
+        #             notes_openfda1[k] = dict_openfda_notes[key]
 
 
     # ir table and heatmap
@@ -1829,13 +1838,16 @@ def final_report(request, scenario_id=None):
     sc_conditions = sc.conditions.all()
 
     # Get drugs concept set id
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
-        sc_drugs) != 1 \
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], domain="Drug",
+                                                     owner=sc.owner, sid=sc.id) if len(sc_drugs) != 1 \
         else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
-        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], domain="Condition",
+                                                         owner=sc.owner, sid=sc.id) if len(sc_conditions) != 1 \
+        else "Condition - {}".format(sc_conditions[0].name)
 
-    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], domain="ir",
+                                                 owner=sc.owner, sid=sc.id)
+    print("ir_name:", ir_name)
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
     if ir_ent:
         ir_id = ir_ent.get("id")
@@ -1843,7 +1855,7 @@ def final_report(request, scenario_id=None):
         ir_id = None
 
     char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
-                                                   "char")
+                                                   domain="char", owner=sc.owner, sid=sc.id)
     char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
     if char_ent:
         char_id = char_ent.get("id")
@@ -1852,7 +1864,7 @@ def final_report(request, scenario_id=None):
 
     conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
     cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
-                                                 "cp")
+                                                 domain="cp", owner=sc.owner, sid=sc.id)
     cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
     if cp_ent:
         cp_id = cp_ent.get("id")
@@ -2287,13 +2299,16 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     sc_conditions = sc.conditions.all()
 
     # Get drugs concept set id
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], "Drug") if len(
-        sc_drugs) != 1 \
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], domain="Drug",
+                                                     owner=sc.owner, sid=sc.id) if len(sc_drugs) != 1 \
         else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], "Condition") \
-        if len(sc_conditions) != 1 else "Condition - {}".format(sc_conditions[0].name)
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], domain="Condition",
+                                                         owner=sc.owner, sid=sc.id) if len(sc_conditions) != 1 \
+        else "Condition - {}".format(sc_conditions[0].name)
 
-    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], "ir")
+    ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], domain="ir",
+                                                 owner=sc.owner, sid=sc.id)
+
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
     if ir_ent:
         ir_id = ir_ent.get("id")
@@ -2301,7 +2316,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         ir_id = None
 
     char_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, filter(None, [drugs_names, condition_names]))),
-                                                   "char")
+                                                   domain="char", owner=sc.owner, sid=sc.id)
     char_ent = ohdsi_wrappers.get_entity_by_name("cohort-characterization", char_name)
     if char_ent:
         char_id = char_ent.get("id")
@@ -2310,7 +2325,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
     conditions_distinct_names = list(map(lambda c: "Condition - {}".format(c.name), sc_conditions))
     cp_name = ohdsi_wrappers.name_entities_group(list(map(lambda c: c, [drugs_names] + conditions_distinct_names)),
-                                                 "cp")
+                                                 domain="cp", owner=sc.owner, sid=sc.id)
     cp_ent = ohdsi_wrappers.get_entity_by_name("pathway-analysis", cp_name)
     if cp_ent:
         cp_id = cp_ent.get("id")

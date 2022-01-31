@@ -164,52 +164,67 @@
 <!--                                    <label for="openfdaChkBx"></label>-->
                                 </div>
                                 <br>
-                                <div class="container">
+                                {% if drug_condition_hash %}
+                                    <div class="row pull-right">
+                                        <div class="col-xs-3">{% trans "Συγχορηγούμενα" %}:</div>
+                                        <div class="col-xs-6 col-xs-offset-3">
+                                        <div class="bs-switch">
+                                            <input type="checkbox" name="bs-switch" class="bs-switch-checkbox" id="concomitantSwitch" checked=true>
+                                            <label class="bs-switch-label" for="concomitantSwitch">
+                                                <div class="bs-switch-inner"></div>
+                                                <div class="bs-switch-switch"></div>
+                                            </label>
+                                        </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="container mt-5">
                                     <div class="panel-group" id="combsAccordion">
 
                                         {% for d,c,k in drug_condition_hash %}
 
-                                <div id="{{ d }}{% if d and c %} - {% endif %}{{ c }}" class="panel panel-default">
-                                    <div class="panel-heading">
-                                      <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#combsAccordion" href="#collapse{{ forloop.counter }}" style="color:#5A738E;">{{ d }}{% if d and c %} - {% endif %}{{ c }}</a>
-                                      </h4>
-                                    </div>
-                                    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
-                                      <div class="panel-body">
+                                            <div id="{{ d.name }}{% if d and c %}_{% endif %}{{ c.name }}" class="panel panel-default">
+                                                <div class="panel-heading">
+                                                  <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#combsAccordion" href="#collapse{{ forloop.counter }}" style="color:#5A738E;">{{ d.name }}{% if d and c %} - {% endif %}{{ c.name }}</a>
+                                                  </h4>
+                                                </div>
+                                                <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
+                                                  <div class="panel-body">
 
-                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Γρήγορη Επισκόπηση" %}</span></strong>
+                                                      <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Γρήγορη Επισκόπηση" %}</span></strong>
 
-                                          {% if d and c %}
+                                                      {% if d and c %}
 
-                                          <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Δυναμικό PRR" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Δυναμικό PRR" %}</span></strong>
 
-                                          <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Ανάλυση Αλλαγής Σημείου" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Ανάλυση Αλλαγής Σημείου" %}</span></strong>
 
-                                          {% elif d %}
+                                                      {% elif d %}
 
-                                         <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας Ελέγχου" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας Ελέγχου" %}</span></strong>
 
-                                          <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></strong>
 
-                                          <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
 
-                                          {% elif c %}
-                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></strong>
-                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
-                                          {%endif%}
-<!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
+                                                      {% elif c %}
+                                                          <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></strong>
+                                                          <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
+                                                      {%endif%}
+            <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
 
-                                          {%for key1,value1 in notes_openfda1.items%}
-                                          {% if key1 == k %}
-                                          <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
+                                                      {%for key1,value1 in notes_openfda1.items%}
+                                                          {% if key1 == k %}
+                                                            <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
 
-                                          {% endif %}
-                                          {%endfor%}
+                                                          {% endif %}
+                                                      {%endfor%}
 
-                                      </div>
-                                    </div>
-                                </div>
+                                                  </div>
+                                                </div>
+                                            </div>
                                         {% endfor %}
 
                                     </div>
