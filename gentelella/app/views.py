@@ -1771,12 +1771,9 @@ def final_report(request, scenario_id=None):
 
     drugs = sc.drugs.all()
     conditions = sc.conditions.all()
-    print("Drugs len:", len(drugs))
-    print("Conditions len:", len(conditions))
+
     all_combs = list(product([d for d in drugs] or [None],
                              [c for c in conditions] or [None]))
-
-    print("All combs:", len(all_combs))
 
     scenario_open = sc.id
 
@@ -1789,7 +1786,6 @@ def final_report(request, scenario_id=None):
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
 
-    print("All dch:", len(drug_condition_hash))
     hashes = list(map(lambda dch: dch[2], drug_condition_hash))
 
     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
@@ -1809,7 +1805,7 @@ def final_report(request, scenario_id=None):
     #     pub_dict[i.title] = i.notes
 
     notes_openfda1 = {}
-    if Notes.objects.filter(user=user) != "":
+    if Notes.objects.filter(user=user, scenario=scenario_open) != "":
         user_notes = Notes.objects.filter(user=user).order_by("scenario", "workspace", "wsview")
         notes_wsview_openfda = list(map(lambda el: el.wsview, filter(lambda elm: elm.workspace == 2, user_notes)))
         dict_openfda_notes = {}
@@ -1838,16 +1834,16 @@ def final_report(request, scenario_id=None):
     sc_conditions = sc.conditions.all()
 
     # Get drugs concept set id
-    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], domain="Drug",
-                                                     owner=sc.owner, sid=sc.id) if len(sc_drugs) != 1 \
+    drugs_names = ohdsi_wrappers.name_entities_group([d.name for d in sc_drugs], domain="Drug") if len(sc_drugs) != 1 \
         else "Drug - {}".format(sc_drugs[0].name)
-    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], domain="Condition",
-                                                         owner=sc.owner, sid=sc.id) if len(sc_conditions) != 1 \
+    condition_names = ohdsi_wrappers.name_entities_group([c.name for c in sc_conditions], domain="Condition"
+                                                         ) if len(sc_conditions) != 1 \
         else "Condition - {}".format(sc_conditions[0].name)
+
 
     ir_name = ohdsi_wrappers.name_entities_group([drugs_names] + [condition_names], domain="ir",
                                                  owner=sc.owner, sid=sc.id)
-    print("ir_name:", ir_name)
+
     ir_ent = ohdsi_wrappers.get_entity_by_name("ir", ir_name)
     if ir_ent:
         ir_id = ir_ent.get("id")
@@ -1909,6 +1905,7 @@ def final_report(request, scenario_id=None):
         pass
 
     intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
+
     entries = os.listdir(img_path)
 
     # pre_table = None
