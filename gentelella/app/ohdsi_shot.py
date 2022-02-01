@@ -30,9 +30,9 @@ class OHDSIShot():
                             "//div[@class='ir-analysis-results__report-block']/ir-analysis-report/table/tbody/tr/td[1]"}
 
         driver.get(url)
-        element = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((
-            By.XPATH, "//table[@class='ir-analysis-results__tbl sourceTable']/tbody/tr/td[10]/span/button")))
-        element.click()
+        # element = WebDriverWait(driver, 30).until(EC.element_to_be_clickable((
+        #     By.XPATH, "//table[@class='ir-analysis-results__tbl sourceTable']/tbody/tr/td[10]/span/button")))
+        # element.click()
 
         WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//ir-analysis-report")))
 
@@ -116,12 +116,12 @@ class OHDSIShot():
         element_path = {"all": "//div[@class='pathway-results__report-group']"}
         driver = webdriver.Chrome(options=self.options)
         driver.get(url)
+
         element = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH,
-                                        "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]\
-                                        /sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']\
-                                        /*[name()='path' and @class='node'][1]")))
-
+                                        "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]"
+                                        "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
+                                        "/*[name()='path' and @class='node'][1]")))
         element.click()
 
         WebDriverWait(driver, 30).until(
