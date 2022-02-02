@@ -4,7 +4,8 @@
 
 /* Style the body */
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   margin: 0;
 }
 
@@ -57,3 +58,16 @@ a:hover {
 .round {
   border-radius: 50%;
 }
+
+.header h1 {
+  font-size: 28px;
+}
+
+.modal-content .modal-header .modal-title {
+  color: rgb(115, 135, 156);
+}
+
+.header>a {
+  padding: 0 0.3rem;
+}
+
