@@ -26,12 +26,12 @@
 {% endblock javascripts %}
 
 
-{% block title %} {% trans "Προσθήκη περίπτωσης ασθενούς" %} {% endblock %}
+{% block title %} {% trans "Προσθήκη Περίπτωσης Ασθενούς" %} {% endblock %}
 
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
-    <h1 class="mb-3">{% trans "Προσθήκη περίπτωσης ασθενούς" %}</h1>
+    <h1 class="mb-3">{% trans "Προσθήκη Περίπτωσης Ασθενούς" %}</h1>
 
     <b>{% trans "* Εάν θέλετε να προσθέσετε μία νέα περίπτωση ασθενούς, ακολουθήστε τα επόμενα βήματα:" %}</b>
     <br>
@@ -78,7 +78,7 @@
     <br>
     <br>
     <br>
-    <div id="completedQuestDiv" style="margin: auto; width: 70%; color:red;"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
+    <div id="completedQuestDiv" class="success"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την νέα" %}
         {% trans "Υπόθεση Ασθενούς σας, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν αλλάξετε σελίδα!" %}
     </b></div>
 

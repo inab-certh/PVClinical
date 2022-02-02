@@ -718,8 +718,8 @@ button.close {
 }
 
 .time-study-info {
-    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
-	border-color: rgba(52, 152, 219, 0.88);
+    background-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/  /*#4d6f80;*/
+	border-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/
 }
 
 
@@ -937,4 +937,8 @@ iframe.social-iframe {
 
 .btn>span.hidden-xs, .btn>span.visible-lg {
 	color: white;
+}
+
+form.ma-form h1, .x_panel .x_title h1 {
+	font-size: 28px;
 }
