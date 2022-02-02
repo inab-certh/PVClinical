@@ -4,7 +4,8 @@ ul li::marker {
 p{
     font-size: 16px;
     font-weight: bold;
-    font-family: Arial;
+    /*font-family: Arial;*/
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     color: #535353;
     padding-top:10px;
 }
@@ -12,7 +13,8 @@ ul{
 class="form-inline"
     font-size: 14px;
     font-weight: bold;
-    font-family: Arial;
+    /*font-family: Arial;*/
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     color: #535353;
 }
 
@@ -24,7 +26,8 @@ class="form-inline"
 .quest_title{
         font-size: 18px;
         font-weight: bold;
-        font-family: Arial;
+        /*font-family: Arial;*/
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
         color: #535353;
         margin-bottom:20px;
     }
