@@ -134,7 +134,7 @@
 
                  <button style="height: 33px" class="glyphicon glyphicon-calendar" id="dateUpdate" data-target="#dateModal"></button>
                  <div style="display:none;" id="scenario_id">{{ scenario.id }}</div>
-                <div style="float: right">Total results: {{ results }}</div>
+                <div style="float: right; color: #2A3F54;">Total results: {{ results }}</div>
                 {% if records.items %}
                     <div class="tab-content">
 
@@ -284,7 +284,7 @@
                                                               </div>
                                                               <div class="modal-body">
                                                                 <textarea style="width: 100%; height: 300px; resize: none;" name='notes_{{ forloop.counter0 }}'
-                                                                  placeholder='{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}'>{{ rec.notes }}</textarea>
+                                                                  placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}">{% if rec.notes %}{{ rec.notes.content}} {% endif %}</textarea>
                                                               </div>
                                                               <div class="modal-footer">
                                                                 <button data-dismiss="modal" class="glyphicon glyphicon-ok lg closemod"></button>
