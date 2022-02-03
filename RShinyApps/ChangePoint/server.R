@@ -31,8 +31,8 @@ source( 'sourcedir.R')
 #**************************************************
 shinyServer(function(input, output, session) {
   
-  # cacheFolder<-"/var/www/html/openfda/media/"
-  cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
+  cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
   
   
   values<-reactiveValues(urlQuery=NULL)

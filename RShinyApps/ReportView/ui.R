@@ -79,26 +79,30 @@ rendert3 <- function() {
 
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-                  fluidRow(useShinyjs(),useShinyalert(),
-                           column(width=12, bsAlert("nodata_report")), id='alertrow'),
-                  fluidRow(useShinyjs(),
-                    column(width=3,
-                           # a(href='https://open.fda.gov/', 
-                           #   img(src='l_openFDA.png', align='bottom')),
-                           #renderDates()
-                    ),
-                  
-                    column(width=8, 
-                           titlePanel(
-                             textOutput("paneltitle"),
-                             "")) 
-                    , id='titlerow'),
-                  fluidRow(useShinyjs(),
-                           style="margin-bottom: 0.3rem; float: center;",
-                           column(width=2, dateInput("date1", "", value = '1989-6-30') ),
-                           column(width=1, uiOutput('toDate'),
-                                  style="margin-top: 2.45rem; text-align: center;"),
-                           column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                  # fluidRow(useShinyjs(),useShinyalert(),
+                  #          column(width=12, bsAlert("nodata_report")), id='alertrow'),
+                  # fluidRow(useShinyjs(),
+                  #   column(width=3,
+                  #          # a(href='https://open.fda.gov/',
+                  #          #   img(src='l_openFDA.png', align='bottom')),
+                  #          #renderDates()
+                  #   ),
+                  # 
+                  #   column(width=8,
+                  #          titlePanel(
+                  #            textOutput("paneltitle"),
+                  #            ""))
+                  #   , id='titlerow'),
+                  fluidRow(useShinyjs(), 
+                           style="margin-bottom: 0.3rem; float: center; margin-left: 0.3rem; width:68%",
+                           column(width=2, offset = 0, dateInput("date1", "", value = '1989-6-30'), style='padding:0px;' ),
+                           # dateInput("date1", "", value = '1989-6-30'),
+                           column(width=1, offset = 0, uiOutput('toDate'),
+                                  style="margin-top: 2.45rem; text-align: center; padding:0px;"),
+                           # dateInput("date1", "", value = '1989-6-30', width = 100),
+                           # uiOutput('toDate', width = 20),
+                           # dateInput("date2", "", value = Sys.Date(), width = 100),
+                           column(width=2, offset = 0, dateInput("date2", "", value = Sys.Date()), style='padding:0px;'),
                            
                   ),
                   
@@ -133,7 +137,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
     column(width=2, bsButton( 'prevrow', '< Previous', block=TRUE, style = 'primary') ),
     column(width=2, htmlOutput("ptext") ),
     column(width=4, 
-           strong( rendercurrec() ) ),
+            rendercurrec()  ),
     column(width=2, htmlOutput("ntext") ),
     column(width=2, bsButton( 'nextrow', 'Next >', block=TRUE, style = 'primary') )
     , id='navrow'),
