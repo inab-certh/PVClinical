@@ -299,6 +299,7 @@ $(function() {
     $("[name='drugs_fld']").trigger("change");
 
     var medDRA_tree = get_medDRA_tree();
+
     var refresh = true;
     $("#loaderOverlay").fadeIn();
     $("#medDRATree").jstree({
@@ -388,9 +389,8 @@ $(function() {
             drugs = data.drugs;
         }).fail(function () {
             drugs = [];
-        }).always(function () {
-            return drugs;
         });
+        return drugs;
     }
 
     function get_medDRA_tree() {
@@ -406,9 +406,8 @@ $(function() {
             medDRA_tree = data.medDRA_tree;
         }).fail(function () {
             medDRA_tree = [];
-        }).always(function () {
-            return medDRA_tree;
         });
+        return medDRA_tree;
     }
 
     function get_conditions_ids(conditions) {
@@ -436,9 +435,8 @@ $(function() {
             conds_nodes_ids = data.conds_nodes_ids;
         }).fail(function () {
             conds_nodes_ids = [];
-        }).always(function () {
-            return conds_nodes_ids;
         });
+        return conds_nodes_ids;
     }
 
     // Function to check leaves and open the whole paths to those leaves
