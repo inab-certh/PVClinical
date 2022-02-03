@@ -1275,7 +1275,8 @@ def save_pubmed_input(request):
         data = {
             'message': 'Success'
         }
-    except:
+    except Exception as e:
+        print(e)
         data = {
             'message': 'Failure'
         }

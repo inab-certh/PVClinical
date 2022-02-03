@@ -119,7 +119,14 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
               column(width=2, dateInput("date1", "", value = (Sys.Date()-365)) ),
               column(width=1, p("to"),
                      style="margin-top: 2.45rem; text-align: center;"),
-              column(width=2, dateInput("date2", "", value = Sys.Date()) ),),
+              column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+              column(id="xlsrow", width=2, style="float:right; margin-top: 1rem;",
+                     #                           # style="display:inline-block",
+                     #                           #     div(id="downloadExcelColumn",
+                     #                           #         textOutput("downloadDataLbl"))),
+                     #                           # div(style="display:inline-block; margin-left:20px;",
+                     downloadButton("dlprr2", textOutput("downloadBtnLbl"))),
+              ),
     # dateRangeInput(
     #   'daterange','',
     #   # uiOutput('UseReportsBetween'),
@@ -134,7 +141,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),fluidRow(
         uiOutput("PRRRORResults"),
         uiOutput("sourcePRRDataframe", style = "display:inline-block; margin-left:20px;"),
         wellPanel(
-          column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", textOutput("downloadBtnLbl1"))))),
+          # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr2", textOutput("downloadBtnLbl1"))))),
           style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
         ),
         withSpinner(dataTableOutput( 'prr2' ))
