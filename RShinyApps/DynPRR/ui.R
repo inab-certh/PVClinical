@@ -84,7 +84,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('PRROverTime'),
                             uiOutput("sourcePlotReport"),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(plotOutput_p( 'prrplot'))

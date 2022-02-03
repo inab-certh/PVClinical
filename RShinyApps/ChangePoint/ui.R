@@ -87,13 +87,20 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                            column(width=2, dateInput("date1", "", value ='1989-6-30') ),
                            column(width=1, p("to"),
                                   style="margin-top: 2.45rem; text-align: center;"),
-                           column(width=2, dateInput("date2", "", value = Sys.Date()) ),),
+                           column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                           column(id="xlsrow", width=2, style="float:right; margin-top: 1rem;",
+                                  #                           # style="display:inline-block",
+                                  #                           #     div(id="downloadExcelColumn",
+                                  #                           #         textOutput("downloadDataLbl"))),
+                                  #                           # div(style="display:inline-block; margin-left:20px;",
+                                  downloadButton("dlChangeinMeanAnalysis", textOutput("downloadBtnLbl"))),
+                           ),
 
       tabsetPanel(
                  tabPanel(uiOutput("ChangeinMeanAnalysis"), 
                           uiOutput("sourcePlotReport", style = "display:inline-block; margin-left:20px;"),
                           wellPanel(
-                            column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinMeanAnalysis", textOutput("downloadBtnLbl1"))))),
+                            # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlChangeinMeanAnalysis", textOutput("downloadBtnLbl1"))))),
                             
                             style="background-color:white;height:60px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                           ),
