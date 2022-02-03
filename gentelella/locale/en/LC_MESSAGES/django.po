@@ -680,7 +680,7 @@ msgid ""
 msgstr ""
 "The following questions are based on Liverpool algorithm for determining the "
 "likelihood of whether an adverse event is actually due to the medication, "
-"rather than the result of other factors."
+"rather than the result of other factors"
 
 #: app/templates/app/answers_detail.html:35
 msgid "Αναγνωριστικό ασθενούς"
@@ -700,8 +700,8 @@ msgid "Πατήστε για να δείτε το διάγραμμα ροής τ
 msgstr "Click to see the flowchart of Liverpool Algorithm"
 
 #: app/templates/app/answers_detail.html:63
-msgid "Διάγραμμα ροής"
-msgstr "Flowchart"
+msgid "Διάγραμμα απόφασης"
+msgstr "Decision diagram"
 
 #: app/templates/app/answers_detail.html:71
 msgid ""
@@ -842,7 +842,7 @@ msgid ""
 "στο σύστημα, ως προς την εμφάνιση κάποιας από τις διάφορες πιθανές "
 "καταστάσεις υγείας (ασθένεια, ανεπιθύμητη δράση, παρενέργεια κ.ο.κ.)."
 msgstr ""
-"Condition Occurrence </strong> functionality is an auxiliary tool for "
+"<strong>Condition Occurrence</strong> functionality is an auxiliary tool for "
 "obtaining an overview, concerning the distribution of the population, for "
 "whom relevant information is available in the system, to the various "
 "possible health conditions (illness, side effects, side effects, etc.)."
@@ -850,6 +850,7 @@ msgstr ""
 #: app/templates/app/condition_occurrence.html:43
 #: app/templates/app/ohdsi_workspace.html:107
 #: app/templatetags/custom_tags.py:65 app/views.py:1403
+#: app/views.py:809
 #: gentelella/settings.py:261
 msgid "Εκδήλωση Κατάστασης"
 msgstr "Condition Occurrence"
@@ -875,7 +876,7 @@ msgid ""
 "συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία στο σύστημα, "
 "ως προς την έκθεση του στα διάφορα φάρμακα."
 msgstr ""
-"Drug Exposure </strong> functionality is an auxiliary tool for obtaining an "
+"<strong>Drug Exposure</strong> functionality is an auxiliary tool for obtaining an "
 "overview, concerning the distribution of the population, for whom relevant "
 "information is available in the system, to their exposure to the various "
 "drugs."
@@ -883,6 +884,7 @@ msgstr ""
 #: app/templates/app/drug_exposure.html:43
 #: app/templates/app/ohdsi_workspace.html:89 app/templatetags/custom_tags.py:64
 #: app/views.py:1402 gentelella/settings.py:261
+#: app/views.py:787
 msgid "Έκθεση σε Φάρμακα"
 msgstr "Drug Exposure"
 
@@ -1380,8 +1382,8 @@ msgid "Επιλογή"
 msgstr "Choice"
 
 #: app/templates/app/new_pmcase.html:29 app/templates/app/new_pmcase.html:34
-msgid "Προσθήκη περίπτωσης ασθενούς"
-msgstr "Add new patient case"
+msgid "Προσθήκη Περίπτωσης Ασθενούς"
+msgstr "Add New Patient Case"
 
 #: app/templates/app/new_pmcase.html:36
 msgid ""
@@ -2018,14 +2020,6 @@ msgstr "Gender criterion:"
 #: app/views.py:699
 msgid "Δεν βρέθηκε χαρακτηρισμός πληθυσμού με το συγκεκριμένο αναγνωριστικο!"
 msgstr "No characterization analysis with the specific id found!"
-
-#: app/views.py:787
-msgid "Έκθεση σε φάρμακα"
-msgstr "Drug exposure"
-
-#: app/views.py:809
-msgid "Εκδήλωση κατάστασης"
-msgstr "Condition occurrence"
 
 #: app/views.py:844
 msgid ""

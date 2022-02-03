@@ -784,7 +784,7 @@ def drug_exposure(request):
 
     context = {
         "de_url": de_url,
-        "title": _("Έκθεση σε φάρμακα"),
+        "title": _("Έκθεση σε Φάρμακα"),
         "ohdsi_atlas": settings.OHDSI_ATLAS
     }
 
@@ -806,7 +806,7 @@ def condition_occurrence(request):
 
     context = {
         "co_url": co_url,
-        "title": _("Εκδήλωση κατάστασης")
+        "title": _("Εκδήλωση Κατάστασης")
     }
 
     return render(request, 'app/condition_occurrence.html', context)
