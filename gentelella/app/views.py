@@ -784,7 +784,7 @@ def drug_exposure(request):
 
     context = {
         "de_url": de_url,
-        "title": _("Έκθεση σε φάρμακα"),
+        "title": _("Έκθεση σε Φάρμακα"),
         "ohdsi_atlas": settings.OHDSI_ATLAS
     }
 
@@ -806,7 +806,7 @@ def condition_occurrence(request):
 
     context = {
         "co_url": co_url,
-        "title": _("Εκδήλωση κατάστασης")
+        "title": _("Εκδήλωση Κατάστασης")
     }
 
     return render(request, 'app/condition_occurrence.html', context)
@@ -1253,21 +1253,24 @@ def save_pubmed_input(request):
 
     scenario = Scenario.objects.get(id=scenario_id)
 
-    notes, created = Notes.objects.update_or_create(
-        content=request.GET.get('notes', None), user=user, scenario=scenario,
-        workspace=settings.WORKSPACES.get('PubMed'), wsview=title, note_datetime=datetime.datetime.now())
+    req_notes = request.GET.get("notes", None)
+    notes, _ = Notes.objects.update_or_create(user=user, scenario=scenario, workspace=settings.WORKSPACES.get("PubMed"),
+                                              wsview=title) if req_notes else (None, None)
 
     try:
         pm = PubMed.objects.get(scenario_id=scenario, user=user, pid=pid)
+        pm.notes = notes
         if relevance:
-            pm.notes = notes
             pm.relevance = relevance
-        else:
-            pm.notes = notes
     except PubMed.DoesNotExist:
         pm = PubMed(user=user, pid=pid, title=title, abstract=abstract, pubdate=pubdate, authors=authors,
                     url=url, relevance=relevance, notes=notes, scenario_id =scenario)
+
     try:
+        if notes:
+            notes.content = req_notes
+            notes.note_datetime = datetime.datetime.now()
+            notes.save()
         pm.save()
         data = {
             'message': 'Success'
@@ -3203,10 +3206,10 @@ def new_pmcase(request):
     # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
     #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
     #                    user=request.user)
-    form = PatientForm(user=request.user, label_suffix='')
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user, label_suffix='')
+
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
             case.user = tmp_user
@@ -3222,6 +3225,9 @@ def new_pmcase(request):
                 quest_btn_disable = False
             else:
                 quest_btn_disable = True
+
+    else:
+        form = PatientForm(user=request.user, label_suffix='')
 
 
     # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]
