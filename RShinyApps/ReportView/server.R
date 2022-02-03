@@ -122,7 +122,8 @@ shinyServer(function(input, output, session) {
   # })
   
   output$paneltitle <- renderText({
-    i18n()$t("Drug Adverse Event Report Browser")
+    i18n()$t("")
+    # i18n()$t("Drug Adverse Event Report Browser")
     })
   
   output$variablesmodal <- renderText({
@@ -600,7 +601,7 @@ output$reporttable <- renderTable({
       mydfheader[ , 'receivedate'] <- format(mydfheader[ , 'receivedate'], "%m/%d/%y") 
     }
     
-    Report <- c( 'First_Received', 'Most_Recent')
+    Report <- c( 'First Received', 'Most Recent')
     Dates <- c( mydfheader$receivedate, mydfheader$receiptdate)
     mydf_p <- data.frame(Report, Dates)
     mydf <- mydf_p
@@ -688,16 +689,16 @@ output$patienttable <- renderTable({
   
   Patient <- c('Gender', 'Age', 'Weight', 'Outcome')
   if ( is.null(mydfpatient$Weight)){
-    mydfpatient$Weight <- "UNKNOWN"
+    mydfpatient$Weight <- "Unknown"
   }
   if ( is.null(mydfpatient$Age)){
-    mydfpatient$Age <- "UNKNOWN"
+    mydfpatient$Age <- "Unknown"
   }
   if ( is.null(mydfpatient$Gender)){
-    mydfpatient$Gender <- "UNKNOWN"
+    mydfpatient$Gender <- "Unknown"
   }
   if ( is.null(myserious)){
-    myserious <- "UNKNOWN"
+    myserious <- "Unknown"
   }
   Description <- c(mydfpatient$Gender, mydfpatient$Age, mydfpatient$Weight, myserious)
   mydf_p <- data.frame(Patient, Description)

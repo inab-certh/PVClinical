@@ -42,8 +42,8 @@ source('sourcedir.R')
 
 shinyServer(function(input, output, session) {
   
-  # cacheFolder<-"/var/www/html/openfda/media/"
-  cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
+  cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/"
   
 
   values<-reactiveValues(urlQuery=NULL)
@@ -1081,7 +1081,7 @@ shinyServer(function(input, output, session) {
     # q$t1<-"A02BC01"
     # q$t2<-"10021015"
     # q$hash <- "ksjdhfksdhfhsk"
-    # q$concomitant<-FALSE
+    # q$concomitant<-TRUE
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateTextInput(session, "t1", value=q$term1)
     updateTextInput(session,"t2", value=q$term2)
