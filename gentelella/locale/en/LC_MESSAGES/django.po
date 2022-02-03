@@ -699,7 +699,7 @@ msgstr "Result"
 msgid "Πατήστε για να δείτε το διάγραμμα ροής του αλγορίθμου Liverpool"
 msgstr "Click to see the flowchart of Liverpool Algorithm"
 
-#: app/templates/app/answers_detail.html:63
+#: app/templates/app/answers_detail.html:65
 msgid "Διάγραμμα απόφασης"
 msgstr "Decision diagram"
 
