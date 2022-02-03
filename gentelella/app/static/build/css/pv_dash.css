@@ -605,6 +605,7 @@ iframe.modalIframe {
   padding-left: 1.5rem;
 }
 
+
 .custom-control-inline {
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -698,6 +699,8 @@ button.close {
 	}
 }
 
+
+
 .pathways-int-fld select {
 	margin: 0 1rem;
 	direction: ltr;
@@ -715,9 +718,10 @@ button.close {
 }
 
 .time-study-info {
-    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
-	border-color: rgba(52, 152, 219, 0.88);
+    background-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/  /*#4d6f80;*/
+	border-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/
 }
+
 
 .age_crit_info {
     background-color: rgba(75, 95, 113, 0.88);  /*#4d6f80;*/
@@ -814,6 +818,8 @@ button.close {
     box-sizing: border-box;
 }
 
+
+
 /*@media (min-width: 768px)*/
 /*.icon-bar {*/
 /*    position: fixed;*/
@@ -860,6 +866,7 @@ button.close {
 /*    white-space: nowrap;*/
 /*    overflow: hidden;*/
 /*}*/
+
 
 #notesTbl td {
 	vertical-align: middle;
@@ -985,6 +992,10 @@ input[type='checkbox']+span {
 
 .btn>span.hidden-xs, .btn>span.visible-lg {
 	color: white;
+}
+
+form.ma-form h1, .x_panel .x_title h1 {
+	font-size: 28px;
 }
 
 .bs-switch {

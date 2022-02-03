@@ -178,7 +178,7 @@ class Notes(models.Model):
     """ Notes for users for the various workspaces of a scenario
     """
     # content = HTMLField(blank=True, default="")
-    content = RichTextField(blank=True, default="")
+    content = RichTextField(blank=True, default="", null=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)

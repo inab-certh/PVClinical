@@ -2,7 +2,8 @@ body{
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
   color:#667!important;
   /*color:#73879C!important;
-  font-style: italic!important;*/
+  font-style: italic!important;
+  "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important*/
 }
 .popover{
   max-width: 100%!important;
@@ -19,6 +20,18 @@ body{
   font-size: 12px;
   opacity:1;
    width:500px!important;
+}
+
+.js-plotly-plot .plotly, .js-plotly-plot .plotly div {
+  font-family:"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
+}
+
+#safetyreportid-label {
+  font-weight: 100!important;
+}
+
+#currec{
+  font-size: 13px;
 }
 
 .action-button {
