@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -117,12 +118,26 @@ class OHDSIShot():
         driver = webdriver.Chrome(options=self.options)
         driver.get(url)
 
-        element = WebDriverWait(driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH,
-                                        "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]"
-                                        "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
-                                        "/*[name()='path' and @class='node'][1]")))
-        element.click()
+        outer_path = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.XPATH,
+                                            "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]"
+                                            "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
+                                            "/*[name()='path' and @class='node'][1]")))
+
+        inner_path = driver.find_element_by_xpath(
+            "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]"
+            "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
+            "/*[name()='path' and @class='node'][2]")
+
+        # Inner path size if inner path exists
+        ip_size = inner_path.size if inner_path else {"width": 0, "height": 0}
+        op_size = outer_path.size
+
+        actions = ActionChains(driver)
+        actions.move_to_element(outer_path)
+        actions.move_by_offset(op_size.get("width", 0)/2-1, 0)
+        actions.click()
+        actions.perform()
 
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, "//table[@class='pathway-results__detail-table table']")))
