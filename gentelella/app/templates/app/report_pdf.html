@@ -363,8 +363,37 @@
 
 <!--for combination of drug-condition-->
 
-{% for key1,val1 in dict1.items%}
-{% for key2,val2 in dict2.items%}
+<!-- if openFDA report selections non empty -->
+{% if empty_OpenFDA %}
+    <div style="padding-top:30px"></div>
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
+    <br>
+    <br>
+    <!-- If dict1 dict2 and dict3 are empty and only report notes are marked for report -->
+    {% if report_notes and not dict1 or dict2 or dict3 %}
+        {% for k,v in dict_hash_combination.items %}
+            {% if k == key1 %}
+                <br>
+                <br>
+                <div class="drug_event">{{v}}</div>
+                <br>
+                <br>
+                {% for hash,note in report_notes.items %}
+                    {% if hash == k %}
+                    <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+                    <br>
+                    <br>
+                    <div class="notes_content">{{note}}</div>
+                    <br>
+                    <br>
+                    {%endif%}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% for key1,val1 in dict1.items %}
+{% for key2,val2 in dict2.items %}
 
 {% if key1 == key2  %}
 
@@ -484,7 +513,7 @@
 {% endif %}
 {% endfor %}
 
-{% for key3,val3 in dict3.items%}
+{% for key3,val3 in dict3.items %}
 
 {% if key1 == key3  %}
 
@@ -622,6 +651,8 @@
         {% endfor %}
 
         {%endfor%}
+
+{% endif %}
 <!--End for combination of drug-condition-->
 
 <!--PubMed Workspace-->

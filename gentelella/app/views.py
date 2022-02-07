@@ -2703,7 +2703,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_qevents".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
             if changep_png:
-                dict3.setdefault(k, []).append('-Change in mean analysis ')
+                dict3.setdefault(k, []).append('- Change in mean analysis ')
                 dict3.setdefault(k, []).append(changep_png[0])
                 kin = kin + 1
                 dict3.setdefault(k, []).append("Figure {}".format(kin))
@@ -3070,7 +3070,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
     empty_OpenFDA = "no" if list(
-        filter(None, list(dict1.values()) + list(dict2.values()) + list(dict3.values()))) else ""
+        filter(None, list(dict1.values()) + list(dict2.values()) + list(dict3.values()) + list(report_notes.values()))
+    ) else ""
 
     context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
                "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,

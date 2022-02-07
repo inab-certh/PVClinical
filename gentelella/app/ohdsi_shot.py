@@ -124,18 +124,11 @@ class OHDSIShot():
                                             "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
                                             "/*[name()='path' and @class='node'][1]")))
 
-        inner_path = driver.find_element_by_xpath(
-            "//div[@class='pathway-results__plot-panel panel panel-primary']/div[2]"
-            "/sunburst/div/*[name()='svg']/*[name()='g']/*[name()='g']"
-            "/*[name()='path' and @class='node'][2]")
-
-        # Inner path size if inner path exists
-        ip_size = inner_path.size if inner_path else {"width": 0, "height": 0}
         op_size = outer_path.size
 
         actions = ActionChains(driver)
         actions.move_to_element(outer_path)
-        actions.move_by_offset(op_size.get("width", 0)/2-1, 0)
+        actions.move_by_offset(op_size.get("width", 0)/2, 0)
         actions.click()
         actions.perform()
 
