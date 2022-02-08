@@ -1743,6 +1743,9 @@ def final_report(request, scenario_id=None):
     :return: the form view
     """
 
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
+
     ir_table = ""
     ir_all = ""
     path_all = ""
@@ -1789,12 +1792,12 @@ def final_report(request, scenario_id=None):
 
     hashes = list(map(lambda dch: dch[2], drug_condition_hash))
 
-    if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
-        # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
-        del_resp = requests.delete("{}delete-media-files".format(
-            settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-            auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
-            params={"hashes": hashes})
+    # if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
+    # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
+    requests.delete("{}delete-media-files".format(
+        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        params={"hashes": hashes})
 
     user = sc.owner
 
@@ -2287,7 +2290,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     :param pub_notes: selected notes from pubmed
     :param extra_notes: last notes in final report
     :return: the form view
-     """
+    """
+
+    if not request.META.get('HTTP_REFERER'):
+        return forbidden_redirect(request)
 
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
