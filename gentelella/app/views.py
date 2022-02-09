@@ -2292,9 +2292,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     :return: the form view
     """
 
-    if not request.META.get('HTTP_REFERER'):
-        return forbidden_redirect(request)
-
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
     drugs_cohort_name = None

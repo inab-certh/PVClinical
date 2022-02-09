@@ -98,11 +98,17 @@ img {
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title col-xs-11" id="myModalLabel">Notes</h4>
+        <h4 class="modal-title col-xs-11" id="myModalLabel">{% trans "Σημειώσεις" %}</h4>
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
           <div class="modal-body">
-                <input type="checkbox" id="shiny_note" class="note_chkb" value="">&nbsp<label for="shiny_note" id="label_shiny_note"></label>
+              <div class="row">
+                  <input type="checkbox" id="shiny_note" class="note_chkb col-xs-1" value="">
+                  <label for="shiny_note" id="shiny_note_label"></label>
+                  <div id="cke_shiny_note_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
+                      <textarea readonly="readonly" id="taShinyNote{{ forloop.counter}}"></textarea>
+                  </div>
+              </div>
           </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -277,7 +283,13 @@ img {
             </div>
       <div class="modal-body">
         {% if ir_notes != '' %}
-            <input type="checkbox" id="irnote" value="">&nbsp; {{ ir_notes|striptags|safe }}<label for="irnote" id="label_ir_note"></label>
+          <div class="row">
+              <input type="checkbox" id="irnote" class="col-xs-1" value="">
+              <label for="irnote" id="label_ir_note"></label>
+              <div id="cke_irnote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
+                  <textarea readonly="readonly" id="taIrNote">{{ ir_notes|striptags|safe }}</textarea>
+              </div>
+          </div>
         {% else %}
            <b>There are no notes in this field yet.</b>
         {% endif %}
@@ -302,7 +314,13 @@ img {
             </div>
       <div class="modal-body">
             {% if char_notes != '' %}
-            <input type="checkbox" id="charnote" value="">&nbsp; {{ char_notes|striptags|safe }}<label for="charnote" id="label_char_note"></label>
+                <div class="row">
+                    <input type="checkbox" id="charnote" class="col-xs-1" value="">
+                    <label for="charnote" id="label_char_note"></label>
+                    <div id="cke_charnote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
+                        <textarea readonly="readonly" id="taCharNote">{{ char_notes|striptags|safe }}</textarea>
+                    </div>
+                </div>
             {% else %}
           <b>There are no notes in this field yet.</b>
             {% endif %}
@@ -326,8 +344,14 @@ img {
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-            {% if char_notes != '' %}
-            <input type="checkbox" id="pathwaysnote" value="">&nbsp; {{ pathways_notes|striptags|safe }}<label for="charnote" id="label_pathways_note"></label>
+            {% if pathways_notes != '' %}
+                <div class="row">
+                    <input type="checkbox" id="pathwaysnote" class="col-xs-1" value="">
+                    <label for="pathwaysnote" id="label_pathways_note"></label>
+                    <div id="cke_pathwaynote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
+                        <textarea readonly="readonly" id="taPathwayNote">{{ pathways_notes|striptags|safe }}</textarea>
+                    </div>
+                </div>
             {% else %}
           <b>There are no notes in this field yet.</b>
             {% endif %}

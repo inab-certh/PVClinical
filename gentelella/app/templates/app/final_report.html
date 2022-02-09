@@ -1,7 +1,7 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
 {% load static %}
-
+{% load custom_tags %}
 {% block title %} Final Report {% endblock title %}
 
 {% block stylesheets %}
@@ -12,18 +12,9 @@
 <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 
+<link href='{% static "build/css/final_report.css" %}' rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-.report{
-    max-width:950px;
-    width: 100%;
-    height: 50%;
-    border-style: solid;
-    border-width: thin;
-    padding: 30px;
-    margin:auto;
-    }
-</style>
+
 {% endblock stylesheets %}
 
 {% block content %}
@@ -106,7 +97,7 @@
                                                             <i class="fas fa-search-plus"></i></button><span> {% trans "Ρυθμός Επίπτωσης" %}</span></td>
                                                     {% endif %}
                                                     <td>
-                                                        <button class="btn btn-secondary" id="IrNotes" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}">
+                                                        <button class="btn btn-secondary" id="IrNotes" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}" {% if not ir_notes %}disabled{% endif %}>
                                                             <i class="fas fa-search-plus"></i>
                                                         </button><span> {% trans "Σημειώσεις" %}</span>
                                                     </td>
@@ -120,7 +111,7 @@
                                                             <i class="fas fa-search-plus"></i></button><span> {% trans "Χαρακτηρισμός Πληθυσμού" %}</span></td>
                                                     {% endif %}
                                                     <td>
-                                                        <button class="btn btn-secondary" id="CharNotes" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}">
+                                                        <button class="btn btn-secondary" id="CharNotes" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}" {% if not char_notes %}disabled{% endif %}>
                                                             <i class="fas fa-search-plus"></i>
                                                         </button><span> {% trans "Σημειώσεις" %}</span>
                                                     </td>
@@ -134,7 +125,7 @@
                                                         <i class="fas fa-search-plus"></i></button><span>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</span></td>
                                                   {% endif %}
                                                   <td>
-                                                     <button class="btn btn-secondary" id="PathwaysNotes" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}">
+                                                     <button class="btn btn-secondary" id="PathwaysNotes" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}" {% if not pathways_notes %}disabled{% endif %}>
                                                         <i class="fas fa-search-plus"></i>
                                                      </button><span> {% trans "Σημειώσεις" %}</span>
                                                   </td>
@@ -217,7 +208,7 @@
 
                                                       {%for key1,value1 in notes_openfda1.items%}
                                                           {% if key1 == k %}
-                                                            <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" ><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
+                                                            <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" {% if not value1 %}disabled{% endif %}><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
 
                                                           {% endif %}
                                                       {%endfor%}
@@ -285,7 +276,7 @@
                                                                     </tr>
                                                                     <tr>
                                                                         <td><strong>{% trans "Συντάκτες" %}</strong></td>
-                                                                        <td><em>{{ pub_obj.authors }}</em></td>
+                                                                        <td><em>{{ pub_obj.authors|discreet_authors }}</em></td>
                                                                     </tr>
                                                                      <tr>
                                                                         <td><strong>{% trans "Σύνδεσμος" %}</strong></td>
@@ -334,9 +325,15 @@
                                                                               <div class="modal-header">
                                                                                 <h4 class="modal-title col-xs-11">{% trans "Σημειώσεις δημοσίευσης από Mendeley" %}</h4>
                                                                                    <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                                                    </div>
+                                                                              </div>
                                                                               <div class="modal-body">
-                                                                                  <input type="checkbox" id="pubnote{{ forloop.counter}}" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}" data-objid="{{pub_obj.id}}"><span>{{ pub_obj.notes }}</span><label for="pubnote{{ forloop.counter}}" ></label>
+                                                                                  <div class="row">
+                                                                                  <input type="checkbox" id="pubnote{{ forloop.counter}}" class="col-xs-1" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}" data-objid="{{pub_obj.id}}">
+                                                                                  <label for="pubnote{{ forloop.counter}}"></label>
+                                                                                  <div id="cke_pubnote{{ forloop.counter}}_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
+                                                                                      <textarea readonly="readonly" id="taPubnote{{ forloop.counter}}">{{ pub_obj.notes.content }}</textarea>
+                                                                                  </div>
+                                                                                  </div>
                                                                               </div>
                                                                               <div class="modal-footer">
                                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>

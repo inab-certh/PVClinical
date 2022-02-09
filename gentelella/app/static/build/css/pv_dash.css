@@ -1059,7 +1059,7 @@ form.ma-form h1, .x_panel .x_title h1 {
 	-webkit-border-radius: 20px;
 	-moz-border-radius: 20px;
 	border-radius: 20px;
-	background-color: #2e9e89;
+	background-color: #2b5763; /*#2e9e89;*/
 	color: #fff;
 	/*content: "ON";*/
 	content: '\2713';

@@ -144,7 +144,7 @@ $(function(){
         note= $(this).data('note');
 
         $("#shinyModal_notes").val(note) ;
-        $("#label_shiny_note").text(note);
+        $("#cke_shiny_note_contents textarea").text(note);
     });
 
     $(".note_chkb").on("change", function(){
