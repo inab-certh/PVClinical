@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-13 17:37+0200\n"
+"POT-Creation-Date: 2022-02-11 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -191,51 +191,51 @@ msgstr ""
 "Maximum number of steps in a given pathway to be included in the sunburst "
 "plot."
 
-#: app/forms.py:384
+#: app/forms.py:382
 msgid "Αναγνωριστικό Ασθενούς:"
 msgstr "Patient Id"
 
-#: app/forms.py:395
+#: app/forms.py:399
 msgid ""
 "Τα πεδία που αφορούν το αναγνωριστικό ασθενούς και το συσχετιζόμενο σενάριο "
 "πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"
 msgstr ""
 "Both fields, patient id and respective scenarios, must be properly filled in"
 
-#: app/forms.py:403 app/forms.py:408 app/forms.py:413 app/forms.py:423
-#: app/forms.py:433 app/forms.py:439 app/forms.py:444 app/forms.py:449
-#: app/views.py:3332 app/views.py:3333 app/views.py:3334 app/views.py:3337
-#: app/views.py:3341 app/views.py:3342 app/views.py:3344 app/views.py:3346
+#: app/forms.py:407 app/forms.py:412 app/forms.py:417 app/forms.py:427
+#: app/forms.py:437 app/forms.py:442 app/forms.py:447 app/forms.py:452
+#: app/views.py:3358 app/views.py:3359 app/views.py:3360 app/views.py:3363
+#: app/views.py:3367 app/views.py:3368 app/views.py:3370 app/views.py:3372
 msgid "Ναί"
 msgstr "Yes"
 
-#: app/forms.py:403 app/forms.py:408 app/forms.py:413 app/forms.py:418
-#: app/forms.py:423 app/forms.py:433 app/forms.py:439 app/forms.py:444
-#: app/forms.py:449 app/views.py:3332 app/views.py:3333 app/views.py:3334
-#: app/views.py:3336 app/views.py:3337 app/views.py:3341 app/views.py:3342
-#: app/views.py:3344 app/views.py:3346
+#: app/forms.py:407 app/forms.py:412 app/forms.py:417 app/forms.py:422
+#: app/forms.py:427 app/forms.py:437 app/forms.py:442 app/forms.py:447
+#: app/forms.py:452 app/views.py:3358 app/views.py:3359 app/views.py:3360
+#: app/views.py:3362 app/views.py:3363 app/views.py:3367 app/views.py:3368
+#: app/views.py:3370 app/views.py:3372
 msgid "Όχι"
 msgstr "No"
 
-#: app/forms.py:405 app/views.py:3332
+#: app/forms.py:409 app/views.py:3358
 msgid "Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;"
 msgstr "Do you suspect an adverse drug reaction?"
 
-#: app/forms.py:410 app/views.py:3333
+#: app/forms.py:414 app/views.py:3359
 msgid ""
 "Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;"
 msgstr ""
 "Did the event appear after the drug was administered or dose increased?"
 
-#: app/forms.py:415 app/views.py:3334
+#: app/forms.py:419 app/views.py:3360
 msgid "Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;"
 msgstr "Were pre-existing symptoms exacerbated by the drug?"
 
-#: app/forms.py:418 app/views.py:3336
+#: app/forms.py:422 app/views.py:3362
 msgid "Ναί ή Μη προσδιορίσιμο"
 msgstr "Yes or Unassessable"
 
-#: app/forms.py:420 app/views.py:3335
+#: app/forms.py:424 app/views.py:3361
 msgid ""
 "Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η "
 "δόση;"
@@ -243,42 +243,42 @@ msgstr ""
 "Did the event improve (± treatment) when the drug was stopped or dose "
 "reduced?"
 
-#: app/forms.py:425 app/views.py:3337
+#: app/forms.py:429 app/views.py:3363
 msgid "Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"
 msgstr "Was the event associated with long-lasting disability or impairment?"
 
-#: app/forms.py:428 app/views.py:3339
+#: app/forms.py:432 app/views.py:3365
 msgid "Χαμηλή"
 msgstr "Low"
 
-#: app/forms.py:428 app/views.py:3339
+#: app/forms.py:432 app/views.py:3365
 msgid "Υψηλή ή Αβέβαιο"
 msgstr "High or Unsure"
 
-#: app/forms.py:430 app/views.py:3338
+#: app/forms.py:434 app/views.py:3364
 msgid "Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"
 msgstr ""
 "What is the probability that the event was due to an underlying disease?"
 
-#: app/forms.py:436 app/views.py:3340
+#: app/forms.py:439 app/views.py:3366
 msgid ""
 "Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού "
 "μηχανισμού ΑΔΦ;"
 msgstr ""
 "Is there any objective evidence supportive of the casual ADR mechanism?"
 
-#: app/forms.py:441 app/views.py:3342
+#: app/forms.py:444 app/views.py:3368
 msgid "Υπήρξε εκ νέου θετική επαναπρόκληση;"
 msgstr "Was there a positive rechallenge?"
 
-#: app/forms.py:446 app/views.py:3343
+#: app/forms.py:449 app/views.py:3369
 msgid ""
 "Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο "
 "ασθενή;"
 msgstr ""
 "Is there a past history of the same event with this drug in this patient?"
 
-#: app/forms.py:451 app/views.py:3345
+#: app/forms.py:454 app/views.py:3371
 msgid ""
 "Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το "
 "φάρμακο;"
@@ -394,7 +394,7 @@ msgid "Ανεπιθύμητες ενέργειες"
 msgstr "Adverse Events"
 
 #: app/templates/app/LiteratureWorkspace.html:146
-#: app/templates/app/index.html:36 app/templates/app/report_pdf.html:658
+#: app/templates/app/index.html:36 app/templates/app/report_pdf.html:674
 msgid "Τίτλος"
 msgstr "Title"
 
@@ -411,17 +411,22 @@ msgstr "Relevance"
 #: app/templates/app/characterizations.html:38
 #: app/templates/app/condition_occurrence.html:24
 #: app/templates/app/drug_exposure.html:23
-#: app/templates/app/final_report.html:111
-#: app/templates/app/final_report.html:125
-#: app/templates/app/final_report.html:139
-#: app/templates/app/final_report.html:205
-#: app/templates/app/final_report.html:262 app/templates/app/ir.html:37
-#: app/templates/app/pathways.html:38 app/templates/app/report_pdf.html:165
-#: app/templates/app/report_pdf.html:196 app/templates/app/report_pdf.html:382
-#: app/templates/app/report_pdf.html:503 app/templates/app/report_pdf.html:651
-#: app/templates/app/report_pdf.html:659 app/templates/app/sidebar.html:61
+#: app/templates/app/final_report.html:102
+#: app/templates/app/final_report.html:116
+#: app/templates/app/final_report.html:130
+#: app/templates/app/final_report.html:211
+#: app/templates/app/final_report.html:268 app/templates/app/ir.html:37
+#: app/templates/app/modals/shiny_modal.html:101
+#: app/templates/app/modals/shiny_modal.html:281
+#: app/templates/app/modals/shiny_modal.html:312
+#: app/templates/app/modals/shiny_modal.html:343
+#: app/templates/app/pathways.html:38 app/templates/app/report_pdf.html:166
+#: app/templates/app/report_pdf.html:196 app/templates/app/report_pdf.html:383
+#: app/templates/app/report_pdf.html:408 app/templates/app/report_pdf.html:521
+#: app/templates/app/report_pdf.html:667 app/templates/app/report_pdf.html:675
+#: app/templates/app/sidebar.html:61
 #: app/templates/app/social_media_workspace.html:23
-#: app/templatetags/custom_tags.py:73 app/views.py:1373
+#: app/templatetags/custom_tags.py:73 app/views.py:1380
 msgid "Σημειώσεις"
 msgstr "Notes"
 
@@ -431,7 +436,7 @@ msgstr "Notes"
 #: app/templates/app/form_base.html:96 app/templates/app/ir.html:164
 #: app/templates/app/new_pmcase.html:103 app/templates/app/notes.html:48
 #: app/templates/app/notes_aggregated.html:137
-#: app/templates/app/pathways.html:117 app/templates/app/questionnaire.html:56
+#: app/templates/app/pathways.html:117 app/templates/app/questionnaire.html:57
 msgid "Αποθήκευση"
 msgstr "Save"
 
@@ -456,35 +461,36 @@ msgstr "Date"
 msgid "Περισσότερες πληροφορίες"
 msgstr "Identifiers"
 
-#: app/templates/app/LiteratureWorkspace.html:397
-#: app/templates/app/LiteratureWorkspace.html:416
-#: app/templates/app/LiteratureWorkspace.html:437
-#: app/templates/app/LiteratureWorkspace.html:472
-#: app/templates/app/LiteratureWorkspace.html:494
-#: app/templates/app/LiteratureWorkspace.html:510
-#: app/templates/app/LiteratureWorkspace.html:531
-#: app/templates/app/LiteratureWorkspace.html:566
+#: app/templates/app/LiteratureWorkspace.html:403
+#: app/templates/app/LiteratureWorkspace.html:422
+#: app/templates/app/LiteratureWorkspace.html:443
+#: app/templates/app/LiteratureWorkspace.html:478
+#: app/templates/app/LiteratureWorkspace.html:500
+#: app/templates/app/LiteratureWorkspace.html:516
+#: app/templates/app/LiteratureWorkspace.html:537
+#: app/templates/app/LiteratureWorkspace.html:572
 msgid "Προηγούμενη"
 msgstr "Previous"
 
-#: app/templates/app/LiteratureWorkspace.html:409
-#: app/templates/app/LiteratureWorkspace.html:428
-#: app/templates/app/LiteratureWorkspace.html:449
-#: app/templates/app/LiteratureWorkspace.html:466
-#: app/templates/app/LiteratureWorkspace.html:478
-#: app/templates/app/LiteratureWorkspace.html:503
-#: app/templates/app/LiteratureWorkspace.html:522
-#: app/templates/app/LiteratureWorkspace.html:543
-#: app/templates/app/LiteratureWorkspace.html:560
-#: app/templates/app/LiteratureWorkspace.html:572
+#: app/templates/app/LiteratureWorkspace.html:415
+#: app/templates/app/LiteratureWorkspace.html:434
+#: app/templates/app/LiteratureWorkspace.html:455
+#: app/templates/app/LiteratureWorkspace.html:472
+#: app/templates/app/LiteratureWorkspace.html:484
+#: app/templates/app/LiteratureWorkspace.html:509
+#: app/templates/app/LiteratureWorkspace.html:528
+#: app/templates/app/LiteratureWorkspace.html:549
+#: app/templates/app/LiteratureWorkspace.html:566
+#: app/templates/app/LiteratureWorkspace.html:578
 msgid "Επόμενη"
 msgstr "Next"
 
-#: app/templates/app/LiteratureWorkspace.html:581
+#: app/templates/app/LiteratureWorkspace.html:587
 msgid "Δεν υπάρχουν αποτελέσματα"
 msgstr "No results"
 
 #: app/templates/app/OpenFDAWorkspace.html:37
+#: app/templates/app/final_report.html:160
 msgid "Συγχορηγούμενα"
 msgstr "Concomitant"
 
@@ -526,15 +532,15 @@ msgstr "LabelView"
 
 #: app/templates/app/OpenFDAWorkspace.html:159
 #: app/templates/app/OpenFDAWorkspace.html:227
-#: app/templates/app/final_report.html:185
-#: app/templates/app/report_pdf.html:431
+#: app/templates/app/final_report.html:191
+#: app/templates/app/report_pdf.html:452
 msgid "Δυναμικό PRR"
 msgstr "Dynamic PRR"
 
 #: app/templates/app/OpenFDAWorkspace.html:162
 #: app/templates/app/OpenFDAWorkspace.html:230
-#: app/templates/app/final_report.html:187
-#: app/templates/app/report_pdf.html:520
+#: app/templates/app/final_report.html:193
+#: app/templates/app/report_pdf.html:534
 msgid "Ανάλυση Αλλαγής Σημείου"
 msgstr "Change Point Analysis"
 
@@ -557,13 +563,6 @@ msgstr "Likelihood Rate Test"
 #: app/templates/app/OpenFDAWorkspace.html:240
 msgid "ντραγκενφορσβιοθ"
 msgstr "DrugEnforceView"
-
-#: app/templates/app/add_edit_scenario.html:35 app/templates/app/index.html:39
-#: app/templates/app/OpenFDAWorkspace.html:200
-#: app/templates/app/final_report.html:191
-#: app/templates/app/report_pdf.html:241
-msgid "Πίνακας Ελέγχου"
-msgstr "Dashboard"
 
 #: app/templates/app/add_edit_scenario.html:35 app/templates/app/index.html:39
 #: app/templates/app/notes_aggregated.html:65
@@ -634,7 +633,7 @@ msgstr ""
 "also edit a note, by selecting the 'Edit' button at the last column in each "
 "row of this table."
 
-#: app/templates/app/all_notes.html:36 app/templates/app/form_base.html:47
+#: app/templates/app/all_notes.html:37 app/templates/app/form_base.html:47
 #: app/templates/app/index.html:35
 #: app/templates/app/modals/parametric_modal.html:12
 #: app/templates/app/social_media_workspace.html:41
@@ -643,11 +642,9 @@ msgstr ""
 msgid "Σενάριο"
 msgstr "Scenario"
 
-#: app/templates/app/all_notes.html:38 app/templates/app/all_notes_OLD.html:37
-#: app/templates/app/index.html:38
-#: app/templates/app/all_notes.html:37 app/templates/app/index.html:38
+#: app/templates/app/all_notes.html:38 app/templates/app/index.html:38
 #: app/templates/app/patient_history.html:38
-#: app/templates/app/patient_management_workspace.html:39
+#: app/templates/app/patient_management_workspace.html:40
 msgid "Ημ/νία καταχώρισης"
 msgstr "Creation Date"
 
@@ -673,14 +670,14 @@ msgstr "Edit"
 msgid "Ανεξάρτητο Σεναρίου"
 msgstr "Scenario Independent"
 
-#: app/templates/app/answers_detail.html:29
+#: app/templates/app/answers_detail.html:30
 msgid ""
 "Δοθείσες απαντήσεις στο ερωτηματολόγιο του αλγορίθμου Liverpool και σχετικό "
 "αποτέλεσμα"
 msgstr ""
 "Answers given to the Liverpool algorithm questionnaire and relevant result"
 
-#: app/templates/app/answers_detail.html:30
+#: app/templates/app/answers_detail.html:31
 #: app/templates/app/questionnaire.html:29
 msgid ""
 "Οι ακόλουθες ερωτήσεις βασίζονται στον αλγόριθμο Liverpool, προκειμένου να "
@@ -691,20 +688,20 @@ msgstr ""
 "likelihood of whether an adverse event is actually due to the medication, "
 "rather than the result of other factors"
 
-#: app/templates/app/answers_detail.html:35
+#: app/templates/app/answers_detail.html:37
 msgid "Αναγνωριστικό ασθενούς"
 msgstr "Patient id"
 
-#: app/templates/app/answers_detail.html:36
+#: app/templates/app/answers_detail.html:38
 msgid "Συσχετιζόμενο σενάριο"
 msgstr "Associated scenario"
 
-#: app/templates/app/answers_detail.html:50
-#: app/templates/app/questionnaire.html:40
+#: app/templates/app/answers_detail.html:52
+#: app/templates/app/questionnaire.html:41
 msgid "Αποτέλεσμα"
 msgstr "Result"
 
-#: app/templates/app/answers_detail.html:59
+#: app/templates/app/answers_detail.html:61
 msgid "Πατήστε για να δείτε το διάγραμμα ροής του αλγορίθμου Liverpool"
 msgstr "Click to see the flowchart of Liverpool Algorithm"
 
@@ -712,16 +709,25 @@ msgstr "Click to see the flowchart of Liverpool Algorithm"
 msgid "Διάγραμμα απόφασης"
 msgstr "Decision diagram"
 
-#: app/templates/app/answers_detail.html:71
+#: app/templates/app/answers_detail.html:73
 msgid ""
 "Εργαλείο αξιολόγησης αιτιότητας ΑΕΦ με τη χρήση του αλγορίθμου Liverpool"
 msgstr "Liverpool ADR causality assessment tool"
 
-#: app/templates/app/answers_detail.html:85
-#: app/templates/app/final_report.html:306
-#: app/templates/app/final_report.html:327
+#: app/templates/app/answers_detail.html:87
+#: app/templates/app/final_report.html:312
+#: app/templates/app/final_report.html:339
 #: app/templates/app/modals/patient_management_modals.html:15
 #: app/templates/app/modals/patient_management_modals.html:53
+#: app/templates/app/modals/shiny_modal.html:86
+#: app/templates/app/modals/shiny_modal.html:114
+#: app/templates/app/modals/shiny_modal.html:160
+#: app/templates/app/modals/shiny_modal.html:208
+#: app/templates/app/modals/shiny_modal.html:246
+#: app/templates/app/modals/shiny_modal.html:266
+#: app/templates/app/modals/shiny_modal.html:298
+#: app/templates/app/modals/shiny_modal.html:329
+#: app/templates/app/modals/shiny_modal.html:360
 msgid "Κλείσιμο"
 msgstr "Close"
 
@@ -788,12 +794,12 @@ msgid "Cancel"
 msgstr "Ακύρωση"
 
 #: app/templates/app/base_site.html:262
-#: app/templates/app/patient_management_workspace.html:183
+#: app/templates/app/patient_management_workspace.html:189
 msgid "Επιτυχής διαγραφή!"
 msgstr "Successful Deletion"
 
 #: app/templates/app/base_site.html:277
-#: app/templates/app/patient_management_workspace.html:198
+#: app/templates/app/patient_management_workspace.html:204
 msgid "Αποτυχία διαγραφής!"
 msgstr "Deletion failure!"
 
@@ -858,9 +864,8 @@ msgstr ""
 
 #: app/templates/app/condition_occurrence.html:43
 #: app/templates/app/ohdsi_workspace.html:107
-#: app/templatetags/custom_tags.py:65 app/views.py:1403
-#: app/views.py:809
-#: gentelella/settings.py:261
+#: app/templatetags/custom_tags.py:65 app/views.py:809 app/views.py:1410
+#: gentelella/settings.py:276
 msgid "Εκδήλωση Κατάστασης"
 msgstr "Condition Occurrence"
 
@@ -885,38 +890,37 @@ msgid ""
 "συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία στο σύστημα, "
 "ως προς την έκθεση του στα διάφορα φάρμακα."
 msgstr ""
-"<strong>Drug Exposure</strong> functionality is an auxiliary tool for obtaining an "
-"overview, concerning the distribution of the population, for whom relevant "
-"information is available in the system, to their exposure to the various "
-"drugs."
+"<strong>Drug Exposure</strong> functionality is an auxiliary tool for "
+"obtaining an overview, concerning the distribution of the population, for "
+"whom relevant information is available in the system, to their exposure to "
+"the various drugs."
 
 #: app/templates/app/drug_exposure.html:43
 #: app/templates/app/ohdsi_workspace.html:89 app/templatetags/custom_tags.py:64
-#: app/views.py:1402 gentelella/settings.py:261
-#: app/views.py:787
+#: app/views.py:787 app/views.py:1409 gentelella/settings.py:276
 msgid "Έκθεση σε Φάρμακα"
 msgstr "Drug Exposure"
 
-#: app/templates/app/final_report.html:36
+#: app/templates/app/final_report.html:27
 msgid "Ανασκόπηση"
 msgstr "Review"
 
-#: app/templates/app/final_report.html:43
-#: app/templates/app/final_report.html:357
+#: app/templates/app/final_report.html:34
+#: app/templates/app/final_report.html:369
 msgid "Κάνε τη δική σου ανασκόπηση ακολουθώντας τα παρακάτω βήματα:"
 msgstr "Make your own review by following next steps:"
 
-#: app/templates/app/final_report.html:47
-#: app/templates/app/final_report.html:361
+#: app/templates/app/final_report.html:38
+#: app/templates/app/final_report.html:373
 msgid "Βήμα 1"
 msgstr "Step 1"
 
-#: app/templates/app/final_report.html:51
-#: app/templates/app/final_report.html:365
+#: app/templates/app/final_report.html:42
+#: app/templates/app/final_report.html:377
 msgid "Βήμα 2"
 msgstr "Step 2"
 
-#: app/templates/app/final_report.html:56
+#: app/templates/app/final_report.html:47
 msgid ""
 "Μπορείτε να επιλέξετε ποιες από τις παρακάτω πληροφορίες θέλετε να "
 "περιλαμβάνονται στη συνολική"
@@ -924,17 +928,17 @@ msgstr ""
 "You can choose which of the following information you want to be in the "
 "overall "
 
-#: app/templates/app/final_report.html:57
+#: app/templates/app/final_report.html:48
 msgid "αναφορά αυτού του σεναρίου."
 msgstr "report of this scenario."
 
-#: app/templates/app/final_report.html:58
+#: app/templates/app/final_report.html:49
 msgid ""
 "Κάντε κλικ στο κουμπί δίπλα από κάθε προβολή για να δείτε το περιεχόμενό της "
 "και ελέγξτε"
 msgstr "Click the button next to each view to see its content and choose"
 
-#: app/templates/app/final_report.html:59
+#: app/templates/app/final_report.html:50
 msgid ""
 "ποιες πληροφορίες θέλετε για την τελική σας αναφορά ,επιλέγοντας το "
 "αντίστοιχο πλαίσιο ελέγχου."
@@ -942,36 +946,36 @@ msgstr ""
 "any information you want for your final report, by checkingthe corresponding "
 "checkbox"
 
-#: app/templates/app/final_report.html:62
-#: app/templates/app/final_report.html:373
+#: app/templates/app/final_report.html:53
+#: app/templates/app/final_report.html:385
 msgid "Τώρα μπορείτε να επεξεργαστείτε την αναφορά σας και να συμπεριλάβετε"
 msgstr "Now you can edit your report and include "
 
-#: app/templates/app/final_report.html:63
-#: app/templates/app/final_report.html:374
+#: app/templates/app/final_report.html:54
+#: app/templates/app/final_report.html:386
 msgid "ορισμένες προσθήκες που  πιστεύετε ότι θα σας βοηθήσουν να ολοκληρώσετε"
 msgstr "some additions that you think will be helpful to complete"
 
-#: app/templates/app/final_report.html:64
-#: app/templates/app/final_report.html:375
+#: app/templates/app/final_report.html:55
+#: app/templates/app/final_report.html:387
 msgid "την προεπισκόπηση σας."
 msgstr "your review."
 
-#: app/templates/app/final_report.html:65
-#: app/templates/app/final_report.html:376
+#: app/templates/app/final_report.html:56
+#: app/templates/app/final_report.html:388
 msgid "Κάντε κλικ στο παρακάτω πλαίσιο για να γράψετε τα σχόλιά σας και να"
 msgstr "Click in frame bellow to write your comments and"
 
-#: app/templates/app/final_report.html:66
-#: app/templates/app/final_report.html:377
+#: app/templates/app/final_report.html:57
+#: app/templates/app/final_report.html:389
 msgid "αποθηκεύσετε επιπλέον κείμενο στην τελική σας έκθεση."
 msgstr " save some extra text in your final report."
 
-#: app/templates/app/final_report.html:70
+#: app/templates/app/final_report.html:61
 msgid "Βήμα 1: Κάντε τις επιλογές σας για κάθε χώρο εργασίας."
 msgstr "Step 1: Choose your options for every workspace."
 
-#: app/templates/app/final_report.html:93
+#: app/templates/app/final_report.html:84
 msgid ""
 "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας OHDSI που θέλετε να "
 "συμπεριλάβετε"
@@ -979,50 +983,50 @@ msgstr ""
 "Choose the piece of information you would like to include to the final "
 "report from OHDSI workspace"
 
-#: app/templates/app/final_report.html:103
-#: app/templates/app/final_report.html:106
+#: app/templates/app/final_report.html:94
+#: app/templates/app/final_report.html:97
 #: app/templates/app/ohdsi_workspace.html:54
 #: app/templates/app/ohdsi_workspace.html:127
-#: app/templates/app/report_pdf.html:77 app/templatetags/custom_tags.py:66
-#: app/views.py:1401 gentelella/settings.py:261
+#: app/templates/app/report_pdf.html:78 app/templatetags/custom_tags.py:66
+#: app/views.py:1408 gentelella/settings.py:276
 msgid "Ρυθμός Επίπτωσης"
 msgstr "Incidence Rate"
 
-#: app/templates/app/final_report.html:117
-#: app/templates/app/final_report.html:120
+#: app/templates/app/final_report.html:108
+#: app/templates/app/final_report.html:111
 #: app/templates/app/ohdsi_workspace.html:65
 #: app/templates/app/ohdsi_workspace.html:138
-#: app/templates/app/report_pdf.html:48 app/templatetags/custom_tags.py:67
-#: app/views.py:766 app/views.py:1401 gentelella/settings.py:262
+#: app/templates/app/report_pdf.html:49 app/templatetags/custom_tags.py:67
+#: app/views.py:766 app/views.py:1408 gentelella/settings.py:277
 msgid "Χαρακτηρισμός Πληθυσμού"
 msgstr "Cohort Characterization"
 
-#: app/templates/app/final_report.html:131
-#: app/templates/app/final_report.html:134
+#: app/templates/app/final_report.html:122
+#: app/templates/app/final_report.html:125
 #: app/templates/app/ohdsi_workspace.html:158
 #: app/templates/app/pathways.html:133 app/templatetags/custom_tags.py:68
-#: app/views.py:1402 gentelella/settings.py:262
+#: app/views.py:1409 gentelella/settings.py:277
 msgid "Μονοπάτι Ακολουθίας Συμβάντων"
 msgstr "Cohort Pathways"
 
-#: app/templates/app/final_report.html:154
+#: app/templates/app/final_report.html:145
 msgid "Αν θέλετε να συμπεριλάβετε κάτι από το OpenFDA στην αναφορά σας,"
 msgstr " If you want to include something from OpenFDA in your report,"
 
-#: app/templates/app/final_report.html:155
+#: app/templates/app/final_report.html:146
 msgid ""
 "επιλέξτε το πλαίσιο ελέγχου στην αριστερή πλευρά και ανοίξτε με το κουμπί"
 msgstr "check the checkbox in the left side and open the search button"
 
-#: app/templates/app/final_report.html:156
+#: app/templates/app/final_report.html:147
 msgid "αναζήτησης την κάθε περίπτωση, για να επιλέξετε ποιες πληροφορίες"
 msgstr "in every case to select which information"
 
-#: app/templates/app/final_report.html:157
+#: app/templates/app/final_report.html:148
 msgid "θέλετε από αυτόν τον χώρο εργασίας στην τελική σας αναφορά."
 msgstr "you want from this workspace in your final report."
 
-#: app/templates/app/final_report.html:158
+#: app/templates/app/final_report.html:149
 msgid ""
 " Αν θέλετε να συμπεριλάβετε πληροφορία από το OpenFDA περιβάλλον εργασίας\n"
 "                                        στην τελική σας αναφορά, πατήστε "
@@ -1039,57 +1043,57 @@ msgstr ""
 "your topics of interest, and select any of the individual elements shown \n"
 "inside each pop-up dialog"
 
-#: app/templates/app/final_report.html:181
-#: app/templates/app/report_pdf.html:212 app/templates/app/report_pdf.html:397
+#: app/templates/app/final_report.html:187
+#: app/templates/app/report_pdf.html:212 app/templates/app/report_pdf.html:418
 msgid "Γρήγορη Επισκόπηση"
 msgstr "Quick View"
 
-#: app/templates/app/final_report.html:191
+#: app/templates/app/final_report.html:197
 #: app/templates/app/report_pdf.html:242
 msgid "Πίνακας Ελέγχου"
 msgstr "Dashboard"
 
-#: app/templates/app/final_report.html:193
-#: app/templates/app/final_report.html:198
+#: app/templates/app/final_report.html:199
+#: app/templates/app/final_report.html:204
 #: app/templates/app/report_pdf.html:271 app/templates/app/report_pdf.html:288
 msgid "Λόγος Αναφορών"
 msgstr "Reporting Rates"
 
-#: app/templates/app/final_report.html:195
-#: app/templates/app/final_report.html:199
+#: app/templates/app/final_report.html:201
+#: app/templates/app/final_report.html:205
 #: app/templates/app/report_pdf.html:307 app/templates/app/report_pdf.html:336
 msgid "Έλεγχος Λόγου Πιθανοφανειών"
 msgstr "Likelihood Rate Test"
 
-#: app/templates/app/final_report.html:222
+#: app/templates/app/final_report.html:228
 msgid "Δεν υπάρχουν σχετικές πληροφορίες για το περιβάλλον εργασίας PubMed"
 msgstr "No relevant information available for PubMed workspace"
 
-#: app/templates/app/final_report.html:229
+#: app/templates/app/final_report.html:235
 msgid "Εάν επιλέξετε να συμπεριλάβετε "
 msgstr "If you choose to include "
 
-#: app/templates/app/final_report.html:230
+#: app/templates/app/final_report.html:236
 msgid "τον τίτλο ενός εγγράφου από το PubMed, προστίθενται αυτόματα και οι "
 msgstr "the title of a paper from PubMed, author and "
 
-#: app/templates/app/final_report.html:231
+#: app/templates/app/final_report.html:237
 msgid "πληροφορίες των συντακτων και του Ενιαίου Εντοπιστή Πόρων(URL) "
 msgstr "Unified Resource Locator (URL) information is automatically added "
 
-#: app/templates/app/final_report.html:232
+#: app/templates/app/final_report.html:238
 msgid " στην τελική αναφορά. Επίσης, οι σημειώσεις για το κάθε "
 msgstr "to the final report. Also, notes for each "
 
-#: app/templates/app/final_report.html:233
+#: app/templates/app/final_report.html:239
 msgid "έγγραφο εμφανίζονται στην τελική αναφορά, μόνο εάν έχετε συμπεριλάβει "
 msgstr "paper appear in the final report only if you have included "
 
-#: app/templates/app/final_report.html:234
+#: app/templates/app/final_report.html:240
 msgid "και τον τίτλο του εκάστοτε εγγράφου."
 msgstr "the title of each paper."
 
-#: app/templates/app/final_report.html:243
+#: app/templates/app/final_report.html:249
 msgid ""
 "Επιλέξτε τις πληροφορίες του περιβάλλοντος εργασίας PubMed που θέλετε να "
 "συμπεριλάβετε"
@@ -1097,38 +1101,38 @@ msgstr ""
 "Choose the piece of information you would like to include to the final "
 "report from PubMed workspace"
 
-#: app/templates/app/final_report.html:268
+#: app/templates/app/final_report.html:274
 msgid "Ημερομηνία δημοσίευσης"
 msgstr "Pubdate"
 
-#: app/templates/app/final_report.html:272
+#: app/templates/app/final_report.html:278
 msgid "Συντάκτες"
 msgstr "Authors"
 
-#: app/templates/app/final_report.html:276
+#: app/templates/app/final_report.html:282
 msgid "Σύνδεσμος"
 msgstr "Url link"
 
-#: app/templates/app/final_report.html:288
+#: app/templates/app/final_report.html:294
 msgid "Τίτλος δημοσίευσης από Mendeley"
 msgstr "Title of publication from Mendeley"
 
-#: app/templates/app/final_report.html:320
+#: app/templates/app/final_report.html:326
 msgid "Σημειώσεις δημοσίευσης από Mendeley"
 msgstr "Notes of publication from Mendeley"
 
-#: app/templates/app/final_report.html:352
+#: app/templates/app/final_report.html:364
 msgid ""
 "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα."
 msgstr "Proceed to step 2 to see the review's status until now"
 
-#: app/templates/app/final_report.html:381
+#: app/templates/app/final_report.html:393
 msgid ""
 "Βήμα 2: Επεξεργαστείτε και συμπληρώστε την προεπισκόπησή σας με τις "
 "τελευταίες προσθήκες"
 msgstr "Step 2: Edit and fill in your review with the last additions"
 
-#: app/templates/app/final_report.html:390
+#: app/templates/app/final_report.html:402
 msgid "Λήψη της τελικής αναφοράς"
 msgstr "Download your final report"
 
@@ -1386,9 +1390,43 @@ msgstr "Add Scenario"
 msgid "Ερωτηματολόγιο"
 msgstr "Questionnaire"
 
-#: app/templates/app/modals/shiny_modal.html:186
+#: app/templates/app/modals/shiny_modal.html:133
+#: app/templates/app/modals/shiny_modal.html:179
+#: app/templates/app/modals/shiny_modal.html:226
+#: app/templates/app/modals/shiny_modal.html:263
+msgid "Δεν υπάρχουν δεδομένα προς επιλογή!"
+msgstr "There is no data to select here!"
+
+#: app/templates/app/modals/shiny_modal.html:138
+msgid "Συμπερίληψη πίνακα"
+msgstr "Include table"
+
+#: app/templates/app/modals/shiny_modal.html:147
+msgid "Συμπερίληψη πίνακα και γραφήματος θερμικού χάρτη"
+msgstr "Include table with heatmap"
+
+#: app/templates/app/modals/shiny_modal.html:154
+#: app/templates/app/modals/shiny_modal.html:240
+msgid ""
+"Προέκυψε σφάλμα κατά τη δημιουργία προεπισκόπησης. Παρακαλούμε δοκιμάστε "
+"αργότερα!"
+msgstr ""
+"An error might have occurred during preview generation. Please try again "
+"later!"
+
+#: app/templates/app/modals/shiny_modal.html:192
 msgid "Επιλογή"
 msgstr "Choice"
+
+#: app/templates/app/modals/shiny_modal.html:233
+msgid "Συμπερίληψη πινάκων και γραφημάτων"
+msgstr "Include tables and charts"
+
+#: app/templates/app/modals/shiny_modal.html:294
+#: app/templates/app/modals/shiny_modal.html:325
+#: app/templates/app/modals/shiny_modal.html:356
+msgid "Δεν εντοπίστηκαν σχετικές σημειώσεις!"
+msgstr "Νo relevant notes found!"
 
 #: app/templates/app/new_pmcase.html:29 app/templates/app/new_pmcase.html:34
 msgid "Προσθήκη Περίπτωσης Ασθενούς"
@@ -1491,20 +1529,6 @@ msgstr "Quick View"
 msgid "Λεπτομερής Προβολή"
 msgstr "Detailed View"
 
-#: app/templates/app/ohdsi_workspace.html:54
-#: app/templates/app/ohdsi_workspace.html:127
-#: app/templatetags/custom_tags.py:50 app/views.py:1329
-#: gentelella/settings.py:278
-msgid "Ρυθμός Επίπτωσης"
-msgstr "Incidence Rate"
-
-#: app/templates/app/ohdsi_workspace.html:65
-#: app/templates/app/ohdsi_workspace.html:138
-#: app/templatetags/custom_tags.py:51 app/views.py:694 app/views.py:1329
-#: gentelella/settings.py:279
-msgid "Χαρακτηρισμός Πληθυσμού"
-msgstr "Cohort Characterization"
-
 #: app/templates/app/ohdsi_workspace.html:68
 #: app/templates/app/ohdsi_workspace.html:141
 msgid ""
@@ -1594,76 +1618,76 @@ msgstr "Patient cases reset"
 msgid "Προσθήκη νέας καταχώρισης ασθενούς"
 msgstr "Add new patient case"
 
-#: app/templates/app/questionnaire.html:33
+#: app/templates/app/questionnaire.html:34
 msgid "Ερωτήσεις"
 msgstr "Questions"
 
-#: app/templates/app/questionnaire.html:46
+#: app/templates/app/questionnaire.html:47
 msgid "Βέβαιο"
 msgstr "Definite"
 
-#: app/templates/app/questionnaire.html:47
+#: app/templates/app/questionnaire.html:48
 msgid "Πιθανό"
 msgstr "Probable"
 
-#: app/templates/app/questionnaire.html:48
+#: app/templates/app/questionnaire.html:49
 msgid "Ενδεχόμενο"
 msgstr "Possible"
 
-#: app/templates/app/questionnaire.html:49
+#: app/templates/app/questionnaire.html:50
 msgid "Απίθανο"
 msgstr "Unlikely"
 
-#: app/templates/app/report_pdf.html:23
+#: app/templates/app/report_pdf.html:24
 msgid "Επισκόπηση σεναρίου:"
 msgstr "Review of scenario:"
 
-#: app/templates/app/report_pdf.html:27
+#: app/templates/app/report_pdf.html:28
 msgid "Πληροφορίες Σύνταξης"
 msgstr "Authoring Information"
 
-#: app/templates/app/report_pdf.html:29
+#: app/templates/app/report_pdf.html:30
 msgid "Όνομα:"
 msgstr "First Name:"
 
-#: app/templates/app/report_pdf.html:32
+#: app/templates/app/report_pdf.html:33
 msgid "Επώνυμο:"
 msgstr "Last Name:"
 
-#: app/templates/app/report_pdf.html:35
+#: app/templates/app/report_pdf.html:36
 msgid "Ημερομηνία Έκδοσης:"
 msgstr "Date Issued:"
 
-#: app/templates/app/report_pdf.html:42 app/templatetags/custom_tags.py:70
+#: app/templates/app/report_pdf.html:43 app/templatetags/custom_tags.py:70
 msgid "Περιβάλλον Εργασίας OHDSI"
 msgstr "OHDSI Workspace"
 
-#: app/templates/app/report_pdf.html:62
+#: app/templates/app/report_pdf.html:63
 msgid "Σημειώσεις για Χαρακτηρισμό Πληθυσμού"
 msgstr "Notes for Cohort Characterization"
 
-#: app/templates/app/report_pdf.html:105
+#: app/templates/app/report_pdf.html:106
 msgid "Σημειώσεις για Ρυθμό Επίπτωσης"
 msgstr "Notes for Incidence Rate"
 
-#: app/templates/app/report_pdf.html:122
+#: app/templates/app/report_pdf.html:123
 msgid "Ανάλυση Μονοπατιού"
 msgstr "Pathway Analysis"
 
-#: app/templates/app/report_pdf.html:135
+#: app/templates/app/report_pdf.html:136
 msgid "Σημειώσεις για Ανάλυση Μονοπατιού"
 msgstr "Notes for Pathway Analysis"
 
-#: app/templates/app/report_pdf.html:152 app/templates/app/report_pdf.html:179
-#: app/templatetags/custom_tags.py:69
+#: app/templates/app/report_pdf.html:153 app/templates/app/report_pdf.html:180
+#: app/templates/app/report_pdf.html:369 app/templatetags/custom_tags.py:69
 msgid "Περιβάλλον Εργασίας OpenFDA"
 msgstr "OpenFDA Workspace"
 
-#: app/templates/app/report_pdf.html:223 app/templates/app/report_pdf.html:407
+#: app/templates/app/report_pdf.html:223 app/templates/app/report_pdf.html:428
 msgid "Ανάλυση μεταβολής μέσου"
 msgstr "Change in mean analysis"
 
-#: app/templates/app/report_pdf.html:231 app/templates/app/report_pdf.html:420
+#: app/templates/app/report_pdf.html:231 app/templates/app/report_pdf.html:441
 msgid "Αποτελέσματα PRR και ROR"
 msgstr "PRR and ROR results"
 
@@ -1675,93 +1699,98 @@ msgstr "Simulation Results for Event Based LRT"
 msgid "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων"
 msgstr "Simulation Results for Drug Based LRT"
 
-#: app/templates/app/report_pdf.html:409
+#: app/templates/app/report_pdf.html:430
 msgid ""
 "Η ανάλυση μεταβολής μέσου (change in mean analysis), υπολογίζει σημεία "
 "αλλαγής,\n"
-"                μόνο όταν αλλάζει η μέση τιμή (mean) των δεδομένων."
+"                            μόνο όταν αλλάζει η μέση τιμή (mean) των "
+"δεδομένων."
 msgstr ""
-"Change in variance analysis calculates change points for mean only changes."
+"Change in mean analysis, calculates change points, only when data mean "
+"changes occur."
 
-#: app/templates/app/report_pdf.html:441
+#: app/templates/app/report_pdf.html:462
 msgid "&#9432;"
 msgstr "&#9432;"
 
-#: app/templates/app/report_pdf.html:453
+#: app/templates/app/report_pdf.html:474
 msgid "Μηνιαίο και αθροιστικό πλήθος για συνδυασμό φαρμάκου-συμβάντος"
 msgstr "Monthly and cumulative counts for drug-event combination."
 
-#: app/templates/app/report_pdf.html:465
+#: app/templates/app/report_pdf.html:486
 msgid "Πίνακας συχνοτήτων για φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές"
 msgstr "Frequency table for drugs found in selected reports"
 
-#: app/templates/app/report_pdf.html:477
+#: app/templates/app/report_pdf.html:498
 msgid ""
 "Πίνακας συχνοτήτων για συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές"
 msgstr "Frequency table for events found in selected reports"
 
-#: app/templates/app/report_pdf.html:532
+#: app/templates/app/report_pdf.html:546
 msgid ""
 "Το σημείο αλλαγής (changepoint) είναι μια στιγμή στο χρόνο, όπου οι "
 "στατιστικές ιδιότητες πριν και μετά από αυτό\n"
-"                το σημείο διαφέρουν. Καθώς πολλές αλλαγές λαμβάνουν χώρα, "
-"αυθόρμητα, σε υπό ανάλυση δεδομένα και καθώς πολλές\n"
-"                στατιστικές μέθοδοι υποθέτουν ότι αλλαγές «δεν υφίστανται» "
-"στα δεδομένα, η ανάλυση change point έχει βαρύτητα\n"
-"                τόσο στην εφαρμοσμένη όσο και στη θεωρητική στατιστική.\n"
-"                H ανάλυση ChangePoint, υπολογίζει το βέλτιστο σημείο και "
-"δυνητικά τον αριθμό των σημείων αλλαγής στα υπό ανάλυση\n"
-"                δεδομένα."
+"                            το σημείο διαφέρουν. Καθώς πολλές αλλαγές "
+"λαμβάνουν χώρα, αυθόρμητα, σε υπό ανάλυση δεδομένα και καθώς πολλές\n"
+"                            στατιστικές μέθοδοι υποθέτουν ότι αλλαγές «δεν "
+"υφίστανται» στα δεδομένα, η ανάλυση change point έχει βαρύτητα\n"
+"                            τόσο στην εφαρμοσμένη όσο και στη θεωρητική "
+"στατιστική.\n"
+"                            H ανάλυση ChangePoint, υπολογίζει το βέλτιστο "
+"σημείο και δυνητικά τον αριθμό των σημείων αλλαγής στα υπό ανάλυση\n"
+"                            δεδομένα."
 msgstr ""
 "Changepoint is an instance in time where the statistical properties before "
 "and after this time point differ.\n"
 "            With potential changes naturally occurring in data and many "
 "statistical methods assuming a “no change” setup, changepoint analysis\n"
 "            is important in both applied and theoretical statistics."
-"ChangePoint Calculates the optimal positioning and (potentially) number of\n"
+"ChangePoint analysis, calculates the optimal positioning and (potentially) "
+"number of\n"
 "            changepoints of data."
 
-#: app/templates/app/report_pdf.html:552
+#: app/templates/app/report_pdf.html:566
 msgid ""
 "H ανάλυση μεταβολής διακύμανσης, υπολογίζει σημεία αλλαγής, μόνο όταν "
 "αλλάζει η διακύμανση (variance) των δεδομένων."
 msgstr ""
-"Change in variance analysis calculates change points for mean only changes."
+"Change in variance analysis calculates change points, only when data "
+"variance changes occur."
 
-#: app/templates/app/report_pdf.html:567
+#: app/templates/app/report_pdf.html:581
 msgid ""
 "Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), "
-"γίνεται η υπόθεση υπάρχει ένας άγνωστος\n"
-"                διαμερισμός μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε η "
-"μέση τιμή να είναι σταθερή σε κάθε μπλοκ.\n"
-"                Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση για μια "
-"κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε\n"
-"                κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ "
-"των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.\n"
-"                Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση της εκ των υστέρων "
-"μέσης τιμής.\n"
-"                Αντίθετα από μια συχνοτική ή αλγοριθμική προσέγγιση στο "
-"πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές\n"
-"                εντός των περιοχών και κανένα τμήμα δεν αναγνωρίζεται ως το "
-"καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις\n"
-"                της πιθανότητας ενός σημείου αλλαγής σε οποιαδήποτε δεδομένη "
-"τοποθεσία."
+"γίνεται η υπόθεση ότι υπάρχει ένας άγνωστος\n"
+"                            διαμερισμός μιας σειράς δεδομένων y σε μπλοκ "
+"έτσι ώστε η μέση τιμή να είναι σταθερή σε κάθε μπλοκ.\n"
+"                            Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση "
+"για μια κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε\n"
+"                            κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να "
+"διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.\n"
+"                            Το πρωτεύον αποτέλεσμα είναι μια εκτίμηση της εκ "
+"των υστέρων μέσης τιμής.\n"
+"                            Αντίθετα από μια συχνοτική ή αλγοριθμική "
+"προσέγγιση στο πρόβλημα, αυτές οι εκτιμήσεις δεν θα είναι σταθερές\n"
+"                            εντός των περιοχών και κανένα τμήμα δεν "
+"αναγνωρίζεται ως το καλύτερο. Εντούτοις, παρέχονται εκτιμήσεις\n"
+"                            της πιθανότητας ενός σημείου αλλαγής σε "
+"οποιαδήποτε δεδομένη τοποθεσία."
 msgstr ""
 "In Bayesian change point analysis it is assumed that there exists an unknown "
 "partition of a data series y into blocks such that the mean is constant "
-"within each block.In the multivariate case, a common change point structure "
+"within each block. In the multivariate case, a common change point structure "
 "is assumed; means are constant within each block of each sequence, but may "
-"differ across sequences within a given block.The primary result is an "
-"estimate of the posterior mean.Unlike a frequentist or algorithmic approach "
-"to the problem, these estimates will not be constant within regions, and "
-"nosingle partition is identified as best. Estimates of the probability of a "
+"differ across sequences within a given block. The primary result is an "
+"estimate of the posterior mean. Unlike a frequentist or algorithmic approach "
+"to the problem, these estimates will not be constant within regions, and no "
+"single partition is identified as best. Estimates of the probability of a "
 "change point at any given location are provided, however."
 
-#: app/templates/app/report_pdf.html:589
+#: app/templates/app/report_pdf.html:603
 msgid "Αναφορές φαρμάκων-συμβάντων ανά διάγραμμα ημερομηνίας."
 msgstr "Drug-event reports per date diagram."
 
-#: app/templates/app/report_pdf.html:602
+#: app/templates/app/report_pdf.html:616
 msgid ""
 "Πίνακας συχνοτήτων για τα φάρμακα που εντοπίζονται σε επιλεγμένες αναφορές. "
 "Το όνομα του φαρμάκου συνδέεται με τα αποτελέσματα PRR για συνδυασμούς "
@@ -1770,7 +1799,7 @@ msgstr ""
 "Frequency table for drugs found in selected reports. Drug name is linked to "
 "PRR results for drug-event combinations."
 
-#: app/templates/app/report_pdf.html:615
+#: app/templates/app/report_pdf.html:629
 msgid ""
 "Πίνακας συχνοτήτων για τα συμβάντα που εντοπίζονται σε επιλεγμένες αναφορές. "
 "Το όνομα του συμβάντος συνδέεται με τα αποτελέσματα PRR για συνδυασμούς "
@@ -1779,19 +1808,19 @@ msgstr ""
 "Frequency table for events found in selected reports. Event name is linked "
 "to PRR results for drug-event combinations."
 
-#: app/templates/app/report_pdf.html:631 app/templatetags/custom_tags.py:71
+#: app/templates/app/report_pdf.html:646 app/templatetags/custom_tags.py:71
 msgid "Περιβάλλον Εργασίας PubMed"
 msgstr "PubMed Workspace"
 
-#: app/templates/app/report_pdf.html:634
+#: app/templates/app/report_pdf.html:649
 msgid "Άρθρα σχετικά με το παρόν σενάριο"
 msgstr "Articles relevant to this scenario"
 
-#: app/templates/app/report_pdf.html:685
+#: app/templates/app/report_pdf.html:701
 msgid "Συγκεντρωτικές σημειώσεις για την αναφορά"
 msgstr "Aggregated notes for the report"
 
-#: app/templates/app/report_pdf.html:692
+#: app/templates/app/report_pdf.html:708
 msgid "Κρατήστε εδώ τις σημειώσεις σας..."
 msgstr "Place your notes here..."
 
@@ -1932,7 +1961,7 @@ msgstr "Password Reset"
 msgid "Διεύθυνση Αποστολής"
 msgstr "Send To"
 
-#: app/templatetags/custom_tags.py:45
+#: app/templatetags/custom_tags.py:61
 msgid "Αρχική Σελίδα"
 msgstr "Dashboard"
 
@@ -1948,7 +1977,7 @@ msgstr "New Patient Case"
 msgid "Συγκεντρωτικές Σημειώσεις"
 msgstr "Aggregated Notes"
 
-#: app/templatetags/custom_tags.py:77 app/views.py:3419
+#: app/templatetags/custom_tags.py:77 app/views.py:3445
 msgid "Περιβάλλον Εργασίας Μέσων Κοινωνικής Δικτύωσης"
 msgstr "Social Media Workspace"
 
@@ -1978,12 +2007,12 @@ msgstr ""
 "Entry data should only contain alphanumeric characters, spaces and dashes"
 
 #: app/views.py:369 app/views.py:575 app/views.py:732 app/views.py:863
-#: app/views.py:1353
+#: app/views.py:1360
 msgid "Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"
 msgstr "System update completed successfully!"
 
 #: app/views.py:376 app/views.py:599 app/views.py:744 app/views.py:873
-#: app/views.py:1359
+#: app/views.py:1366
 msgid ""
 "Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ "
 "προσπαθήστε ξανά!"
@@ -2062,7 +2091,7 @@ msgstr "Greek"
 msgid "Αγγλικά"
 msgstr "English"
 
-#: gentelella/settings.py:262
+#: gentelella/settings.py:277
 msgid "Μέσα Κοινωνικής Δικτύωσης"
 msgstr "Social Media"
 

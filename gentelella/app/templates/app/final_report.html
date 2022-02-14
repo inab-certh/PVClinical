@@ -471,85 +471,86 @@
         });
 
 
-    $("#closeIr").click(function() {
-        var scid={{scenario_open}};
-        var note_val="";
+    // $("#closeIr").click(function() {
+    //     var scid={{scenario_open}};
+    //     var note_val="";
+    //
+    //
+    //     $.ajax({
+    //             url: "/ajax/report_pdf",
+    //             data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+    //             "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+    //             "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+    //             "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+    //             "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+    //             "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+    //             "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
+    //             dataType: "html",
+    //             success: function (res) {
+    //
+    //               },
+    //           error: function (res) {
+    //             console.log("error "+res);
+    //           }
+    //     });
+    //
+    // });
 
+    // $("#closeChar").click(function() {
+    //     var scid={{scenario_open}};
+    //     var note_val="";
+    //
+    //
+    //     $.ajax({
+    //             url: "/ajax/report_pdf",
+    //             data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+    //             "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+    //             "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+    //             "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+    //             "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+    //             "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+    //             "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
+    //             dataType: "html",
+    //             success: function (res) {
+    //
+    //
+    //               },
+    //               error: function (res) {
+    //                 console.log("error "+res);
+    //             }
+    //     });
+    //
+    // });
 
-        $.ajax({
-                url: "/ajax/report_pdf",
-                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
-                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
-                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
-                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
-                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
-                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
-                dataType: "html",
-                success: function (res) {
-
-                  },
-              error: function (res) {
-                console.log("error "+res);
-              }
-        });
-
-    });
-    $("#closeChar").click(function() {
-        var scid={{scenario_open}};
-        var note_val="";
-
-
-        $.ajax({
-                url: "/ajax/report_pdf",
-                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
-                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
-                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
-                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
-                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
-                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
-                dataType: "html",
-                success: function (res) {
-
-
-                  },
-                  error: function (res) {
-                    console.log("error "+res);
-                }
-            });
-
-        });
-    $("#closePath").click(function() {
-        var scid={{scenario_open}};
-        var note_val="";
-
-
-        $.ajax({
-                url: "/ajax/report_pdf",
-                data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
-                "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
-                "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
-                "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
-                "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
-                "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
-                "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
-                dataType: "html",
-                success: function (res) {
-
-
-                  },
-                  error: function (res) {
-                    console.log("error "+res);
-                }
-            });
-
-        });
+    // $("#closePath").click(function() {
+    //     var scid={{scenario_open}};
+    //     var note_val="";
+    //
+    //
+    //     $.ajax({
+    //             url: "/ajax/report_pdf",
+    //             data: {"scenario_id": scid , "cp_all_rep": cp_all_rep, "charlson_table_rep": charlson_table_rep,
+    //             "gen_table_rep":gen_table_rep, "gen_chart_rep":gen_chart_rep,
+    //             "charlson_chart_rep":charlson_chart_rep, "demograph_table_rep": demograph_table_rep,
+    //             "demograph_chart_rep":demograph_chart_rep,"drug_table_rep":drug_table_rep,
+    //             "drug_chart_rep":drug_chart_rep,"pre_table_rep": pre_table_rep,"pre_chart_rep": pre_chart_rep,
+    //             "ir_table_rep": ir_table_rep,"ir_all_rep": ir_all_rep,"all_notes": JSON.stringify(all_notes),
+    //             "allPubTitles": JSON.stringify(allPubTitles), "allPubNotes": JSON.stringify(allPubNotes)},
+    //             dataType: "html",
+    //             success: function (res) {
+    //
+    //
+    //               },
+    //               error: function (res) {
+    //                 console.log("error "+res);
+    //             }
+    //     });
+    //
+    // });
 
     $("#proceed-report-btn, #resultBtn").click(function() {
         var scid={{scenario_open}};
         var note_val="";
-        // console.log(allPubNotes);
 
         $("#loaderOverlay").fadeIn();
 
@@ -589,8 +590,6 @@
 
         var extra_notes=$("#editFnote").val();
 
-        console.log(allPubTitles);
-        console.log(allPubNotes);
         var xhr = new XMLHttpRequest();
         var params = "scenario_id="+JSON.stringify(scid)+"&all_notes="+JSON.stringify(all_notes)+"&extra_notes="+JSON.stringify(extra_notes)+"&allPubTitles="+JSON.stringify(allPubTitles)+"&allPubNotes="+JSON.stringify(allPubNotes);
 
@@ -599,9 +598,22 @@
 
         xhr.onload = function(e) {
           if (this.status == 200) {
-            var blob = new Blob([this.response], {type: 'application/pdf'});
-            var fileURL = URL.createObjectURL(blob);
-            window.open(fileURL,'_blank');
+            // var blob = new Blob([this.response], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(this.response);
+            // window.open(fileURL,'_blank');
+            var downloadLink = document.createElement("a");
+            downloadLink.target="_blank"
+            downloadLink.href = fileURL;
+            downloadLink.download = "report.pdf";
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(function(){
+                // For Firefox it is necessary to delay revoking the ObjectURL
+                window.URL.revokeObjectURL(fileURL);
+            }, 100);
           }
         };
 
