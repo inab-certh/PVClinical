@@ -83,7 +83,7 @@ img {
             <iframe id="iframe_shiny" src="" width="750px" height="550" frameborder="0" allowtransparency="true"></iframe>
         </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
           </div>
         </div>
     </div>
@@ -111,7 +111,7 @@ img {
               </div>
           </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -130,12 +130,12 @@ img {
             </div>
       <div class="modal-body">
         {% if ir_generate == 'no' %}
-            <b>There is no data to select here!</b>
+            <b>{% trans "Δεν υπάρχουν δεδομένα προς επιλογή!" %}</b>
         {% endif %}
 
     {% if ir_generate == 'yes' %}
           {% if ir_table %}
-            <input type="checkbox" class="class_ir_table" id="ir_table" value=""> <label for="ir_table">&nbsp Include table</label>
+            <input type="checkbox" class="class_ir_table" id="ir_table" value=""> <label for="ir_table">&nbsp {% trans "Συμπερίληψη πίνακα" %}</label>
             <br>
             <br>
             <br>
@@ -144,20 +144,20 @@ img {
             <br>
           {% endif %}
           {% if ir_all %}
-            <input type="checkbox" class="class_ir_all" id="ir_all" value=""> <label for="ir_all">&nbsp Include table with heatmap</label>
+            <input type="checkbox" class="class_ir_all" id="ir_all" value=""> <label for="ir_all">&nbsp {%trans "Συμπερίληψη πίνακα και γραφήματος θερμικού χάρτη" %}</label>
               <br>
               <br>
               <br>
             <img src="{{ ir_all }}" width="97%">
           {% endif %}
           {% if ir_table is None and ir_all is None %}
-              <b>An error might have occurred during preview generation. Please try again later!</b>
+              <b>{% trans "Προέκυψε σφάλμα κατά τη δημιουργία προεπισκόπησης. Παρακαλούμε δοκιμάστε αργότερα!" %}</b>
           {% endif %}
     {% endif %}
 
       </div>
       <div class="modal-footer">
-        <button id="closeIr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closeIr" type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -176,7 +176,7 @@ img {
       <div class="modal-body">
 
 {% if char_generate == 'no' %}
-    <b>There is no data to select here!</b>
+    <b>{% trans "Δεν υπάρχουν δεδομένα προς επιλογή!" %}</b>
   {% endif %}
 
 {% if char_generate == 'yes' %}
@@ -205,7 +205,7 @@ img {
 
       </div>
       <div class="modal-footer">
-        <button id="closeChar" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closeChar" type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -223,27 +223,27 @@ img {
             </div>
       <div class="modal-body">
         {% if cp_generate == 'no' %}
-            <b>There is no data to select here!</b>
+            <b>{% trans "Δεν υπάρχουν δεδομένα προς επιλογή!" %}</b>
         {% endif %}
 
         {% if cp_generate == 'yes' %}
           {% if path_all %}
             <div class="checkbox_choices">
                 <label class="checkbox-inline">
-                <input type="checkbox" id="cp_all" value="">&nbsp Include tables and charts
+                <input type="checkbox" id="cp_all" value="">&nbsp {% trans "Συμπερίληψη πινάκων και γραφημάτων" %}
                 </label>
             </div>
             <br>
             <br>
             <img src="{{ path_all }}" width="97%">
           {% else %}
-            <b>An error might have occurred during preview generation. Please try again later!</b>
+            <b>{% trans "Προέκυψε σφάλμα κατά τη δημιουργία προεπισκόπησης. Παρακαλούμε δοκιμάστε αργότερα!" %}</b>
           {% endif %}
         {% endif %}
 
       </div>
       <div class="modal-footer">
-        <button id="closePath" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closePath" type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -260,10 +260,10 @@ img {
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
-          <b>There is no data to select here!</b>
+          <b>{% trans "Δεν υπάρχουν δεδομένα προς επιλογή!" %}</b>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -278,7 +278,7 @@ img {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title col-xs-11" id="ohdsi_ir_Label">Notes</h4>
+        <h4 class="modal-title col-xs-11" id="ohdsi_ir_Label">{% trans "Σημειώσεις" %}</h4>
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
@@ -291,11 +291,11 @@ img {
               </div>
           </div>
         {% else %}
-           <b>There are no notes in this field yet.</b>
+           <b>{% trans "Δεν εντοπίστηκαν σχετικές σημειώσεις!" %}</b>
         {% endif %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -309,7 +309,7 @@ img {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title col-xs-11" id="ohdsi_char_Label">Notes</h4>
+        <h4 class="modal-title col-xs-11" id="ohdsi_char_Label">{% trans "Σημειώσεις" %}</h4>
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
@@ -322,11 +322,11 @@ img {
                     </div>
                 </div>
             {% else %}
-          <b>There are no notes in this field yet.</b>
+          <b>{% trans "Δεν εντοπίστηκαν σχετικές σημειώσεις!" %}</b>
             {% endif %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -340,7 +340,7 @@ img {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title col-xs-11" id="ohdsi_pathways_Label">Notes</h4>
+        <h4 class="modal-title col-xs-11" id="ohdsi_pathways_Label">{% trans "Σημειώσεις" %}</h4>
            <button type="button" class="close col-xs-12" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
       <div class="modal-body">
@@ -353,11 +353,11 @@ img {
                     </div>
                 </div>
             {% else %}
-          <b>There are no notes in this field yet.</b>
+          <b>{% trans "Δεν εντοπίστηκαν σχετικές σημειώσεις!" %}</b>
             {% endif %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Κλείσιμο" %}</button>
       </div>
     </div>
     <!-- /.modal-content -->

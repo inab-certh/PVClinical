@@ -37,6 +37,7 @@ from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
+from django.utils import translation
 from django.urls import reverse
 
 from app import ohdsi_wrappers
@@ -2292,6 +2293,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     :return: the form view
     """
 
+    print("First: ", translation.get_language())
+
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
     drugs_cohort_name = None
@@ -3072,9 +3075,15 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             lin = lin + 1
             dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
-    empty_OpenFDA = "no" if list(
-        filter(None, list(dict1.values()) + list(dict2.values()) + list(dict3.values()) + list(report_notes.values()))
-    ) else ""
+    print("Dict1: ", list(dict1.values()))
+    print("Dict2: ", list(dict2.values()))
+    print("Dict3: ", list(dict3.values()))
+    print("Rnotes: ", list(report_notes.values()))
+
+    dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
+    lst_of_all = dicts123_vals + list(report_notes.values())
+    empty_dicts123 = False if any(el != '' for el in chain.from_iterable(dicts123_vals)) else True
+    empty_OpenFDA = False if any(el!='' for el in chain.from_iterable(lst_of_all)) else True
 
     context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
                "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
@@ -3085,7 +3094,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
                "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
-               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs}
+               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs, "empty_dicts123": empty_dicts123}
                # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
                # "pub_dict_urls": pub_dict_urls}
 
@@ -3113,6 +3122,7 @@ def print_report(request, scenario_id=None):
     #     extra_notes = "empty"
 
     cookies_dict = request.COOKIES
+    # print(cookies_dict)
 
     options = {
         'cookie': [
@@ -3128,15 +3138,18 @@ def print_report(request, scenario_id=None):
 
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
+
+    print(translation.get_language())
     url = "{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
                                                           report_notes or "-", extra_notes or "-",
                                                           pub_titles or "-", pub_notes or "-")
 
     resp = requests.get(url, cookies=cookies_dict)
+
     pdfkit.from_url(resp.url, file_path, options=options)
 
     try:
-        return FileResponse(open(file_path, 'rb'), content_type='application/pdf', as_attachment=True)
+        return FileResponse(open(file_path, "rb"), content_type="application/pdf", as_attachment=True)
     except FileNotFoundError:
         raise Http404()
 

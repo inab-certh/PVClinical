@@ -196,8 +196,8 @@ class IRForm(forms.Form):
                                  widget=forms.Select)
 
 
-    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
-    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
                                         initial=[],

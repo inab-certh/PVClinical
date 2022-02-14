@@ -147,7 +147,7 @@
 <!--OHDSI WORKSPACE END-->
 
 
-{% if empty_OpenFDA == '' and report_notes|hexdigest_in_dict %}
+{% if empty_OpenFDA == True and report_notes|hexdigest_in_dict %}
     <div style="padding-top:30px"></div>
 
     <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
@@ -175,7 +175,7 @@
 {% endif %}
 
 <!--For drug or condition only-->
-{% if empty_OpenFDA and dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre  %}
+{% if empty_OpenFDA == False and dict_quickview or dashboard_png or dict_dash_csv or dict_rr_d or dict_lr or dict_rr_e or dict_lre  %}
     <div style="padding-top:30px"></div>
     <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
     <br>
@@ -364,15 +364,18 @@
 <!--for combination of drug-condition-->
 
 <!-- if openFDA report selections non empty -->
-{% if empty_OpenFDA %}
-    <div style="padding-top:30px"></div>
-    <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDA" %}</div>
-    <br>
-    <br>
+{% if not empty_OpenFDA %}
+    RNotes: {{report_notes|length}}
+        Dict1: {{dict1|length}}
+        Dict2: {{dict2|length}}
+        Dict2: {{dict3|length}}
+        <div style="padding-top:30px"></div>
+        <div class="workspace">{% trans "Περιβάλλον Εργασίας OpenFDAsssssssss" %}</div>
+        <br>
+        <br>
     <!-- If dict1 dict2 and dict3 are empty and only report notes are marked for report -->
-    {% if report_notes and not dict1 or dict2 or dict3 %}
+    {% if empty_dicts123  %}
         {% for k,v in dict_hash_combination.items %}
-            {% if k == key1 %}
                 <br>
                 <br>
                 <div class="drug_event">{{v}}</div>
@@ -388,7 +391,6 @@
                     <br>
                     {%endif%}
                 {% endfor %}
-            {% endif %}
         {% endfor %}
     {% endif %}
 
@@ -578,7 +580,7 @@
                         <br>
                         <subt>{{val3.8}}{{val3.6|safe}}</subt>
                         <br>
-                        <div class="details">&#9432; {% blocktrans %}Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), γίνεται η υπόθεση υπάρχει ένας άγνωστος
+                        <div class="details">&#9432; {% blocktrans %}Στην Μπεϋζιανή ανάλυση σημείου αλλαγής (Bayesian change point analysis), γίνεται η υπόθεση ότι υπάρχει ένας άγνωστος
                             διαμερισμός μιας σειράς δεδομένων y σε μπλοκ έτσι ώστε η μέση τιμή να είναι σταθερή σε κάθε μπλοκ.
                             Στην πολυμεταβλητή περίπτωση, γίνεται η υπόθεση για μια κοινή δομή σημείου αλλαγής, οι μέσες τιμές είναι σταθερές σε
                             κάθε μπλοκ κάθε ακολουθίας, αλλά μπορεί να διαφέρουν μεταξύ των ακολουθιών μέσα σε ένα δεδομένο μπλοκ.
