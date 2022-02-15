@@ -307,7 +307,6 @@ def get_updated_scenarios_ids(request):
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def index(request):
-    # print(request.META.get('HTTP_REFERER'))
 
     scenarios = []
     for sc in Scenario.objects.filter(owner=request.user).order_by('-timestamp').all():
@@ -953,8 +952,6 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
     else:
         query = all_combs[0]
 
-    # print(all_combs)
-
     scenario = {"id": scenario_id,
                 "drugs": drugs,
                 "conditions": conditions,
@@ -984,7 +981,6 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
         try:
 
             # access_token = mend_cookies[0].value
-            # print(access_token)
             access_token = mend_cookies[0]
 
             if page_id == None:
@@ -1007,8 +1003,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                 if results != {}:
                     records.update(results[0])
                     total_results = total_results + results[1]
-                # print(results[1])
-                # print(records)
+
             else:
 
                 start = 10*page_id - 10
@@ -1063,7 +1058,6 @@ def is_logged_in(request):
         user = request.user
         social = user.social_auth.get(provider='mendeley-oauth2')
         cookie_list = [social.extra_data['access_token']]
-        # print(cookie_list)
         restoken = requests.get(
             'https://api.mendeley.com/files',
             headers={'Authorization': 'Bearer {}'.format(cookie_list[0]),
@@ -1873,7 +1867,7 @@ def final_report(request, scenario_id=None):
         cp_id = None
 
     try:
-        files = glob.glob(os.path.join(ohdsi_tmp_img_path, '*.png'))
+        files = glob.glob(os.path.join(ohdsi_tmp_img_path, "*_{}_{}.png".format(sc.owner_id, sc.id)))
         for f in files:
             os.remove(f)
     except:
@@ -1927,8 +1921,8 @@ def final_report(request, scenario_id=None):
     ir_table = None
     ir_all = None
 
-    from time import time
-    start = time()
+    # from time import time
+    # start = time()
 
     # Prepare lists for threading functions, parameters and results
     threads_funcs = []
@@ -2236,8 +2230,7 @@ def final_report(request, scenario_id=None):
             except (requests.ConnectTimeout, TimeoutException):
                 pass
 
-    end = time()
-    # print(f'OHDSI shots took {end - start} seconds!')
+    # end = time()
 
     cc_shots_labels = {"pre_table": "All prevalence covariates table",
                        "pre_chart": "All prevalence covariates chart",
@@ -2293,12 +2286,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     :return: the form view
     """
 
-    print("First: ", translation.get_language())
-
     scenario_id = scenario_id or request.GET.get("scenario_id", None)
     sc = Scenario.objects.get(id=scenario_id)
-    drugs_cohort_name = None
-    conditions_cohort_name = None
+
     sc_drugs = sc.drugs.all()
     sc_conditions = sc.conditions.all()
 
@@ -2365,34 +2355,13 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_titles = "" if pub_titles == "-" else pub_titles
     pub_notes = "" if pub_notes == "-" else pub_notes
 
-    # pub_value = list(pub_titles.values())
-    # PubObj = namedtuple("PubObj", ["title", "notes"])
-    # pub_objs = [PubObj(po.title, po.notes, po.authors, po.pubdate if po.id in pub_notes.values() else "") for po
-    #             in PubMed.objects.filter(id__in=pub_titles.values())]
+
 
     pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
     pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
-    # pub_zero_notes = pub_objs.exclude(id__in=pub_notes.values())
-    # for po in pub_objs:
-    #     if po.notes not in
+
 
     pub_exist = len(pub_tobjs) + len(pub_nobjs)
-    # for i in pub_value:
-    #     if i != '' and i != "''":
-    #         pub_exist = 1
-    #
-    # pub_dict_authors = {}
-    # pub_dict_urls = {}
-    # n = 0
-    # print(pub_titles)
-    # for i in pub_value:
-    #     if i != '' and i != "''":
-    #         n = n+1
-    #         pub_obj = PubMed.objects.filter(scenario_id=scenario_id, title=i, relevance=True)
-    #         pub_dict_authors['{}'.format(n)] = list(map(lambda el: el.authors, pub_obj))
-    #         pub_dict_urls['{}'.format(n)] = list(map(lambda el: el.url, pub_obj))
-    #         print(pub_dict_authors)
-    #         print(pub_dict_urls)
 
     if char_id != None:
         response = requests.get('{}/cohort-characterization/{}/generation'.format(settings.OHDSI_ENDPOINT, char_id))
@@ -2413,107 +2382,93 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     cp_dict = {}
     ind = 0
 
-    image_print = []
-
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
         os.mkdir(ohdsi_tmp_img_path, mode=0o700)
     except FileExistsError as e:
         pass
     # print_intro = "/static/images/ohdsi_img_print/"
-
     image_print = os.listdir(ohdsi_tmp_img_path)
 
     if cp_all_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "pw_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "pw_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif cp_all_rep == "0" and "pw_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pw_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if ir_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "irtable_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "irtable_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif ir_table_rep == "0" and "irtable_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irtable_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if ir_all_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "irall_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "irall_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif ir_all_rep == "0" and "irall_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*irall_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if pre_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "pre_table_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "pre_table_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif pre_table_rep == "0" and "pre_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if pre_chart_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif pre_chart_rep == "0" and "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*pre_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if drug_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "drug_table_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "drug_table_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif drug_table_rep == "0" and "drug_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if drug_chart_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif drug_chart_rep == "0" and "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*drug_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if demograph_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif demograph_table_rep == "0" and "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if demograph_chart_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif demograph_chart_rep == "0" and "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if charlson_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif charlson_table_rep == "0" and "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if charlson_chart_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif charlson_chart_rep == "0" and "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if gen_table_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "gen_table_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "gen_table_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif gen_table_rep == "0" and "gen_table_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_table_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
     if gen_chart_rep == "1":
-        printPath = shutil.copy(os.path.join(img_path, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id)),
-                                ohdsi_tmp_img_path)
+        shutil.copy(os.path.join(img_path, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id)), ohdsi_tmp_img_path)
     elif gen_chart_rep == "0" and "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) in image_print:
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
+
+    image_print = os.listdir(ohdsi_tmp_img_path)
 
     for i in image_print:
         ind = ind + 1
@@ -3075,11 +3030,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             lin = lin + 1
             dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
 
-    print("Dict1: ", list(dict1.values()))
-    print("Dict2: ", list(dict2.values()))
-    print("Dict3: ", list(dict3.values()))
-    print("Rnotes: ", list(report_notes.values()))
-
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
     lst_of_all = dicts123_vals + list(report_notes.values())
     empty_dicts123 = False if any(el != '' for el in chain.from_iterable(dicts123_vals)) else True
@@ -3122,24 +3072,23 @@ def print_report(request, scenario_id=None):
     #     extra_notes = "empty"
 
     cookies_dict = request.COOKIES
-    # print(cookies_dict)
 
     options = {
-        'cookie': [
-            ('csrftoken', cookies_dict['csrftoken']),
-            ('sessionid', cookies_dict['sessionid']),
+        "cookie": [
+            ("csrftoken", cookies_dict.get("csrftoken")),
+            ("sessionid", cookies_dict.get("sessionid")),
+            ("django_language", cookies_dict.get("django_language")),
         ],
-        'page-size': 'A4',
-        'encoding': 'UTF-8',
-        'footer-right': '[page]',
-        'enable-local-file-access': None,
+        "page-size": "A4",
+        "encoding": "UTF-8",
+        "footer-right": "[page]",
+        "enable-local-file-access": None,
         # 'disable-smart-shrinking': None,
     }
 
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
 
-    print(translation.get_language())
     url = "{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
                                                           report_notes or "-", extra_notes or "-",
                                                           pub_titles or "-", pub_notes or "-")
@@ -3216,25 +3165,9 @@ def new_pmcase(request):
     patient_id = request.GET.get("patient_id", None)
     sc_id = request.GET.get("sc_id", None)
 
-    # new_scen_id = request.session.get('new_scen_id') \
-    #     if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER')\
-    #     else None
-
-    # new_scen_id_no = 'None'
-    #
-    # if new_scen_id != None and sc_id == None:
-    #     sc_id = new_scen_id
-    #     new_scen_id_no = new_scen_id
-
     tmp_user = User.objects.get(username=request.user)
 
-    # instance = PatientCase
-
     quest_btn_disable = True
-
-    # form = PatientForm(initial={"patient_id": patient_id, "scenarios": Scenario.objects.filter(id=sc_id).first(),
-    #                             "questionnaires": Questionnaire.objects.filter(id=quest_id).first()},
-    #                    user=request.user)
 
     if request.method == "POST":
         form = PatientForm(request.POST, user=request.user, label_suffix='')
@@ -3257,19 +3190,6 @@ def new_pmcase(request):
 
     else:
         form = PatientForm(user=request.user, label_suffix='')
-
-
-    # scenarios = Scenario.objects.filter(owner=request.user).order_by("-timestamp").all() #[]
-    # for sc in Scenario.objects.order_by('-timestamp').all():
-    #     scenarios.append({
-    #         "id": sc.id,
-    #         "title": sc.title,
-    #         "drugs": sc.drugs.all(),
-    #         "conditions": sc.conditions.all(),
-    #         "owner": sc.owner.username,
-    #         "status": dict(sc.status.status_choices).get(sc.status.status),
-    #         "timestamp": sc.timestamp
-    #     })
 
     return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
                                                    "questbtn_disable": quest_btn_disable})
