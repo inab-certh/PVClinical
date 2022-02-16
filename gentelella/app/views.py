@@ -2232,16 +2232,18 @@ def final_report(request, scenario_id=None):
 
     # end = time()
 
-    cc_shots_labels = {"pre_table": "All prevalence covariates table",
-                       "pre_chart": "All prevalence covariates chart",
-                       "drug_table": "Drug Group Era Long Term table",
-                       "drug_chart": "Drug Group Era Long Term chart",
-                       "demograph_table": "Demographics Age Group table",
-                       "demograph_chart": "Demographics Age Group chart",
-                       "charlson_table": "Charlson Index table",
-                       "charlson_chart": "Charlson Index chart",
-                       "gen_table": "Demographics Gender table",
-                       "gen_chart": "Demographics Gender chart"}
+    cc_shots_labels = {"pre_table": _("Πίνακας όλων των συμμεταβλητών επικράτησης"),
+                       "pre_chart": _("Διάγραμμα όλων των συμμεταβλητών επικράτησης"),
+                       "drug_table": _("Πίνακας Μακροχρόνιας Λήψης Κατηγορίας Φαρμάκων"),
+                       "drug_chart": _("Διάγραμμα Μακροχρόνιας Λήψης Κατηγορίας Φαρμάκων"),
+                       "demograph_table": _("Πίνακας Δημογραφικών Ηλικιακών Κατηγοριών"),
+                       "demograph_chart": _("Διάγραμμα Δημογραφικών Ηλικιακών Κατηγοριών"),
+                       "charlson_table": _("Πίνακας Δείκτη Συννοσηρότητας Charlson"),
+                       "charlson_chart": _("Διάγραμμα Δείκτη Συννοσηρότητας Charlson"),
+                       "gen_table": _("Πίνακας Δημογραφικού Φύλου"),
+                       "gen_chart": _("Διάγραμμα Δημογραφικού Φύλου")
+    }
+
 
     # str_to_var = {"pre_table": pre_table,
     #               "pre_chart": pre_chart,
@@ -2475,53 +2477,69 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         kin = kin + 1
         lin = lin + 1
         if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - CONDITION / Charlson Index table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _("Πίνακας ΚΑΤΑΣΤΑΣΗΣ / Δείκτη Συννοσηρότητας Charlson"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - CONDITION / Charlson Index chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα ΚΑΤΑΣΤΑΣΗΣ / Δείκτη Συννοσηρότητας Charlson"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "demograph_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Age Group table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας ΔΗΜΟΓΡΑΦΙΚΩΝ ΣΤΟΙΧΕΙΩΝ / Δημογραφικών Ηλικιακών Κατηγοριών"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
         if i == "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Age Group chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα ΔΗΜΟΓΡΑΦΙΚΩΝ ΣΤΟΙΧΕΙΩΝ / Δημογραφικών Ηλικιακών Κατηγοριών"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "drug_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DRUG / Drug Group Era Long Term table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας ΦΑΡΜΑΚΩΝ / Μακροχρόνιας Λήψης Κατηγορίας Φαρμάκων"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
         if i == "drug_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DRUG / Drug Group Era Long Term chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα ΦΑΡΜΑΚΩΝ / Μακροχρόνιας Λήψης Κατηγορίας Φαρμάκων"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "gen_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - DEMOGRAPHICS / Demographics Gender table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας ΔΗΜΟΓΡΑΦΙΚΩΝ ΣΤΟΙΧΕΙΩΝ / Δημογραφικού Φύλου"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
         if i == "gen_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - DEMOGRAPHICS / Demographics Gender chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα ΔΗΜΟΓΡΑΦΙΚΩΝ ΣΤΟΙΧΕΙΩΝ / Δημογραφικού Φύλου"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "pre_table_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Table {} - All prevalence covariates table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας όλων των συμμεταβλητών επικράτησης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
         if i == "pre_chart_{}_{}.png".format(sc.owner_id, sc.id):
-            coh_dict["Chart {} - All prevalence covariates chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            coh_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα όλων των συμμεταβλητών επικράτησης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         # case that check in first view before proceed
         if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_t["Table {} -Incidence Rates table".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            ir_dict_t["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας Ρυθμού Επίπτωσης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
         if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_a["Table and Heatmap {} -Incidence Rates table with heatmap".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
+            ir_dict_a["{} {} - {}".format(_("Πίνακας και Διάγραμμα Θερμικού Χάρτη"), ind, _(
+                "Πίνακας και Διάγραμμα Θερμικού Χάρτη Ρυθμού Επίπτωσης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
         if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
-            cp_dict["Chart {} -Pathways Analysis chart".format(ind)] = os.path.join(
-                settings.MEDIA_URL, 'ohdsi_img_print', i)
-
+            cp_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
+                "Διάγραμμα Ανάλυσης Μονοπατιού"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
     scenario = sc.title
     drugs = [d for d in sc.drugs.all()]
@@ -2573,7 +2591,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             if files_png:
                 dict1.setdefault(k, []).append(files_png[0])
                 kin = kin + 1
-                dict1.setdefault(k, []).append("Figure {}".format(kin))
+                dict1.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
                 dict1.setdefault(k, []).append('')
@@ -2584,7 +2602,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict1.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
-                dict1.setdefault(k, []).append("Table {}".format(kin))
+                dict1.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
                 dict1.setdefault(k, []).append('')
                 dict1.setdefault(k, []).append('')
@@ -2603,18 +2621,18 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             if dynprr_png:
                 dict2.setdefault(k, []).append(dynprr_png[0])
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Figure {}".format(kin))
+                dict2.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
 
             if dynprr_csv:
-                dict2.setdefault(k, []).append('- Report counts and PRR')
+                dict2.setdefault(k, []).append(" - {}".format(_("Πλήθος αναφορών και PRR")))
                 df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Table {}".format(kin))
+                dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
 
             else:
                 dict2.setdefault(k, []).append('')
@@ -2622,24 +2640,24 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict2.setdefault(k, []).append('')
 
             if dynprr_csv1:
-                dict2.setdefault(k, []).append('- Drugs in scenario reports')
+                dict2.setdefault(k, []).append(" - {}".format(_("Φάρμακα στις επιλεγμένες αναφορές")))
                 df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv1[0])))
                 styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler2.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Table {}".format(kin))
+                dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
 
             if dynprr_csv2:
-                dict2.setdefault(k, []).append('- Events in scenario reports')
+                dict2.setdefault(k, []).append(" - {}".format(_("Συμβάντα στις επιλεγμένες αναφορές")))
                 df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv2[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict2.setdefault(k, []).append("Table {}".format(kin))
+                dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
                 dict2.setdefault(k, []).append('')
                 dict2.setdefault(k, []).append('')
@@ -2664,10 +2682,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_qevents".format(k) in elm,
                        map(lambda el: el.get_text(), soup.find_all('a'))))
             if changep_png:
-                dict3.setdefault(k, []).append('- Change in mean analysis ')
+                dict3.setdefault(k, []).append(" - {}".format(_("Ανάλυση μεταβολής μέσου")))
                 dict3.setdefault(k, []).append(changep_png[0])
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
                 dict3.setdefault(k, []).append('')
@@ -2675,10 +2693,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict3.setdefault(k, []).append('')
 
             if changep_png1:
-                dict3.setdefault(k, []).append('- Change in variance analysis')
+                dict3.setdefault(k, []).append(" - {}".format(_("Ανάλυση μεταβολής διακύμανσης")))
                 dict3.setdefault(k, []).append(changep_png1[0])
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
                 dict3.setdefault(k, []).append('')
@@ -2686,44 +2704,44 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict3.setdefault(k, []).append('')
 
             if changep_png2:
-                dict3.setdefault(k, []).append('- Bayesian changepoint analysis')
+                dict3.setdefault(k, []).append(" - {}".format(_("Μπεϋζιανή ανάλυση σημείου αλλαγής")))
                 dict3.setdefault(k, []).append(changep_png2[0])
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
 
             if changep_png3:
-                dict3.setdefault(k, []).append('- Report counts by date')
+                dict3.setdefault(k, []).append(" - {}".format(_("Πλήθος αναφορών ανά ημερομηνία")))
                 dict3.setdefault(k, []).append(changep_png3[0])
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Figure {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
 
             if changep_csv:
-                dict3.setdefault(k, []).append('- Drugs in scenario reports')
+                dict3.setdefault(k, []).append(" - {}".format(_("Φάρμακα στις επιλεγμένες αναφορές")))
                 df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Table {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
 
             if changep_csv1:
-                dict3.setdefault(k, []).append('- Events in scenario reports')
+                dict3.setdefault(k, []).append(" - {}".format(_("Συμβάντα στις επιλεγμένες αναφορές")))
                 df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv1[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
-                dict3.setdefault(k, []).append("Table {}".format(kin))
+                dict3.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
                 dict3.setdefault(k, []).append('')
                 dict3.setdefault(k, []).append('')
@@ -2740,7 +2758,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dictpng[k] = files_png[0]
             dict_quickview.setdefault(i, []).append(files_png[0])
             lin = lin + 1
-            dict_quickview.setdefault(i, []).append("Figure {}".format(lin))
+            dict_quickview.setdefault(k, []).append("{} {}".format(_("Εικόνα"), lin))
         else:
             dict_quickview.setdefault(i, []).append('')
             dict_quickview.setdefault(i, []).append('')
@@ -2751,7 +2769,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
             dict_quickview.setdefault(i, []).append(styler1.render())
             lin = lin + 1
-            dict_quickview.setdefault(i, []).append("Table {}".format(lin))
+            dict_quickview.setdefault(k, []).append("{} {}".format(_("Πίνακας"), lin))
 
     #for drug only
     if j == "":
@@ -2783,22 +2801,22 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         if dash_csv:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_dash_csv.setdefault(' Events', []).append(styler1.render())
+            dict_dash_csv.setdefault(" {}".format(_("Συμβάντα")), []).append(styler1.render())
             lin = lin+1
-            dict_dash_csv.setdefault(' Events', []).append("Table {}".format(lin))
+            dict_dash_csv.setdefault(" {}".format(_("Συμβάντα")), []).append("{} {}".format(_("Πίνακας"), lin))
         if dash_csv1:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_dash_csv.setdefault(' Concomitant Medications', []).append(styler1.render())
+            dict_dash_csv.setdefault(" {}".format(_("Συγχορηγούμενα Φάρμακα")), []).append(styler1.render())
             lin = lin + 1
-            dict_dash_csv.setdefault(' Concomitant Medications', []).append("Table {}".format(lin))
+            dict_dash_csv.setdefault(" {}".format(_("Συγχορηγούμενα Φάρμακα")), []).append("{} {}".format(_("Πίνακας"), lin))
 
         if dash_csv2:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_dash_csv.setdefault(' Indications', []).append(styler1.render())
+            dict_dash_csv.setdefault(" {}".format(_("Ενδείξεις")), []).append(styler1.render())
             lin = lin + 1
-            dict_dash_csv.setdefault(' Indications', []).append("Table {}".format(lin))
+            dict_dash_csv.setdefault(" {}".format(_("Ενδείξεις")), []).append("{} {}".format(_("Πίνακας"), lin))
 
         rr_d_csv = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_codrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2815,42 +2833,51 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         if rr_d_csv4:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' PRR and ROR Results', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append(
+                "{} {}".format(_("Πίνακας"), lin))
         if rr_d_csv5:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Analyzed Event Counts for Specified Drug', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_d_csv2:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Analyzed Event Counts for All Drug', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv1:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις συμβάντων για φάρμακο")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Ranked Event Counts for Drug', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις συμβάντων για φάρμακο")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' Drugs in scenario reports', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv3:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_d.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            dict_rr_d.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_rr_d.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+            dict_rr_d.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
         lr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_histogram".format(k) in elm,
                              map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2875,46 +2902,56 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         if lr_csv6:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' LTR Results based on Total Events', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών συμβάντων")),
+                               []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' LTR Results based on Total Events', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών συμβάντων")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv2:
             df2 = pd.read_csv(r'{}'.format(
                 lr_csv2[0]))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για φάρμακο")),
+                               []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Analyzed Event Counts for Drug', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για φάρμακο")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
+                               []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Analyzed Event Counts for All Drugs', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv4:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Drugs in scenario reports', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Drugs in scenario reports', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv5:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Event counts for drug', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Πλήθος συμβάντων για φάρμακο")), []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Event counts for drug', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Πλήθος συμβάντων για φάρμακο")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv1:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Counts for all events', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Πλήθος για όλα τα συμβάντα")), []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Counts for all events', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Πλήθος για όλα τα συμβάντα")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv3:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lr.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            dict_lr.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_lr.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+            dict_lr.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                               []).append("{} {}".format(_("Πίνακας"), lin))
 
     #for condition only
     if i == "":
@@ -2935,37 +2972,45 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' PRR and ROR Results', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv5:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append(styler1.render())
+            dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συγκεκριμένο συμβάν")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Analyzed Drug Counts for Specified Event', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συγκεκριμένο συμβάν")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv2:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append(styler1.render())
+            dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Analyzed Drug Counts for All events', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv1:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append(styler1.render())
+            dict_rr_e.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις φαρμάκων για συμβάν")),
+                                 []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Ranked Drug Counts for Event', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις φαρμάκων για συμβάν")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_e.setdefault(' Events in scenario reports', []).append(styler1.render())
+            dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv3:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_rr_e.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_rr_e.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+            dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
         lre_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_Ehistogram".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2990,45 +3035,55 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         if lre_csv6:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών φαρμάκων")),
+                                []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' LTR Results based on Total Drugs', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών φαρμάκων")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv2:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συμβάν")),
+                                []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Analyzed Drug Counts for Event', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συμβάν")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
+                                []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Analyzed Drug Counts for All Events', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv4:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Events in scenario reports', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Events in scenario reports', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv5:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Drug counts for event', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Πλήθος φαρμάκων για συμβάν")), []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Drug counts for event', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Πλήθος φαρμάκων για συμβάν")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv1:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Counts for all drugs', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Πλήθος όλων των φαρμάκων")), []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Counts for all drugs', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Πλήθος όλων των φαρμάκων")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv3:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
-            dict_lre.setdefault(' Indications in scenario reports', []).append(styler1.render())
+            dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
-            dict_lre.setdefault(' Indications in scenario reports', []).append("Table {}".format(lin))
+            dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
+                                []).append("{} {}".format(_("Πίνακας"), lin))
 
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
     lst_of_all = dicts123_vals + list(report_notes.values())
