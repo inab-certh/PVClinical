@@ -41,35 +41,6 @@
     <div class="workspace">{% trans "Περιβάλλον Εργασίας OHDSI" %}</div>
 {% endif %}
 
-{% if coh_dict or "char" in report_notes %}
-    <br>
-    <br>
-    <div class="view_title" >{% trans "Χαρακτηρισμός Πληθυσμού" %}</div>
-    {% for k,l in coh_dict.items %}
-        <br>
-        <br>
-        <br>
-        <div class="tg">
-                <div style="margin-left: 20px;"><img src="{{ l }}"></div>
-                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
-        </div>
-    {% endfor %}
-
-    {% for hash,note in report_notes.items %}
-            {%if hash == 'char' %}
-            <div class="tg" style="padding-top:50px;">
-                <div class="view_title" >{% trans "Σημειώσεις για Χαρακτηρισμό Πληθυσμού" %}</div>
-                <br>
-                <br>
-                <div class="notes_content">{{note}}</div>
-                <br>
-                <br>
-            </div>
-            {% endif %}
-        {% endfor %}
-
-{% endif %}
-
 {% if ir_dict_t or ir_dict_a or "ir" in report_notes  %}
     <br>
     <br>
@@ -113,6 +84,34 @@
 
 {% endif %}
 
+{% if coh_dict or "char" in report_notes %}
+    <br>
+    <br>
+    <div class="view_title" >{% trans "Χαρακτηρισμός Πληθυσμού" %}</div>
+    {% for k,l in coh_dict.items %}
+        <br>
+        <br>
+        <br>
+        <div class="tg">
+                <div style="margin-left: 20px;"><img src="{{ l }}"></div>
+                <div style="padding-top:20px"><subt>{{ k }}</subt></div>
+        </div>
+    {% endfor %}
+
+    {% for hash,note in report_notes.items %}
+            {%if hash == 'char' %}
+            <div class="tg" style="padding-top:50px;">
+                <div class="view_title" >{% trans "Σημειώσεις για Χαρακτηρισμό Πληθυσμού" %}</div>
+                <br>
+                <br>
+                <div class="notes_content">{{note}}</div>
+                <br>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+{% endif %}
 
 {% if cp_dict or "pathways" in report_notes %}
     <br>
@@ -190,7 +189,7 @@
             <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ value.0 }}'>
             <br>
             <br>
-            <subt>{{value.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
+            <subt>{{value.1}} - {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
             </div>
         <br>
         <br>
@@ -198,7 +197,7 @@
         {% if value.2 %}
             <div class="tg">
             <div style="margin-left: 20px;">{{value.2|safe}}</div>
-            <subt>{{value.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
+            <subt>{{value.3}} - {% trans "Αποτελέσματα PRR και ROR" %}</subt>
             </div>
             <br>
             <br>
@@ -228,7 +227,7 @@
     {% for key,value in dict_dash_csv.items %}
         <div class="tg">
         <div style="margin-left: 20px;">{{value.0|safe}}</div>
-        <subt> {{value.1}}-{{key}}</subt>
+        <subt> {{value.1}} - {{key}}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -245,7 +244,7 @@
     {% for key,value in dict_rr_d.items %}
         <div class="tg">
         <div style="margin-left: 20px;">{{value.0|safe}}</div>
-        <subt>{{value.1}} -{{key}}</subt>
+        <subt>{{value.1}} - {{key}}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -264,7 +263,7 @@
         <div class="tg">
         <div style="margin-left: 20px;">{{value.0|safe}}</div>
         <div style="padding-bottom:40px"></div>
-        <subt>{{value.1}} -{{key}}</subt>
+        <subt>{{value.1}} - {{key}}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -283,7 +282,7 @@
         <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
-        <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων" %}</subt>
+        <subt>{{fig}} - {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων" %}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -293,7 +292,7 @@
     {% for key,value in dict_lr.items %}
         <div class="tg">
         <div style="margin-left: 20px;">{{value.0|safe}}</div>
-        <subt>{{value.1}} -{{key}}</subt>
+        <subt>{{value.1}} - {{key}}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -312,7 +311,7 @@
         <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
-        <subt>{{fig}}- {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων" %}</subt>
+        <subt>{{fig}} - {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων" %}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -322,7 +321,7 @@
     {% for key,value in dict_lre.items %}
         <div class="tg">
         <div style="margin-left: 20px;">{{value.0|safe}}</div>
-        <subt>{{value.1}} -{{key}}</subt>
+        <subt>{{value.1}} - {{key}}</subt>
         <div style="padding-bottom:30px"></div>
         </div>
     {% endfor %}
@@ -372,7 +371,7 @@
                         <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val1.0}}'>
                         <br>
                         <br>
-                        <subt>{{val1.1}}- {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
+                        <subt>{{val1.1}} - {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
                         <br>
                         <div class="details">&#9432; {% blocktrans %}Η ανάλυση μεταβολής μέσου (change in mean analysis), υπολογίζει σημεία αλλαγής,
                             μόνο όταν αλλάζει η μέση τιμή (mean) των δεδομένων.{% endblocktrans %}</div>
@@ -385,7 +384,7 @@
                     {% if val1.2 != '' %}
                         <div class="tg">
                         <div style="margin-left: 20px;">{{ val1.2|safe }}</div>
-                        <subt>{{val1.3}}- {% trans "Αποτελέσματα PRR και ROR" %}</subt>
+                        <subt>{{val1.3}} - {% trans "Αποτελέσματα PRR και ROR" %}</subt>
                         <br>
                         <br>
                         </div>
@@ -404,7 +403,7 @@
                         <img width="90%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val2.0}}'>
                         <br>
                         <br>
-                        <subt>{{val2.1}}- PRR over time </subt>
+                        <subt>{{val2.1}} - {% trans "Χρονική εξέλιξη PRR" %}</subt>
                         <br>
                         <div class="details">{% blocktrans %}&#9432;{% endblocktrans %}</div>
                         <br>
@@ -645,14 +644,16 @@
 {% if extra_notes %}
     <div class="final-note" >
         {% if extra_notes != 'empty' %}
-            <div class="view_title" style="width:50%">-{% trans "Συγκεντρωτικές σημειώσεις για την αναφορά" %}</div>
+            <div class="view_title" style="width:50%">{% trans "Συγκεντρωτικές σημειώσεις για την αναφορά" %}</div>
         <br>
         <br>
           <div class="details"> {{ extra_notes }} </div>
         {% endif %}
     </div>
 {% else %}
-    <textarea id="editFnote" placeholder='{% trans "Κρατήστε εδώ τις σημειώσεις σας..." %}'></textarea>
+    {% if request.META.HTTP_REFERER %}
+        <textarea id="editFnote" placeholder='{% trans "Κρατήστε εδώ τις σημειώσεις σας..." %}'></textarea>
+    {% endif %}
 {% endif %}
 <!--End of extra_notes-->
 </div>
