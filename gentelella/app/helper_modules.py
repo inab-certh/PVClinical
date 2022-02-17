@@ -1,25 +1,10 @@
-import json
-from django.utils.translation import gettext_lazy as _
-from django.shortcuts import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
-
 import requests
 
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import HttpResponse
+
 from bs4 import BeautifulSoup
-import browser_cookie3
 
-from mendeley import Mendeley
-
-
-from django.shortcuts import redirect
-
-from django.http import HttpResponseRedirect
-
-
-import os
-
-from oauthlib.oauth2 import TokenExpiredError
 
 def is_in_group(user, group):
     """ Check whether a user belongs to a specific group or not
@@ -267,65 +252,6 @@ def getPMCID(handle):
         pmcid = " "
     return pmcid
 
-#Extract token from Mendeley cookies
-
-# def mendeley_cookies(request):
-    """ Search for Mendeley cookies in users browser.
-    :return: access toke if exists
-    """
-
-    # user = request.user
-    social = user.social_auth.get(provider='mendeley-oauth2')
-    # access_token = social.extra_data['access_token']
-
-    # client_id = 8886
-    # redirect_uri = "http://127.0.0.1:8000/"
-    # client_secret = "4en8hOV7M8nz5Eca"
-    #
-    # mendeley = Mendeley(client_id, redirect_uri=redirect_uri)
-    # auth = mendeley.start_implicit_grant_flow()
-    #
-    # login_url = auth.get_login_url()
-    #
-    # res = requests.post(login_url, allow_redirects=False, data={
-    #     'username': 'pvclinical.project@gmail.com',
-    #     'password': 'L$x3k@!7'
-    # })
-    #
-    # auth_response = res.headers['Location']
-    # session = auth.authenticate(auth_response)
-    # token = session.token
-    # cookie_list = [social.extra_data['access_token']]
-    # if cookie_list == []:
-    #     print('if')
-    #     mend_cookies = filter(lambda el: el.domain == ".mendeley.com" and el.name == "_at", cj)
-    #     cookie_list = list(mend_cookies)
-    #
-    # access_token = cookie_list[0].value
-    # response_doc = requests.get(
-    #     'https://api.mendeley.com/documents',
-    #     headers={'Authorization': 'Bearer {}'.format(access_token),
-    #              'Accept': 'application/vnd.mendeley-document.1+json'},
-    # )
-    # if response_doc.status_code != 200:
-    #     cookie_list = []
-
-    # return cookie_list
-
-    # access_token = list(mend_cookies)[0].value
-    # print(access_token)
-
-    # if cj == {}:
-    #     chromecookies = os.path.join(os.path.expandvars("%userprofile%"),
-    #                                  "AppData\\Local\\Google\\Chrome\\User Data\\Profile 1\\Cookies")
-    #     cookiejar = browser_cookie3.chrome(cookie_file=chromecookies)
-    #     cj = browser_cookie3.load()
-    #     mend_cookies = filter(lambda el: el.domain == "www.mendeley.com" and el.name == "accessToken", cj)
-
-
-
-
-
 
 def mendeley_pdf(access_token, title):
     """ Search for the pdf of the results papers in user's Mendeley library.
@@ -360,4 +286,13 @@ def mendeley_pdf(access_token, title):
         return mendeley_pdf
 
 
+def sort_report_screenshots(ss_lst):
+    """ Sorting report screenshots according to our needs
+    :param ss_lst: the screenshots' list
+    :return: the sorted list
+    """
+    # SORT_ORDER = {"DINT": 0, "INT": 1, "BOOL": 2}
+    # mylist.sort(key=lambda val: SORT_ORDER[val[1]])
 
+    # ss_lst.sort(key=lambda val:)
+    # return ss_lst

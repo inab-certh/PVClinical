@@ -4,23 +4,29 @@ import hashlib
 import html
 
 import datetime
+import glob
 import json
 import os
 import re
 import requests
 import tempfile
 import uuid
-import glob
+import urllib
+
+import pandas as pd
+import pdfkit
 import shutil
 
-from collections import namedtuple
 from math import ceil
 from itertools import chain
 from itertools import product
 from requests.auth import HTTPBasicAuth
 
+from bs4 import BeautifulSoup
+from Bio import Entrez
+from selenium.common.exceptions import TimeoutException
+
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
@@ -37,7 +43,6 @@ from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
-from django.utils import translation
 from django.urls import reverse
 
 from app import ohdsi_wrappers
@@ -51,44 +56,22 @@ from app.forms import NotesForm
 from app.forms import PathwaysForm
 from app.forms import PatientForm
 from app.forms import QuestionnaireForm
-
-
 from app.helper_modules import atc_hierarchy_tree
+from app.helper_modules import delete_db_rec
+from app.helper_modules import getPMCID
 from app.helper_modules import is_doctor
 from app.helper_modules import is_nurse
 from app.helper_modules import is_pv_expert
-from app.helper_modules import delete_db_rec
-from app.helper_modules import getPMCID
-# from app.helper_modules import mendeley_cookies
 from app.helper_modules import mendeley_pdf
+from app.helper_modules import sort_report_screenshots
 from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
 from app.models import PatientCase
 from app.models import Questionnaire
-from app.models import CaseToScenario
-from app.models import CaseToQuestionnaire
-
-
-
-
-# from app.ohdsi_wrappers import update_ir
-# from app.ohdsi_wrappers import create_ir
 from app.entrezpy import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
 from app.pubmed import PubmedAnalyzer
-
-from Bio import Entrez
-from mendeley import Mendeley
-
-from selenium.common.exceptions import TimeoutException
-
-import urllib
-import requests
-from bs4 import BeautifulSoup
-import pandas as pd
-import pdfkit
-import webbrowser
 
 
 @login_required()
@@ -1905,7 +1888,7 @@ def final_report(request, scenario_id=None):
 
     intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
 
-    entries = os.listdir(img_path)
+    # entries = os.listdir(img_path)
 
     # pre_table = None
     # pre_chart = None
@@ -2373,10 +2356,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
         resp_number_cp = response.json()
-        if resp_number_cp != []:
-            resp_num_id_cp = resp_number_cp[0]['id']
-
-    entries = os.listdir(img_path)
+    #     if resp_number_cp != []:
+    #         resp_num_id_cp = resp_number_cp[0]['id']
+    #
+    # entries = os.listdir(img_path)
 
     ir_dict_t = {}
     ir_dict_a = {}
@@ -2470,12 +2453,25 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         dok = glob.glob(os.path.join(ohdsi_tmp_img_path, "*gen_chart_{}_{}.png".format(sc.owner_id, sc.id)))
         os.remove(dok[0])
 
-    image_print = os.listdir(ohdsi_tmp_img_path)
+    image_print = sort_report_screenshots(os.listdir(ohdsi_tmp_img_path))
 
     for i in image_print:
         ind = ind + 1
         kin = kin + 1
         lin = lin + 1
+
+        # Check if there is any element selected for ir analysis
+        if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
+            ir_dict_t["{} {} - {}".format(_("Πίνακας"), ind, _(
+                "Πίνακας Ρυθμού Επίπτωσης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
+            ir_dict_a["{} {} - {}".format(_("Πίνακας και διάγραμμα θερμικού χάρτη"), ind, _(
+                "Πίνακας και διάγραμμα θερμικού χάρτη Ρυθμού Επίπτωσης"))
+            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
+
+        # Check if there is any element selected for char analysis
         if i == "charlson_table_{}_{}.png".format(sc.owner_id, sc.id):
             coh_dict["{} {} - {}".format(_("Πίνακας"), ind, _("Πίνακας ΚΑΤΑΣΤΑΣΗΣ / Δείκτη Συννοσηρότητας Charlson"))
             ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
@@ -2525,17 +2521,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 "Διάγραμμα όλων των συμμεταβλητών επικράτησης"))
             ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
 
-        # case that check in first view before proceed
-        if i == "irtable_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_t["{} {} - {}".format(_("Πίνακας"), ind, _(
-                "Πίνακας Ρυθμού Επίπτωσης"))
-            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
-
-        if i == "irall_{}_{}.png".format(sc.owner_id, sc.id):
-            ir_dict_a["{} {} - {}".format(_("Πίνακας και Διάγραμμα Θερμικού Χάρτη"), ind, _(
-                "Πίνακας και Διάγραμμα Θερμικού Χάρτη Ρυθμού Επίπτωσης"))
-            ] = os.path.join(settings.MEDIA_URL, 'ohdsi_img_print', i)
-
+        # Check if there is any element selected for pathways analysis
         if i == "pw_{}_{}.png".format(sc.owner_id, sc.id):
             cp_dict["{} {} - {}".format(_("Διάγραμμα"), ind, _(
                 "Διάγραμμα Ανάλυσης Μονοπατιού"))
