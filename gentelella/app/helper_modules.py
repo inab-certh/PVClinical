@@ -291,8 +291,11 @@ def sort_report_screenshots(ss_lst):
     :param ss_lst: the screenshots' list
     :return: the sorted list
     """
-    # SORT_ORDER = {"DINT": 0, "INT": 1, "BOOL": 2}
-    # mylist.sort(key=lambda val: SORT_ORDER[val[1]])
 
-    # ss_lst.sort(key=lambda val:)
-    # return ss_lst
+    # The list should be ordered according to specific beginning of words
+    beginning_order_lst = ["irtable_", "irall_", "charlson_table_", "charlson_chart_", "demograph_table_",
+                           "demograph_chart_", "drug_table_", "drug_chart_", "gen_table_", "gen_chart_", "pre_table_",
+                           "pre_chart_", "pw_"]
+
+    return sorted(ss_lst, key=lambda x: int("".join(
+        map(lambda el: str(el[0]) if x.startswith(el[1]) else "", enumerate(beginning_order_lst)))))

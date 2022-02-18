@@ -2243,12 +2243,18 @@ def final_report(request, scenario_id=None):
                               ) for cc_shot in cc_shots_labels.keys() if str_to_var.get(cc_shot)]
 
 
+    all_combs_names = list(product(sorted(set([d.name for d in drugs])) or [""],
+                             sorted(set([c.name for c in conditions])) or [""]))
+
+    all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
+    twitter_query = " OR ".join(all_combs_names)
+
     context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
                "ir_generate": ir_generate, "pub_objs": pub_objs, "cc_shots_paths_labels": cc_shots_paths_labels,
-               "hashes": hashes}
+               "hashes": hashes, "SM_SHINY_ENDPOINT": settings.SM_SHINY_ENDPOINT, "twitter_query": twitter_query}
 
     # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
     context.update(str_to_var)
