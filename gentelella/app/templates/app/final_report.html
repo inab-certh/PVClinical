@@ -374,8 +374,52 @@
                                     </div>
                                     <br>
 
-                                    <div></div>
+                                    <div class="container mt-5">
+                                        <div class="panel-group" id="smCombsAccordion">
 
+                                                <div id="smPanel" class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                      <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#smCombsAccordion" href="#smCollapse" style="color:#5A738E;">{% trans "Στοιχεία Μέσων Κοινωνικής Δικτύωσης" %}</a>
+                                                      </h4>
+                                                    </div>
+                                                    <div id="smCollapse" class="panel-collapse collapse in">
+                                                      <br>
+                                                      <table class="table table-striped table-bordered" style="width:500px">
+                                                          <tr>
+                                                              <td>
+                                                                  <button id="smTimelineBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
+                                                                      <i class="fas fa-search-plus"></i>
+                                                                  </button>
+                                                                  <span>{% trans "Χρονικό Διάγραμμα" %}</span>
+                                                              </td>
+                                                              <td>
+                                                                  <button id="smRawDataBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
+                                                                      <i class="fas fa-search-plus"></i>
+                                                                  </button>
+                                                                  <span>{% trans "Ακατέργαστα Δεδομένα" %}</span>
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr>
+                                                              <td>
+                                                                  <button id="smAuthorsBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
+                                                                      <i class="fas fa-search-plus"></i>
+                                                                  </button>
+                                                                  <span>{% trans "Συντάκτες" %}</span>
+                                                              </td>
+                                                              <td>
+                                                                  <button id="smNotesBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
+                                                                      <i class="fas fa-search-plus"></i>
+                                                                  </button>
+                                                                  <span>{% trans "Σημειώσεις" %}</span>
+                                                              </td>
+                                                          </tr>
+                                                      </table>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             </div>
