@@ -1,4 +1,7 @@
 $(function(){
+    var twitter_query_url = sm_shiny_endpoint + "?twitterQuery=" + twitterQuery;
+    $("#socialMediaModal iframe").attr("src", twitter_query_url);
+
     var openfda_proceed_disabled = true;
     var ohdsi_proceed_disabled = true;
     var pubmed_proceed_disabled = true;
@@ -177,6 +180,26 @@ $(function(){
     $("#link1").on("click", function() {
         $("#div1").show();
         $("#div2").hide();
+    });
+
+    $("[id^='sm'][id$='Btn']").click(function() {
+        console.log($(this));
+        var btn_id = $(this).attr("id");
+
+        if(btn_id!="smNotesBtn") {
+            var iframe_cnt = $("#smIframe").contentWindow;
+            var tabs_ids = iframe_cnt.find(".nav-tabs li a").map(function(){
+                return this.id;
+            });
+            console.log(tabs_ids);
+            // var tabs_dict = {};
+            // keys.forEach((key, i) => result[key] = values[i]);
+            // iframe_cnt.switchTabInIframe(tab_id);
+        }
+
+        // function switchframe(id) {
+        //     document.getElementsByClassName('social-iframe').contentWindow.switchTabInIframe(id);
+        // }
     });
 });
 
