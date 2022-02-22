@@ -7,7 +7,7 @@ $(function(){
     var pubmed_proceed_disabled = true;
 
     var event; // The custom event that will be created
-    proceed_elm = document.createElement("div")
+    proceed_elm = document.createElement("div");
     function triggerProceedActivation(el) {
         if (document.createEvent) {
             event = document.createEvent("Event");

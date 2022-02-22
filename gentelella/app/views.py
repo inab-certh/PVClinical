@@ -2247,14 +2247,20 @@ def final_report(request, scenario_id=None):
                              sorted(set([c.name for c in conditions])) or [""]))
 
     all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
-    twitter_query = " OR ".join(all_combs_names)
+    twitter_query = urllib.parse.quote(" OR ".join(all_combs_names))
+
+    print("{}?twitterQuery={}".format(settings.SM_SHINY_ENDPOINT, twitter_query))
+    response = requests.get("{}?twitterQuery={}".format(settings.SM_SHINY_ENDPOINT, twitter_query))
+    print(response.text)
+    twitter_data_exist = False if "No data to show" in response.text else True
 
     context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
                "ir_generate": ir_generate, "pub_objs": pub_objs, "cc_shots_paths_labels": cc_shots_paths_labels,
-               "hashes": hashes, "SM_SHINY_ENDPOINT": settings.SM_SHINY_ENDPOINT, "twitter_query": twitter_query}
+               "hashes": hashes, "SM_SHINY_ENDPOINT": settings.SM_SHINY_ENDPOINT,
+               "twitter_query": twitter_query, "twitter_data_exist": twitter_data_exist}
 
     # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
     context.update(str_to_var)
