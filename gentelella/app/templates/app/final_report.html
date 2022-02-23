@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load custom_tags %}
-{% block title %} Final Report {% endblock title %}
+{% block title %}{% trans "Τελική αναφορά" %}{% endblock title %}
 
 {% block stylesheets %}
 {{ block.super }}
@@ -370,13 +370,13 @@
 
                                     <div class="container mt-5">
                                         <div class="panel-group" id="smCombsAccordion">
-                                            {% if not twitter_data_exist %}
+{#                                            {% if not twitter_data_exist %}#}
                                                 <div id="noTwitterInfo" class="no-ws-info">
                                                     <i>{% trans "Δεν υπάρχουν σχετικές πληροφορίες για το περιβάλλον εργασίας Twitter" %}</i>
                                                 </div>
                                                 <br>
                                                 <br>
-                                            {% else %}
+{#                                            {% else %}#}
                                                 <div id="smPanel" class="panel panel-default">
                                                     <div class="panel-heading">
                                                       <h4 class="panel-title">
@@ -419,7 +419,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
+{#                                        {% endif %}#}
                                     </div>
                                 </div>
                             </div>

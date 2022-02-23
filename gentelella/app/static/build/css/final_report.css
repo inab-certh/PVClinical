@@ -26,3 +26,12 @@
     font-size: 2.3rem;
     font-weight:bold;
 }
+
+#socialMediaModal iframe {
+  width: 100%;
+  /*height: 800px;*/
+  min-height: 90vh;
+  max-height: 800px;
+  border: none;
+  overflow: hidden;
+}
