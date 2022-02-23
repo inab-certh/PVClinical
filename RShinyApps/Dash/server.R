@@ -1,5 +1,8 @@
 library(plotly)
 require(shiny)
+library(webshot)
+library(htmltools)
+library(htmlwidgets)
 require(shinyBS)
 library(shiny.i18n)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
@@ -23,6 +26,8 @@ source('sourcedir.R')
 shinyServer(function(input, output, session) {
   
   cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/"
+  
 #  print(session$clientData$url_hostname)
 #   mywait <- .0
 #   
@@ -870,7 +875,8 @@ output$serious <- renderTable({
 }, height=300, align=c("rllr"), sanitize.text.function = function(x) x)  
 
 
-output$seriousplot <- renderPlotly({ 
+output$seriousplot <- renderPlotly({
+  q <- geturlquery()
   if(getterm1( session)!=""){
   mydf <- getseriouscounts()
   seriousForExcel<<-mydf
@@ -889,7 +895,9 @@ output$seriousplot <- renderPlotly({
     
   if (!is.null(input$sourceSeriousPlotReportUI)){
     if (input$sourceSeriousPlotReportUI){
-      withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_serious.png")))
+      saveWidget(as_widget(fig), "temp.html")
+      webshot("temp.html", file = paste0(cacheFolder,q$hash,"_serious.png"), cliprect = "viewport")
+      # withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_serious.png")))
     }
   }
     
@@ -927,6 +935,7 @@ output$sex <- renderTable({
 }, height=300, align=c("rlllr"), sanitize.text.function = function(x) x)  
 
 output$sexplot <- renderPlotly({ 
+  q <- geturlquery()
   if(getterm1( session)!=""){
   mydf <- getsexcounts()
   sexForExcel<<-mydf
@@ -945,7 +954,9 @@ output$sexplot <- renderPlotly({
     
   if (!is.null(input$sourceSexPlotReportUI)){
     if (input$sourceSexPlotReportUI){
-      withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_sexplot.png")))
+      saveWidget(as_widget(fig), "temp.html")
+      webshot("temp.html", file = paste0(cacheFolder,q$hash,"_sexplot.png"), cliprect = "viewport")
+      # withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_sexplot.png")))
     }
   }
     
@@ -981,6 +992,7 @@ output$dl <- downloadHandler(
   }
 )
 output$sourceplot <- renderPlotly({
+  q <- geturlquery()
   if(getterm1( session)!=""){
   mydf <- getsourcecounts()
   sourceForExcel<<-mydf
@@ -1016,7 +1028,9 @@ output$sourceplot <- renderPlotly({
   
   if (!is.null(input$sourcePrimaryPlotReportUI)){
     if (input$sourcePrimaryPlotReportUI){
-      withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_primary.png")))
+      saveWidget(as_widget(fig), "temp.html")
+      webshot("temp.html", file = paste0(cacheFolder,q$hash,"_primary.png"), cliprect = "viewport")
+      # withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(values$urlQuery$hash,"_primary.png")))
 
     }
     
@@ -1371,7 +1385,7 @@ geturlquery <- reactive({
   # q$t1<-"N05BA12"
   # q$t1<-"HFHFHJH"
   # q$hash<-"d38ghr"
-  # q$concomitant<- FALSE
+  # q$concomitant<- TRUE
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
   updateNumericInput(session, "limit", value = q$limit)
   updateSelectizeInput(session, 't1', selected= q$drug) 

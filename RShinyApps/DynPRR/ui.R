@@ -93,7 +93,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('ReportCountsandPRR'),
                             uiOutput("sourceInDataReport"),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'query_counts2' ))
@@ -101,7 +101,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
                             uiOutput('sourceConcomReport'),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'coquery2' ))
@@ -111,7 +111,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('CountsForEventsInSelectedReports'),
                             uiOutput('sourceEventDataReport'),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'coqueryE2' ))

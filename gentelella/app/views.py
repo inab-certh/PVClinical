@@ -1300,6 +1300,11 @@ def paper_notes_view(request, scenario_id=None, first=None, end=None, page_id=No
         metainfo['authors'] = request.POST.get("authors")
         metainfo['doi'] = request.POST.get("doi")
         metainfo['pmid'] = request.POST.get("pmid")
+        metainfo['relevance'] = request.POST.get("relevance")
+        metainfo['notes'] = request.POST.get("notes")
+        metainfo['med'] = request.POST.get("med")
+        metainfo['pubdate'] = request.POST.get("pubdate")
+        metainfo['scenario_id'] = request.POST.get("scenarioid")
         metainfo['user'] = request.user
 
 
