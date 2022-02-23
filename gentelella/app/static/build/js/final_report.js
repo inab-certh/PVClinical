@@ -1,4 +1,4 @@
-$(function(){
+$(function() {
     var twitter_query_url = sm_shiny_endpoint + "?twitterQuery=" + twitterQuery;
     $("#socialMediaModal iframe").attr("src", twitter_query_url);
 
@@ -182,23 +182,34 @@ $(function(){
         $("#div2").hide();
     });
 
+    $("#socialMediaModal iframe").load(function () {
+        try {
+            $(this).style.overflow = "hidden";
+            $(this).style.height = $(this).contentWindow.document.body.scrollHeight + 'px';
+        }
+        catch(typeError) {
+            console.log("Not found");
+        }
+    });
+
     $("[id^='sm'][id$='Btn']").click(function() {
-        console.log($(this));
+        // console.log($(this));
         var btn_id = $(this).attr("id");
+        var order_dic = {"smTimelineBtn":1, "smRawDataBtn":2, "smAuthorsBtn":3}
+        var btn_num = order_dic[btn_id];
 
         if(btn_id!="smNotesBtn") {
-            var iframe_cnt = $("#smIframe").contentWindow;
-            var tabs_ids = iframe_cnt.find(".nav-tabs li a").map(function(){
-                return this.id;
-            });
-            console.log(tabs_ids);
+            var iframe_cnt = document.getElementById("socialMediaModalIframe").contentWindow;
+            console.log(iframe_cnt.document.body.innerHTML);
+            // iframe_cnt.switchTabInIframe("ui-tab-572");
+            // iframe_cnt.find(".nav-tabs li:nth-child("+ btn_num +") a").click();
             // var tabs_dict = {};
             // keys.forEach((key, i) => result[key] = values[i]);
             // iframe_cnt.switchTabInIframe(tab_id);
         }
 
         // function switchframe(id) {
-        //     document.getElementsByClassName('social-iframe').contentWindow.switchTabInIframe(id);
+        //     document.getElementsById('social-iframe').contentWindow.switchTabInIframe(id);
         // }
     });
 });
