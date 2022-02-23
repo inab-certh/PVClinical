@@ -17,7 +17,83 @@
         <script src='{% static "build/js/importer-api.js" %}'></script>
         <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/corehtml/pmc/ctxp/jquery.citationexporter.min.js"></script>
         <script type="text/javascript">window.name="mainwindow";</script>
+     <script>
+                $(document).ready(function() {
 
+                    // $("tr[name='row_" + i + "'] input[type='radio']:checked").parent().css('color', '#B8B8B8');
+                    // if ($('#Relevant').is(':checked')) {
+                    //      $("input[id='Relevant']:checked").parent().css('color', '#008000');
+                    // }
+
+                    $("input[id='Relevant']:checked").parent().css('color', '#008000');
+
+                    $("input[id='Irrelevant']:checked").parent().css('color', '#bf2b27');
+
+                    if(!$("input[id='Relevant']").is(':checked') && !$("input[id='Irrelevant']").is(':checked')){
+                        $("input[type='radio']:checked").parent().css('color', '#FFA500');
+                    }
+
+           $('input[name="relevance"]').click(function () {
+               var reltype = $(this).attr('id');
+               if (reltype == 'Relevant') {
+                   $("input[type='radio']").parent().css('color','#2A3F54');
+                   $("input[type='radio']:checked").parent().css('color','#008000');
+               } else if (reltype == 'Irrelevant'){
+                   $("input[type='radio']").parent().css('color','#2A3F54');
+                   $("input[type='radio']:checked").parent().css('color','#bf2b27');
+               } else {
+                   $("input[type='radio']").parent().css('color','#2A3F54');
+                   $("input[type='radio']:checked").parent().css('color','#FFA500');
+               }
+
+           });
+        });
+        $(document).ready(function() {
+            $("a[name='save']").click(function () {
+                console.log("Link starting with save");
+                var title = $("meta[name='citation_title']").attr("content");
+                console.log(title);
+                var relevance = $("input[name='relevance']:checked").val();
+                var pmid = $("meta[name='citation_pmid']").attr("content");
+                var url = $("meta[name='citation_pdf_url']").attr("content");
+                var abstract = $("meta[name='citation_abstract']").attr("content");
+                var notes = $("textarea[name='notes']").val();
+                var pubmeddate = $("span[name='pubdate']").text();
+                var authors = $("meta[name='citation_authors']").attr("content");
+                var med = '{{ metainfo.med }}';
+                var scenario_id = $("#scenario_id").text();
+                
+    
+    
+                $.ajax({
+                    url: '{% url "save_pubmed_input" %}',
+                    data: {
+                      'scenario_id': scenario_id,
+                      'title': title,
+                      'pubmeddate' : pubmeddate,
+                      'relevance' : relevance,
+                      'pmid' : pmid,
+                      'url' : url,
+                      'abstract' : abstract,
+                      'notes' : notes,
+                      'authors' : authors,
+                      'med': med
+                    },
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.message === 'Failure') {
+                            $("#pubMedSaveInfoModal .modal-body").text(gettext("Αποτυχία αποθήκευσης"));
+                            $("#pubMedSaveInfoModal").modal("show");
+                        } else {
+                            $("#pubMedSaveInfoModal .modal-body").text(gettext("Επιτυχής αποθήκευση"));
+                            $("#pubMedSaveInfoModal").modal("show");
+                        }
+                    }
+                    });
+            });
+        });
+        </script>
 
 
 
@@ -47,26 +123,145 @@
 <div class="right_col" role="main">
 <!--     <table id="articles" class="table table-striped table-bordered dt-responsive dt-multilingual nowrap" cellspacing="0" width="100%">-->
 <!--         <td style="align-content: center">-->
-    <div align="center">
+    <div style="float: left; width: 80%; height: 5%;">
              {% if metainfo.pmcid %}
                 <iframe name="pdf-frame" id="pdf-frame"
                         frameborder="0" scrolling="auto"
                         src="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{{ metainfo.pmcid }}/pdf/">
                  </iframe>
             {% endif %}
-    </div>
+
     <br/>
-    <div>
+
 <!--         </td>-->
 <!--        <td>-->
             <button id="mendeley-btn" type="button" class="btn btn-lg view-pdf-widget" onclick="MendeleyImporterApi.open()"
-                 name="mendeley"><img src='{% static "images/logoTransparent.png" %}'></button>
+                 name="mendeley" style=" margin-left: 195px;"><img src='{% static "images/logoTransparent.png" %}'></button>
     </div>
 
 <!--        </td>-->
 <!--     </table>-->
-</div>
 
+<div style="float: right; width: 17%; margin-top: 250px">
+    {% if metainfo.relevance == "" %}
+            <td style="text-align: center" id="relevance">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <label for="Relevant" class="glyphicon glyphicon-ok-sign fa-2x" name="relevant">
+                    <input style="display: none" type="radio" id="Relevant" value="True" name="relevance" class="relevant">
+                    </label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                   <label for="Irrelevant" class="glyphicon glyphicon-remove-sign fa-2x" name="irrelevant">
+                    <input style="display: none" type="radio" id="Irrelevant" value="False" name="relevance" class="irrelevant" >
+                   </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <label for="Not sure" class="glyphicon glyphicon-question-sign fa-2x" name="uncertain">
+                        <input style="display: none" type="radio" id="Not sure" value="Not sure" name="relevance" class="uncertain">
+                    </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+                </div>
+<!--                                                            <br/>-->
+<!--                                                            <p> </p>-->
+<!--                                                            <textarea style="display: none" name="notes" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                            <p> </p>-->
+<!--                                                            <a style="display: none" name="save" href= '#' class="btn btn-dark ">Save</a>-->
+<!--                                                            <p> </p>-->
+            </td>
+        {% else %}
+         {% if metainfo.relevance == "True" %}
+         <td style="text-align: right" id="relevance">
+             <div class="custom-control custom-radio custom-control-inline" name="label">
+                 <label for="Relevant" class="glyphicon glyphicon-ok-sign fa-2x">
+                    <input style="display: none" type="radio" id="Relevant" value="True" name="relevance" checked>
+                </label><br>
+             </div>
+             <div class="custom-control custom-radio custom-control-inline">
+                 <label for="Irrelevant" class="glyphicon glyphicon-remove-sign fa-2x" name="label">
+                    <input style="display: none" type="radio" id="Irrelevant" value="False" name="relevance" >
+                </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+             </div>
+             <div class="custom-control custom-radio custom-control-inline">
+                 <label for="Not sure" class="glyphicon glyphicon-question-sign fa-2x" name="label">
+                    <input style="display: none" type="radio" id="Not sure" value="Not sure" name="relevance">
+                </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+             </div>
+<!--                                                                 <br/>-->
+<!--                                                                 <p> </p>-->
+<!--                                                                 <textarea style="display: none" name="notes" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none" name="save" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+         </td>
+     {% elif metainfo.relevance == "False" %}
+          <td style="text-align: center" id="relevance">
+              <div class="custom-control custom-radio custom-control-inline">
+                  <label for="Relevant" class="glyphicon glyphicon-ok-sign fa-2x" name="label">
+              <input style="display: none" type="radio" id="Relevant" value="True" name="relevance" >
+                <span></span></label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <label for="Irrelevant" class="glyphicon glyphicon-remove-sign fa-2x" name="label">
+                    <input style="display: none" type="radio" id="Irrelevant" value="False" name="relevance"  checked>
+               </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                  <label for="Not sure" class="glyphicon glyphicon-question-sign fa-2x" name="label">
+                    <input style="display: none" type="radio" id="Not sure" value="Not sure" name="relevance" >
+                </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+              </div>
+<!--                                                                  <br/>-->
+<!--                                                                  <p> </p>-->
+<!--                                                                 <textarea style="display: none" name="notes" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none"  name="save" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+         </td>
+     {% else %}
+         <td style="text-align: center" id="relevance">
+         <div class="custom-control custom-radio custom-control-inline">
+             <label for="Relevant" class="glyphicon glyphicon-ok-sign fa-2x" name="label">
+                <input style="display: none" type="radio" id="Relevant" value="True" name="relevance" >
+           </label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+         </div>
+         <div class="custom-control custom-radio custom-control-inline">
+             <label for="Irrelevant" class="glyphicon glyphicon-remove-sign fa-2x" name="label">
+                <input style="display: none" type="radio" id="Irrelevant" value="False" name="relevance" >
+            </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+         </div>
+         <div class="custom-control custom-radio custom-control-inline">
+             <label for="Not sure" class="glyphicon glyphicon-question-sign fa-2x" name="label">
+                <input style="display: none" type="radio" id="Not sure" value="Not sure" name="relevance"  checked>
+            </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+         </div>
+             <br/>
+<!--                                                                 <textarea style="display: none" name="notes" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none" name="save" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+         </td>
+            {% endif %}
+       {% endif %}
+
+    <br/>
+    <br/>
+     <textarea style="width: 80%; height: 100px; resize: none;" name='notes'
+                                                                  placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}">{% if metainfo.notes %}{{ metainfo.notes }}{% endif %}</textarea>
+    <br/>
+    <a id="save_notes" name="save" href= '#' class="btn btn-secondary glyphicon glyphicon-floppy-disk" style=" margin-left: 33px"></a>
+    <div style="display:none;" id="scenario_id">{{ metainfo.scenario_id }}</div>
+</div>
+</div>
 {% endblock content %}
 
 
