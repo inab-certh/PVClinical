@@ -90,7 +90,7 @@
                                               </div>
                                               <div id="collapseohdsi" class="panel-collapse collapse in">
                                                   <br>
-                                                  <table class="table table-striped table-bordered" style="width:500px">
+                                                  <table class="table table-striped table-bordered table-report-special">
                                                     <tr>
                                                         {% if ir_id %}
                                                             <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
@@ -184,35 +184,36 @@
                                                       </h4>
                                                     </div>
                                                     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
-                                                      <div class="panel-body">
+                                                        <br>
+                                                        <table class="table table-striped table-bordered table-report-special">
+                                                            <tr>
+                                                              <td><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Γρήγορη Επισκόπηση" %}</span></td>
 
-                                                          <strong style="padding-right:80px"><button id="QuickViewDrugEventShinyBtn{{ forloop.counter }}"  data-target="#shinyModal" class="btn btn-secondary" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Γρήγορη Επισκόπηση" %}</span></strong>
+                                                              {% if d and c %}
+                                                                  <td><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Δυναμικό PRR" %}</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                  <td><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Ανάλυση Αλλαγής Σημείου" %}</span></td>
+                                                              {% elif d %}
+                                                                  <td><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας Ελέγχου" %}</span></td>
+                                                                  <td><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></td>
+                                                                  <td><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></td>
+                                                              {% elif c %}
+                                                                  <td><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                  <td><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></td>
+                                                              {%endif%}
+                    <!--                                          <td><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</td>-->
 
-                                                          {% if d and c %}
-                                                              <strong style="padding-right:80px"><button id="DynPRRShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Δυναμικό PRR" %}</span></strong>
-
-                                                              <strong style="padding-right:80px"><button id="ChangePointShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Ανάλυση Αλλαγής Σημείου" %}</span></strong>
-
-                                                          {% elif d %}
-                                                              <strong style="padding-right:80px"><button id="DashShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal"  data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Πίνακας Ελέγχου" %}</span></strong>
-
-                                                              <strong style="padding-right:80px"><button id="RR_DShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span> {% trans "Λόγος Αναφορών" %}</span></strong>
-
-                                                              <strong style="padding-right:80px"><button  id="LrTestShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
-                                                          {% elif c %}
-                                                              <strong style="padding-right:80px"><button id="RR_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Λόγος Αναφορών" %}</span></strong>
-                                                              <strong style="padding-right:80px"><button  id="LrTest_EShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-target="#shinyModal" data-toggle="modal" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button><span>{% trans "Έλεγχος Λόγου Πιθανοφανειών" %}</span></strong>
-                                                          {%endif%}
-                <!--                                          <strong style="padding-right:80px"><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</strong>-->
-
-                                                          {%for key1,value1 in notes_openfda1.items%}
-                                                              {% if key1 == k %}
-                                                                <strong style="padding-right:80px"><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" {% if not value1 %}disabled{% endif %}><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></strong>
-
-                                                              {% endif %}
-                                                          {%endfor%}
-
-                                                      </div>
+                                                              {%for key1,value1 in notes_openfda1.items%}
+                                                                  {% if key1 == k %}
+                                                                        <td><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" {% if not value1 %}disabled{% endif %}><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></td>
+                                                                    </tr>
+                                                                  {% endif %}
+                                                              {%endfor%}
+                                                        </table>
+                                                        <br>
                                                     </div>
                                                 </div>
                                             {% endfor %}
@@ -385,29 +386,17 @@
                                                     </div>
                                                     <div id="smCollapse" class="panel-collapse collapse in">
                                                       <br>
-                                                      <table class="table table-striped table-bordered" style="width:500px">
+                                                      <table class="table table-striped table-bordered table-report-special">
                                                           <tr>
                                                               <td>
-                                                                  <button id="smTimelineBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
+                                                                  <button id="smGraphicsBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
                                                                       <i class="fas fa-search-plus"></i>
                                                                   </button>
-                                                                  <span>{% trans "Χρονικό Διάγραμμα" %}</span>
-                                                              </td>
-                                                              <td>
-                                                                  <button id="smRawDataBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
-                                                                      <i class="fas fa-search-plus"></i>
-                                                                  </button>
-                                                                  <span>{% trans "Ακατέργαστα Δεδομένα" %}</span>
+                                                                  <span>{% trans "Γραφικά στοιχεία" %}</span>
                                                               </td>
                                                           </tr>
 
                                                           <tr>
-                                                              <td>
-                                                                  <button id="smAuthorsBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
-                                                                      <i class="fas fa-search-plus"></i>
-                                                                  </button>
-                                                                  <span>{% trans "Συντάκτες" %}</span>
-                                                              </td>
                                                               <td>
                                                                   <button id="smNotesBtn"  data-target="#socialMediaModal" class="btn btn-secondary" data-toggle="modal">
                                                                       <i class="fas fa-search-plus"></i>
@@ -416,6 +405,7 @@
                                                               </td>
                                                           </tr>
                                                       </table>
+                                                        <br>
                                                     </div>
                                                 </div>
                                             </div>
@@ -486,7 +476,8 @@
         var openfda_shiny_endpoint = "{{ OPENFDA_SHINY_ENDPOINT }}";
         var hashes = "{{ hashes }}";
         var sm_shiny_endpoint = "{{ SM_SHINY_ENDPOINT }}";
-        var twitterQuery = "{{ twitter_query }}";
+        // var twitter_data_exist = "{{ twitter_data_exist }}"
+        var twitter_query_url = "{{ twitter_query_url }}";
         var all_notes={};
         var ir_table_rep=0 ;
         var ir_all_rep=0 ;

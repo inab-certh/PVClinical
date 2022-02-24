@@ -2247,15 +2247,42 @@ def final_report(request, scenario_id=None):
                              sorted(set([c.name for c in conditions])) or [""]))
 
     all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
-    twitter_query = urllib.parse.quote(" OR ".join(all_combs_names))
+    p = sc.title + str(sc.owner) + str(i)
+    h = hashlib.md5(repr(p).encode('utf-8'))
+    twitter_hash = h.hexdigest()
+    twitter_query_url = "{}?twitterQuery={}&hash={}".format(
+        settings.SM_SHINY_ENDPOINT, urllib.parse.quote(" OR ".join(all_combs_names)), twitter_hash)
+
+    # if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
+    # Delete all files containing twitter hash in their filename (to make sure new ones will be created)
+    requests.delete("{}delete-media-files".format(
+        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        params={"hashes": [twitter_hash]})
+
+    # Make the request, so that if twitter data exist, new files with specific hash will be created
+    requests.get("{}{}".format(settings.SM_SHINY_ENDPOINT, twitter_query_url))
+
+    ls_resp = requests.get("{}list-media-files".format(settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+                           auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER,
+                                              settings.OPENFDA_SHOTS_SERVICES_PASS))
+    existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
+
+    found_files = list(filter(lambda fname: fname.starts_with(twitter_hash), existing_files))
+    twitter_data_exist = (len(found_files) != 0)
+
+    # Clear again
+    requests.delete("{}delete-media-files".format(
+        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        params={"hashes": [twitter_hash]})
 
     context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
                "ir_generate": ir_generate, "pub_objs": pub_objs, "cc_shots_paths_labels": cc_shots_paths_labels,
-               "hashes": hashes, "SM_SHINY_ENDPOINT": settings.SM_SHINY_ENDPOINT,
-               "twitter_query": twitter_query}
+               "hashes": hashes, "twitter_query_url": twitter_query_url, "twitter_data_exist": twitter_data_exist}
 
     # Passing all "variables" (i.e. ir_table, ir_all, pre_table etc.) to context
     context.update(str_to_var)
