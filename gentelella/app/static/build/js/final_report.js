@@ -1,7 +1,4 @@
 $(function() {
-    var twitter_query_url = sm_shiny_endpoint + "?twitterQuery=" + twitterQuery;
-    $("#socialMediaModal iframe").attr("src", twitter_query_url);
-
     var openfda_proceed_disabled = true;
     var ohdsi_proceed_disabled = true;
     var pubmed_proceed_disabled = true;
@@ -192,25 +189,10 @@ $(function() {
         }
     });
 
-    $("[id^='sm'][id$='Btn']").click(function() {
-        // console.log($(this));
-        var btn_id = $(this).attr("id");
-        var order_dic = {"smTimelineBtn":1, "smRawDataBtn":2, "smAuthorsBtn":3}
-        var btn_num = order_dic[btn_id];
+    $("#smGraphicsBtn").click(function() {
+        $("#socialMediaModal iframe").attr("src", twitter_query_url);
 
-        if(btn_id!="smNotesBtn") {
-            var iframe_cnt = document.getElementById("socialMediaModalIframe").contentWindow;
-            console.log(iframe_cnt.document.body.innerHTML);
-            // iframe_cnt.switchTabInIframe("ui-tab-572");
-            // iframe_cnt.find(".nav-tabs li:nth-child("+ btn_num +") a").click();
-            // var tabs_dict = {};
-            // keys.forEach((key, i) => result[key] = values[i]);
-            // iframe_cnt.switchTabInIframe(tab_id);
-        }
 
-        // function switchframe(id) {
-        //     document.getElementsById('social-iframe').contentWindow.switchTabInIframe(id);
-        // }
     });
 });
 

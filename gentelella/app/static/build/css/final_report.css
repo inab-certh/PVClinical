@@ -35,3 +35,12 @@
   border: none;
   overflow: hidden;
 }
+
+.table-report-special{
+    width: 80rem;
+}
+
+.panel-collapse>table tr>td {
+    padding-right: 80px;
+    font-weight: 700;
+}
