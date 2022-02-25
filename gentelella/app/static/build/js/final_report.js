@@ -153,7 +153,7 @@ $(function() {
             // console.log(note)
             // console.log(hash)
             all_notes[hash]=note;
-            // console.log(all_notes);
+            console.log(all_notes);
         } else if(!$(this).is(":checked") && (hash in all_notes)){
             delete all_notes[hash];
             // console.log(all_notes);

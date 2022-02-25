@@ -390,7 +390,7 @@ img {
 <!-- /.modal -->
 
 <!-- Social Media Modal Notes -->
-<div class="modal fade report-note-modal"  id="socialMediaModal_notes" tabindex="-1" role="dialog" aria-labelledby="SMModalLabel" aria-hidden="true">
+<div class="modal fade report-note-modal"  id="socialMediaModalΝotes" tabindex="-1" role="dialog" aria-labelledby="SMModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -402,7 +402,7 @@ img {
                   <input type="checkbox" id="sm_note" class="note_chkb col-xs-1" value="">
                   <label for="sm_note" id="sm_note_label"></label>
                   <div id="cke_shiny_note_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                      <textarea readonly="readonly" id="taSmNote{{ forloop.counter}}"></textarea>
+                      <textarea readonly="readonly" id="taSmNote">{{ twitter_notes|striptags|safe }}</textarea>
                   </div>
               </div>
           </div>

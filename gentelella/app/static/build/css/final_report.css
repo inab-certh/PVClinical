@@ -41,6 +41,11 @@
 }
 
 .panel-collapse>table tr>td {
-    padding-right: 80px;
     font-weight: 700;
 }
+
+#combsAccordion .panel-collapse table {
+    empty-cells:hide;
+    border: 0;
+}
+
