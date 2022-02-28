@@ -100,7 +100,7 @@
                                                                 <i class="fas fa-search-plus"></i></button><span> {% trans "Ρυθμός Επίπτωσης" %}</span></td>
                                                         {% endif %}
                                                         <td>
-                                                            <button class="btn btn-secondary" id="IrNotes" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}" {% if not ir_notes %}disabled{% endif %}>
+                                                            <button class="btn btn-secondary" id="irNotesBtn" data-toggle="modal" data-target="#ohdsi_ir_notes" data-note="{{ ir_notes }}" {% if not ir_notes %}disabled{% endif %}>
                                                                 <i class="fas fa-search-plus"></i>
                                                             </button><span> {% trans "Σημειώσεις" %}</span>
                                                         </td>
@@ -114,7 +114,7 @@
                                                                 <i class="fas fa-search-plus"></i></button><span> {% trans "Χαρακτηρισμός Πληθυσμού" %}</span></td>
                                                         {% endif %}
                                                         <td>
-                                                            <button class="btn btn-secondary" id="CharNotes" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}" {% if not char_notes %}disabled{% endif %}>
+                                                            <button class="btn btn-secondary" id="charNotesBtn" data-toggle="modal" data-target="#ohdsi_char_notes" data-note="{{ char_notes }}" {% if not char_notes %}disabled{% endif %}>
                                                                 <i class="fas fa-search-plus"></i>
                                                             </button><span> {% trans "Σημειώσεις" %}</span>
                                                         </td>
@@ -128,7 +128,7 @@
                                                             <i class="fas fa-search-plus"></i></button><span>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</span></td>
                                                       {% endif %}
                                                       <td>
-                                                         <button class="btn btn-secondary" id="PathwaysNotes" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}" {% if not pathways_notes %}disabled{% endif %}>
+                                                         <button class="btn btn-secondary" id="pathwaysNotesBtn" data-toggle="modal" data-target="#ohdsi_pathways_notes" data-note="{{ pathways_notes }}" {% if not pathways_notes %}disabled{% endif %}>
                                                             <i class="fas fa-search-plus"></i>
                                                          </button><span> {% trans "Σημειώσεις" %}</span>
                                                       </td>
@@ -208,9 +208,9 @@
                                                               {%endif%}
                     <!--                                          <td><button id="ReportViewShinyBtn{{ forloop.counter }}" class="btn btn-secondary" data-toggle="modal" data-target="#shinyModal" data-drug="{{d}}" data-con="{{c}}" data-hash="{{k}}"><i class="fas fa-search-plus"></i></button>Report View</td>-->
 
-                                                              {%for key1,value1 in notes_openfda1.items%}
-                                                                  {% if key1 == k %}
-                                                                        <td><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{value1|striptags|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" {% if not value1 %}disabled{% endif %}><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></td>
+                                                              {% for hash_key,openfda_notes in notes_openfda1.items %}
+                                                                  {% if hash_key == k %}
+                                                                        <td><button class="btn btn-secondary" id="NotesBtn{{ k }}" data-toggle="modal" data-target="#shinyModal_notes" data-note="{{openfda_notes|safe}}" data-drug="{{d.code}}" data-con="{{c.code}}" data-hash="{{k}}" {% if not openfda_notes %}disabled{% endif %}><i class="fas fa-search-plus"></i></button><span>{% trans "Σημειώσεις" %}</span></td>
                                                                     </tr>
                                                                   {% endif %}
                                                               {%endfor%}
@@ -330,8 +330,8 @@
                                                                                           <div class="row">
                                                                                           <input type="checkbox" id="pubnote{{ forloop.counter}}" class="col-xs-1" value="" data-note="{{ pub_obj.notes }}" data-series="{{ forloop.counter}}" data-objid="{{pub_obj.id}}">
                                                                                           <label for="pubnote{{ forloop.counter}}"></label>
-                                                                                          <div id="cke_pubnote{{ forloop.counter}}_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                                                                                              <textarea readonly="readonly" id="taPubnote{{ forloop.counter}}">{{ pub_obj.notes.content }}</textarea>
+                                                                                          <div id="cke_pubnote{{ forloop.counter}}_contents" class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                                                                                              <textarea class="ckeditor" readonly="readonly" id="taPubnote{{ forloop.counter}}">{{ pub_obj.notes.content }}</textarea>
                                                                                           </div>
                                                                                           </div>
                                                                                       </div>
@@ -393,7 +393,7 @@
                                                                   <span>{% trans "Γραφικά στοιχεία" %}</span>
                                                               </td>
                                                               <td>
-                                                                  <button id="smNotesBtn"  data-target="#socialMediaModalΝotes" class="btn btn-secondary" data-toggle="modal" data-hash="{{ twitter_hash }}" {% if not twitter_notes %}disabled{% endif %}>
+                                                                  <button id="smNotesBtn"  data-target="#socialMediaModalΝotes" class="btn btn-secondary" data-toggle="modal" data-note="{{ twitter_notes }}" data-hash="{{ twitter_hash }}" {% if not twitter_notes %}disabled{% endif %}>
                                                                       <i class="fas fa-search-plus"></i>
                                                                   </button>
                                                                   <span>{% trans "Σημειώσεις" %}</span>
@@ -473,6 +473,9 @@
     {% block javascripts %}
 
     {{ block.super }}
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
     <script>
         var openfda_shiny_endpoint = "{{ OPENFDA_SHINY_ENDPOINT }}";
         var hashes = "{{ hashes }}";
@@ -500,8 +503,8 @@
     $(document).ready(function(){
         var note ;
         var hash ;
-        var el_name_to_value = {"#irnote": "{{ ir_notes|striptags|safe }}",
-            "#charnote": "{{ char_notes|striptags|safe }}", "#pathwaysnote": "{{ pathways_notes|striptags|safe }}"};
+        var el_name_to_value = {"#irnote": "{{ ir_notes|safe }}",
+            "#charnote": "{{ char_notes|safe }}", "#pathwaysnote": "{{ pathways_notes|safe }}"};
         var el_name_to_var = {"#ir_table": "ir_table_rep", "#ir_all": "ir_all_rep", "#pre_table": "pre_table_rep",
             "#pre_chart": "pre_chart_rep", "#drug_table": "drug_table_rep", "#drug_chart": "drug_chart_rep",
             "#demograph_table": "demograph_table_rep", "#demograph_chart": "demograph_chart_rep",

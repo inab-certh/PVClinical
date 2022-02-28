@@ -105,8 +105,8 @@ img {
               <div class="row">
                   <input type="checkbox" id="shiny_note" class="note_chkb col-xs-1" value="">
                   <label for="shiny_note" id="shiny_note_label"></label>
-                  <div id="cke_shiny_note_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                      <textarea readonly="readonly" id="taShinyNote{{ forloop.counter}}"></textarea>
+                  <div class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                      <textarea class="ckeditor" readonly="readonly" id="taShinyNote{{ forloop.counter}}">{{ openfda_notes|safe }}</textarea>
                   </div>
               </div>
           </div>
@@ -286,8 +286,8 @@ img {
           <div class="row">
               <input type="checkbox" id="irnote" class="col-xs-1" value="">
               <label for="irnote" id="label_ir_note"></label>
-              <div id="cke_irnote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                  <textarea readonly="readonly" id="taIrNote">{{ ir_notes|striptags|safe }}</textarea>
+              <div id="cke_irnote_contents" class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                      <textarea class="ckeditor" readonly="readonly" id="taIrNote">{{ ir_notes|safe }}</textarea>
               </div>
           </div>
         {% else %}
@@ -317,8 +317,8 @@ img {
                 <div class="row">
                     <input type="checkbox" id="charnote" class="col-xs-1" value="">
                     <label for="charnote" id="label_char_note"></label>
-                    <div id="cke_charnote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                        <textarea readonly="readonly" id="taCharNote">{{ char_notes|striptags|safe }}</textarea>
+                    <div id="cke_charnote_contents" class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                      <textarea class="ckeditor" readonly="readonly" id="taCharNote">{{ char_notes|safe }}</textarea>
                     </div>
                 </div>
             {% else %}
@@ -348,8 +348,8 @@ img {
                 <div class="row">
                     <input type="checkbox" id="pathwaysnote" class="col-xs-1" value="">
                     <label for="pathwaysnote" id="label_pathways_note"></label>
-                    <div id="cke_pathwaynote_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                        <textarea readonly="readonly" id="taPathwayNote">{{ pathways_notes|striptags|safe }}</textarea>
+                    <div id="cke_pathwaynote_contents" class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                      <textarea class="ckeditor" readonly="readonly" id="taPathwayNote">{{ pathways_notes|safe }}</textarea>
                     </div>
                 </div>
             {% else %}
@@ -401,8 +401,10 @@ img {
               <div class="row">
                   <input type="checkbox" id="sm_note" class="note_chkb col-xs-1" value="">
                   <label for="sm_note" id="sm_note_label"></label>
-                  <div id="cke_shiny_note_contents" class="cke_contents cke_reset col-xs-11" role="presentation">
-                      <textarea readonly="readonly" id="taSmNote">{{ twitter_notes|striptags|safe }}</textarea>
+                  <div class="notes-editor cke_contents cke_shiny_note_contents col-xs-11" role="presentation">
+                      <textarea class="ckeditor" readonly="readonly" id="taSmNote">
+                          {{ twitter_notes|safe }}
+                      </textarea>
                   </div>
               </div>
           </div>
