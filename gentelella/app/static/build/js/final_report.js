@@ -5,6 +5,7 @@ $(function() {
 
     var event; // The custom event that will be created
     proceed_elm = document.createElement("div");
+
     function triggerProceedActivation(el) {
         if (document.createEvent) {
             event = document.createEvent("Event");
@@ -144,14 +145,18 @@ $(function() {
         var con= $(this).data("con");
         note= $(this).data("note");
 
-        $("#shinyModal_notes").val(note) ;
-        $("#cke_shiny_note_contents textarea").text(note);
+        var modal_id = $(this).data("target");
+        $(modal_id).val(note) ;
+        // $(".cke_shiny_note_contents textarea").text(note);
+        // $("#shinyModal_notes .cke_shiny_note_contents textarea").addClass("ckeditor")
+        $(".notes-editor iframe").contents().find("html, body").css(
+            {"background-color": "#f4f4f4", "color": "#333333b3", "cursor": "not-allowed"});
     });
 
     $(".note_chkb").on("change", function(){
         if($(this).is(":checked") && !(hash in all_notes)){
-            // console.log(note)
-            // console.log(hash)
+            console.log(note);
+            console.log(hash);
             all_notes[hash]=note;
             console.log(all_notes);
         } else if(!$(this).is(":checked") && (hash in all_notes)){
@@ -194,5 +199,6 @@ $(function() {
 
 
     });
+
 });
 
