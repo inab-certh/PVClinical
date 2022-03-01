@@ -342,7 +342,7 @@ def add_edit_scenario(request, scenario_id=None):
 
     if request.method == 'POST':
         scform = ScenarioForm(request.POST,
-                              instance=scenario, label_suffix='')
+                              instance=scenario, label_suffix="")
 
         if scform.is_valid():
             sc=scform.save()
@@ -364,7 +364,7 @@ def add_edit_scenario(request, scenario_id=None):
 
     # GET request method
     else:
-        scform = ScenarioForm(label_suffix='',  instance=scenario)
+        scform = ScenarioForm(label_suffix="",  instance=scenario)
 
     all_drug_codes = list(map(lambda d: d.code, scform.all_drugs))
 
@@ -538,7 +538,7 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
 
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
-        irform = IRForm(request.POST, label_suffix='', ir_options=ir_options, read_only=read_only)
+        irform = IRForm(request.POST, label_suffix="", ir_options=ir_options, read_only=read_only)
 
         if irform.is_valid():
 
@@ -602,7 +602,7 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
     else:
         # if "ohdsi-workspace" in http_referer:
         #     sc_id = http_referer.rsplit('/', 1)[-1]
-        irform = IRForm(label_suffix='', ir_options=ir_options, read_only=read_only)
+        irform = IRForm(label_suffix="", ir_options=ir_options, read_only=read_only)
         # irform["sc_id"].initial = sc_id
         # update_ir(ir_id)
 
@@ -702,7 +702,7 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
 
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
-        char_form = CharForm(request.POST, label_suffix='', char_options=char_options, read_only=read_only)
+        char_form = CharForm(request.POST, label_suffix="", char_options=char_options, read_only=read_only)
 
         if char_form.is_valid():
             char_options["features"] = list(map(int, char_form.cleaned_data.get("features")))
@@ -732,7 +732,7 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
 
     # GET request method
     else:
-        char_form = CharForm(label_suffix='', char_options=char_options, read_only=read_only)
+        char_form = CharForm(label_suffix="", char_options=char_options, read_only=read_only)
         status_code = 200
 
     results_url = "{}/#/cc/characterizations/{}?{}".format(settings.OHDSI_ATLAS, char_id, view_type)
@@ -831,7 +831,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
 
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
-        cp_form = PathwaysForm(request.POST, label_suffix='', cp_options=cp_options, read_only=read_only)
+        cp_form = PathwaysForm(request.POST, label_suffix="", cp_options=cp_options, read_only=read_only)
 
         if cp_form.is_valid():
             cp_options["combinationWindow"] = cp_form.cleaned_data.get("combination_window")
@@ -858,7 +858,7 @@ def pathways(request, sc_id, cp_id, read_only=1):
 
     # GET request method
     else:
-        cp_form = PathwaysForm(label_suffix='', cp_options=cp_options, read_only=read_only)
+        cp_form = PathwaysForm(label_suffix="", cp_options=cp_options, read_only=read_only)
         status_code = 200
 
     results_url = "{}/#/pathways/{}/executions".format(settings.OHDSI_ATLAS, cp_id)
@@ -1132,7 +1132,7 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
             else:
                 res.pubmed_records[i].drug = qr[0]
             authors = res.pubmed_records[i].authors
-            res.pubmed_records[i].authors = ';'.join(str(x['lname'] + "," + x['fname'].replace(' ', '')) if x['fname'] else str(x['lname']) for x in res.pubmed_records[i].authors )
+            res.pubmed_records[i].authors = ';'.join(str(x['lname'] + "," + x['fname'].replace(' ', "")) if x['fname'] else str(x['lname']) for x in res.pubmed_records[i].authors )
 
 
             Entrez.email = 'pvclinical.project@gmail.com'
@@ -1317,7 +1317,7 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
                      wsview=wsview_id)
 
     if request.method == 'POST':
-        notes_form = NotesForm(request.POST, instance=nobj, label_suffix='')
+        notes_form = NotesForm(request.POST, instance=nobj, label_suffix="")
         # sc_id = sc_id or request.POST.get("sc_id")
 
         if notes_form.is_valid():
@@ -1346,7 +1346,7 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
 
     # GET request method
     else:
-        notes_form = NotesForm(instance=nobj, label_suffix='')
+        notes_form = NotesForm(instance=nobj, label_suffix="")
         status_code = 200
 
     context = {
@@ -1695,12 +1695,12 @@ def openfda_screenshots_exist(request):
     :param request: The request from which hashes are retrieved and this function is called
     :return: true or false, depending on whether the specific screenshot files were found or not on server
     """
-    # r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    # r = requests.get(settings.SHINY_SCREENSHOTS_ENDPOINT)
     # soup = BeautifulSoup(r.text, 'html.parser')
     # existing_files = filter(lambda lnk: "." in lnk, map(lambda link: link['href'], soup.find_all('a', href=True)))
 
-    ls_resp = requests.get("{}list-media-files".format(settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS))
+    ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS))
     existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
 
     hashes = ast.literal_eval(html.unescape(request.GET.get("hashes", None)))
@@ -1773,8 +1773,8 @@ def final_report(request, scenario_id=None):
     # if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
     # Delete all files containing any of the hashes in their filename (to make sure new ones will be created)
     requests.delete("{}delete-media-files".format(
-        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
         params={"hashes": hashes})
 
     user = sc.owner
@@ -2255,25 +2255,25 @@ def final_report(request, scenario_id=None):
     # if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
     # Delete all files containing twitter hash in their filename (to make sure new ones will be created)
     requests.delete("{}delete-media-files".format(
-        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
         params={"hashes": [twitter_hash]})
 
     # Make the request, so that if twitter data exist, new files with specific hash will be created
     requests.get("{}{}".format(settings.SM_SHINY_ENDPOINT, twitter_query_url))
 
-    ls_resp = requests.get("{}list-media-files".format(settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-                           auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER,
-                                              settings.OPENFDA_SHOTS_SERVICES_PASS))
+    ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+                           auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
+                                              settings.SHINY_SHOTS_SERVICES_PASS))
     existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
 
-    found_files = list(filter(lambda fname: fname.starts_with(twitter_hash), existing_files))
+    found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
     twitter_data_exist = (len(found_files) != 0)
 
     # Clear again
     requests.delete("{}delete-media-files".format(
-        settings.OPENFDA_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.OPENFDA_SHOTS_SERVICES_USER, settings.OPENFDA_SHOTS_SERVICES_PASS),
+        settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+        auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
         params={"hashes": [twitter_hash]})
 
     try:
@@ -2380,11 +2380,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_titles = "" if pub_titles == "-" else pub_titles
     pub_notes = "" if pub_notes == "-" else pub_notes
 
-
-
     pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
     pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
-
 
     pub_exist = len(pub_tobjs) + len(pub_nobjs)
 
@@ -2582,7 +2579,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
         drug_condition_hash.append(list(all_combs[i])+[hash])
 
-    r = requests.get(settings.OPENFDA_SCREENSHOTS_ENDPOINT)
+    r = requests.get(settings.SHINY_SCREENSHOTS_ENDPOINT)
     soup = BeautifulSoup(r.text, 'html.parser')
 
     dict_quickview = {}
@@ -2603,7 +2600,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
     for i, j, k in drug_condition_hash:
 
-        if i != '' and j != '':
+        if i != "" and j != "":
             no_comb = 'combination'
 
             dict_hash_combination[k] = i + ' - ' + j
@@ -2620,18 +2617,18 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict1.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
-                dict1.setdefault(k, []).append('')
-                dict1.setdefault(k, []).append('')
+                dict1.setdefault(k, []).append("")
+                dict1.setdefault(k, []).append("")
 
             if files_csv:
-                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, files_csv[0])))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, files_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict1.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
                 dict1.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
-                dict1.setdefault(k, []).append('')
-                dict1.setdefault(k, []).append('')
+                dict1.setdefault(k, []).append("")
+                dict1.setdefault(k, []).append("")
 
             dynprr_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_prrplot".format(k) in elm,
                                      map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2649,45 +2646,45 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 kin = kin + 1
                 dict2.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
 
             if dynprr_csv:
                 dict2.setdefault(k, []).append(" - {}".format(_("Πλήθος αναφορών και PRR")))
-                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv[0])))
+                df1 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dynprr_csv[0])))
                 styler1 = df1.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler1.render())
                 kin = kin + 1
                 dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
 
             else:
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
 
             if dynprr_csv1:
                 dict2.setdefault(k, []).append(" - {}".format(_("Φάρμακα στις επιλεγμένες αναφορές")))
-                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv1[0])))
+                df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dynprr_csv1[0])))
                 styler2 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler2.render())
                 kin = kin + 1
                 dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
 
             if dynprr_csv2:
                 dict2.setdefault(k, []).append(" - {}".format(_("Συμβάντα στις επιλεγμένες αναφορές")))
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dynprr_csv2[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dynprr_csv2[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict2.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
                 dict2.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
-                dict2.setdefault(k, []).append('')
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
+                dict2.setdefault(k, []).append("")
 
             changep_png = list(
                 filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_cpmeanplot".format(k) in elm,
@@ -2714,9 +2711,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
             if changep_png1:
                 dict3.setdefault(k, []).append(" - {}".format(_("Ανάλυση μεταβολής διακύμανσης")))
@@ -2725,9 +2722,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
 
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
             if changep_png2:
                 dict3.setdefault(k, []).append(" - {}".format(_("Μπεϋζιανή ανάλυση σημείου αλλαγής")))
@@ -2735,9 +2732,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 kin = kin + 1
                 dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
             if changep_png3:
                 dict3.setdefault(k, []).append(" - {}".format(_("Πλήθος αναφορών ανά ημερομηνία")))
@@ -2745,35 +2742,35 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                 kin = kin + 1
                 dict3.setdefault(k, []).append("{} {}".format(_("Εικόνα"), kin))
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
             if changep_csv:
                 dict3.setdefault(k, []).append(" - {}".format(_("Φάρμακα στις επιλεγμένες αναφορές")))
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, changep_csv[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
                 dict3.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
             if changep_csv1:
                 dict3.setdefault(k, []).append(" - {}".format(_("Συμβάντα στις επιλεγμένες αναφορές")))
-                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, changep_csv1[0])))
+                df3 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, changep_csv1[0])))
                 styler3 = df3.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
                 dict3.setdefault(k, []).append(styler3.render())
                 kin = kin + 1
                 dict3.setdefault(k, []).append("{} {}".format(_("Πίνακας"), kin))
             else:
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
-                dict3.setdefault(k, []).append('')
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
+                dict3.setdefault(k, []).append("")
 
-    if i == '' or j == '':
+    if i == "" or j == "":
         no_comb = ""
         files_png = list(filter(lambda elm: os.path.splitext(elm)[1] in [".png"] and "{}_timeseries".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
@@ -2786,12 +2783,12 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             lin = lin + 1
             dict_quickview.setdefault(k, []).append("{} {}".format(_("Εικόνα"), lin))
         else:
-            dict_quickview.setdefault(i, []).append('')
-            dict_quickview.setdefault(i, []).append('')
+            dict_quickview.setdefault(i, []).append("")
+            dict_quickview.setdefault(i, []).append("")
 
         if files_csv:
             dictcsv[k] = files_csv[0]
-            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dictcsv[k])))
+            df1 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dictcsv[k])))
             styler1 = df1.loc[:9].style.hide_columns(['Unnamed: 0', 'Definition']).hide_index()
             dict_quickview.setdefault(i, []).append(styler1.render())
             lin = lin + 1
@@ -2825,20 +2822,20 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
 
         if dash_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dash_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(" {}".format(_("Συμβάντα")), []).append(styler1.render())
             lin = lin+1
             dict_dash_csv.setdefault(" {}".format(_("Συμβάντα")), []).append("{} {}".format(_("Πίνακας"), lin))
         if dash_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dash_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(" {}".format(_("Συγχορηγούμενα Φάρμακα")), []).append(styler1.render())
             lin = lin + 1
             dict_dash_csv.setdefault(" {}".format(_("Συγχορηγούμενα Φάρμακα")), []).append("{} {}".format(_("Πίνακας"), lin))
 
         if dash_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, dash_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, dash_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_dash_csv.setdefault(" {}".format(_("Ενδείξεις")), []).append(styler1.render())
             lin = lin + 1
@@ -2857,14 +2854,14 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_d_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_d_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append(styler1.render())
             lin = lin + 1
             dict_rr_d.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append(
                 "{} {}".format(_("Πίνακας"), lin))
         if rr_d_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο")),
                                  []).append(styler1.render())
@@ -2872,7 +2869,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για συγκεκριμένο φάρμακο")),
                                  []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_d_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
                                  []).append(styler1.render())
@@ -2881,7 +2878,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                  []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις συμβάντων για φάρμακο")),
                                  []).append(styler1.render())
@@ -2890,7 +2887,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                  []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
@@ -2898,7 +2895,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                  []).append("{} {}".format(_("Πίνακας"), lin))
 
         if rr_d_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_d_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_d_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_d.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
@@ -2926,7 +2923,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lr_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prres".format(k) in elm,
                               map(lambda el: el.get_text(), soup.find_all('a'))))
         if lr_csv6:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv6[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών συμβάντων")),
                                []).append(styler1.render())
@@ -2943,7 +2940,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για φάρμακο")),
                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
                                []).append(styler1.render())
@@ -2951,28 +2948,28 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lr.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις συμβάντων για όλα τα φάρμακα")),
                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(" {}".format(_("Φάρμακα στις αναφορές σεναρίου")),
                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Πλήθος συμβάντων για φάρμακο")), []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(" {}".format(_("Πλήθος συμβάντων για φάρμακο")),
                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Πλήθος για όλα τα συμβάντα")), []).append(styler1.render())
             lin = lin + 1
             dict_lr.setdefault(" {}".format(_("Πλήθος για όλα τα συμβάντα")),
                                []).append("{} {}".format(_("Πίνακας"), lin))
         if lr_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lr_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lr_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lr.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
@@ -2994,13 +2991,13 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         rr_e_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_e_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(' PRR and ROR Results', []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(" {}".format(_("Αποτελέσματα PRR και ROR")), []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συγκεκριμένο συμβάν")),
                                  []).append(styler1.render())
@@ -3008,7 +3005,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συγκεκριμένο συμβάν")),
                                  []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
                                  []).append(styler1.render())
@@ -3016,7 +3013,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_rr_e.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
                                  []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις φαρμάκων για συμβάν")),
                                  []).append(styler1.render())
@@ -3024,14 +3021,14 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_rr_e.setdefault(" {}".format(_("Ταξινομημένες μετρήσεις φαρμάκων για συμβάν")),
                                  []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
             dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
                                  []).append("{} {}".format(_("Πίνακας"), lin))
         if rr_e_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, rr_e_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_rr_e.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
@@ -3059,7 +3056,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
         lre_csv6 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_Eprres".format(k) in elm,
                                map(lambda el: el.get_text(), soup.find_all('a'))))
         if lre_csv6:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv6[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv6[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών φαρμάκων")),
                                 []).append(styler1.render())
@@ -3067,7 +3064,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lre.setdefault(" {}".format(_("Αποτελέσματα LRT βάσει των συνολικών φαρμάκων")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv2:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv2[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv2[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συμβάν")),
                                 []).append(styler1.render())
@@ -3075,7 +3072,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για συμβάν")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
                                 []).append(styler1.render())
@@ -3083,40 +3080,63 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lre.setdefault(" {}".format(_("Αναλυθείσες μετρήσεις φαρμάκων για όλα τα συμβάντα")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv4:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv4[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv5:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv5[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv5[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Πλήθος φαρμάκων για συμβάν")), []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(" {}".format(_("Πλήθος φαρμάκων για συμβάν")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv1:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv1[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv1[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Πλήθος όλων των φαρμάκων")), []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(" {}".format(_("Πλήθος όλων των φαρμάκων")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
         if lre_csv3:
-            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.OPENFDA_SCREENSHOTS_ENDPOINT, lre_csv3[0])))
+            df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, lre_csv3[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
             dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")), []).append(styler1.render())
             lin = lin + 1
             dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
+    # Add twitter screenshots into dicts for final report
+    all_combs_names = list(product(sorted(set([d.name for d in drugs])) or [""],
+                                   sorted(set([c.name for c in conditions])) or [""]))
+
+    all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
+    p = sc.title + str(sc.owner) + str(i)
+    h = hashlib.md5(repr(p).encode('utf-8'))
+    twitter_hash = h.hexdigest()
+
+    ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+                           auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
+                                              settings.SHINY_SHOTS_SERVICES_PASS))
+
+    existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
+
+    found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
+
+    # Most active users in the selected twitter discourse
+    twitter_shots = dict([(_("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
+                             ) if "timeseries" in f else _(
+        "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
+
+
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
     lst_of_all = dicts123_vals + list(report_notes.values())
-    empty_dicts123 = False if any(el != '' for el in chain.from_iterable(dicts123_vals)) else True
-    empty_OpenFDA = False if any(el!='' for el in chain.from_iterable(lst_of_all)) else True
+    empty_dicts123 = False if any(el != "" for el in chain.from_iterable(dicts123_vals)) else True
+    empty_OpenFDA = False if any(el != "" for el in chain.from_iterable(lst_of_all)) else True
 
-    context = {"OPENFDA_SCREENSHOTS_ENDPOINT": settings.OPENFDA_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
+    context = {"SHINY_SCREENSHOTS_ENDPOINT": settings.SHINY_SCREENSHOTS_ENDPOINT, "all_combs": all_combs,
                "scenario": scenario, "dict_quickview": dict_quickview, "dict_dashboard_png": dict_dashboard_png,
                "dict_dash_csv": dict_dash_csv, "dict_rr_d": dict_rr_d, "dict_lr": dict_lr,
                "dict_lrTest_png": dict_lrTest_png, "dict_rr_e": dict_rr_e,
@@ -3125,7 +3145,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                "empty_OpenFDA": empty_OpenFDA, "report_notes": report_notes, "no_comb": no_comb,
                "extra_notes": extra_notes, "image_print": image_print, "ir_dict_t": ir_dict_t, "ir_dict_a": ir_dict_a,
                "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
-               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs, "empty_dicts123": empty_dicts123}
+               "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs, "empty_dicts123": empty_dicts123,
+               "twitter_shots": twitter_shots, "twitter_hash": twitter_hash}
                # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
                # "pub_dict_urls": pub_dict_urls}
 
@@ -3251,7 +3272,7 @@ def new_pmcase(request):
     quest_btn_disable = True
 
     if request.method == "POST":
-        form = PatientForm(request.POST, user=request.user, label_suffix='')
+        form = PatientForm(request.POST, user=request.user, label_suffix="")
 
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
@@ -3270,7 +3291,7 @@ def new_pmcase(request):
                 quest_btn_disable = True
 
     else:
-        form = PatientForm(user=request.user, label_suffix='')
+        form = PatientForm(user=request.user, label_suffix="")
 
     return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
                                                    "questbtn_disable": quest_btn_disable})
@@ -3305,7 +3326,7 @@ def questionnaire(request, patient_id=None, sc_id=None):
     """
     if request.method == "POST":
 
-        form = QuestionnaireForm(request.POST, label_suffix='')
+        form = QuestionnaireForm(request.POST, label_suffix="")
         pat_id = request.session.get('pat_id')
         scen_id = request.session.get('scen_id')
 
@@ -3348,7 +3369,7 @@ def questionnaire(request, patient_id=None, sc_id=None):
         # patient_id = patient_id #or request.GET.get("patient_id", None)
         # sc_id = sc_id #or request.GET.getlist("sc_id")
 
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix='')
+        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix="")
         request.session['quest_id'] = None
         request.session['scen_id'] = sc_id
         request.session['pat_id'] = patient_id

@@ -126,6 +126,10 @@ div.pers-info>span.pers-val {
   /*font-family: Arial, Helvetica, sans-serif;*/
 }
 
+.notes_content>p {
+    font-weight: unset;
+}
+
 .details{
     /*font-family: Arial, Helvetica, sans-serif;*/
     padding-left: 20px;

@@ -146,22 +146,20 @@ $(function() {
         note= $(this).data("note");
 
         var modal_id = $(this).data("target");
-        $(modal_id).val(note) ;
+        // $(modal_id).val(note);
+        var element_id = $(modal_id).find("textarea").attr("id");
+        CKEDITOR.instances[element_id].setData(note);
         // $(".cke_shiny_note_contents textarea").text(note);
         // $("#shinyModal_notes .cke_shiny_note_contents textarea").addClass("ckeditor")
-        $(".notes-editor iframe").contents().find("html, body").css(
+        $(modal_id).find(".notes-editor iframe").contents().find("html, body").css(
             {"background-color": "#f4f4f4", "color": "#333333b3", "cursor": "not-allowed"});
     });
 
     $(".note_chkb").on("change", function(){
         if($(this).is(":checked") && !(hash in all_notes)){
-            console.log(note);
-            console.log(hash);
             all_notes[hash]=note;
-            console.log(all_notes);
         } else if(!$(this).is(":checked") && (hash in all_notes)){
             delete all_notes[hash];
-            // console.log(all_notes);
         }
     });
 

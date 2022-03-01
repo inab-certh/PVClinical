@@ -75,7 +75,7 @@
                 <div class="view_title" >{% trans "Σημειώσεις για Ρυθμό Επίπτωσης" %}</div>
                 <br>
                 <br>
-                <div class="notes_content">{{note}}</div>
+                <div class="notes_content">{{ note|safe }}</div>
                 <br>
                 <br>
             </div>
@@ -104,7 +104,7 @@
                 <div class="view_title" >{% trans "Σημειώσεις για Χαρακτηρισμό Πληθυσμού" %}</div>
                 <br>
                 <br>
-                <div class="notes_content">{{note}}</div>
+                <div class="notes_content">{{ note|safe }}</div>
                 <br>
                 <br>
             </div>
@@ -133,7 +133,7 @@
                 <div class="view_title" >{% trans "Σημειώσεις για Ανάλυση Μονοπατιού" %}</div>
                 <br>
                 <br>
-                <div class="notes_content">{{note}}</div>
+                <div class="notes_content">{{ note|safe }}</div>
                 <br>
                 <br>
             </div>
@@ -165,7 +165,7 @@
             <div class="view_title" >{% trans "Σημειώσεις" %}</div>
             <br>
             <br>
-            <div class="notes_content">{{note}}</div>
+            <div class="notes_content">{{ note|safe }}</div>
             <br>
             <br>
         {% endif %}
@@ -186,7 +186,7 @@
 
         {% if value.0 != '' %}
             <div class="tg">
-            <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ value.0 }}'>
+            <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{ value.0 }}'>
             <br>
             <br>
             <subt>{{value.1}} - {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
@@ -214,7 +214,7 @@
     <br>
     {% for img,fig in dict_dashboard_png.items %}
         <div class="tg">
-        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
         <div class="fig"><br>{{fig}}</div>
@@ -279,7 +279,7 @@
     {% for img, fig in dict_lrTest_png.items %}
         <div class="tg">
         <div style="padding-bottom:30px"></div>
-        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
         <subt>{{fig}} - {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Συμβάντων" %}</subt>
@@ -308,7 +308,7 @@
     {% for img,fig  in dict_lreTest_png.items %}
         <div class="tg">
         <div style="padding-bottom:30px"></div>
-        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{ img }}'>
+        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{ img }}'>
         <br>
         <br>
         <subt>{{fig}} - {% trans "Αποτελέσματα Προσομοίωσης LRT Βάσει Φαρμάκων" %}</subt>
@@ -354,7 +354,7 @@
                         <div class="view_title" >{% trans "Σημειώσεις" %}</div>
                         <br>
                         <br>
-                        <div class="notes_content">{{ report_notes|get_item:key1 }}</div>
+                        <div class="notes_content">{{ report_notes|get_item:key1|safe }}</div>
                         <br>
                         <br>
                     {% endif %}
@@ -368,7 +368,7 @@
                     <br>
                     {% if val1.0 != '' %}
                         <div class="tg">
-                        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val1.0}}'>
+                        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val1.0}}'>
                         <br>
                         <br>
                         <subt>{{val1.1}} - {% trans "Ανάλυση μεταβολής μέσου" %}</subt>
@@ -400,7 +400,7 @@
 
                     {% if val2.0 != '' %}
                         <div class="tg">
-                        <img width="90%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val2.0}}'>
+                        <img width="90%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val2.0}}'>
                         <br>
                         <br>
                         <subt>{{val2.1}} - {% trans "Χρονική εξέλιξη PRR" %}</subt>
@@ -466,7 +466,7 @@
                             <div class="view_title" >{% trans "Σημειώσεις" %}</div>
                             <br>
                             <br>
-                            <div class="notes_content">{{ report_notes|get_item:key1 }}</div>
+                            <div class="notes_content">{{ report_notes|get_item:key1|safe }}</div>
                             <br>
                             <br>
                         {% endif %}
@@ -483,7 +483,7 @@
                         <br>
                         <br>
                         <br>
-                        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.1}}'>
+                        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val3.1}}'>
                         <br>
                         <br>
                         <subt>{{val3.2}}{{val3.0}}</subt>
@@ -503,7 +503,7 @@
                         <br>
                         <br>
                         <br>
-                        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.4}}'>
+                        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val3.4}}'>
                         <br>
                         <br>
                         <subt>{{val3.5}}{{val3.3}}</subt>
@@ -518,7 +518,7 @@
                         <br>
                         <br>
                         <br>
-                        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.7}}'>
+                        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val3.7}}'>
                         <br>
                         <br>
                         <subt>{{val3.8}}{{val3.6|safe}}</subt>
@@ -540,7 +540,7 @@
                         <br>
                         <br>
                         <br>
-                        <img width="80%" src='{{OPENFDA_SCREENSHOTS_ENDPOINT}}{{val3.10}}'>
+                        <img width="80%" src='{{SHINY_SCREENSHOTS_ENDPOINT}}{{val3.10}}'>
                         <br>
                         <br>
                         <subt>{{val3.11}}{{val3.9|safe}}</subt>
@@ -627,7 +627,7 @@
                         {% for pno in pub_nobjs %}
                             <tr>
                                 <td>{{ pno.title }}</td>
-                                <td>{{ pno.notes.content }}</td>
+                                <td>{{ pno.notes.content|safe }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -639,6 +639,34 @@
     {% endif %}
 {% endif %}
 <!--End of PubMed Workspace-->
+
+<!-- Twitter workspace -->
+{% if twitter_shots or twitter_hash in report_notes %}
+    <div class="workspace">{% trans "Περιβάλλον Εργασίας Twitter" %}</div>
+{% endif %}
+
+{% for shot_caption, shot_img in twitter_shots.items %}
+    <br>
+    <br>
+    <br>
+    <div class="tg">
+            <div style="margin-left: 20px;"><img src="{{SHINY_SCREENSHOTS_ENDPOINT}}{{ shot_img }}" width="97%"></div>
+
+            <div style="padding-top:30px"><subt>{{ shot_caption }}</subt></div>
+    </div>
+{% endfor %}
+
+{% if twitter_hash in report_notes %}
+<div class="tg" style="padding-top:50px;">
+    <div class="view_title" >{% trans "Σημειώσεις" %}</div>
+    <br>
+    <br>
+    <div class="notes_content">{{ report_notes|get_item:twitter_hash|safe }}</div>
+    <br>
+    <br>
+</div>
+{% endif %}
+<!-- end of twitter workspace -->
 
 <!--Extra-notes-->
 {% if extra_notes %}
