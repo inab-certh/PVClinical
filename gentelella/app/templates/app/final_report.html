@@ -264,7 +264,7 @@
                                                                         <span><em>{{ pub_obj.title }}</em></span>
                                                                     </td>
 
-                                                                    <td><button id="PubMedNoteBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" {% if not pub_obj.notes %}disabled{% endif %}>
+                                                                    <td><button id="PubMedNotesBtn" data-target="#pubModalNote{{ forloop.counter}}" class="btn btn-secondary" data-toggle="modal" {% if not pub_obj.notes %}disabled{% endif %}>
                                                                         <i class="fas fa-search-plus"></i></button><span> {% trans "Σημειώσεις" %}</span></td>
 
                                                                     <td id="pubObjDetails{{ forloop.counter}}" class="collapse">
