@@ -167,7 +167,7 @@ $(function() {
         triggerProceedActivation(proceed_elm);
     });
 
-    $("#shinyModal_notes").on("show.bs.modal", function (){
+    $("#shinyModal_notes, #socialMediaModalΝotes").on("show.bs.modal", function (){
         if(hash in all_notes){
             $(".note_chkb").prop("checked", true);
         }else{
@@ -194,8 +194,6 @@ $(function() {
 
     $("#smGraphicsBtn").click(function() {
         $("#socialMediaModal iframe").attr("src", twitter_query_url);
-
-
     });
 
 });
