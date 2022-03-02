@@ -2246,7 +2246,7 @@ def final_report(request, scenario_id=None):
                              sorted(set([c.name for c in conditions])) or [""]))
 
     all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
-    p = sc.title + str(sc.owner) + str(i)
+    p = "twitter" + sc.title + str(sc.owner)
     h = hashlib.md5(repr(p).encode('utf-8'))
     twitter_hash = h.hexdigest()
     twitter_query_url = "{}?twitterQuery={}&hash={}".format(
@@ -2374,6 +2374,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_notes = dict(urllib.parse.parse_qsl(pub_notes)) or json.loads(request.GET.get("allPubNotes", "{}"))
     pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", "{}"))
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", "{}"))
+
+    print(report_notes)
 
     report_notes = "" if report_notes == "-" else report_notes
     extra_notes = "" if extra_notes == "-" else extra_notes
@@ -3109,11 +3111,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
     # Add twitter screenshots into dicts for final report
-    all_combs_names = list(product(sorted(set([d.name for d in drugs])) or [""],
-                                   sorted(set([c.name for c in conditions])) or [""]))
-
-    all_combs_names = list(map(lambda el: " ".join(filter(None, el)), all_combs_names))
-    p = sc.title + str(sc.owner) + str(i)
+    p = "twitter" + sc.title + str(sc.owner)
     h = hashlib.md5(repr(p).encode('utf-8'))
     twitter_hash = h.hexdigest()
 
@@ -3130,9 +3128,11 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                              ) if "timeseries" in f else _(
         "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
 
-
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
-    lst_of_all = dicts123_vals + list(report_notes.values())
+
+    # Keep only report notes that have to do with openFDA
+    openFDA_notes = {k: v for k, v in report_notes.items() if k not in ["ir", "char", "pathways", twitter_hash]}
+    lst_of_all = dicts123_vals + list(openFDA_notes.values())
     empty_dicts123 = False if any(el != "" for el in chain.from_iterable(dicts123_vals)) else True
     empty_OpenFDA = False if any(el != "" for el in chain.from_iterable(lst_of_all)) else True
 
@@ -3147,8 +3147,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                "coh_dict": coh_dict, "cp_dict": cp_dict, "pub_notes": pub_notes, "pub_exist": pub_exist,
                "pub_tobjs": pub_tobjs, "pub_nobjs": pub_nobjs, "empty_dicts123": empty_dicts123,
                "twitter_shots": twitter_shots, "twitter_hash": twitter_hash}
-               # "pub_titles": pub_titles, "pub_exist": pub_exist, "pub_dict_authors": pub_dict_authors,
-               # "pub_dict_urls": pub_dict_urls}
 
     return render(request, 'app/report_pdf.html', context)
 
@@ -3162,11 +3160,13 @@ def print_report(request, scenario_id=None):
 
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
-    report_notes = urllib.parse.urlencode(json.loads(report_notes))
+    report_notes = urllib.parse.quote_plus(str(json.loads(report_notes)))
     pub_titles = request.GET.get("allPubTitles", None)
     pub_titles = urllib.parse.urlencode(json.loads(pub_titles))
     pub_notes = request.GET.get("allPubNotes", None)
     pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
+
+    print(report_notes)
 
     extra_notes = json.loads(request.GET.get("extra_notes", ""))
 
