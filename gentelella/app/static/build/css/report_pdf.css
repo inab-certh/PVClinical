@@ -26,7 +26,7 @@ table       { margin-bottom: 1em; width:50%; }
 th          { font-weight: bold; }
 thead th    { background: #bcc8d4; }
 th,td,caption { padding: 4px 10px 4px 5px; }
-p { font-weight: bold; }
+/*p { font-weight: bold; }*/
 
 .view_title {
   page-break-inside: avoid;
