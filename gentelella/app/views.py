@@ -2375,12 +2375,10 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", "{}"))
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", "{}"))
 
-    print(report_notes)
-
-    report_notes = "" if report_notes == "-" else report_notes
-    extra_notes = "" if extra_notes == "-" else extra_notes
-    pub_titles = "" if pub_titles == "-" else pub_titles
-    pub_notes = "" if pub_notes == "-" else pub_notes
+    # report_notes = "" if report_notes == "-" else report_notes
+    # extra_notes = "" if extra_notes == "-" else extra_notes
+    # pub_titles = "" if pub_titles == "-" else pub_titles
+    # pub_notes = "" if pub_notes == "-" else pub_notes
 
     pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
     pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
@@ -3160,13 +3158,11 @@ def print_report(request, scenario_id=None):
 
     scenario_id = scenario_id or json.loads(request.GET.get("scenario_id", None))
     report_notes = request.GET.get("all_notes", None)
-    report_notes = urllib.parse.quote_plus(str(json.loads(report_notes)))
+    # report_notes = urllib.parse.quote_plus(str(json.loads(report_notes)))
     pub_titles = request.GET.get("allPubTitles", None)
-    pub_titles = urllib.parse.urlencode(json.loads(pub_titles))
+    # pub_titles = urllib.parse.urlencode(json.loads(pub_titles))
     pub_notes = request.GET.get("allPubNotes", None)
-    pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
-
-    print(report_notes)
+    # pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
 
     extra_notes = json.loads(request.GET.get("extra_notes", ""))
 
@@ -3191,12 +3187,12 @@ def print_report(request, scenario_id=None):
     fname = "{}.pdf".format(str(uuid.uuid4()))
     file_path = os.path.join(tempfile.gettempdir(), fname)
 
-    url = "{}/report_pdf/{}/{}/{}/{}/{}".format(settings.PDFKIT_ENDPOINT, scenario_id,
-                                                          report_notes or "-", extra_notes or "-",
-                                                          pub_titles or "-", pub_notes or "-")
+    url = "{}/ajax/report_pdf".format(settings.PDFKIT_ENDPOINT)
 
-    resp = requests.get(url, cookies=cookies_dict)
+    req_params = {"scenario_id": scenario_id, "all_notes": report_notes or "", "extra_notes": extra_notes or "",
+                  "allPubTitles": pub_titles or "", "allPubNotes": pub_notes or ""}
 
+    resp = requests.get(url, params=req_params, cookies=cookies_dict)
     pdfkit.from_url(resp.url, file_path, options=options)
 
     try:
