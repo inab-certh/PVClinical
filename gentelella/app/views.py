@@ -3123,7 +3123,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
     # Most active users in the selected twitter discourse
     twitter_shots = dict([(_("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
-                             ) if "timeseries" in f else _(
+                             ) if "twitter_timeline" in f else _(
         "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
 
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
