@@ -3166,8 +3166,6 @@ def print_report(request, scenario_id=None):
     pub_notes = request.GET.get("allPubNotes", None)
     pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
 
-    print(report_notes)
-
     extra_notes = json.loads(request.GET.get("extra_notes", ""))
 
     # if not extra_notes:
