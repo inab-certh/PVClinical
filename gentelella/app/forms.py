@@ -404,27 +404,27 @@ class PatientForm(forms.ModelForm):
 
 class QuestionnaireForm(forms.ModelForm):
     q1 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;")
     )
     q2 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;")
     )
     q3 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;")
     )
     q4 = forms.ChoiceField(
-        choices=((True, _("Ναί ή Μη προσδιορίσιμο")), (False, _("Όχι"))),
+        choices=((True, _("Ναι ή Μη προσδιορίσιμο")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;")
     )
     q5 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;")
     )
@@ -434,22 +434,22 @@ class QuestionnaireForm(forms.ModelForm):
         label=_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;")
     )
     q7 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;")
     )
     q8 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Υπήρξε εκ νέου θετική επαναπρόκληση;")
     )
     q9 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;")
     )
     q10 = forms.ChoiceField(
-        choices=((True, _("Ναί")), (False, _("Όχι"))),
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
         label=_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;")
     )
