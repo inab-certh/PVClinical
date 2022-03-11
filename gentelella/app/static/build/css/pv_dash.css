@@ -1117,3 +1117,7 @@ form.ma-form h1, .x_panel .x_title h1 {
 .bs-switch-checkbox:checked + .bs-switch-label .bs-switch-switch {
 	right: 0
 }
+
+.sc-report-btn {
+	padding: 0;
+}
