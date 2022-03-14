@@ -1,9 +1,9 @@
 $(function() {
     $(window).on("load", function(){
-         $("#loaderOverlay").fadeOut();
-
+        if(!window.location.pathname.includes("edit-scenario")) {
+            $("#loaderOverlay").fadeOut();
+        }
     });
-
 
     $('.has-popover').popover({'trigger':'manual'
     }).on("mouseenter", function () {
@@ -104,7 +104,8 @@ $(function() {
     });
 
 
-    $(document).on("click", "button.report-btn", function (){
+    $(document).on("click", "button.sc-report-btn", function (){
+        console.log("sc-report-btn");
         $("#genReportConfirmModal").modal("show");
         var new_location = $(this).attr("data-href");
         $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
