@@ -29,7 +29,14 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block buttongroup %}
+<!--    <div class="sc-report-btn col-xs-6 col-sm-3">-->
+    <div class="pull-left">
+        <button class="btn btn-outline sc-report-btn" data-href="{% url 'final_report' scenario_id %}" {% if not scenario_id %}disabled{% endif %}>
+            <i class="fas fa-file-pdf fa-2x"></i>
+        </button>
+    </div>
 
+<!--    <div class="btn-group ws-menu mb-3 dropdown col-xs-12 col-sm-3 col-sm-offset-6">-->
     <div class="btn-group ws-menu mb-3 dropdown pull-right">
         <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if not scenario_id %}disabled{% endif %} >
             {% trans "Περιβάλλοντα Εργασίας" %} <i class="fa fa-caret-right"></i>
