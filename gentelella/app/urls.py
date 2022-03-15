@@ -99,6 +99,8 @@ urlpatterns = [
          name='patient_history'),
     path("ajax/get-popover-content", views.get_popover_content, name='get_popover_content'),
 
+    path("ajax/check-twitter-shots", views.check_twitter_shots, name='ajax_check_twitter_shots'),
+
     # Permission denied
     path('denied', views.unauthorized, name='unauthorized'),
 ]

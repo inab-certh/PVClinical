@@ -24,7 +24,11 @@ from requests.auth import HTTPBasicAuth
 
 from bs4 import BeautifulSoup
 from Bio import Entrez
+from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -38,6 +42,7 @@ from django.template import loader
 from django.http import FileResponse
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
+from django.http import HttpResponseNotAllowed
 from django.http import QueryDict
 from django.shortcuts import HttpResponseRedirect
 from django.http import JsonResponse
@@ -2249,8 +2254,8 @@ def final_report(request, scenario_id=None):
     p = "twitter" + sc.title + str(sc.owner)
     h = hashlib.md5(repr(p).encode('utf-8'))
     twitter_hash = h.hexdigest()
-    twitter_query_url = "{}?twitterQuery={}&hash={}".format(
-        settings.SM_SHINY_ENDPOINT, urllib.parse.quote(" OR ".join(all_combs_names)), twitter_hash)
+    twitter_query_url = "{}?twitterQuery={}".format(
+        settings.SM_SHINY_ENDPOINT, urllib.parse.quote(" OR ".join(all_combs_names)))
 
     # if request.build_absolute_uri(request.get_full_path()) == request.META.get('HTTP_REFERER'):
     # Delete all files containing twitter hash in their filename (to make sure new ones will be created)
@@ -2259,22 +2264,30 @@ def final_report(request, scenario_id=None):
         auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
         params={"hashes": [twitter_hash]})
 
-    # Make the request, so that if twitter data exist, new files with specific hash will be created
-    requests.get("{}{}".format(settings.SM_SHINY_ENDPOINT, twitter_query_url))
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.headless = True
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.get("{}&hash={}".format(twitter_query_url, twitter_hash))
+    WebDriverWait(driver, 70).until(
+        EC.invisibility_of_element_located(
+            (By.XPATH, '//div[@class="shiny-loader-output-container"]/div[@class="load-container"]')))
+
+    driver.quit()
 
     ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
                            auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
                                               settings.SHINY_SHOTS_SERVICES_PASS))
+
     existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
 
     found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
     twitter_data_exist = (len(found_files) != 0)
 
-    # Clear again
-    requests.delete("{}delete-media-files".format(
-        settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-        auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
-        params={"hashes": [twitter_hash]})
+    # # Clear again
+    # requests.delete("{}delete-media-files".format(
+    #     settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+    #     auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
+    #     params={"hashes": [twitter_hash]})
 
     try:
         twitter_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=4, wsview="sm")
@@ -2294,6 +2307,17 @@ def final_report(request, scenario_id=None):
     context.update(str_to_var)
 
     return render(request, "app/final_report.html", context)
+
+
+def check_twitter_shots(request):
+    """ Turn twitter_shots_checked session variable to true
+    :param request: request
+    """
+    if not request.is_ajax() or not request.method == "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    request.session["twitter_shots_checked"] = request.POST.get("twitter_shots_checked", False)
+    return HttpResponse("OK")
 
 
 @login_required()
@@ -3113,18 +3137,28 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     h = hashlib.md5(repr(p).encode('utf-8'))
     twitter_hash = h.hexdigest()
 
-    ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-                           auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
-                                              settings.SHINY_SHOTS_SERVICES_PASS))
+    # If twitter shots' checkbox checked in final report, find files else delete them
+    if not request.session.get("twitter_shots_checked"):
+        # Clear again
+        requests.delete("{}delete-media-files".format(
+            settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+            auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
+            params={"hashes": [twitter_hash]})
+        twitter_shots = {}
 
-    existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
+    else:
+        ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
+                               auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
+                                                  settings.SHINY_SHOTS_SERVICES_PASS))
 
-    found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
+        existing_files = ls_resp.json() if ls_resp.status_code == 200 else []
 
-    # Most active users in the selected twitter discourse
-    twitter_shots = dict([(_("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
-                             ) if "twitter_timeline" in f else _(
-        "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
+        found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
+
+        # Most active users in the selected twitter discourse
+        twitter_shots = dict([(_("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
+                                 ) if "twitter_timeline" in f else _(
+            "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
 
     dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
 
