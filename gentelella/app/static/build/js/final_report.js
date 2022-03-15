@@ -2,6 +2,11 @@ $(function() {
     var openfda_proceed_disabled = true;
     var ohdsi_proceed_disabled = true;
     var pubmed_proceed_disabled = true;
+    var twitter_proceed_disabled = true;
+
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
 
     var event; // The custom event that will be created
     proceed_elm = document.createElement("div");
@@ -22,7 +27,7 @@ $(function() {
 
     proceed_elm.addEventListener("proceedactivation", function(e) {
         var proceed_disabled = openfda_proceed_disabled && Object.keys(all_notes).length === 0 &&
-            ohdsi_proceed_disabled && pubmed_proceed_disabled;
+            ohdsi_proceed_disabled && pubmed_proceed_disabled && twitter_proceed_disabled;
 
         $("#proceed-report-btn").prop("disabled", proceed_disabled);
         $("#resultBtn").prop("disabled", proceed_disabled);
@@ -194,6 +199,13 @@ $(function() {
 
     $("#smGraphicsBtn").click(function() {
         $("#socialMediaModal iframe").attr("src", twitter_query_url);
+    });
+
+    $("#smShotsChkb").change(function (){
+        var twitter_shots_checked = $(this).is(":checked");
+        $.post('/ajax/check-twitter-shots', {"twitter_shots_checked": twitter_shots_checked}, function(data, status) {
+            twitter_proceed_disabled = twitter_shots_checked?status=="success":true;
+        });
     });
 
 });
