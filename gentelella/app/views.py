@@ -54,6 +54,7 @@ from app import ohdsi_wrappers
 from app import ohdsi_shot
 
 from app.errors_redirects import forbidden_redirect
+from app.errors_redirects import timeout_redirect
 from app.forms import ScenarioForm
 from app.forms import IRForm
 from app.forms import CharForm
@@ -1729,20 +1730,7 @@ def final_report(request, scenario_id=None):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    ir_table = ""
-    ir_all = ""
-    path_all = ""
-    pre_table = ""
-    pre_chart = ""
-    drug_table = ""
-    drug_chart = ""
-    demograph_table = ""
-    demograph_chart = ""
-    charlson_table = ""
-    charlson_chart = ""
-    gen_table = ""
-    gen_chart = ""
-
+    request.session["twitter_shots_checked"] = request.session.get("twitter_shots_checked", True)
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
@@ -1784,12 +1772,7 @@ def final_report(request, scenario_id=None):
 
     user = sc.owner
 
-    pub_dict = {}
     pub_objs = PubMed.objects.filter(scenario_id=scenario_open, relevance=True)
-    # pub_objs_titles = list(map(lambda el: el.title, pub_objs))
-
-    # for i in pub_objs:
-    #     pub_dict[i.title] = i.notes
 
     notes_openfda1 = {}
     if Notes.objects.filter(user=user, scenario=scenario_open) != "":
@@ -1803,20 +1786,6 @@ def final_report(request, scenario_id=None):
         notes_openfda1 = dict([(k, dict_openfda_notes.get(" - ".join(list(filter(None, [i and i.name, j and j.name]))))
                                 ) for i,j,k in drug_condition_hash])
 
-        # for i, j, k in drug_condition_hash:
-        #     for key in dict_openfda_notes:
-        #         if i and j and i.name + ' - ' + j.name == key:
-        #             notes_openfda1[k] = dict_openfda_notes[key]
-        #         if i and i.name == key and not j:
-        #             notes_openfda1[k] = dict_openfda_notes[key]
-        #         if j and j.name == key and not i:
-        #             notes_openfda1[k] = dict_openfda_notes[key]
-
-
-    # ir table and heatmap
-
-    drugs_cohort_name = None
-    conditions_cohort_name = None
     sc_drugs = sc.drugs.all()
     sc_conditions = sc.conditions.all()
 
@@ -1892,25 +1861,6 @@ def final_report(request, scenario_id=None):
 
     intro = os.path.join(settings.MEDIA_URL, "ohdsi_img")  # img_path  # "/static/images/ohdsi_img/"
 
-    # entries = os.listdir(img_path)
-
-    # pre_table = None
-    # pre_chart = None
-    # drug_table = None
-    # drug_chart = None
-    # demograph_table = None
-    # demograph_chart = None
-    # charlson_table = None
-    # charlson_chart = None
-    # gen_table = None
-    # gen_chart = None
-    path_all = None
-    ir_table = None
-    ir_all = None
-
-    # from time import time
-    # start = time()
-
     # Prepare lists for threading functions, parameters and results
     threads_funcs = []
     threads_shot_urls = []
@@ -1940,15 +1890,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("pre_table",
                                        os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["pre_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("All prevalence covariates", "table")], tbls_len=10, store_path=img_path)
-                #     pre_table = os.path.join(intro, "pre_table_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-                # if "pre_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -1958,15 +1900,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("pre_chart",
                                         os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["pre_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("All prevalence covariates", "chart")], tbls_len=10, store_path=img_path)
-                #     pre_chart = os.path.join(intro, "pre_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-                # if "drug_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
+
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -1976,17 +1910,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("drug_table",
                                         os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["drug_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "table")], tbls_len=10,
-                #         store_path=img_path)
-                #     drug_table = os.path.join(intro, "drug_table_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
 
-                # if "drug_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -1996,17 +1920,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("drug_chart",
                                         os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["drug_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DRUG / Drug Group Era Long Term", "chart")], tbls_len=10,
-                #         store_path=img_path)
-                #     drug_chart = os.path.join(intro, "drug_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
 
-                # if "demograph_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2016,17 +1930,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("demograph_table",
                                         os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["demograph_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "table")], tbls_len=10,
-                #         store_path=img_path)
-                #     demograph_table = os.path.join(intro, "demograph_table_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
 
-                # if "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2036,17 +1940,7 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("demograph_chart",
                                         os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))))
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["demograph_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DEMOGRAPHICS / Demographics Age Group", "chart")], tbls_len=10,
-                #         store_path=img_path)
-                #     demograph_chart = os.path.join(intro, "demograph_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
 
-                # if "charlson_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2057,16 +1951,6 @@ def final_report(request, scenario_id=None):
                 threads_results.append(("charlson_table",
                                         os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))))
 
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["charlson_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("CONDITION / Charlson Index", "table")], tbls_len=10, store_path=img_path)
-                #     charlson_table = os.path.join(intro, "charlson_table_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-
-                # if "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2077,17 +1961,6 @@ def final_report(request, scenario_id=None):
                 threads_results.append(("charlson_chart",
                                         os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))))
 
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["charlson_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("CONDITION / Charlson Index", "chart")], tbls_len=10, store_path=img_path)
-                #     charlson_chart = os.path.join(intro, "charlson_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-
-
-                # if "gen_table_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2098,17 +1971,6 @@ def final_report(request, scenario_id=None):
                 threads_results.append(("gen_table",
                                         os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))))
 
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["gen_table_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "table")], tbls_len=10,
-                #         store_path=img_path)
-                #     gen_table = os.path.join(intro, "gen_table_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-
-                # if "gen_chart_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
                 threads_funcs.append(ohdsi_sh.cc_shot)
                 threads_shot_urls.append("{}/#/cc/characterizations/{}/results/{}".format(
                     settings.OHDSI_ATLAS, char_id, resp_num_id))
@@ -2118,16 +1980,6 @@ def final_report(request, scenario_id=None):
                 threads_store_path.append(img_path)
                 threads_results.append(("gen_chart",
                                         os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))))
-
-                # try:
-                #     ohdsi_sh.cc_shot(
-                #         "{}/#/cc/characterizations/{}/results/{}".format(settings.OHDSI_ATLAS, char_id, resp_num_id),
-                #         fnames=["gen_chart_{}_{}.png".format(sc.owner_id, sc.id)],
-                #         shoot_elements=[("DEMOGRAPHICS / Demographics Gender", "chart")], tbls_len=10,
-                #         store_path=img_path)
-                #     gen_chart = os.path.join(intro, "gen_chart_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
 
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
@@ -2150,19 +2002,10 @@ def final_report(request, scenario_id=None):
                 threads_results.append(("path_all",
                                         os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))))
 
-                # try:
-                #     ohdsi_sh.pathways_shot(
-                #         "{}/#/pathways/{}/results/{}".format(settings.OHDSI_ATLAS, cp_id, resp_num_id_cp),
-                #         "pw_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-                #     path_all = os.path.join(intro, "pw_{}_{}.png".format(sc.owner_id, sc.id))
-                # except TimeoutException:
-                #     pass
-
     try:
         if ir_id != None:
             ir_generate = "yes"
 
-            # if "irtable_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
             threads_funcs.append(ohdsi_sh.ir_shot)
             threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
             threads_fnames.append("irtable_{}_{}.png".format(sc.owner_id, sc.id))
@@ -2172,13 +2015,6 @@ def final_report(request, scenario_id=None):
             threads_results.append(("ir_table",
                                     os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))))
 
-            # try:
-            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-            #                      "irtable_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="table", store_path=img_path)
-            #     ir_table = os.path.join(intro, "irtable_{}_{}.png".format(sc.owner_id, sc.id))
-            # except TimeoutException:
-            #     pass
-            # if "irall_{}_{}.png".format(sc.owner_id, sc.id) not in entries:
             threads_funcs.append(ohdsi_sh.ir_shot)
             threads_shot_urls.append("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id))
             threads_fnames.append("irall_{}_{}.png".format(sc.owner_id, sc.id))
@@ -2188,12 +2024,6 @@ def final_report(request, scenario_id=None):
             threads_results.append(("ir_all",
                                     os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))))
 
-            # try:
-            #     ohdsi_sh.ir_shot("{}/#/iranalysis/{}".format(settings.OHDSI_ATLAS, ir_id),
-            #                      "irall_{}_{}.png".format(sc.owner_id, sc.id), shoot_element="all", store_path=img_path)
-            #     ir_all = os.path.join(intro, "irall_{}_{}.png".format(sc.owner_id, sc.id))
-            # except TimeoutException:
-            #     pass
     except:
         ir_generate = "no"
 
@@ -2217,8 +2047,6 @@ def final_report(request, scenario_id=None):
             except (requests.ConnectTimeout, TimeoutException):
                 pass
 
-    # end = time()
-
     cc_shots_labels = {"pre_table": _("Πίνακας όλων των συμμεταβλητών επικράτησης"),
                        "pre_chart": _("Διάγραμμα όλων των συμμεταβλητών επικράτησης"),
                        "drug_table": _("Πίνακας Μακροχρόνιας Λήψης Κατηγορίας Φαρμάκων"),
@@ -2229,19 +2057,7 @@ def final_report(request, scenario_id=None):
                        "charlson_chart": _("Διάγραμμα Δείκτη Συννοσηρότητας Charlson"),
                        "gen_table": _("Πίνακας Δημογραφικού Φύλου"),
                        "gen_chart": _("Διάγραμμα Δημογραφικού Φύλου")
-    }
-
-
-    # str_to_var = {"pre_table": pre_table,
-    #               "pre_chart": pre_chart,
-    #               "drug_table": drug_table,
-    #               "drug_chart": drug_chart,
-    #               "demograph_table": demograph_table,
-    #               "demograph_chart": demograph_chart,
-    #               "charlson_table": charlson_table,
-    #               "charlson_chart": charlson_chart,
-    #               "gen_table": gen_table,
-    #               "gen_chart": gen_chart}
+                       }
 
     cc_shots_paths_labels = [(cc_shot, str_to_var.get(cc_shot), cc_shots_labels.get(cc_shot)
                               ) for cc_shot in cc_shots_labels.keys() if str_to_var.get(cc_shot)]
@@ -2268,9 +2084,12 @@ def final_report(request, scenario_id=None):
     chrome_options.headless = True
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("{}&hash={}".format(twitter_query_url, twitter_hash))
-    WebDriverWait(driver, 70).until(
-        EC.invisibility_of_element_located(
-            (By.XPATH, '//div[@class="shiny-loader-output-container"]/div[@class="load-container"]')))
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.invisibility_of_element_located(
+                (By.XPATH, '//div[@class="shiny-loader-output-container"]/div[@class="load-container"]')))
+    except TimeoutException:
+        return timeout_redirect(request)
 
     driver.quit()
 
@@ -2399,11 +2218,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     pub_titles = dict(urllib.parse.parse_qsl(pub_titles)) or json.loads(request.GET.get("allPubTitles", "{}"))
     report_notes = dict(urllib.parse.parse_qsl(report_notes)) or json.loads(request.GET.get("all_notes", "{}"))
 
-    # report_notes = "" if report_notes == "-" else report_notes
-    # extra_notes = "" if extra_notes == "-" else extra_notes
-    # pub_titles = "" if pub_titles == "-" else pub_titles
-    # pub_notes = "" if pub_notes == "-" else pub_notes
-
     pub_tobjs = PubMed.objects.filter(id__in=pub_titles.values())
     pub_nobjs = PubMed.objects.filter(id__in=pub_notes.values())
 
@@ -2417,10 +2231,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
     if cp_id != None:
         response = requests.get('{}/pathway-analysis/{}/generation'.format(settings.OHDSI_ENDPOINT, cp_id))
         resp_number_cp = response.json()
-    #     if resp_number_cp != []:
-    #         resp_num_id_cp = resp_number_cp[0]['id']
-    #
-    # entries = os.listdir(img_path)
 
     ir_dict_t = {}
     ir_dict_a = {}
@@ -3012,8 +2822,9 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
         rr_e_csv4 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_prr".format(k) in elm,
                                 map(lambda el: el.get_text(), soup.find_all('a'))))
-        rr_e_csv5 = list(filter(lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
-                                map(lambda el: el.get_text(), soup.find_all('a'))))
+        rr_e_csv5 = list(filter(
+            lambda elm: os.path.splitext(elm)[1] in [".csv"] and "{}_specifieddrug".format(k) in elm,
+            map(lambda el: el.get_text(), soup.find_all('a'))))
         if rr_e_csv4:
             df2 = pd.read_csv(r'{}'.format(os.path.join(settings.SHINY_SCREENSHOTS_ENDPOINT, rr_e_csv4[0])))
             styler1 = df2.loc[:9].style.hide_index().hide_columns(['Unnamed: 0'])
@@ -3132,6 +2943,8 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             dict_lre.setdefault(" {}".format(_("Ενδείξεις στις αναφορές σεναρίου")),
                                 []).append("{} {}".format(_("Πίνακας"), lin))
 
+    dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
+
     # Add twitter screenshots into dicts for final report
     p = "twitter" + sc.title + str(sc.owner)
     h = hashlib.md5(repr(p).encode('utf-8'))
@@ -3145,7 +2958,6 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
             auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
             params={"hashes": [twitter_hash]})
         twitter_shots = {}
-
     else:
         ls_resp = requests.get("{}list-media-files".format(settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
                                auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER,
@@ -3155,12 +2967,13 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
         found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
 
-        # Most active users in the selected twitter discourse
-        twitter_shots = dict([(_("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
-                                 ) if "twitter_timeline" in f else _(
-            "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter"), f) for f in found_files])
+        len_image_print = len(image_print)
 
-    dicts123_vals = list(dict1.values()) + list(dict2.values()) + list(dict3.values())
+        # Most active users in the selected twitter discourse
+        twitter_shots = dict([("{} {} - {}".format(
+            _("Διάγραμμα"), i+1+len_image_print, _("Χρονοδιάγραμμα σχετικών δημοσιεύσεων στο Twitter"
+                                                   ) if "twitter_timeline" in f else _(
+                "Δραστήριοι χρήστες στη σχετική θεματολογία στο Twitter")), f) for i, f in enumerate(found_files)])
 
     # Keep only report notes that have to do with openFDA
     openFDA_notes = {k: v for k, v in report_notes.items() if k not in ["ir", "char", "pathways", twitter_hash]}
@@ -3199,9 +3012,6 @@ def print_report(request, scenario_id=None):
     # pub_notes = urllib.parse.urlencode(json.loads(pub_notes))
 
     extra_notes = json.loads(request.GET.get("extra_notes", ""))
-
-    # if not extra_notes:
-    #     extra_notes = "empty"
 
     cookies_dict = request.COOKIES
 
