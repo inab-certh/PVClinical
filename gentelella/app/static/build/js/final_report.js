@@ -204,9 +204,12 @@ $(function() {
     $("#smShotsChkb").change(function (){
         var twitter_shots_checked = $(this).is(":checked");
         $.post('/ajax/check-twitter-shots', {"twitter_shots_checked": twitter_shots_checked}, function(data, status) {
-            twitter_proceed_disabled = twitter_shots_checked?status=="success":true;
+            twitter_proceed_disabled = (status == "success") ? (!twitter_shots_checked) : true;
         });
     });
 
+    $("#socialMediaModal").on("hidden.bs.modal", function() {
+        triggerProceedActivation(proceed_elm);
+    });
 });
 

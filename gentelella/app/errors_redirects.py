@@ -12,7 +12,16 @@ from django.utils.translation import gettext_lazy as _
 def forbidden_redirect(request):
     return HttpResponseForbidden(
             render(request, "app/app_errors.html", context={
-                'window_title': "Δεν επιτρέπεται η πρόσβαση!",
-                'exception':
-                _('Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα')})
-            )
+                "window_title": _("Δεν επιτρέπεται η πρόσβαση!"),
+                "exception": _("Δεν επιτρέπεται η απευθείας πρόσβαση σε αυτήν τη σελίδα")})
+    )
+
+
+def timeout_redirect(request):
+    return HttpResponseForbidden(
+            render(request, "app/app_errors.html", context={
+                "window_title": _("Σφάλμα χρονικού ορίου!"),
+                "exception": _("Συνέβη κάποιο σφάλμα χρονικού ορίου!"),
+                "extra_message": _("Παρακαλούμε δοκιμάστε να ανανεώσετε τη σελίδα."),
+                "button": (_("Ανανέωση"), "window.location.reload();", "fa-refresh")})
+    )
