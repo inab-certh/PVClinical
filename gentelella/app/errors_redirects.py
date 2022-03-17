@@ -22,6 +22,5 @@ def timeout_redirect(request):
             render(request, "app/app_errors.html", context={
                 "window_title": _("Σφάλμα χρονικού ορίου!"),
                 "exception": _("Συνέβη κάποιο σφάλμα χρονικού ορίου!"),
-                "extra_message": _("Παρακαλούμε δοκιμάστε να ανανεώσετε τη σελίδα."),
-                "button": (_("Ανανέωση"), "window.location.reload();", "fa-refresh")})
+                "button": (_("Ανανέωση"), "refresh_page()", "fa-refresh")})
     )
