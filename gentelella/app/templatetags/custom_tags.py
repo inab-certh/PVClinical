@@ -103,3 +103,7 @@ def trans_to(token, lang):
     with translation.override(lang):
         val = gettext(token)
     return val
+
+@register.filter
+def discreet_authors(authors):
+    return authors.replace(",", ", ").replace(";", "; ")
