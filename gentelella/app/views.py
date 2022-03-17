@@ -3036,7 +3036,7 @@ def print_report(request, scenario_id=None):
     req_params = {"scenario_id": scenario_id, "all_notes": report_notes or "", "extra_notes": extra_notes or "",
                   "allPubTitles": pub_titles or "", "allPubNotes": pub_notes or ""}
 
-    resp = requests.get(url, params=req_params, cookies=cookies_dict)
+    resp = requests.get(url, params=req_params, cookies=cookies_dict, verify=False)
     pdfkit.from_url(resp.url, file_path, options=options)
 
     try:
