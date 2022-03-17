@@ -2085,7 +2085,7 @@ def final_report(request, scenario_id=None):
     driver = webdriver.Chrome(options=chrome_options)
     driver.get("{}&hash={}".format(twitter_query_url, twitter_hash))
     try:
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, 70).until(
             EC.invisibility_of_element_located(
                 (By.XPATH, '//div[@class="shiny-loader-output-container"]/div[@class="load-container"]')))
     except TimeoutException:
