@@ -112,8 +112,9 @@ $(function() {
             $("#loaderOverlay").fadeIn();
             window.location = new_location;
         }
-        )
+        );
     });
+
 });
 
 function getCookie(name) {
@@ -132,3 +133,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function refresh_page() {
+    $("#loaderOverlay").fadeIn();
+    window.location.reload();
+}

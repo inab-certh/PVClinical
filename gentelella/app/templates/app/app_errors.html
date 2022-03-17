@@ -10,16 +10,19 @@
 		  <div class="col-4 col-offset-6">
 			  <div class="x_panel">
 				<div class="x_title">
-					<div class="exceptions-errors row">
-                        <h1 class={% if button %}"col-xs-9"{% endif %}>{{ exception }}</h1>
+					<div class="exceptions-errors">
+                        <h1>
+                            {{ exception }}
                         {% if button %}
-                            <button class="btn btn-dark col-xs-2" onClick="{{ button.1 }}">
+                            <button class="btn btn-dark ml-1" onClick="{{ button.1 }}">
                                 <i class="fa {{ button.2 }}"></i>
-                                <span class="visible-lg">
+                                <span class="visible-xxl">
                                     {{ button.0 }}
                                 </span>
                             </button>
                         {% endif %}
+                        </h1>
+
                     </div>
 				</div>
 			  </div>

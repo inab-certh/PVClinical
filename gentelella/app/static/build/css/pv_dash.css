@@ -1121,3 +1121,7 @@ form.ma-form h1, .x_panel .x_title h1 {
 .sc-report-btn {
 	padding: 0;
 }
+
+div.exceptions-errors>h1>button {
+	margin-top: 3px;
+}
