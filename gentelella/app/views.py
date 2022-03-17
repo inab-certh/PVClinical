@@ -1734,7 +1734,7 @@ def final_report(request, scenario_id=None):
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
-        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+        os.mkdir(ohdsi_tmp_img_path, mode=0o770)
     except FileExistsError as e:
         pass
 
@@ -1855,7 +1855,7 @@ def final_report(request, scenario_id=None):
     img_path = os.path.join(settings.MEDIA_ROOT, "ohdsi_img")
 
     try:
-        os.mkdir(img_path, mode=0o700)
+        os.mkdir(img_path, mode=0o770)
     except FileExistsError as e:
         pass
 
@@ -2240,7 +2240,7 @@ def report_pdf(request, scenario_id=None, report_notes=None, pub_titles=None, pu
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
-        os.mkdir(ohdsi_tmp_img_path, mode=0o700)
+        os.mkdir(ohdsi_tmp_img_path, mode=0o770)
     except FileExistsError as e:
         pass
     # print_intro = "/static/images/ohdsi_img_print/"
