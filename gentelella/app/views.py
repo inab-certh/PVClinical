@@ -1730,7 +1730,7 @@ def final_report(request, scenario_id=None):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    request.session["twitter_shots_checked"] = request.session.get("twitter_shots_checked", True)
+    request.session["twitter_shots_checked"] = request.session.get("twitter_shots_checked", False)
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
