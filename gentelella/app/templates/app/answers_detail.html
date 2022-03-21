@@ -34,7 +34,7 @@
 
 <div class="row">
     <div class="side">
-        <h3>{% trans "Αναγνωριστικό ασθενούς" %}: {{ pat_id }}</h3>
+        <h3>{% trans "Αναγνωριστικό αναφοράς ατομικού περιστατικού" %}: {{ ic_id }}</h3>
         <h3>{% trans "Συσχετιζόμενο σενάριο" %}: {{ scen_title }}</h3>
 
         <div class="main">
@@ -109,12 +109,12 @@
 <!--        var pat_id = {{ pat_id }};-->
 
 <!--        $.ajax({-->
-<!--                url: "/ajax/new_pmcase",-->
-<!--                data: {"quest_id":quest_id, "patient_id":pat_id, "sc_id":scen_id },-->
+<!--                url: "/ajax/new_ic_cor",-->
+<!--                data: {"quest_id":quest_id, "indiv_case_id":pat_id, "sc_id":scen_id },-->
 <!--                dataType: "html",-->
 <!--                success: function (res) {-->
 <!--                    console.log(quest_id);-->
-<!--                    console.log(patient_id);-->
+<!--                    console.log(indiv_case_id);-->
 <!--                    console.log(sc_id);-->
 
 <!--                  },-->

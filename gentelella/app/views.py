@@ -60,7 +60,7 @@ from app.forms import IRForm
 from app.forms import CharForm
 from app.forms import NotesForm
 from app.forms import PathwaysForm
-from app.forms import PatientForm
+from app.forms import IndividualCaseForm
 from app.forms import QuestionnaireForm
 from app.helper_modules import atc_hierarchy_tree
 from app.helper_modules import delete_db_rec
@@ -73,7 +73,7 @@ from app.helper_modules import sort_report_screenshots
 from app.models import Notes
 from app.models import PubMed
 from app.models import Scenario
-from app.models import PatientCase
+from app.models import IndividualCase
 from app.models import Questionnaire
 from app.entrezpy import conduit
 from app.retrieve_meddata import KnowledgeGraphWrapper
@@ -3047,10 +3047,10 @@ def print_report(request, scenario_id=None):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def patient_management_workspace(request):
-    """ Table of patients cases for scenarios selected on the possibility of adverse drug reactions
-    Contains patient_id,creation date,scenario title, drugs, diseases, questionnaire's result,
-    patient's history and delete options
+def ic_management_workspace(request):
+    """ Table of individual cases for scenarios selected on the possibility of adverse drug reactions
+    Contains ic_id,creation date,scenario title, drugs, diseases, questionnaire's result,
+    case's history and delete options
     :param request: request
     :return: the form view
     """
@@ -3060,17 +3060,17 @@ def patient_management_workspace(request):
 
     request.session['quest_id'] = None
     request.session['scen_id'] = None
-    request.session['pat_id'] = None
+    request.session['ic_id'] = None  # Individual case
 
-    patient_cases = []
+    individual_cases = []
 
-    for case in PatientCase.objects.filter(user=request.user).order_by('-timestamp').all():
+    for case in IndividualCase.objects.filter(user=request.user).order_by('-timestamp').all():
         for scs in case.scenarios.all():
             for quests in case.questionnaires.all():
 
-                patient_cases.append({
+                individual_cases.append({
                         "id": case.id,
-                        "patient_id": case.patient_id,
+                        "indiv_case_id": case.indiv_case_id,
                         "timestamp": case.timestamp,
                         # "scenario_id": scs.id,
                         "scenario": scs,
@@ -3078,24 +3078,24 @@ def patient_management_workspace(request):
                     })
 
     if request.method == 'DELETE':
-        patient_id = QueryDict(request.body).get("patient_id")
-        patient = None
-        if patient_id:
+        indiv_case_id = QueryDict(request.body).get("indiv_case_id")
+        indiv_case = None
+        if indiv_case_id:
             try:
-                patient = PatientCase.objects.get(id=int(patient_id))
+                indiv_case = IndividualCase.objects.get(id=int(indiv_case_id))
             except:
                 pass
-        return delete_db_rec(patient)
+        return delete_db_rec(indiv_case)
 
-    context = {"patient_cases": patient_cases}
+    context = {"individual_cases": individual_cases}
 
-    return render(request, 'app/patient_management_workspace.html', context)
+    return render(request, 'app/ic_management_workspace.html', context)
 
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def new_pmcase(request):
-    """ Create a new patient case and set patient's id, select from existing scenarios or create a new one and
+def new_ic_cor(request):
+    """ Create a new indiv_case and set indiv_case's id, select from existing scenarios or create a new one and
     complete the questionnaire.
     :param request: request
     :return: the form view
@@ -3104,7 +3104,7 @@ def new_pmcase(request):
         return forbidden_redirect(request)
 
     quest_id = request.GET.get("quest_id", None)
-    patient_id = request.GET.get("patient_id", None)
+    indiv_case_id = request.GET.get("indiv_case_id", None)
     sc_id = request.GET.get("sc_id", None)
 
     tmp_user = User.objects.get(username=request.user)
@@ -3112,7 +3112,7 @@ def new_pmcase(request):
     quest_btn_disable = True
 
     if request.method == "POST":
-        form = PatientForm(request.POST, user=request.user, label_suffix="")
+        form = IndividualCaseForm(request.POST, user=request.user, label_suffix="")
 
         if form.is_valid() and request.POST.get("saveCtrl") == "1":
             case = form.save(commit=False)
@@ -3121,33 +3121,33 @@ def new_pmcase(request):
             case.save()
             form.save_m2m()
 
-            return redirect("patient_management_workspace")
+            return redirect("ic_management_workspace")
         else:
             form_errors = form.errors.as_data()
-            # If there is an error in at least one of the patient_id and scenarios fields, disable button
-            if not list(filter(lambda el: el in form_errors, ["patient_id", "scenarios"])):
+            # If there is an error in at least one of the indiv_case_id and scenarios fields, disable button
+            if not list(filter(lambda el: el in form_errors, ["indiv_case_id", "scenarios"])):
                 quest_btn_disable = False
             else:
                 quest_btn_disable = True
 
     else:
-        form = PatientForm(user=request.user, label_suffix="")
+        form = IndividualCaseForm(user=request.user, label_suffix="")
 
-    return render(request, "app/new_pmcase.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
+    return render(request, "app/new_ic_cor.html", {"form": form, "quest_id":quest_id,  # "scenarios": scenarios,
                                                    "questbtn_disable": quest_btn_disable})
 
 
 def retr_del_session_pmcvars(request):
     """ Retrieve and delete all the necessary for new pmcase, session variables
     :param request: request
-    :return: the session variables (i.e. scenario id, patient id, questionnaire id
+    :return: the session variables (i.e. scenario id, indiv_case id, questionnaire id
     """
-    pat_id = request.session.get("pat_id")
+    ic_id = request.session.get("ic_id")
     sc_id = request.session.get("scen_id")
     quest_id = request.session.get("quest_id")
 
-    data = {"sc_id": sc_id, "pat_id": pat_id, "quest_id": quest_id}
-    del request.session["pat_id"]
+    data = {"sc_id": sc_id, "ic_id": ic_id, "quest_id": quest_id}
+    del request.session["ic_id"]
     del request.session["scen_id"]
     del request.session["quest_id"]
 
@@ -3156,18 +3156,18 @@ def retr_del_session_pmcvars(request):
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def questionnaire(request, patient_id=None, sc_id=None):
+def questionnaire(request, indiv_case_id=None, sc_id=None):
     """ Questionnaire based on liverpool algorithm for determining the likelihood of whether an ADR
     is actually due to the drug rather than the result of other factors.
     :param request: request
-    :param patient_id: the specific patient's id or None
-    :param sc_id: scenario ids that are correlated with this patient's case or None
+    :param indiv_case_id: the specific indiv_case's id or None
+    :param sc_id: scenario ids that are correlated with this indiv_case or None
     :return: the form view
     """
     if request.method == "POST":
 
         form = QuestionnaireForm(request.POST, label_suffix="")
-        pat_id = request.session.get('pat_id')
+        ic_id = request.session.get('ic_id')
         scen_id = request.session.get('scen_id')
 
         if form.is_valid():
@@ -3201,28 +3201,28 @@ def questionnaire(request, patient_id=None, sc_id=None):
 
             request.session['quest_id'] = existing_pk
             request.session['scen_id'] = scen_id
-            request.session['pat_id'] = pat_id
+            request.session['ic_id'] = ic_id
 
-            return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, pat_id=pat_id)
+            return redirect('answers_detail', pk=existing_pk, scen_id=scen_id, ic_id=ic_id)
 
     else:
-        # patient_id = patient_id #or request.GET.get("patient_id", None)
+        # indiv_case_id = indiv_case_id #or request.GET.get("indiv_case_id", None)
         # sc_id = sc_id #or request.GET.getlist("sc_id")
 
-        form = QuestionnaireForm(initial={"patient_id": patient_id, "sc_id": sc_id}, label_suffix="")
+        form = QuestionnaireForm(initial={"indiv_case_id": indiv_case_id, "sc_id": sc_id}, label_suffix="")
         request.session['quest_id'] = None
         request.session['scen_id'] = sc_id
-        request.session['pat_id'] = patient_id
+        request.session['ic_id'] = indiv_case_id
 
-    return render(request, 'app/questionnaire.html', {'form': form, 'patient_id': patient_id, "sc_id": sc_id})
+    return render(request, 'app/questionnaire.html', {'form': form, 'indiv_case_id': indiv_case_id, "sc_id": sc_id})
 
 
-def answers_detail(request, pk, scen_id, pat_id):
-    """ Questionnaire's answers for a specific patient case(unique pk)
+def answers_detail(request, pk, scen_id, ic_id):
+    """ Questionnaire's answers for a specific indiv_case(unique pk)
     :param request: request
     :param pk: unique questionnaire's id
-    :param scen_id: scenario's id that is correlated with this patient case
-    :param pat_id: patient's id for this patient case
+    :param scen_id: scenario's id that is correlated with this indiv_case
+    :param ic_id: indiv_case's id for this indiv_case
     :return: the form view
     """
 
@@ -3247,26 +3247,26 @@ def answers_detail(request, pk, scen_id, pat_id):
                  _("Όχι"), _("Ναι")),
                 ]
 
-    return render(request, "app/answers_detail.html", {"quest": quest, "scen_id": scen_id, "pat_id": pat_id,
+    return render(request, "app/answers_detail.html", {"quest": quest, "scen_id": scen_id, "ic_id": ic_id,
                                                        "scen_title": scen_title, "algo_tbl": algo_tbl})
 
 
-def patient_history(request, patient_pk=None):
-    """ Keep the history(answers of questionnaires) for every patient case that you create for "patient_pk"
+def indiv_case_history(request, indiv_case_pk=None):
+    """ Keep the history(answers of questionnaires) for every indiv_case that you create for "indiv_case_pk"
     :param request: request
-    :param patient_pk: patient's id
+    :param indiv_case_pk: indiv_case's id
     :return: the form view
     """
-    patient_cases = []
+    individual_cases = []
 
-    for case in PatientCase.objects.order_by('-timestamp').all():
-        if case.patient_id == patient_pk:
+    for case in IndividualCase.objects.order_by('-timestamp').all():
+        if case.indiv_case_id == indiv_case_pk:
             for scs in case.scenarios.all():
                 for quests in case.questionnaires.all():
 
-                    patient_cases.append({
+                    individual_cases.append({
                             "id": case.id,
-                            "patient_id": case.patient_id,
+                            "indiv_case_id": case.indiv_case_id,
                             "timestamp": case.timestamp,
                             "scenario_id": scs.id,
                             "scenario_title": scs.title,
@@ -3275,9 +3275,9 @@ def patient_history(request, patient_pk=None):
                             "questionnaire_id": quests.id
                         })
 
-    context = {"patient_cases": patient_cases, "patient_pk": patient_pk}
+    context = {"individual_cases": individual_cases, "indiv_case_pk": indiv_case_pk}
 
-    return render(request, 'app/patient_history.html', context)
+    return render(request, 'app/indiv_case_history.html', context)
 
 
 @login_required()

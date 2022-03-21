@@ -24,17 +24,17 @@
     <div class="row tile_count">
       <div class="col-4 col-offset-6">
           <div class="x_panel">
-            <div class="x_title"><h2>{% trans "Ιστορικό του ασθενή" %} " {{patient_pk}} "</h2>
+            <div class="x_title"><h2>{% trans "Ιστορικό αναφοράς ατομικού περιστατικού" %} " {{indiv_case_pk}} "</h2>
               <div class="clearfix"></div>
             </div>
             <div class="x_content">
               <p class="text-muted font-13 m-b-30">
-                    {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τις αναφορές ασθενή" %} <b>"{{ patient_pk }}"</b>
-                    {% trans "σχετικά με την πιθανότητα  ανεπιθύμητης ενέργειας φαρμάκου και τη συσχέτιση της κάθε μιας από αυτές με πιθανό σενάρια διερεύνησης." %}</p>
+                    {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τις συσχετίσεις κάποιας αναφοράς ατομικού περιστατικού" %} <b>"{{ indiv_case_pk }}"</b>
+                    {% trans "με πιθανά σενάρια διερεύνησης, όσον αφορά την πιθανότητα ανεπιθύμητης ενέργειας φαρμάκου." %}</p>
         <table id="scenariosTbl" class="table table-striped table-bordered dt-responsive dataTable dt-multilingual nowrap" cellspacing="0" width="100%">
                 <thead>
                   <tr>
-                    <th>{% trans "Ασθενής" %}</th>
+                    <th>{% trans "Αναφορά Ατομικού Περιστατικού" %}</th>
                     <th>{% trans "Ημ/νία καταχώρισης" %}</th>
                     <th>{% trans "Τίτλος Σεναρίου" %}</th>
                     <th>{% trans "Φάρμακο/Φάρμακα" %}</th>
@@ -43,10 +43,10 @@
 
                 </thead>
                 <tbody>
-                  {% for case in patient_cases %}
+                  {% for case in individual_cases %}
 
                     <tr>
-                      <td>{{ case.patient_id }}</td>
+                      <td>{{ case.indiv_case_id }}</td>
                         <td>
                           {{ case.timestamp }}
                       </td>
@@ -72,7 +72,7 @@
                           </table>
                       </td>
                         <td>
-                             <a href="{% url 'answers_detail' case.questionnaire_id case.scenario_id case.patient_id %}">
+                             <a href="{% url 'answers_detail' case.questionnaire_id case.scenario_id case.indiv_case_id %}">
                           <i class="fas fa-notes-medical fa-1x"></i>
                         </a>
                         </td>
@@ -84,10 +84,10 @@
               <div style="margin-top:30px;"></div>
 
                {% block toolbarbuttons %}
-                  <a class="btn btn-dark col-xs-4 pull-right" type="button" href="{% url 'patient_management_workspace' %}">
+                  <a class="btn btn-dark col-xs-4 pull-right" type="button" href="{% url 'ic_management_workspace' %}">
                         <i class="fa fa-reply"></i>
                         <span class="visible-lg">
-                            {% trans "Περιβάλλον Διαχείρισης Ασθενών" %}
+                            {% trans "Περιβάλλον Διαχείρισης Αναφοράς Ατομικού Περιστατικού" %}
                         </span>
                     </a>
 
