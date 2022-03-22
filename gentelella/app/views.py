@@ -35,6 +35,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.signals import request_finished
+from django.dispatch import receiver
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -1716,6 +1718,14 @@ def openfda_screenshots_exist(request):
     ret["exist"] = (len(found_files) != 0)
 
     return JsonResponse(ret)
+
+
+# # Use check url to know when the user has left final report functionality for some other view
+# # in order to clean twitter_shots_checked
+# @receiver(request_finished)
+# def check_url_change(request, sender, **kwargs):
+#     if reverse("app:final_report") not in HttpRequest.get_full_path(request):
+#         request.session["twitter_shots_checked"] = False
 
 
 @login_required()
