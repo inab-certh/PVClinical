@@ -15,7 +15,7 @@ from app.models import Drug
 from app.models import Condition
 from app.models import Notes
 from app.models import Scenario
-from app.models import PatientCase
+from app.models import IndividualCase
 from app.models import Questionnaire
 from app.models import Status
 from app.retrieve_meddata import KnowledgeGraphWrapper
@@ -356,7 +356,7 @@ class NotesForm(forms.ModelForm):
         fields = ["content"]
 
 
-class PatientForm(forms.ModelForm):
+class IndividualCaseForm(forms.ModelForm):
     # drugs_fld = forms.MultipleChoiceField(choices=[],
     #                                       required=False,
     #                                       label=_("Φάρμακο/Φάρμακα:"),
@@ -373,13 +373,13 @@ class PatientForm(forms.ModelForm):
     questionnaires = forms.IntegerField()
 
     class Meta:
-        model = PatientCase
-        fields = ["patient_id", "scenarios", "questionnaires"]
+        model = IndividualCase
+        fields = ["indiv_case_id", "scenarios", "questionnaires"]
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
-        super(PatientForm, self).__init__(*args, **kwargs)
-        self.fields["patient_id"].label = _("Αναγνωριστικό Ασθενούς:")
+        super(IndividualCaseForm, self).__init__(*args, **kwargs)
+        self.fields["indiv_case_id"].label = _("Αναγνωριστικό Αναφοράς Ατομικού Περιστατικού:")
         self.fields["scenarios"].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
                                                                                                 ).order_by("title")]
 
@@ -393,11 +393,11 @@ class PatientForm(forms.ModelForm):
         """ Overriding-extending is_valid module
         """
 
-        super(PatientForm, self).is_valid()
+        super(IndividualCaseForm, self).is_valid()
 
-        if (not self.cleaned_data.get("patient_id")) or not self.cleaned_data.get("scenarios"):
-            self.add_error(None, _("Τα πεδία που αφορούν το αναγνωριστικό ασθενούς και το συσχετιζόμενο σενάριο "
-                                   "πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"))
+        if (not self.cleaned_data.get("indiv_case_id")) or not self.cleaned_data.get("scenarios"):
+            self.add_error(None, _("Τα πεδία που αφορούν το αναγνωριστικό αναφοράς ατομικού περιστατικού και το συσχετιζόμενο " 
+                                   "σενάριο πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"))
 
         return not self._errors
 
