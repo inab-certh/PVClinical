@@ -15,7 +15,7 @@ from ckeditor.fields import RichTextField
 # from tinymce.models import HTMLField
 
 from app.helper_modules import choices_max_length
-from app.validators import pat_id_validator
+from app.validators import ic_id_validator
 
 
 # Create your models here.
@@ -254,10 +254,10 @@ class Questionnaire(models.Model):
         ]
 
 
-class PatientCase(models.Model):
-    """ PatientCase for user's patients for Patient Management Workspace
+class IndividualCase(models.Model):
+    """ IndividualCase for user's patients for Individual Case Management Workspace
     """
-    patient_id = models.CharField(max_length=500, blank=False, default='', validators=[pat_id_validator])
+    indiv_case_id = models.CharField(max_length=500, blank=False, default='', validators=[ic_id_validator])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     #ena scenario mporei na to exoun polloi astheneis, alla kai 1 asthenis mporei na exei polla senaria
@@ -274,14 +274,14 @@ class PatientCase(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["patient_id", "timestamp"],
-                                    name="unique_patientcase")
+            models.UniqueConstraint(fields=["indiv_case_id", "timestamp"],
+                                    name="unique_individualcase")
         ]
 
 
 class CaseToScenario(models.Model):
     scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
-    pcase = models.ForeignKey(PatientCase, on_delete=models.CASCADE)
+    pcase = models.ForeignKey(IndividualCase, on_delete=models.CASCADE)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["scenario", "pcase"],
@@ -291,7 +291,7 @@ class CaseToScenario(models.Model):
 
 class CaseToQuestionnaire(models.Model):
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
-    pcaseq = models.ForeignKey(PatientCase, on_delete=models.CASCADE)
+    pcaseq = models.ForeignKey(IndividualCase, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -319,7 +319,7 @@ class CaseToQuestionnaire(models.Model):
 #         constraints = [
 #             models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
 #                                             "q6", "q7", "q8", "q9", "q10"],
-#                                     name="unique_patientcase")
+#                                     name="unique_individualcase")
 #         ]
 
 
