@@ -1730,7 +1730,8 @@ def final_report(request, scenario_id=None):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    request.session["twitter_shots_checked"] = request.session.get("twitter_shots_checked", False)
+    request.session["twitter_shots_checked"] = (request.POST.get("twitter_shots_checked", "false") != "false")\
+        if list(filter(lambda p: p in request.META.get('HTTP_REFERER'), ["final_report", "report_pdf"])) else False
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
@@ -2135,7 +2136,7 @@ def check_twitter_shots(request):
     if not request.is_ajax() or not request.method == "POST":
         return HttpResponseNotAllowed(["POST"])
 
-    request.session["twitter_shots_checked"] = request.POST.get("twitter_shots_checked", False)
+    request.session["twitter_shots_checked"] = (request.POST.get("twitter_shots_checked", "false") != "false")
     return HttpResponse("OK")
 
 
