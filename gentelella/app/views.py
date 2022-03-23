@@ -35,8 +35,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.signals import request_finished
-from django.dispatch import receiver
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -1720,14 +1718,6 @@ def openfda_screenshots_exist(request):
     return JsonResponse(ret)
 
 
-# # Use check url to know when the user has left final report functionality for some other view
-# # in order to clean twitter_shots_checked
-# @receiver(request_finished)
-# def check_url_change(request, sender, **kwargs):
-#     if reverse("app:final_report") not in HttpRequest.get_full_path(request):
-#         request.session["twitter_shots_checked"] = False
-
-
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def final_report(request, scenario_id=None):
@@ -1740,7 +1730,8 @@ def final_report(request, scenario_id=None):
     if not request.META.get('HTTP_REFERER'):
         return forbidden_redirect(request)
 
-    request.session["twitter_shots_checked"] = request.session.get("twitter_shots_checked", False)
+    request.session["twitter_shots_checked"] = (request.POST.get("twitter_shots_checked", "false") != "false")\
+        if list(filter(lambda p: p in request.META.get('HTTP_REFERER'), ["final_report", "report_pdf"])) else False
 
     ohdsi_tmp_img_path = os.path.join(settings.MEDIA_ROOT, 'ohdsi_img_print')
     try:
@@ -2145,7 +2136,7 @@ def check_twitter_shots(request):
     if not request.is_ajax() or not request.method == "POST":
         return HttpResponseNotAllowed(["POST"])
 
-    request.session["twitter_shots_checked"] = request.POST.get("twitter_shots_checked", False)
+    request.session["twitter_shots_checked"] = (request.POST.get("twitter_shots_checked", "false") != "false")
     return HttpResponse("OK")
 
 
