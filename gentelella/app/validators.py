@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 ic_id_validator = RegexValidator(
     # r"\d{4}[A-Z]{3}\d{7}",
-    r"\d+",
+    r"^\d+$",
     format_lazy("{} 10029250", _("Παράδειγμα ορθού αναγνωριστικού:")))
 
 prof_validator = RegexValidator(
