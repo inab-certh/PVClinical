@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 library(shiny.i18n)
 library(shinyalert)
 
@@ -287,7 +287,7 @@ fluidRow(useShinyjs(),
                          uiOutput("sourcePatientDataframe", style = "display:inline-block; margin-left:20px;"),
                          wellPanel( 
                            htmlOutput('patientreactiontabletitle'),
-                           htmlOutput( 'patientreaction'),
+                           withSpinner(htmlOutput( 'patientreaction')),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
@@ -295,7 +295,7 @@ fluidRow(useShinyjs(),
                          uiOutput("sourceDrugDataframe", style = "display:inline-block; margin-left:20px;"),
                          wellPanel(  
                            # htmlOutput('patientdrugtabletitle'),
-                           htmlOutput( 'drug' ),
+                           withSpinner(htmlOutput( 'drug' )),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
@@ -311,7 +311,7 @@ fluidRow(useShinyjs(),
                          ),
                         
                          wellPanel(  
-                                     tableOutput('medication'),
+                           withSpinner(tableOutput('medication')),
                                      # htmlOutput('patientdrugopenfdatabletitle'),
                                      # tableOutput( 'openfda' ),
                                      # htmlOutput('patientdrugopenfda2tabletitle'),
