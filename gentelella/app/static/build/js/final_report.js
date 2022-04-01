@@ -1,10 +1,16 @@
-$(function(){
+$(function() {
     var openfda_proceed_disabled = true;
     var ohdsi_proceed_disabled = true;
     var pubmed_proceed_disabled = true;
+    var twitter_proceed_disabled = true;
+
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
 
     var event; // The custom event that will be created
-    proceed_elm = document.createElement("div")
+    proceed_elm = document.createElement("div");
+
     function triggerProceedActivation(el) {
         if (document.createEvent) {
             event = document.createEvent("Event");
@@ -21,29 +27,38 @@ $(function(){
 
     proceed_elm.addEventListener("proceedactivation", function(e) {
         var proceed_disabled = openfda_proceed_disabled && Object.keys(all_notes).length === 0 &&
-            ohdsi_proceed_disabled && pubmed_proceed_disabled;
+            ohdsi_proceed_disabled && pubmed_proceed_disabled && twitter_proceed_disabled;
 
         $("#proceed-report-btn").prop("disabled", proceed_disabled);
         $("#resultBtn").prop("disabled", proceed_disabled);
     });
 
+    // $("#concomitantSwitch").on('change', function() {
+    //     if ($(this).is(":checked")) {
+    //         switchStatus = $(this).is(":checked");
+    //     }
+    //     else {
+    //        switchStatus = $(this).is(":checked");
+    //     }
+    // });
+
 
     $("[id*=ShinyBtn]").click(function(){
-        var drug= $(this).data('drug');
-        var con= $(this).data('con');
-        var hash= $(this).data('hash');
+        var drug= $(this).data("drug");
+        var con= $(this).data("con");
+        var hash= $(this).data("hash");
         var lang = $("#curLang").data("lang").substring(0, 2).toLowerCase();
-        var urlquickview1= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-        var urlquickview2= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&hash=" + hash;
-        var urlquickview3= openfda_shiny_endpoint + $(this).attr('id').replace('ShinyBtn','').replace(/\d+/,'') + "/?lang=" + lang + "&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&hash=" + hash;
-        // console.log(urlquickview1);
+        var concomitant = $("#concomitantSwitch").is(":checked")? "TRUE": "FALSE";
+        var urlquickview1= openfda_shiny_endpoint + $(this).attr("id").replace("ShinyBtn","").replace(/\d+/,"") + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&concomitant="+concomitant+"&hash=" + hash;
+        var urlquickview2= openfda_shiny_endpoint + $(this).attr("id").replace("ShinyBtn","").replace(/\d+/,"") + "/?lang=" + lang + "&t1=" + drug + "&v1=patient.drug.openfda.generic_name&concomitant="+concomitant+"&hash=" + hash;
+        var urlquickview3= openfda_shiny_endpoint + $(this).attr("id").replace("ShinyBtn","").replace(/\d+/,"") + "/?lang=" + lang + "&t2=" + con + "&v2=patient.reaction.reactionmeddrapt&concomitant="+concomitant+"&hash=" + hash;
 
-        if (con == '') {
-            document.getElementById('iframe_shiny').src = urlquickview2;
-        } else if (drug == '') {
-            document.getElementById('iframe_shiny').src = urlquickview3;
+        if (con == "") {
+            document.getElementById("iframe_shiny").src = urlquickview2;
+        } else if (drug == "") {
+            document.getElementById("iframe_shiny").src = urlquickview3;
         } else {
-            document.getElementById('iframe_shiny').src = urlquickview1;
+            document.getElementById("iframe_shiny").src = urlquickview1;
         }
     });
 
@@ -84,27 +99,28 @@ $(function(){
         triggerProceedActivation(proceed_elm);
     }
 
-    $(".ohdsi-report-modal").on('hidden.bs.modal', function() {
+    $(".ohdsi-report-modal").on("hidden.bs.modal", function() {
         ohdsi_set_proceed_btns_status();
     });
 
-    $("#shinyModal").on('hidden.bs.modal', function() {
+    $("#shinyModal").on("hidden.bs.modal", function() {
         openfda_set_proceed_btns_status(hashes);
+        $(this).find("iframe").attr("src", "");
     });
 
-    $(".pubmed-report-modal").on('hidden.bs.modal', function() {
+    $(".pubmed-report-modal").on("hidden.bs.modal", function() {
         pubmed_set_proceed_btns_status();
     });
 
     $("[id^=pubnote]").change(function(){
 
-        var pubnote_rep= $(this).data('series');
-        var note= $(this).data('note');
+        var pubnote_rep= $(this).data("series");
+        var note= $(this).data("note");
 
-        if ($(this).is(':checked')) {
-            allPubNotes[pubnote_rep]=$(this).data('objid');
+        if ($(this).is(":checked")) {
+            allPubNotes[pubnote_rep]=$(this).data("objid");
         }else{
-            // pubnote_rep = $(this).data('series') ;
+            // pubnote_rep = $(this).data("series") ;
             // allPubNotes[pubnote_rep]="";
             delete allPubNotes[pubnote_rep];
         }
@@ -112,13 +128,13 @@ $(function(){
 
     $("[id^=pubtitle]").change(function(){
 
-        var pubtitle_rep= $(this).data('series');
+        var pubtitle_rep= $(this).data("series");
 
-        if ($(this).is(':checked')) {
-            allPubTitles[pubtitle_rep]=$(this).data('objid');
+        if ($(this).is(":checked")) {
+            allPubTitles[pubtitle_rep]=$(this).data("objid");
 
         }else{
-            // pubtitle_rep = $(this).data('series') ;
+            // pubtitle_rep = $(this).data("series") ;
             // allPubTitles[pubtitle_rep]="";
             delete allPubTitles[pubtitle_rep];
         }
@@ -129,32 +145,34 @@ $(function(){
     var i=0;
 
     $("[id*=NotesBtn]").click(function(){
-        hash= $(this).data('hash');
-        var drug= $(this).data('drug');
-        var con= $(this).data('con');
-        note= $(this).data('note');
+        hash= $(this).data("hash");
+        var drug= $(this).data("drug");
+        var con= $(this).data("con");
+        note= $(this).data("note");
 
-        $("#shinyModal_notes").val(note) ;
-        $("#label_shiny_note").text(note);
+        var modal_id = $(this).data("target");
+        // $(modal_id).val(note);
+        var element_id = $(modal_id).find("textarea").attr("id");
+        CKEDITOR.instances[element_id].setData(note);
+        // $(".cke_shiny_note_contents textarea").text(note);
+        // $("#shinyModal_notes .cke_shiny_note_contents textarea").addClass("ckeditor")
+        $(modal_id).find(".notes-editor iframe").contents().find("html, body").css(
+            {"background-color": "#f4f4f4", "color": "#333333b3", "cursor": "not-allowed"});
     });
 
     $(".note_chkb").on("change", function(){
-        if($(this).is(':checked') && !(hash in all_notes)){
-            // console.log(note)
-            // console.log(hash)
+        if($(this).is(":checked") && !(hash in all_notes)){
             all_notes[hash]=note;
-            // console.log(all_notes);
-        } else if(!$(this).is(':checked') && (hash in all_notes)){
+        } else if(!$(this).is(":checked") && (hash in all_notes)){
             delete all_notes[hash];
-            // console.log(all_notes);
         }
     });
 
-    $(".report-note-modal").on('hidden.bs.modal', function() {
+    $(".report-note-modal").on("hidden.bs.modal", function() {
         triggerProceedActivation(proceed_elm);
     });
 
-    $("#shinyModal_notes").on('show.bs.modal', function (){
+    $("#shinyModal_notes, #socialMediaModalΝotes").on("show.bs.modal", function (){
         if(hash in all_notes){
             $(".note_chkb").prop("checked", true);
         }else{
@@ -167,6 +185,31 @@ $(function(){
     $("#link1").on("click", function() {
         $("#div1").show();
         $("#div2").hide();
+    });
+
+    $("#socialMediaModal iframe").load(function () {
+        try {
+            $(this).style.overflow = "hidden";
+            $(this).style.height = $(this).contentWindow.document.body.scrollHeight + 'px';
+        }
+        catch(typeError) {
+            console.log("Not found");
+        }
+    });
+
+    $("#smGraphicsBtn").click(function() {
+        $("#socialMediaModal iframe").attr("src", twitter_query_url);
+    });
+
+    $("#smShotsChkb").change(function (){
+        var twitter_shots_checked = $(this).is(":checked");
+        $.post('/ajax/check-twitter-shots', {"twitter_shots_checked": twitter_shots_checked}, function(data, status) {
+            twitter_proceed_disabled = (status == "success") ? (!twitter_shots_checked) : true;
+        });
+    });
+
+    $("#socialMediaModal").on("hidden.bs.modal", function() {
+        triggerProceedActivation(proceed_elm);
     });
 });
 

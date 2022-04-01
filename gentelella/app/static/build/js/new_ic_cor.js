@@ -143,7 +143,7 @@ $(function() {
                     // $("[name='scenarios']").val(difference);
                     // $("[name='scenarios']").trigger("change");
                     sessionStorage.setItem("difference", difference);
-                    sessionStorage.setItem("pat_id", $("[name='patient_id']").val());
+                    sessionStorage.setItem("ic_id", $("[name='indiv_case_id']").val());
                     sessionStorage.setItem("questionnaires", $("[name='questionnaires']").val());
 
                     $("#loaderOverlay").fadeIn();
@@ -181,7 +181,7 @@ $(function() {
             url: "/ajax/retr-del-session-pmcvars",
             dataType: "json",
             success: function (data) {
-                // $("[name='patient_id']").val(data["pat_id"]).trigger("change");
+                // $("[name='indiv_case_id']").val(data["pat_id"]).trigger("change");
                 // $("[name='scenarios']").val(data["sc_id"]).trigger("change");
                 if(data["quest_id"] && data["quest_id"].length!=0) {
                     $("[name='questionnaires']").val(data["quest_id"]).trigger("change");
@@ -197,23 +197,23 @@ $(function() {
     });
 
 
-    var init_patient_id = $("[name='patient_id']").val();
+    var init_indiv_case_id = $("[name='indiv_case_id']").val();
     var init_sc_id = $("[name='scenarios']").val();
     var init_quest_id = $("[name='questionnaires']").val();
 
-    if(init_patient_id && init_sc_id && init_quest_id) {
+    if(init_indiv_case_id && init_sc_id && init_quest_id) {
         $(".btn-group>.save.btn").prop("disabled", false);
     } else {
         $(".btn-group>.save.btn").prop("disabled", true);
     }
 
-    // $("[name='patient_id'], [name='scenarios'], [name='questionnaires']").on("change", function () {
-    //     var patient_id = $("[name='patient_id']").val();
+    // $("[name='indiv_case_id'], [name='scenarios'], [name='questionnaires']").on("change", function () {
+    //     var indiv_case_id = $("[name='indiv_case_id']").val();
     //     var sc_id = $("[name='scenarios']").val();
     //     var questionnaire_id = $("[name='questionnaires']").val();
     //
     //     console.log($(".invalid-feedback"));
-    //     if(patient_id && sc_id && questionnaire_id && !$(".invalid-feedback")) {
+    //     if(indiv_case_id && sc_id && questionnaire_id && !$(".invalid-feedback")) {
     //         $(".btn-group>.save.btn").prop("disabled", false);
     //         $("#completedQuestDiv").show();
     //     } else {
@@ -228,18 +228,18 @@ $(function() {
 
         if(difference && difference.length!=0) {
             $("[name='scenarios']").val(difference).trigger("change");
-            $("[name='patient_id']").val(sessionStorage.getItem("pat_id"))
+            $("[name='indiv_case_id']").val(sessionStorage.getItem("ic_id"))
             $("[name='questionnaires']").val(sessionStorage.getItem("questionnaires")).trigger("change");
-            sessionStorage.removeItem("pat_id");
+            sessionStorage.removeItem("ic_id");
             sessionStorage.removeItem("questionnaires");
-            $("[name='patient_id']").trigger("change");
+            $("[name='indiv_case_id']").trigger("change");
         }
 
-        var patient_id = $("[name='patient_id']").val();
+        var indiv_case_id = $("[name='indiv_case_id']").val();
         var sc_id = $("[name='scenarios']").val();
         var questionnaire_id = $("[name='questionnaires']").val();
 
-        if(patient_id && sc_id && questionnaire_id && $(".invalid-feedback").length===0) {
+        if(indiv_case_id && sc_id && questionnaire_id && $(".invalid-feedback").length===0) {
             $(".btn-group>.save.btn").prop("disabled", false);
             $("#completedQuestDiv").show();
         } else {
@@ -248,11 +248,11 @@ $(function() {
         }
     });
 
-    $("[name='patient_id'], [name='scenarios']").on("change", function () {
-        var patient_id = $("[name='patient_id']").val();
+    $("[name='indiv_case_id'], [name='scenarios']").on("change", function () {
+        var indiv_case_id = $("[name='indiv_case_id']").val();
         var sc_id = $("[name='scenarios']").val();
 
-        if(patient_id && sc_id) {
+        if(indiv_case_id && sc_id) {
             $(".ma-form").submit();
         } else {
             $("#questModalBtn").prop("disabled", true);
@@ -260,16 +260,16 @@ $(function() {
     });
 
     $('#questModalBtn').on("click", function(){
-        var patient_id = $("[name='patient_id']").val();
+        var indiv_case_id = $("[name='indiv_case_id']").val();
         var sc_id = $("[name='scenarios']").val();
 
-        if(patient_id && sc_id){
-            var url=$('#questModalBtn').data('url')+'/'+patient_id+'/'+sc_id;
+        if(indiv_case_id && sc_id){
+            var url=$('#questModalBtn').data('url')+'/'+indiv_case_id+'/'+sc_id;
             $('#iframe_quest').attr('src', url);
 
             $.ajax({
-                url: "/ajax/new_pmcase",
-                data: {"patient_id":patient_id,"sc_id":sc_id },
+                url: "/ajax/new_ic_cor",
+                data: {"indiv_case_id":indiv_case_id,"sc_id":sc_id },
                 dataType: "html",
                 success: function (res) {
                     $('#questionnaireModal').modal('show');

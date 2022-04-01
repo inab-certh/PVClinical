@@ -8,9 +8,10 @@ from django.core.validators import RegexValidator
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
-pat_id_validator = RegexValidator(
-    r"\d{4}[A-Z]{3}\d{7}",
-    format_lazy("{} 0001PGH0000001", _("Παράδειγμα ορθού αναγνωριστικού:")))
+ic_id_validator = RegexValidator(
+    # r"\d{4}[A-Z]{3}\d{7}",
+    r"^\d+$",
+    format_lazy("{} 10029250", _("Παράδειγμα ορθού αναγνωριστικού:")))
 
 prof_validator = RegexValidator(
     r"^[a-zA-Zα-ωΑ-Ω]+(" "[a-zA-Zα-ωΑ-Ω]+)*$",
