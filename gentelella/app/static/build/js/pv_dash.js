@@ -1,9 +1,9 @@
 $(function() {
     $(window).on("load", function(){
-         $("#loaderOverlay").fadeOut();
-
+        if(!window.location.pathname.includes("edit-scenario")) {
+            $("#loaderOverlay").fadeOut();
+        }
     });
-
 
     $('.has-popover').popover({'trigger':'manual'
     }).on("mouseenter", function () {
@@ -103,6 +103,18 @@ $(function() {
         }
     });
 
+
+    $(document).on("click", "button.sc-report-btn", function (){
+        $("#genReportConfirmModal").modal("show");
+        var new_location = $(this).attr("data-href");
+        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
+            $("#genReportConfirmModal").modal("hide");
+            $("#loaderOverlay").fadeIn();
+            window.location = new_location;
+        }
+        );
+    });
+
 });
 
 function getCookie(name) {
@@ -119,4 +131,9 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function refresh_page() {
+    $("#loaderOverlay").fadeIn();
+    window.location.reload();
 }

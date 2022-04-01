@@ -9,6 +9,7 @@ RShinyApps/QuickView/rsconnect/shinyapps.io/
 *.RData
 */*/*/*.pyc
 
+
 gentelella/db_b.sqlite3
 db_b.sqlite3
 RShinyApps/.Rproj.user/shared/notebooks/paths
@@ -21,10 +22,12 @@ gentelella/users/migrations/__pycache__/
 gentelella/app/entrezpy/__pycache__/
 gentelella/app/templatetags/__pycache__/
 gentelella/staticfiles/
+gentelella/media/
 app/__pycache__/
 app/migrations/__pycache__/
 gentelella/__pycache__/
 users/migrations/__pycache__/
 app/entrezpy/__pycache__/
 app/templatetags/__pycache__/
+media/
 staticfiles/
