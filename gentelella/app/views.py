@@ -1076,10 +1076,8 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
     the  total number of the retrieved papers for a certain query. If there are no results
     for the query, returns an empty dictionary
     """
-    # pvclinical.project @ gmail.com
-    # , apikey = '40987f0b48b279c32047b1386f249d8cb308'
 
-    w = conduit.Conduit(email='pvclinical.project@gmail.com', apikey = '40987f0b48b279c32047b1386f249d8cb308')
+    w = conduit.Conduit(email= settings.PUBMED_EMAIL, apikey = settings.PUBMED_KEY)
     fetch_pubmed = w.new_pipeline()
     q = query
     if start==None and end==None:
@@ -1141,7 +1139,7 @@ def pubmed_search(query, begin, max, access_token, start, end, user):
             res.pubmed_records[i].authors = ';'.join(str(x['lname'] + "," + x['fname'].replace(' ', "")) if x['fname'] else str(x['lname']) for x in res.pubmed_records[i].authors )
 
 
-            Entrez.email = 'pvclinical.project@gmail.com'
+            Entrez.email = settings.ENTREZ_EMAIL
             handle = Entrez.elink(dbfrom="pubmed", db="pmc", linkname="pubmed_pmc", id=res.pubmed_records[i].pmid,
                                   retmode="text")
             pmcid = getPMCID(handle)
@@ -1284,6 +1282,11 @@ def paper_notes_view(request, scenario_id=None, first=None, end=None, page_id=No
         metainfo['authors'] = request.POST.get("authors")
         metainfo['doi'] = request.POST.get("doi")
         metainfo['pmid'] = request.POST.get("pmid")
+        metainfo['relevance'] = request.POST.get("relevance")
+        metainfo['notes'] = request.POST.get("notes")
+        metainfo['med'] = request.POST.get("med")
+        metainfo['pubdate'] = request.POST.get("pubdate")
+        metainfo['scenario_id'] = request.POST.get("scenarioid")
         metainfo['user'] = request.user
 
 
