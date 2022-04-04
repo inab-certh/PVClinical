@@ -13,6 +13,11 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(ggplot2)
+library(htmltools)
+library(magrittr)
+library(pins)
+library(webshot)
+library(htmlwidgets)
 
 
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
