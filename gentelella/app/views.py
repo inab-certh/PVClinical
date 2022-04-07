@@ -3023,7 +3023,7 @@ def print_report(request, scenario_id=None):
         "cookie": [
             ("csrftoken", cookies_dict.get("csrftoken")),
             ("sessionid", cookies_dict.get("sessionid")),
-            ("django_language", cookies_dict.get("django_language")),
+            ("django_language", cookies_dict.get("django_language", "en")),
         ],
         "page-size": "A4",
         "encoding": "UTF-8",
