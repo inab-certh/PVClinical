@@ -2,6 +2,9 @@ require(shiny)
 require(shinyBS)
 library(shiny.i18n)
 library(DT)
+library(webshot)
+library(htmltools)
+library(htmlwidgets)
 library(xlsx)
 library(parallel)
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
@@ -1436,7 +1439,9 @@ output$simplot <- renderPlotly({
   # simplot()
   if (!is.null(input$sourceLLRPlotReportUI)){
     if (input$sourceLLRPlotReportUI){
-      withr::with_dir("/var/www/html/openfda/media", orca(simplot(), paste0(values$urlQuery$hash,"_histogram.png")))
+      saveWidget(as_widget(simplot()), "temp.html")
+      webshot("temp.html", file = paste0(cacheFolder,values$urlQuery$hash,"_histogram.png"), cliprect = "viewport")
+      # withr::with_dir("/var/www/html/openfda/media", orca(simplot(), paste0(values$urlQuery$hash,"_histogram.png")))
     }
     
   }
@@ -2255,7 +2260,7 @@ geturlquery <- reactive({
   # q$t1<-"A02BC01"
   # q$t1<-"10003239"
   # q$hash <- "ksjdhfksdhfhsk"
-  # q$concomitant <- FALSE
+  # q$concomitant <- TRUE
   
   v$t1<-toupper(toupper(q$t1))
   updateNumericInput(session, "limit", value = q$limit)

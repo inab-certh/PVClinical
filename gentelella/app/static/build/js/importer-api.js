@@ -14,8 +14,8 @@ MendeleyImporterApi = {};
 (function(api) {
 
 	var data = {},
-		bookmarkletUrl = 'static/build/js/bookmarklet.js';
-		//bookmarkletUrl = 'https://www.mendeley.com/minified/bookmarklet.js';
+		// bookmarkletUrl = 'static/build/js/bookmarklet.js';
+		bookmarkletUrl = 'https://www.mendeley.com/minified/bookmarklet.js';
 
 
 	// Main

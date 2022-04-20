@@ -4,6 +4,7 @@ library(shinycssloaders)
 source('sourcedir.R')
 library(shinyalert)
 library(DT)
+library(shiny.i18n)
 
 options(encoding = 'UTF-8')
 
@@ -65,9 +66,15 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                  fluidRow( useShinyjs(),
                  style="margin-bottom: 0.3rem",
                  column(width=2, dateInput("date1", "", value = '1989-6-30') ),
-                 column(width=1, p("to"),
+                 column(width=1, uiOutput('toDate'),
                         style="margin-top: 2.45rem; text-align: center;"),
                  column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                 column(id="xlsrow", width=2, style="float:right; margin-top: 1rem;",
+                        #                           # style="display:inline-block",
+                        #                           #     div(id="downloadExcelColumn",
+                        #                           #         textOutput("downloadDataLbl"))),
+                        #                           # div(style="display:inline-block; margin-left:20px;",
+                        downloadButton("dlprr", textOutput("downloadBtnLbl"))),
                  
                  ),
                  uiOutput("daterange"),
@@ -77,7 +84,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('PRROverTime'),
                             uiOutput("sourcePlotReport"),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl1"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlprr", textOutput("downloadBtnLbl1")))), id="dlprrxlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoprrplot", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(plotOutput_p( 'prrplot'))
@@ -86,7 +93,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('ReportCountsandPRR'),
                             uiOutput("sourceInDataReport"),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl2"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlquery_counts2", textOutput("downloadBtnLbl2")))), id="dlquery_counts2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infoquery_counts2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'query_counts2' ))
@@ -94,7 +101,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('CountsForDrugsInSelectedReports'),
                             uiOutput('sourceConcomReport'),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl3"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoquery2", textOutput("downloadBtnLbl3")))), id="dlcoquery2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoquery2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'coquery2' ))
@@ -104,7 +111,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                    tabPanel(uiOutput('CountsForEventsInSelectedReports'),
                             uiOutput('sourceEventDataReport'),
                             wellPanel(
-                              column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
+                              # column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl4"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dlcoqueryE2", textOutput("downloadBtnLbl4")))), id="dlcoqueryE2xlsrow"),
                               style="background-color:white;height:30px;border:none",uiOutput("infocoqueryE2", style = "position:absolute;right:40px;z-index:10")
                             ),
                             withSpinner(makeDataTableOutput( 'coqueryE2' ))

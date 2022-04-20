@@ -1,6 +1,8 @@
 $(function() {
-    $(window).load(function(){
-        $("#loaderOverlay").fadeOut();
+    $(window).on("load", function(){
+        if(!window.location.pathname.includes("edit-scenario")) {
+            $("#loaderOverlay").fadeOut();
+        }
     });
 
     $('.has-popover').popover({'trigger':'manual'
@@ -48,7 +50,7 @@ $(function() {
     $("[data-toggle='popover']").popover();
     $("body").on("click", ".notes-btn", function () {
         var mod_url = $(this).data("url");
-        var mod_id = $(this).data("id");
+        var mod_id = $(this).data("id").replace(/\W/g, '');
         $(".notesModal").attr("id", mod_id);
         $(".notesModal iframe").attr("src", mod_url);
         $("#" + mod_id).modal("show");
@@ -101,6 +103,18 @@ $(function() {
         }
     });
 
+
+    $(document).on("click", "button.sc-report-btn", function (){
+        $("#genReportConfirmModal").modal("show");
+        var new_location = $(this).attr("data-href");
+        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
+            $("#genReportConfirmModal").modal("hide");
+            $("#loaderOverlay").fadeIn();
+            window.location = new_location;
+        }
+        );
+    });
+
 });
 
 function getCookie(name) {
@@ -117,4 +131,9 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function refresh_page() {
+    $("#loaderOverlay").fadeIn();
+    window.location.reload();
 }
