@@ -771,7 +771,7 @@ shinyServer(function(input, output, session) {
       out <- i18n()$t('Insufficient data')
     }
     addPopover(session=session, id="infocpmeantext", title=i18n()$t("Application Info"), 
-               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in mean analysis explanation')), placement = "left",
+               content=paste(out,i18n()$t('Change in mean analysis explanation')), placement = "left",
                trigger = "hover", options = list(html = "true"))
     #attr(session, "cpmeanplottext") <- out
     # browser()
@@ -806,8 +806,9 @@ shinyServer(function(input, output, session) {
     if(getterm1( session)!=""){
       mydf <-getquerydata()$mydfin$result
       cpmeanForExcel<<-mydf
+      # browser()
       # write.xlsx(mydf, "../mydf.xlsx")
-      if (length(mydf) > 0)
+      if ((length(mydf) > 0) & (length(getdrugcounts()$mydf[,1]) > 0))
       {
         if(!is.null(session$nodataAlert))
         {
@@ -910,7 +911,7 @@ shinyServer(function(input, output, session) {
         }
         
         # p
-        
+        # browser()
         if (!is.null(input$sourcePlotReportUI)){
           if (input$sourcePlotReportUI){
             # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_timeseries.png")))
@@ -1048,7 +1049,7 @@ shinyServer(function(input, output, session) {
 
   output$date1 <- renderText({
     l <- getdaterange()
-    paste( '<b>', l[3] , 'from', as.Date(l[1],  "%Y%m%d")  ,'to', as.Date(l[2],  "%Y%m%d"), '</b>')
+    paste( '<b>', l[3] , 'from', as.Date(l[1],  "%Y%m%d")  ,i18n()$t('to'), as.Date(l[2],  "%Y%m%d"), '</b>')
   })
   
   
@@ -1072,6 +1073,9 @@ shinyServer(function(input, output, session) {
     # q<-NULL
     # q$v1<-"patient.drug.openfda.generic_name"
     # q$v2<-"patient.reaction.reactionmeddrapt"
+    # q$t1<-"L01XE01"
+    # q$t2<-"10007555"
+    # q$t2<-"10007562"
     # q$t1<-"J01CA04"
     # q$t2<-"10037844"
     # q$t1<-"A02BC01"
@@ -1777,7 +1781,7 @@ shinyServer(function(input, output, session) {
     q <- geturlquery()
     v <- c('_exists_' , input$v1, gettimevar() )
     t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
-
+  
     if (is.null(q$t2) && q$v1 ==  "patient.reaction.reactionmeddrapt"){
       v[2] = "patient.reaction.reactionmeddrapt.exact"
     }
@@ -1866,6 +1870,7 @@ shinyServer(function(input, output, session) {
       t[3] <- q$dename
       v[3]<- q$v1
       totaldrugurl <- buildURL( v, t, count='', limit=1)
+      
       totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag=paste( 'No Reports for',
                                                                           ifelse(getwhich()=='D', 'drug', 'event' ), getterm1( session ), '<br>' ) )
           if ( length( totaldrugreports )==0 )
@@ -2066,6 +2071,7 @@ shinyServer(function(input, output, session) {
             #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
             cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
             #   print(cururl)
+            
             #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
             all_events2 <- fda_fetch_p( session, cururl, message= i )
             
@@ -2077,12 +2083,13 @@ shinyServer(function(input, output, session) {
             #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
             cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
             #   print(cururl)
+            
             #    all_events2 <- getcounts999( session, v= myv, t=myt, count= getprrvarname(), limit=1, counter=i )      
             all_events2 <- fda_fetch_p( session, cururl, message= i )
           }
        
           #    Sys.sleep( .25 )
-          
+          # browser()
           curcount <- all_events2$meta$results$total
         }else {
           # Refactor

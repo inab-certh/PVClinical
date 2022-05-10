@@ -83,6 +83,7 @@ getcounts999fda <- function( session, v, t, count, limit=1000,
   }
   # browser()
   #Can we find exact name?
+
   if ( exactrad=='exact' )
   {
     exact <- TRUE

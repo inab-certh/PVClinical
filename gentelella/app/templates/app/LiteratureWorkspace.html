@@ -337,7 +337,13 @@
                                                                                         <input style="display: none" id="title_{{ forloop.counter0 }}" name="title" type="text" value="{{ rec.title }}">
                                                                                         <input style="display: none" id="authors_{{ forloop.counter0 }}" name="authors" type="text" value="{{ rec.authors }}">
                                                                                         <input style="display: none" id="pmcid_{{ forloop.counter0 }}" name="pmcid" type="text" value="{{ rec.pmcid }}">
+                                                                                       <input style="display: none" id="relevance_{{ forloop.counter0 }}" name="relevance" type="text" value="{{ rec.relevance }}">
+                                                                                       <input style="display: none" id="notes_{{ forloop.counter0 }}" name="notes" type="text" value="{% if rec.notes %}{{ rec.notes.content }}{% endif %}">
+                                                                                        <input style="display: none" id="med_{{ forloop.counter0 }}" name="med" type="text" value="{{ rec.med }}">
+                                                                                       <input style="display: none" id="pubdate__{{ forloop.counter0 }}" name="pubdate" type="text" value="{{ rec.pubdate }}">
+                                                                                       <input style="display: none" id="scenarioid" name="scenarioid" type="text" value="{{ scenario.id }}">
                                                                                          <input  type="image" id="more_{{ forloop.counter0 }}" class="pdf_mendeley" value="PDF" src="{% static 'images/pdf_view.png' %}">
+
                                                                                     </form>
                                                                           <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
                                                                               target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
