@@ -13,6 +13,11 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(ggplot2)
+library(htmltools)
+library(magrittr)
+library(pins)
+library(webshot)
+library(htmlwidgets)
 
 
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
@@ -1050,7 +1055,9 @@ output$queryplot <- renderPlotly({
     
     if (!is.null(input$sourceYearPlotReportUI)){
       if (input$sourceYearPlotReportUI){
-        withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_yearplot.png")))
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_yearplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_yearplot.png")))
         # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
         # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
         # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
@@ -1349,7 +1356,9 @@ output$cpmeanplot <- renderPlotly ({
     
     if (!is.null(input$sourcePlotReportUI)){
       if (input$sourcePlotReportUI){
-        withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpmeanplot.png")))
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpmeanplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpmeanplot.png")))
         
         # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
         # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
@@ -1398,7 +1407,7 @@ output$infocpvartext <- renderUI ({
        out<-HTML(i18n()$t('Insufficient Data') )
     }
     addPopover(session=session, id="infocpvartext", title="", 
-               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in variance analysis explanation')), placement = "left",
+               content=paste(out,i18n()$t('Change in variance analysis explanation')), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
@@ -1494,7 +1503,9 @@ output$cpvarplot <- renderPlotly ({
     }
     if (!is.null(input$sourceVarPlotReportUI)){
       if (input$sourceVarPlotReportUI){
-        withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpvarplot.png")))
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpvarplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpvarplot.png")))
         # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
         # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
         # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
@@ -1693,7 +1704,9 @@ output$cpbayesplot <- renderPlotly ({
     
     if (!is.null(input$sourceBayesPlotReportUI)){
       if (input$sourceBayesPlotReportUI){
-        withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(q$hash,"_cpbayesplot.png")))
+        saveWidget(as_widget(fig), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpbayesplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(q$hash,"_cpbayesplot.png")))
         # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
         # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
         # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
