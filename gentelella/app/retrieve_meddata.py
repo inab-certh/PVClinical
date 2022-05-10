@@ -151,27 +151,45 @@ class KnowledgeGraphWrapper:
         synonyms = []
         if drugs:
             drugs = list(map(lambda d: d.lower(), drugs))
-
-            drugs_union = "UNION".join(["{{?drugbank_drug <http://purl.org/dc/terms/title> ?drugbank_drug_name.\n"
-                                        "?drugbank_drug_name bif:contains \"{}\"}}".format(d) for d in drugs])
+            drugs_union = "UNION".join(["{{?drugbank_drug dc:title ?drugbank_drug_name.\n"
+                                        "?drugbank_drug_name bif:contains \"'{}'\"}}".format(d.replace("'", "''")) for d in drugs])
 
             # drugs = "(\"{}\"@en)".format("\"@en, \"".join(drugs))
+            # whole_query = """
+            #         prefix dc: <http://purl.org/dc/terms/>
+            #         select ?synonym_name, ?drug_code
+            #         from <http://purl.bioontology.org/ontology/UATC/>
+            #         from <https://bio2rdf.org/drugbank>
+            #         where {{
+            #         {}.
+            #         ?drug skos:prefLabel ?drug_name.
+            #         FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
+            #         ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+            #         ?drug skos:notation ?code.
+            #         bind(str(?code) as ?drug_code)
+            #         ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+            #         ?synonym dc:title ?synonym_name.
+            #         FILTER(?synonym_name!=?drugbank_drug_name)
+            #         }}
+            #         """.format(drugs_union)
+
             whole_query = """
-                    select ?synonym_name, ?drug_code
-                    from <http://purl.bioontology.org/ontology/UATC/>
-                    from <https://bio2rdf.org/drugbank>
-                    where {{
+                prefix dc: <http://purl.org/dc/terms/>
+                select ?drug_code, ?synonym_name from <{}>
+                where {{
                     {}.
-                    ?drug skos:prefLabel ?drug_name.
-                    FILTER(lcase(?drugbank_drug_name)=lcase(?drug_name))
-                    ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-                    ?drug skos:notation ?code.
-                    bind(str(?code) as ?drug_code)
-                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
-                    ?synonym <http://purl.org/dc/terms/title> ?synonym_name.
-                    FILTER(?synonym_name!=?drugbank_drug_name)
-                    }}
-                    """.format(drugs_union)
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
+                    bind(strafter(str(?atc),str("http://bio2rdf.org/atc:")) as ?drug_code).
+                    {{?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:synonym> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:product> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:brand> ?synonym.
+                    ?synonym dc:title ?synonym_name}} UNION {{
+                    ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:mixture> ?synonym.
+                    ?synonym dc:title ?synonym_name}}
+                }}
+            """.format(settings.SPARQL_DRUGS_URI, drugs_union)
 
             self.sparql.setQuery(whole_query)
             synonyms = self.sparql.query().bindings
@@ -187,16 +205,25 @@ class KnowledgeGraphWrapper:
         """ Caches the drugs for faster retrieval
         """
 
+        # whole_query = """
+        # select ?drug_name, ?drug_code from <http://purl.bioontology.org/ontology/UATC/> where {
+        #     {
+        #         ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
+        #         ?drug skos:prefLabel ?drug_name.
+        #         ?drug skos:notation ?code.
+        #         bind(str(?code) as ?drug_code)
+        #     }
+        # }
+        # """
+
         whole_query = """
-        select ?drug_name, ?drug_code from <http://purl.bioontology.org/ontology/UATC/> where {
-            {
-                ?drug <http://purl.bioontology.org/ontology/UATC/ATC_LEVEL> "5"^^<http://www.w3.org/2001/XMLSchema#string>.
-                ?drug skos:prefLabel ?drug_name.
-                ?drug skos:notation ?code.
-                bind(str(?code) as ?drug_code)
-            }
-        }
-        """
+            prefix dc: <http://purl.org/dc/terms/>
+            select ?drug_name, ?drug_code from <{}> where {{
+                ?drugbank_drug <http://bio2rdf.org/drugbank_vocabulary:x-atc> ?atc.
+                bind(strafter(str(?atc),str("http://bio2rdf.org/atc:")) as ?drug_code).
+                ?drugbank_drug dc:title ?drug_name.
+            }}
+            """.format(settings.SPARQL_DRUGS_URI)
         #
         self.sparql.setQuery(whole_query)
         drugs = self.sparql.query().bindings
@@ -219,18 +246,18 @@ class KnowledgeGraphWrapper:
         whole_query = """
         prefix meddra: <https://w3id.org/phuse/meddra#>
         select ?condition_name, ?soc, ?hlgt, ?hlt, ?pt, ?condition_type, ?condition_code
-        from <http://english211.meddra.org> where {
+        from <{}> where {{
             ?condition a ?condition_type;
                 skos:prefLabel ?condition_name;
                 meddra:hasIdentifier ?condition_code.
             FILTER(STRSTARTS(STR(?condition_type), STR(meddra:))
             && ! STRSTARTS(STR(?condition_type), STR(meddra:MeddraConcept))).
-            OPTIONAL {?condition meddra:hasPT ?pt}.
-            OPTIONAL {?condition meddra:hasHLT ?hlt}.
-            OPTIONAL {?condition meddra:hasHLGT ?hlgt}.
-            OPTIONAL {?condition meddra:hasSOC ?soc}
-        } order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
-        """
+            OPTIONAL {{?condition meddra:hasPT ?pt}}.
+            OPTIONAL {{?condition meddra:hasHLT ?hlt}}.
+            OPTIONAL {{?condition meddra:hasHLGT ?hlgt}}.
+            OPTIONAL {{?condition meddra:hasSOC ?soc}}
+        }} order by desc(?soc) desc(?hlgt) desc(?hlt) desc(?pt)
+        """.format(settings.SPARQL_MEDDRA_URI)
         self.sparql.setQuery(whole_query)
 
         sparql_conditions = self.sparql.query().bindings
@@ -331,15 +358,15 @@ class KnowledgeGraphWrapper:
             whole_query = """
                     prefix meddra: <https://w3id.org/phuse/meddra#> 
                     select ?condition_name, ?parent 
-                    from <http://english211.meddra.org> where {{
-                        ?condition a <{0}>;
+                    from <{0}> where {{
+                        ?condition a <{1}>;
                             skos:prefLabel ?condition_name;
-                            meddra:hasIdentifier "{1}"^^<http://www.w3.org/2001/XMLSchema#string>.
-                        FILTER(STRSTARTS("{0}", STR(meddra:))
-                        && ! STRSTARTS("{0}", STR(meddra:MeddraConcept))).
-                        OPTIONAL {{?condition meddra:has{2} ?parent}}. 
+                            meddra:hasIdentifier "{2}"^^<http://www.w3.org/2001/XMLSchema#string>.
+                        FILTER(STRSTARTS("{1}", STR(meddra:))
+                        && ! STRSTARTS("{1}", STR(meddra:MeddraConcept))).
+                        OPTIONAL {{?condition meddra:has{3} ?parent}}. 
                     }} 
-                    """.format(abbrv_2_type.get(node_type), node_code, parent_type.upper())
+                    """.format(settings.SPARQL_MEDDRA_URI, abbrv_2_type.get(node_type), node_code, parent_type.upper())
             # print(whole_query)
             self.sparql.setQuery(whole_query)
             results = self.sparql.query().bindings

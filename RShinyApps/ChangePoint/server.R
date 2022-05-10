@@ -13,6 +13,11 @@ library(dygraphs)
 library(xts)          # To make the convertion data-frame / xts format
 library(tidyverse)
 library(ggplot2)
+library(htmltools)
+library(magrittr)
+library(pins)
+library(webshot)
+library(htmlwidgets)
 
 
 translator <- Translator$new(translation_json_path = "../sharedscripts/translation.json")
@@ -30,6 +35,15 @@ source( 'sourcedir.R')
 #CPA
 #**************************************************
 shinyServer(function(input, output, session) {
+  
+  cacheFolder<-"/var/www/html/openfda/media/"
+  # cacheFolder<- "C:/Users/dimst/Desktop/work_project/"
+  
+  
+  values<-reactiveValues(urlQuery=NULL)
+  
+  #Values for checkboxes view
+  ckbx <- reactiveValues(cb1=FALSE, cb2=FALSE, cb3=FALSE, cb4=FALSE)
   
   output$page_content <- renderUI({
     query <- parseQueryString(session$clientData$url_search)
@@ -279,23 +293,67 @@ getexactvals <- reactive({
 
 
 gettotalquery <- reactive({
-  geturlquery()
   toggleModal(session, 'updatemodal', 'close')
-  v1 <- getbestdrugvar()
-  t1 <- c(getbestterm1() ) 
-  myurl <- buildURL(v1, t1, count='', limit=5 )
-  mydf <- fda_fetch_p( session, myurl, wait = getwaittime())
-  # print(mydf)
+  # v1 <- getbestdrugvar()
+  # t1 <- c(getbestterm1() ) 
+  
+  
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE){
+    geturlquery()
+    toggleModal(session, 'updatemodal', 'close')
+    v1 <- getbestdrugvar()
+    t1 <- c(getbestterm1() ) 
+    myurl <- buildURL(v1, t1, count='', limit=5 )
+    mydf <- fda_fetch_p( session, myurl, wait = getwaittime())
+    
+  }else {
+    con <- mongo("dict_fda", url =mongoConnection())
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dname)
+    ids <- con$aggregate(drugQuery)
+    con$disconnect()
+    rank <- ceiling(length(ids$safetyreportid))
+    
+    v1 <- 'safetyreportid'
+    t1 <- paste(ids$safetyreportid[1:100], collapse='", "' )
+    # t1 <- ids$safetyreportid
+    mydf <- data.frame()
+    myurl <- buildURL(v1, t1, count='', limit=5 )
+    mylist <- fda_fetch_p( session, myurl, wait = getwaittime())
+    x <- mylist$results
+    mydf <- rbind(mydf, x)
+  }
   mydf <- list(result=mydf$result, url=myurl, meta=mydf$meta)
   return(mydf)
 })    
 
 gettotaldaterangequery <- reactive({
-  geturlquery()
-  v1 <- c( getbestdrugvar(), gettimevar() )
-  t1 <- c(getbestterm1(), gettimerange() ) 
-  myurl <- buildURL(v1, t1, count='', limit=5)
-  mydf <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=4)
+  q <- geturlquery()
+  
+  if (q$concomitant == TRUE){
+    geturlquery()
+    v1 <- c( getbestdrugvar(), gettimevar() )
+    t1 <- c(getbestterm1(), gettimerange() ) 
+    myurl <- buildURL(v1, t1, count='', limit=5)
+    mydf <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=4)
+    
+  } else {
+    con <- mongo("dict_fda", url =mongoConnection())
+    drugQuery <- SearchDrugReports(q$t1, input$date1, input$date2, q$dname)
+    ids <- con$aggregate(drugQuery)
+    con$disconnect()
+    rank <- ceiling(length(ids$safetyreportid))
+    
+    v1 <- 'safetyreportid'
+    t1 <- paste(ids$safetyreportid[1:100], collapse='", "' )
+    
+    myurl <- buildURL(v1, t1, count='', limit=5)
+    
+    mydf <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=4)
+  }
+  
+  
   mydf <- list(result=mydf$result, url=myurl, meta=mydf$meta)
   return(mydf)
 })  
@@ -308,23 +366,65 @@ getdrugeventtotal <- reactive({
 
 getstartend <- function(){
   geturlquery()
-  start <- input$daterange[1]
-  end <- input$daterange[2]
+  # start <- input$daterange[1]
+  # end <- input$daterange[2]
+  start <- input$date1
+  end <- input$date2
   return( c(start, end))
 }
 
 getqueryde <- reactive({
-  geturlquery()
+  q<-geturlquery()
+  
   v <- c( getbestdrugvar(), getbestaevar() , gettimevar() )
-  t <- c( getbestterm1(), getbestterm2(), gettimerange() )  
-  myurl <- buildURL(v, t, count=gettimevar() )
-  out <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=5 )
-  return( list(out=out, myurl=myurl ) )
+  t <- c( getbestterm1(), getbestterm2(), gettimerange() )
+  if (t[1] !="" & t[2] !=""){
+    t[1]<- toupper(q$dname)
+    t[2]<- toupper(q$ename)
+  }
+  if (q$concomitant == TRUE){
+    geturlquery()
+    myurl <- buildURL(v, t, count=gettimevar() )
+    out <- fda_fetch_p( session, myurl, wait = getwaittime(), reps=5 )
+    
+  } else {
+    
+    # Refactor
+    
+    if (t[1]=="" & t[2] ==""){
+      con <- mongo("dict_fda", url =mongoConnection())
+      
+      timeall<-TimeseriesForTotalReports(input$date1, input$date2)
+      timeallResult <- con$aggregate(timeall)
+      colnames(timeallResult)[1]<-"time"
+      timeallResult$time <- as.Date(timeallResult$time, tz = "HST")
+      out<-timeallResult
+      con$disconnect()
+    } else {
+      con <- mongo("dict_fda", url =mongoConnection())
+      
+      timeall<-TimeseriesForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
+      timeallResult <- con$aggregate(timeall)
+      colnames(timeallResult)[1]<-"time"
+      timeallResult$time <- as.Date(timeallResult$time, tz = "HST")
+      out<-timeallResult
+      con$disconnect()
+      
+    }
+    # Redone
+    
+  }
+  return( list(out=out ) )
 })
 
 getquerydata <- reactive({
+  q<-geturlquery()
   mydf <- getqueryde()
-  tmp <-mydf$out$result
+  if (q$concomitant == TRUE){
+    tmp <-mydf$out$result
+  } else {
+    tmp <-mydf$out
+  }
   createAlert(session, 'alert', 'calcalert',
               title='Calculating...', 
               content = 'Calculating Time Series...', 
@@ -334,31 +434,74 @@ getquerydata <- reactive({
   {
     closeAlert(session,  'calcalert')
   }
-  return( list( mydfin= mydfin, mydf=mydf, myurl= mydf$myurl, mysum = mydfin$total ) )
+  return( list( mydfin= mydfin, mydf=mydf, mysum = mydfin$total ) )
 })
 
 getcodruglist <- reactive({
-  v <- c(getbestdrugvar(), getbestaevar())
-  t <- c( getbestterm1(),  getbestterm2())
-  myurl <- buildURL( v, t, 
-                     count= getexactdrugvar(), limit=999 )
-  mydf <- fda_fetch_p( session, myurl)
-  mydf <- mydf$result[1:999,]
+  q<-geturlquery()
+  
+  if (q$concomitant == TRUE){
+    geturlquery()
+    v <- c(getbestdrugvar(), getbestaevar())
+    t <- c( getbestterm1(),  getbestterm2())
+    if (t[1] !="" & t[2] !=""){
+      t[1]<- toupper(q$dname)
+      t[2]<- toupper(q$ename)
+    }
+    myurl <- buildURL( v, t, 
+                       count= getexactdrugvar(), limit=999 )
+    mydf <- fda_fetch_p( session, myurl)
+    mydf <- mydf$result[1:999,]
+    
+  } else {
+    
+    con <- mongo("dict_fda", url =mongoConnection())
+    
+    totaleventQuery<-CocomitantForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
+    mydf <- con$aggregate(totaleventQuery)
+    # eventReport<-totaleventResult$safetyreportid
+    colnames(mydf)[1]<-"term"
+    con$disconnect()
+    
+    mydf <- mydf[1:999,]
+    
+  }
+
   mydf <- mydf[!is.na(mydf[,2]), ]
   mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
-  return( list( mydf=mydf, myurl=myurl) )
+  return( list( mydf=mydf) )
 })
 
 getcoeventlist <- reactive({
-  v <- c(getbestdrugvar(), getbestaevar())
-  t <- c( getbestterm1(),  getbestterm2())
-  myurl <- buildURL( v, t, 
-                     count= getexactaevar(), limit=999 )
-  mydf <- fda_fetch_p( session, myurl)
-  mydf <- mydf$result[1:999,]
+  q<-geturlquery()
+  
+  if (q$concomitant == TRUE){
+    v <- c(getbestdrugvar(), getbestaevar())
+    t <- c( getbestterm1(),  getbestterm2())
+    if (t[1] !="" & t[2] !=""){
+      t[1]<- toupper(q$dname)
+      t[2]<- toupper(q$ename)
+    }
+    myurl <- buildURL( v, t, 
+                       count= getexactaevar(), limit=999 )
+    mydf <- fda_fetch_p( session, myurl)
+    mydf <- mydf$result[1:999,]
+    
+  } else {
+    con <- mongo("dict_fda", url =mongoConnection())
+    
+    totaleventQuery<-ReactionsForDrugEventReports(q$t1, q$t2, input$date1, input$date2, q$dname)
+    mydf <- con$aggregate(totaleventQuery)
+    colnames(mydf)[1]<-"term"
+    con$disconnect()
+    
+    mydf <- mydf[1:999,]
+    
+  }
+  
   mydf <- mydf[!is.na(mydf[,2]), ]
   mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
-  return( list( mydf=mydf, myurl=myurl) )
+  return( list( mydf=mydf) )
 })
 
 getcocountsE <- reactive({
@@ -437,11 +580,19 @@ getcocounts <- function(whichcount = 'D'){
 }   
 
 gettstable <- function( tmp ){
+  # browser()
+  q<- geturlquery()
   if ( length(tmp)!=0  )
   {
-
-    mydf <- data.frame(count=tmp$count, 
-                       date= as.character( floor_date( ymd( (tmp[,1]) ), 'month' ) ), stringsAsFactors = FALSE )
+    
+    if (q$concomitant == TRUE){
+      mydf <- data.frame(count=tmp$count, 
+                         date= as.character( floor_date( ymd( (tmp[,1]) ), 'month' ) ), stringsAsFactors = FALSE )
+    }else {
+      mydf <- data.frame(count=tmp$count, 
+                         date= as.character( floor_date( ymd( (tmp[,1]) ), 'month' ) ), stringsAsFactors = FALSE )
+      
+    }  
     mydaterange <- getstartend()
      mydf2 <- seq( as.Date(  mydf$date[1] ), as.Date( mydaterange[2] ), 'months' )
     
@@ -534,6 +685,25 @@ anychanged <- reactive({
     closeAlert(session, 'erroralert')
   }
 })
+
+# observeEvent(input$date1, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date2",
+#                     value=input$date1+365
+#     )
+#   }
+# })
+# 
+# observeEvent(input$date2, {
+#   
+#   if (abs(input$date2-input$date1)>365){
+#     updateDateInput(session, "date1",
+#                     value=input$date1-365
+#     )
+#   }
+# })
+
 #SETTERS
 output$mymodal <- renderText({
   if (input$update > 0)
@@ -595,21 +765,51 @@ output$coquery <- DT::renderDT({
   {
     selectedLang='en'
   }
-  datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
-      language = list(
-        url = ifelse(selectedLang=='gr', 
-                     'datatablesGreek.json',
-                     'datatablesEnglish.json')
-      )
-    ))
+  if (!is.null(input$sourceCoDataframeUI)){
+    if (input$sourceCoDataframeUI){
+      write.csv(codrugs,paste0(cacheFolder,values$urlQuery$hash,"_codrugs.csv"))
+      
+    }
+  }
+  
+  if(!is.null(values$urlQuery$hash)){
+    return(datatable(
+      if ( is.data.frame(codrugs) )
+      { 
+        return(codrugs) 
+      } else  {
+        return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+      options = list(
+        autoWidth = TRUE,
+        dom = 't',
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ))
+    )
+  } else {
+    return ( datatable(
+      if ( is.data.frame(codrugs) )
+      { 
+        return(codrugs) 
+      } else  {
+        return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ))
+    )
+    
+  }
+  
 },  escape=FALSE)
 
 output$coqueryE <- DT::renderDT({
@@ -635,21 +835,53 @@ output$coqueryE <- DT::renderDT({
   {
     selectedLang='en'
   }
-  datatable(
-    if ( is.data.frame(codrugs) )
-    { 
-      return(codrugs) 
-    } else  {
-      return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
-      language = list(
-        url = ifelse(selectedLang=='gr', 
-                     'datatablesGreek.json',
-                     'datatablesEnglish.json')
-      )
-    ))
+  
+  if (!is.null(input$sourceEvDataframeUI)){
+    if (input$sourceEvDataframeUI){
+      write.csv(codrugs,paste0(cacheFolder,values$urlQuery$hash,"_qevents.csv"))
+      
+    }
+  }
+  
+  if(!is.null(values$urlQuery$hash)){
+    return(  datatable(
+      if ( is.data.frame(codrugs) )
+      { 
+        return(codrugs) 
+      } else  {
+        return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+      options = list(
+        autoWidth = TRUE,
+        dom = 't',
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ))
+    )
+  } else {
+    return (   datatable(
+      if ( is.data.frame(codrugs) )
+      { 
+        return(codrugs) 
+      } else  {
+        return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )},
+      options = list(
+        autoWidth = TRUE,
+        columnDefs = list(list(className = 'dt-right', targets = c(1, 2,3))),
+        language = list(
+          url = ifelse(selectedLang=='gr', 
+                       'datatablesGreek.json',
+                       'datatablesEnglish.json')
+        )
+      ))
+    )
+    
+  }
+  
+
 },  escape=FALSE)
 
 # output$coqueryE <- renderTable({  
@@ -724,13 +956,16 @@ output$maxcp <- renderText({
   out <- paste( '<b>Maximum Number of Changepoints:<i>', s, '</i></b>' )
   return(out)
 })
-output$queryplot <- renderPlotly({  
+output$queryplot <- renderPlotly({ 
+  q<-geturlquery()
+  
   fetchalldata()
   #   if (input$term1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
   mydf <- getquerydata()$mydfin
   queryForExcel<<-mydf
   if (length(mydf) > 0 )
   {
+    
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
@@ -751,6 +986,7 @@ output$queryplot <- renderPlotly({
   Dates2<-unlist(Dates2, use.names=FALSE)
   if ( is.data.frame(mydf$display) )
   {
+    ckbx$cb4 <- TRUE
     labs <-    mydf$display[[1]]
     Date<-mydf$display[[1]]
     Counts<-as.vector(mydf$display[,2])
@@ -778,7 +1014,7 @@ output$queryplot <- renderPlotly({
     # grid()
     #to here vagelis
     
-    data <- read.table("https://python-graph-gallery.com/wp-content/uploads/bike.csv", header=T, sep=",") %>% head(300)
+    # data <- read.table("https://python-graph-gallery.com/wp-content/uploads/bike.csv", header=T, sep=",") %>% head(300)
     
     # Check type of variable
     # str(data)
@@ -817,8 +1053,26 @@ output$queryplot <- renderPlotly({
     
     p <- p %>% layout(title = i18n()$t("Report Counts By Date"),titlefont = f)
     
+    if (!is.null(input$sourceYearPlotReportUI)){
+      if (input$sourceYearPlotReportUI){
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_yearplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_yearplot.png")))
+        # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
+        # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+        # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL)
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #       lwd = par("lwd") )
+        # dev.off()
+      }
+      
+    }
+    
     p
   } else  {return(plot(data.frame(Drug=paste( 'No events for drug', input$term1), Count=0)))}
+  
 })
 
 
@@ -995,6 +1249,8 @@ output$dlCountsForEventsInSelectedReports <- downloadHandler(
   }
 )
 output$cpmeanplot <- renderPlotly ({
+  q<- geturlquery()
+  
   if(getterm1( session)!=""){
   mydf <-getquerydata()$mydfin$result
   cpmeanForExcel<<-mydf
@@ -1017,6 +1273,7 @@ output$cpmeanplot <- renderPlotly ({
     s1 <- calccpmean()
     labs <-    index( getts() )
     pos <- seq(1, length(labs), 3)
+    ckbx$cb1 <- TRUE
     
     if ( getterm1( session, FALSE )==''  )
       {
@@ -1096,7 +1353,26 @@ output$cpmeanplot <- renderPlotly ({
       
       range_0<-range_1
     }
+    
+    if (!is.null(input$sourcePlotReportUI)){
+      if (input$sourcePlotReportUI){
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpmeanplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpmeanplot.png")))
+        
+        # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
+        # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+        # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL)
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #       lwd = par("lwd") )
+        # dev.off()
+      }
+      
+    }
     p
+    
     
     }
     else
@@ -1110,6 +1386,8 @@ output$cpmeanplot <- renderPlotly ({
     return (NULL)
   }
 })
+
+# ckbx$cb1 <- TRUE
 
 output$infocpvartext <- renderUI ({
   mydf <-getquerydata()$mydfin$result
@@ -1129,16 +1407,19 @@ output$infocpvartext <- renderUI ({
        out<-HTML(i18n()$t('Insufficient Data') )
     }
     addPopover(session=session, id="infocpvartext", title="", 
-               content=paste(out,i18n()$t('changepoint explanation'),i18n()$t('Change in variance analysis explanation')), placement = "left",
+               content=paste(out,i18n()$t('Change in variance analysis explanation')), placement = "left",
                trigger = "hover", options = list(html = "true"))
     return(HTML('<button type="button" class="btn btn-info">i</button>'))
 })
 
 output$cpvarplot <- renderPlotly ({
+  q<-geturlquery()
+  
   mydf <-getquerydata()$mydfin$result
   cpvarForExcel<<-mydf
   if (length(mydf) > 0 )
   {
+    ckbx$cb2 <- TRUE
     if(!is.null(session$nodataAlert))
     {
       closeAlert(session, "nodataAlert")
@@ -1220,8 +1501,25 @@ output$cpvarplot <- renderPlotly ({
     for (i in 1:(length(s1@cpts))){
       p <- p%>% add_segments(x = attr(s1@data.set,'index')[s1@cpts[i]], xend = attr(s1@data.set,'index')[s1@cpts[i]], y = 0, yend = maxy,line = list(color = '#ff7f0e'))
     }
-    p
+    if (!is.null(input$sourceVarPlotReportUI)){
+      if (input$sourceVarPlotReportUI){
+        saveWidget(as_widget(p), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpvarplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(p, paste0(q$hash,"_cpvarplot.png")))
+        # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
+        # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+        # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL)
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #       lwd = par("lwd") )
+        # dev.off()
+      }
+      
     }
+    p
+  }
+  
 })
 
 output$cpbayestext <- renderPrint ({
@@ -1334,6 +1632,8 @@ build_infocpbayes_table <- function(out)({
 #   
 # })
 output$cpbayesplot <- renderPlotly ({
+  q<-geturlquery()
+  
   mydf <-getquerydata()$mydfin$result
   cpbayesForExcel<<-mydf
   if (length(mydf) > 0 )
@@ -1352,7 +1652,7 @@ output$cpbayesplot <- renderPlotly ({
   }
   if (length(mydf) > 0)
     {
-    
+    ckbx$cb3 <- TRUE
     s1 <- calccpbayes()$bcp.flu
     # labs <-    index( getts() )
     # plot(s1)
@@ -1402,9 +1702,28 @@ output$cpbayesplot <- renderPlotly ({
       
     fig <- subplot(p, p2,nrows = 2, shareX = TRUE, titleY = TRUE)%>% layout(title = i18n()$t("Posterior Means and Probabilities of Change"),titlefont = f)
     
+    if (!is.null(input$sourceBayesPlotReportUI)){
+      if (input$sourceBayesPlotReportUI){
+        saveWidget(as_widget(fig), "temp.html")
+        webshot("temp.html", file = paste0(cacheFolder,q$hash,"_cpbayesplot.png"), cliprect = "viewport")
+        # withr::with_dir("/var/www/html/openfda/media", orca(fig, paste0(q$hash,"_cpbayesplot.png")))
+        # png(filename = paste0(cacheFolder,q$hash,"_timeseries.png"))
+        # mytitle <- paste( "Change in Mean Analysis for", mydrugs, 'and', myevents )
+        # plot(s1, xaxt = 'n', ylab='Count', xlab='', main=mytitle)
+        # axis(1, pos,  labs[pos], las=2  )
+        # grid(nx=NA, ny=NULL)
+        # abline(v=pos, col = "lightgray", lty = "dotted",
+        #       lwd = par("lwd") )
+        # dev.off()
+      }
+      
+    }
+    
     fig
     }
-})
+  
+  })
+
 output$querytitle <- renderText({ 
   return( paste('<h4>Counts for', getterm1( session,FALSE), 'with event "', getterm2( session,FALSE), '"</h4>') )
 })
@@ -1435,7 +1754,17 @@ getcururl <- reactive({
 
 geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
-  
+  # q<-NULL
+  # q$v1<-"patient.drug.openfda.generic_name"
+  # q$v2<-"patient.reaction.reactionmeddrapt"
+  # q$t1<-"N05BA12"
+  # q$t2<-"10013654"
+  # q$t1<-"Omeprazole"
+  # q$t2<-"Hypokalaemia"
+  # q$t1<-"A02BC01"
+  # q$t2<-"10021015"
+  # q$hash <- "ksjdhfksdhfhsk"
+  # q$concomitant<-FALSE
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateTextInput(session, "t1", value=q$term1)
   updateTextInput(session,"t2", value=q$term2)   
@@ -1446,7 +1775,7 @@ geturlquery <- reactive({
   updateTextInput(session,"t2", value=q$t2) 
   updateTextInput(session, "drugname", value=q$t1)
   updateTextInput(session,"eventname", value=q$t2) 
-  updateDateRangeInput(session,'daterange', start = q$start, end = q$end)
+  updateDateRangeInput(session,'daterange', start = input$date1, end = input$date2)
   updateNumericInput(session,'maxcp', value=q$maxcps)
   updateNumericInput(session,'maxcp2', value=q$maxcps)
   updateRadioButtons(session, 'useexact',
@@ -1455,6 +1784,21 @@ geturlquery <- reactive({
                      selected = if(length(q$useexactD)==0) "exact" else q$useexactD)
   updateRadioButtons(session, 'useexactE',
                      selected = if(length(q$useexactE)==0) "exact" else q$useexactE)
+  
+ 
+  con_atc <- mongo("atc", url =mongoConnection())
+  drug <- con_atc$find(paste0('{"code" : "',q$t1,'"}'))
+  con_atc$disconnect()
+  
+  q$dname <- drug$names[[1]][1]
+  
+  con_medra <- mongo("medra", url =mongoConnection())
+  event <- con_medra$find(paste0('{"code" : "',q$t2,'"}'))
+  con_medra$disconnect()
+  
+  q$ename <- event$names[[1]][1]
+  values$urlQuery<-q
+  
   return(q)
 })
 
@@ -1513,6 +1857,108 @@ output$DateReportWasFirstReceivedbyFDA <- renderUI({
 output$ChangePointAnalysis <- renderUI({ 
   HTML(stri_enc_toutf8(i18n()$t("Change Point Analysis")))
   
+})
+
+output$sourcePlotReport<-renderUI({
+  if ((!is.null(values$urlQuery$hash) && ckbx$cb1))
+    checkboxInput("sourcePlotReportUI", "Save plot")
+})
+
+observeEvent(input$sourcePlotReportUI,{
+  
+  if (!is.null(input$sourcePlotReportUI))
+    if (!input$sourcePlotReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_cpmeanplot.png")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceVarPlotReport<-renderUI({
+  if ((!is.null(values$urlQuery$hash) && ckbx$cb2))
+    checkboxInput("sourceVarPlotReportUI", "Save plot")
+})
+
+observeEvent(input$sourceVarPlotReportUI,{
+  
+  if (!is.null(input$sourceVarPlotReportUI))
+    if (!input$sourceVarPlotReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_cpvarplot.png")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceBayesPlotReport<-renderUI({
+  if ((!is.null(values$urlQuery$hash)) && ckbx$cb3)
+    checkboxInput("sourceBayesPlotReportUI", "Save plot")
+})
+
+observeEvent(input$sourceBayesPlotReportUI,{
+  
+  if (!is.null(input$sourceBayesPlotReportUI))
+    if (!input$sourceBayesPlotReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_cpbayesplot.png")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceYearPlotReport<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceYearPlotReportUI", "Save plot")
+})
+
+observeEvent(input$sourceYearPlotReportUI,{
+  
+  if (!is.null(input$sourceYearPlotReportUI))
+    if (!input$sourceYearPlotReportUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_yearplot.png")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceCoDataframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceCoDataframeUI", "Save data values")
+})
+
+observeEvent(input$sourceCoDataframeUI,{
+  
+  if (!is.null(input$sourceCoDataframeUI))
+    if (!input$sourceCoDataframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_codrugs.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
+})
+
+output$sourceEvDataframe<-renderUI({
+  if (!is.null(values$urlQuery$hash))
+    checkboxInput("sourceEvDataframeUI", "Save data values")
+})
+
+observeEvent(input$sourceEvDataframeUI,{
+  
+  if (!is.null(input$sourceEvDataframeUI))
+    if (!input$sourceEvDataframeUI){
+      fileName<-paste0(cacheFolder,values$urlQuery$hash,"_qevents.csv")
+      if (file.exists(fileName)) {
+        #Delete file if it exists
+        file.remove(fileName)
+      }
+    }
 })
 
 

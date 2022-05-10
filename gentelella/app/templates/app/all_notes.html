@@ -1,0 +1,137 @@
+{% extends "app/base_site.html" %}
+{% load i18n %}
+{% load static %}
+{% load custom_tags %}
+
+
+{% block title %} AllNotes {% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="row tile_count">
+        <div class="col-4 col-offset-6">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>{% trans "Προσωπικές Σημειώσεις Σεναρίων" %}</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p class="text-muted font-13 m-b-30">
+                        {% trans "Στον ακόλουθο πίνακα μπορείτε να δείτε τις σημειώσεις που έχετε ήδη δημιουργήσει. Επίσης, μπορείτε να επεξεργαστείετε μια σημείωση επιλέγοντας το κουμπί 'Επεξεργασία' , που βρίσκεται στην τελευταία στήλη του πίνακα." %}
+                    </p>
+                    <div id="curLang" data-lang="{{ lang }}"></div>
+                    <table id="allNotesTbl" class="table table-striped table-bordered dt-responsive dataTable nowrap" width="100%" align="center" border="0" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Σενάριο" %}</th>
+                            <th>{% trans "Ημ/νία καταχώρισης" %}</th>
+                            <th>{% trans "Περιβάλλον Εργασίας" %}</th>
+                            <th>{% trans "Φόρμα" %}</th>
+                            <th >{% trans "Περιεχομενο" %}</th>
+                            <th>{% trans "Επεξεργασία" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for note in user_notes %}
+                        {% firstof  abbrv_views|get_item:note.wsview note.wsview as note_wsview %}
+                        <tr>
+                        {% trans note_wsview as trans_note_wsview %}
+                            <td>{% if note.scenario %}{{ note.scenario.title }}{% else %}{% trans "Ανεξάρτητο Σεναρίου" %}{% endif %}</td>
+
+                            <td>{{ note.note_datetime}}</td>
+
+                            <td class="cen">{{ note.workspace }}</td>
+
+                            <td ><p class="notesellipsis">{{ note_wsview }}</p></td>
+
+                            <td><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
+                            <td class="cen">
+                                {% if note.scenario %}
+                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                {% else %}
+                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="pubMedNotesModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title col-xs-11" id="myModalLabel">{% trans 'Σημειώσεις' %}</h4>
+                <button type="button" class="close col-xs-1" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="note-hdn hidden"></div>
+                <div class="note-title"></div>
+                 <textarea style="width: 100%; height: 300px; resize: none;" name="allNotesTxt" placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="saveNotesBtn" name="saveNotesBtn" class="btn btn-primary col-xs-offset-9 col-xs-3" type="submit">
+                    <i class="fa fa-save"></i>
+                    <span class="visible-lg">
+                        {% trans "Αποθήκευση" %}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{{ block.super }}
+<script src="/static/build/js/all_notes.js"></script>
+<script>
+    $(function() {
+        $(".delete-sc-btn").on("click", function () {
+            // On trash can button click, pass record id to modal confirm btn
+            $("#confirmBtn").data("record", $(this).data("scid"));
+
+        })
+    });
+</script>
+
+<script src="/static/build/js/pv_literature.js"></script>
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
+
+{% endblock javascripts %}

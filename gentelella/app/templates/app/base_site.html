@@ -1,7 +1,8 @@
 {% load flags %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load custom_tags %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -107,10 +108,16 @@
         </div>
     </form>
 
-
     {% block body %}
         <div class="container body">
           <div class="main_container">
+
+            {% block geninfo_box %}
+                <div class="alert alert-warning alert-geninfo" role="alert">
+<!--                  <button type="button" class="close" data-dismiss="alert">×</button>-->
+                  {% trans "Το σύστημα αυτό δεν έχει επαληθευθεί μέσω κλινικών δοκιμών και τα όποια δεδομένα του δεν μπορούν να αξιοποιηθούν ως κομμάτι κλινικής πράξης, παρά μόνο συμβουλευτικά" %}
+                </div>
+            {% endblock geninfo_box%}
 
             {% block sidebar %}
               <div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">
@@ -121,6 +128,9 @@
             {% block top_navigation %}
               <div class="top_nav">
                 {% include "app/top_navigation.html" %}
+                {% if breadcrumbs %}
+                    {% include "app/breadcrumbs.html" with breadcrumbs=breadcrumbs%}
+                {% endif %}
               </div>
             {% endblock top_navigation %}
 
@@ -144,6 +154,7 @@
             {% trans "Επιβεβαίωση" as main_lbl%}
             {% trans "Ακύρωση" as dismiss_lbl %}
             {% trans "Εντάξει" as ok_lbl%}
+            {% trans "Πληροφορίες" as info_title %}
             {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="scDeleteConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#scDeleteInfoModal" %}
             {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="scDeleteInfoModal" dismiss_btn=ok_lbl %}
             {% trans 'Συνδεθείτε στο Mendeley <a target="_blank" href="https://www.mendeley.com/reference-manager/library/all-references"><strong>εδώ</strong> και ανανεώστε την σελίδα.</a>' as mend_body %}
@@ -151,13 +162,14 @@
             {% with '<img src="/static/images/mendeleyicon.png">' as mend_title %}
                 {% include 'app/modals/mendeley_modal.html' with modal_type="infoModal" modal_id="mendeleyModal" modal_title=mend_title dismiss_btn=mend_lbl data_target="#analysisViewModal" %}
             {% endwith %}
+            {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="pubMedSaveInfoModal" modal_title=info_title dismiss_btn=ok_lbl %}
         {% endblock modals %}
 
         {% trans "Σημειώσεις" as mod_title %}
         {% include 'app/modals/parametric_modal.html' with modal_type="notesModal" modal_title=mod_title modal_id="notesModal" modal_iframe_url=""%}
         {% trans 'Cancel' as date_lbl %}
         {% with 'Update dates' as date_title %}
-        {% include 'app/modals/date_modal.html' with modal_type="\"infoModal\"" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
+        {% include 'app/modals/date_modal.html' with modal_type="infoModal" modal_id="dateModal" modal_title=date_title dismiss_btn=date_lbl data_target="#analysisViewModal" %}
         {% endwith %}
 
     {% endblock body %}
@@ -231,13 +243,6 @@
 
         <!-- Convert fields with 'datepicker' class to bootstrap's  datepicker input type -->
         <script type="text/javascript" src='{% static "build/js/datepickerconv.js" %}'></script>
-
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('.has-popover').popover({'trigger':'hover'});
-            });
-        </script>
-
 
         <script type="text/javascript">
             $(function() {

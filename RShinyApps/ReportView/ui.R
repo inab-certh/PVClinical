@@ -1,6 +1,6 @@
 library(shiny)
 library(shinyjs)
-
+library(shinycssloaders)
 library(shiny.i18n)
 library(shinyalert)
 
@@ -79,19 +79,33 @@ rendert3 <- function() {
 
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
-                  fluidRow(useShinyjs(),useShinyalert(),
-                           column(width=12, bsAlert("nodata_report")), id='alertrow'),
-                  fluidRow(useShinyjs(),
-                    column(width=4,
-                           a(href='https://open.fda.gov/', 
-                             img(src='l_openFDA.png', align='bottom')),
-                           #renderDates()
-                    ),
-                    column(width=8,
-                           titlePanel(
-                             textOutput("paneltitle"),
-                             "")) 
-                    , id='titlerow'),
+                  # fluidRow(useShinyjs(),useShinyalert(),
+                  #          column(width=12, bsAlert("nodata_report")), id='alertrow'),
+                  # fluidRow(useShinyjs(),
+                  #   column(width=3,
+                  #          # a(href='https://open.fda.gov/',
+                  #          #   img(src='l_openFDA.png', align='bottom')),
+                  #          #renderDates()
+                  #   ),
+                  # 
+                  #   column(width=8,
+                  #          titlePanel(
+                  #            textOutput("paneltitle"),
+                  #            ""))
+                  #   , id='titlerow'),
+                  fluidRow(useShinyjs(), 
+                           style="margin-bottom: 0.3rem; float: center; margin-left: 0.3rem; width:68%",
+                           column(width=2, offset = 0, dateInput("date1", "", value = '1989-6-30'), style='padding:0px;' ),
+                           # dateInput("date1", "", value = '1989-6-30'),
+                           column(width=1, offset = 0, uiOutput('toDate'),
+                                  style="margin-top: 2.45rem; text-align: center; padding:0px;"),
+                           # dateInput("date1", "", value = '1989-6-30', width = 100),
+                           # uiOutput('toDate', width = 20),
+                           # dateInput("date2", "", value = Sys.Date(), width = 100),
+                           column(width=2, offset = 0, dateInput("date2", "", value = Sys.Date()), style='padding:0px;'),
+                           
+                  ),
+                  
 #                   img(src='l_openFDA.png'),
 #   titlePanel("Report Browser"),
 #   fluidRow(
@@ -120,24 +134,44 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
 #     )
 #   ),
   fluidRow(useShinyjs(), style="margin-bottom: 0.3rem",
-    column(width=2, bsButton( 'prevrow', '< Previous Report', block=TRUE, style = 'primary') ),
+    column(width=2, bsButton( 'prevrow', '< Previous', block=TRUE, style = 'primary') ),
     column(width=2, htmlOutput("ptext") ),
     column(width=4, 
-           strong( rendercurrec() ) ),
+            rendercurrec()  ),
     column(width=2, htmlOutput("ntext") ),
-    column(width=2, bsButton( 'nextrow', 'Next Report>', block=TRUE, style = 'primary') )
+    column(width=2, bsButton( 'nextrow', 'Next >', block=TRUE, style = 'primary') )
     , id='navrow'),
   fluidRow(useShinyjs(),
     column(width=12, 
            wellPanel( 
-             sliderInput('skip', 'Report #', value=1, min=1, step= 1, max=100, width='100%')
+             fluidRow(column(width=8, tableOutput( 'patienttable' ),),
+             # htmlOutput( 'overviewtitle' ), 
+             column(width=4, 
+                    fluidRow(column(width=6,textInput("safetyreportid", "Safety Report Id", "")),
+                             column(width=5,bsButton( 'searchID', 'Search ID', block=TRUE, style = 'primary'),
+                                    style="margin-top: 2.45rem;"),),
+                    tableOutput('reporttable'),),
+             style = "max-height: 600px;",
+             
+             # style="float: right;"
+             hidden(sliderInput('skip', 'Report #', value=1, min=1, step= 1, max=100, width='100%'))
+           )
            )
     )
     , id='sliderrow'),
+fluidRow(column(width=2, downloadButton( 'downloadData', 'Download report', 
+                                         block=TRUE) ),
+         style= " margin-bottom: 0.3rem; float:right; color: #fffff",
+         ),
+fluidRow(column(width=2, downloadButton( 'downloadAllData', 'Download all reports', 
+                                         block=TRUE) ),
+         style= " margin-bottom: 0.3rem; float:right; color: #fffff",
+),
 fluidRow(useShinyjs(),
-  column(width=3,
+         hidden(column(width=3,
          wellPanel(
-           style = "overflow-y:scroll; max-height: 600px",
+           
+           style = "max-height: 600px",
            bsButton("tabBut", "Filter by...", style='primary'),
            br(),
            renderv1(),
@@ -162,12 +196,17 @@ fluidRow(useShinyjs(),
                                    selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ),
                     textInput("t3_2", textOutput("termslbl3"), '[20000101+TO+20170101]'),
                     bsButton("update", "Update Variables", style='primary') )
-         ),
+         ,
+         # tableOutput( 'patienttable' ),
          tags$script(
            "$( document ).ready(function() {
               $('#modalUpdateVars .modal-footer .btn-default').attr('id', 
               'modalCloseBtn');
-           })"),
+           })")
+          
+         
+         ),
+         
          
          wellPanel( 
            style = "overflow-y:scroll; max-height: 600px",
@@ -192,18 +231,18 @@ fluidRow(useShinyjs(),
            )
          ),
          # bsAlert("alert")
-  ),
-  column(width=9, 
+  )),
+  column(width=12, 
          bsAlert("alert2"),  
       tabsetPanel(
-                tabPanel(textOutput("overviewtxt"),  
-                         
-                         wellPanel( 
-                           htmlOutput( 'overviewtitle' ), 
-                           tableOutput( 'overviewtable' ),
-                           style = "overflow-y:scroll; max-height: 600px",
-                         )
-                ),
+                # tabPanel(textOutput("overviewtxt"),  
+                #          uiOutput("sourceReportframe", style = "display:inline-block; margin-left:20px;"),
+                #          wellPanel( 
+                #            htmlOutput( 'overviewtitle' ), 
+                #            tableOutput( 'overviewtable' ),
+                #            style = "overflow-y:scroll; max-height: 600px",
+                #          )
+                # ),
                 # tabPanel(textOutput("metadatatxt"),
                 #         
                 #          wellPanel( 
@@ -245,28 +284,38 @@ fluidRow(useShinyjs(),
                 #          )
                 # ),
                 tabPanel(textOutput("patreactiontxt"),  
-                         
+                         uiOutput("sourcePatientDataframe", style = "display:inline-block; margin-left:20px;"),
                          wellPanel( 
                            htmlOutput('patientreactiontabletitle'),
-                           htmlOutput( 'patientreaction'),
+                           withSpinner(htmlOutput( 'patientreaction')),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
                 tabPanel(textOutput("patdrugtxt"),
-                         
+                         uiOutput("sourceDrugDataframe", style = "display:inline-block; margin-left:20px;"),
                          wellPanel(  
-                           htmlOutput('patientdrugtabletitle'),
-                           htmlOutput( 'drug' ),
+                           # htmlOutput('patientdrugtabletitle'),
+                           withSpinner(htmlOutput( 'drug' )),
                            style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),
-                tabPanel(textOutput("patdrugopenfdatxt"),  
-                         
+                tabPanel(textOutput("patdrugopenfdatxt"),
+                         fluidRow(
+                           column(width=4,
+                                  uiOutput("sourceFdaDataframe", style = "display:inline-block; margin-left:20px;"),
+                                  
+                           ),
+                           column(width=4,
+                                  uiOutput("sourceFdaSDataframe", style = "display:inline-block; margin-left:20px;"),
+                           ),
+                         ),
+                        
                          wellPanel(  
-                                     htmlOutput('patientdrugopenfdatabletitle'),
-                                     tableOutput( 'openfda' ),
-                                     htmlOutput('patientdrugopenfda2tabletitle'),
-                                     tableOutput( 'openfda2' ),
+                           withSpinner(tableOutput('medication')),
+                                     # htmlOutput('patientdrugopenfdatabletitle'),
+                                     # tableOutput( 'openfda' ),
+                                     # htmlOutput('patientdrugopenfda2tabletitle'),
+                                     # tableOutput( 'openfda2' ),
                                      style = "overflow-y:scroll; max-height: 600px"
                          )
                 ),

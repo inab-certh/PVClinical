@@ -3,6 +3,7 @@ library(rsconnect)
 library(shinyjs)
 library(shiny)
 library(shinyWidgets)
+library(shiny.i18n)
 library(DT)
 library(shinycssloaders)
 library(dygraphs)
@@ -60,21 +61,53 @@ flags <- c(
 
 shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),
-                           column(id="xlsrow", width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", textOutput("downloadBtnLbl"))))),
+                           # column(id="xlsrow", width=8,div(div(style="display:inline-block",
+                           #                                 #     div(id="downloadExcelColumn",
+                           #                                 #         textOutput("downloadDataLbl"))),
+                           #                                 # div(style="display:inline-block; margin-left:20px;",
+                           #                                     downloadButton("dl", textOutput("downloadBtnLbl"))))),
                            # column(width=4,bsAlert("nodata_qvde"),uiOutput("infocpmeantext",style = "position:absolute;right:40px;z-index:10")
                            #        )
                   ),
                   fluidRow(useShinyjs(),
                            tags$head(tags$script(src="code.js")),
                            column(width=12, 
-                                  dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
-                                  uiOutput("dtlocator"),
+                                  # dateRangeInput('daterange', '', start = '1989-6-30', end = Sys.Date(), language="en", separator="to" ),
+                                  # uiOutput("dtlocator"),
+                                  fluidRow( useShinyjs(),
+                                            # style="margin-bottom: 0.3rem",
+                                            # column(width=2, dateInput("date1", "", value = '1989-6-30') ),
+                                            # column(width=1, p("to"),
+                                            #        style="margin-top: 2.45rem; text-align: center;"),
+                                            # column(width=2, dateInput("date2", "", value = Sys.Date()) ),
+                                            style="margin-bottom: 0.3rem; float: center; margin-left: 0.3rem; width:100%",
+                                            
+                                            column(width=2, offset = 0, dateInput("date1", "", value = '1989-6-30'), style='padding:0px;' ),
+                                            # dateInput("date1", "", value = '1989-6-30'),
+                                            column(width=1, offset = 0, p("to"),
+                                                   style="margin-top: 2.45rem; text-align: center; padding:0px;"),
+                                            # dateInput("date1", "", value = '1989-6-30', width = 100),
+                                            # uiOutput('toDate', width = 20),
+                                            # dateInput("date2", "", value = Sys.Date(), width = 100),
+                                            column(width=2, offset = 0, dateInput("date2", "", value = Sys.Date()), style='padding:0px;'),
+                                            # column(id="xlsrow", width=2,downloadButton("dl", textOutput("downloadBtnLbl")),
+                                            column(id="xlsrow", width=2, style="float:right; margin-top: 1rem;",
+                                            #                           # style="display:inline-block",
+                                            #                           #     div(id="downloadExcelColumn",
+                                            #                           #         textOutput("downloadDataLbl"))),
+                                            #                           # div(style="display:inline-block; margin-left:20px;",
+                                                                      downloadButton("dl", textOutput("downloadBtnLbl"))),
+                                  ),
+                          
                                   fluidRow( bsAlert("nodata_qvde"),
+                                            uiOutput("sourcePlotReport", style = "position:absolute;margin-top:10px;left:30px;z-index:10"),
                                             wellPanel(
                                               style="background-color:white;height:30px;border:none",uiOutput("infocpmeantext", style = "position:absolute;margin-bottom:20px;right:40px;z-index:10")
                                             ),
+                                            
                                             # withSpinner(plotOutput( 'cpmeanplot' ))
                                             withSpinner(plotlyOutput( 'cpmeanplot'))
+                                            
                                   )
                                   
                                   
@@ -84,6 +117,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                   #   htmlOutput_p( 'cpmeantext' )
                                   # )
                            ),
+                           
                            
                            hidden(
                              # numericInput_p('limit', 'Maximum number of event terms', 50,
@@ -154,7 +188,7 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                                tt('limit2'),
                                placement = 'bottom'
                              ),
-                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1, ,  step=1,
+                             numericInput_p('maxcp2', "Maximum Number of Change Points", 3, 1,   step=1,
                                             HTML( tt('cplimit1') ), tt('cplimit2'),
                                             placement='left')
                              
@@ -170,9 +204,11 @@ shinyUI(fluidPage(includeCSS("../sharedscripts/custom.css"),
                   
                   tabsetPanel(
                     tabPanel(uiOutput("PRRRORResults"),
+                             uiOutput("sourceDataframe", style = "position:absolute;margin-top:10px;left:30px;z-index:10"),
                              wellPanel(
                                style="background-color:white;height:60px;border:none",uiOutput( 'prrtitleBlank' ),uiOutput("infoprr2",style = "position:absolute;right:40px;z-index:10")
                              ),
+                             
                              DTOutput( 'prr2' )
                     ),
                     # tabPanel(uiOutput("ChangeinVarianceAnalysis"), 

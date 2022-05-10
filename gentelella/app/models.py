@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from decimal import Decimal
 
+from bs4 import BeautifulSoup
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -14,6 +15,7 @@ from ckeditor.fields import RichTextField
 # from tinymce.models import HTMLField
 
 from app.helper_modules import choices_max_length
+from app.validators import ic_id_validator
 
 
 # Create your models here.
@@ -172,6 +174,37 @@ class Scenario(models.Model):
         ]
 
 
+class Notes(models.Model):
+    """ Notes for users for the various workspaces of a scenario
+    """
+    # content = HTMLField(blank=True, default="")
+    content = RichTextField(blank=True, default="", null=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
+    workspace = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
+                                                             MaxValueValidator(5)])
+    wsview = models.TextField(default="")  # Workspace specific view
+    note_datetime = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not BeautifulSoup(self.content, "lxml").text.strip():
+            if self.pk is None:
+                # creating a new instance - just don't save anything
+                return
+            else:
+                # updating an existing instance - delete self
+                self.delete()
+        else:
+            super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "scenario", "workspace", "wsview"],
+                                    name="unique_note")
+        ]
+
+
 class PubMed(models.Model):
     """
         PubMed articles and user notes
@@ -185,10 +218,10 @@ class PubMed(models.Model):
     authors = models.CharField(max_length=400, blank=False, default='')
     url = models.CharField(max_length=100, blank=False, default='')
     relevance = models.CharField(max_length=20, choices=CHOICES, null=True, default='')
-    notes = models.TextField(null=True, blank=True)
+    notes = models.ForeignKey(Notes, null=True, on_delete=models.CASCADE)
 
     scenario_id = models.ForeignKey(Scenario, on_delete=models.CASCADE)
-    # created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
         constraints = [
@@ -197,34 +230,99 @@ class PubMed(models.Model):
 
     # created = models.DateTimeField(auto_now_add=True)
 
+class Questionnaire(models.Model):
 
-class Notes(models.Model):
-    """ Notes for users for the various workspaces of a scenario
-    """
-    # content = HTMLField(blank=True, default="")
-    content = RichTextField(blank=True, default="",
-        # config_name='forum-post',
+    q1 = models.BooleanField(null=True,default=None)
+    q2 = models.BooleanField(null=True,default=None)
+    q3 = models.BooleanField(null=True,default=None)
+    q4 = models.BooleanField(null=True,default=None)
+    q5 = models.BooleanField(null=True,default=None)
+    q6 = models.BooleanField(null=True,default=None)
+    q7 = models.BooleanField(null=True,default=None)
+    q8 = models.BooleanField(null=True,default=None)
+    q9 = models.BooleanField(null=True,default=None)
+    q10 = models.BooleanField(null=True,default=None)
 
-        # CKEDITOR.config.extraPlugins:
-        # extra_plugins=['someplugin'],
+    result = models.CharField(max_length=200)
 
-        # CKEDITOR.plugins.addExternal(...)
-        # external_plugin_resources=[(
-        #     'someplugin',
-        #     '/static/.../path-to-someplugin/',
-        #     'plugin.js',
-        # )],
-    )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    scenario = models.ForeignKey(Scenario, null=True, on_delete=models.CASCADE)
-    workspace = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
-                                                             MaxValueValidator(5)])
-    wsview = models.CharField(max_length=32, default='')  # Workspace specific view
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["user", "scenario", "workspace", "wsview"],
-                                    name="unique_condition")
+            models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
+                                            "q6", "q7", "q8", "q9", "q10"],
+                                    name="unique_questionnaire")
         ]
+
+
+class IndividualCase(models.Model):
+    """ IndividualCase for user's patients for Individual Case Management Workspace
+    """
+    indiv_case_id = models.CharField(max_length=500, blank=False, default='', validators=[ic_id_validator])
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    #ena scenario mporei na to exoun polloi astheneis, alla kai 1 asthenis mporei na exei polla senaria
+    scenarios = models.ManyToManyField(Scenario, through= "CaseToScenario", default=None,
+                                        verbose_name="scenarios", related_name="scenarios")
+
+    questionnaires = models.ManyToManyField(Questionnaire, through= "CaseToQuestionnaire", default=None,
+                                        verbose_name="questionnaires", related_name="questionnaires")
+    #ena questionnaire mporoun na to exoun polloi astheneis, alla kai enas asthenis mporei na exei polla questionnaire,
+    #ara h arxiki skepsi tou vlasi mou fainetai swsth, oxi foreignkey, alla pali manytomany
+    #me to manytomany na ftiaxw sti vasi allon enan pinaka casetoquestionnaire, opws exw casetoscenario
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True)
+
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["indiv_case_id", "timestamp"],
+                                    name="unique_individualcase")
+        ]
+
+
+class CaseToScenario(models.Model):
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE)
+    pcase = models.ForeignKey(IndividualCase, on_delete=models.CASCADE)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["scenario", "pcase"],
+                                    name="unique_pcase_scenario")
+        ]
+
+
+class CaseToQuestionnaire(models.Model):
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    pcaseq = models.ForeignKey(IndividualCase, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["questionnaire", "pcaseq"],
+                                    name="unique_questionnaire_pcaseq")
+        ]
+
+# class Questionnaire(models.Model):
+#
+#     q1= models.BooleanField(null=True,default=None)
+#     q2= models.BooleanField(null=True,default=None)
+#     q3= models.BooleanField(null=True,default=None)
+#     q4= models.BooleanField(null=True,default=None)
+#     q5= models.BooleanField(null=True,default=None)
+#     q6= models.BooleanField(null=True,default=None)
+#     q7= models.BooleanField(null=True,default=None)
+#     q8= models.BooleanField(null=True,default=None)
+#     q9= models.BooleanField(null=True,default=None)
+#     q10= models.BooleanField(null=True,default=None)
+#
+#     result= models.CharField(max_length=200)
+#
+#
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=["q1", "q2", "q3", "q4", "q5",
+#                                             "q6", "q7", "q8", "q9", "q10"],
+#                                     name="unique_individualcase")
+#         ]
+
+
+
+
 

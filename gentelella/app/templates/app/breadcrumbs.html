@@ -1,0 +1,19 @@
+{% load custom_tags %}
+
+<nav id="breadcrumbNav" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for bc in breadcrumbs %}
+            {% breadcrumb_label bc.name as bc_label %}
+            {% with next=breadcrumbs|next:forloop.counter0 %}
+                {% breadcrumb_label next.name as next_label %}
+                {% if bc_label and not bc.name|is_numeric %}
+                    <li class={% if not next_label %}"breadcrumb-item active"{% else %}"breadcrumb-item"{% endif %}>
+                        <a href={% if bc.name == "ohdsi-workspace" or bc.name == "ic_management_workspace" and next_label %}"{{ request.META.HTTP_REFERER }}"{% else %}"{{ bc.url }}"{% endif %}>
+                            {{ bc_label }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+  </ol>
+</nav>

@@ -57,7 +57,12 @@ renderuseexact <- function() {
 } 
 shinyUI(fluidPage( includeCSS("../sharedscripts/custom.css"),
                   fluidRow(useShinyjs(),column(width=12,
-                    column(width=8,div(div(style="display:inline-block",div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),div(style="display:inline-block; margin-left:20px;",downloadButton("dl", textOutput("downloadBtnLbl")))))),
+                     style="margin-bottom: 0.3rem; width:100%",
+                    column(width=8, style="float:right; margin-top: 1rem;",
+                           # div(div(style="display:inline-block",
+                           #                 div(id="downloadExcelColumn",textOutput("downloadDataLbl"))),
+                           #             div(style="display:inline-block; margin-left:20px;",
+                                           downloadButton("dl", textOutput("downloadBtnLbl")))),
                   ),
                   fluidRow(useShinyjs(),column(width=12,bsAlert("nodata_dash"))),
                    fluidRow(useShinyjs(),
@@ -116,13 +121,18 @@ hidden(
 
   fluidRow(
     column(width=4,
-           withSpinner(plotlyOutput("sourceplot"))
+           uiOutput("sourcePrimaryPlotReport"),
+           withSpinner(plotlyOutput("sourceplot")),
            
-           ),
+
+           
+    ), 
     column(width=4,
+           uiOutput("sourceSeriousReport"),
            withSpinner(plotlyOutput("seriousplot"))
             ),
     column(width=4,
+           uiOutput("sourceSexPlotReport"),
            withSpinner(plotlyOutput("sexplot"))
            )
   ),
@@ -133,14 +143,19 @@ hidden(
     column(width=9,
       tabsetPanel(
 
-        tabPanel(uiOutput( "Events"), makeDataTableOutput('query')
+        tabPanel(uiOutput( "Events"),  
+                 uiOutput("sourceEventReport", style = "left:170px;z-index:10"),
+                 makeDataTableOutput('query')
                  # withSpinner(uiOutput("wordcloudtabset"))
                 ),
         tabPanel(uiOutput("ConcomitantMedications"),
+                 uiOutput("sourceConcomitantReport", style = "left:170px;z-index:10"),
                  makeDataTableOutput('coquery')
                  
             ),
-        tabPanel(uiOutput("Indications"),makeDataTableOutput('indquery')
+        tabPanel(uiOutput("Indications"),
+                 uiOutput("sourceIndicationReport", style = "left:170px;z-index:10"),
+                 makeDataTableOutput('indquery')
                  
         )
         

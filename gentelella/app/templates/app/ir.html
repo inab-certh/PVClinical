@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -8,7 +8,9 @@
 
 {% block javascripts %}
     {{ block.super }}
-
+    <script type="text/javascript">
+        var ir_id = "{{ ir_id }}";
+    </script>
 	<!-- Select 2 css -->
 	{{ form.media.js }}
     <script src='{% static "build/js/ir.js" %}'></script>
@@ -138,7 +140,7 @@
                 </span>
             </button>
 
-            <button class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
+            <button id="irAnalysisBtn" class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisIRModal" type="button">
                     <i class="fa fa-bar-chart"></i>
                     <span class="visible-lg">
                         {% trans "Ανάλυση" %}
@@ -178,12 +180,6 @@
 
 
 {% trans "Ανάλυση Ρυθμού Επίπτωσης" as analysisIR_mod_title %}
-{% trans " έως " as to_lex %}
-{% if form.add_study_window.value %}
-    {% trans "Χρονικό παράθυρο μελέτης: "|add:form.study_start_date.value|add:to_lex|add:form.study_end_date.value as study_window_lex %}
-{% else %}
-    {% trans "Δεν έχει οριστεί συγκεκριμένο χρονικό παράθυρο μελέτης!" as study_window_lex %}
-{% endif %}
 {% trans "Πληροφορίες για αναφορά ανάλυσης" as expl_info_title %}
 {% blocktrans asvar expl_info %}
     <p>Το αποτέλεσμα της ανάλυσης που πραγματοποιήθηκε, εμφανίζεται με δύο διαφορετικές οπτικές απεικονίσεις,
@@ -238,6 +234,6 @@
 
 {% endblocktrans %}
 
-{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=study_window_lex help_info_title=expl_info_title help_info=expl_info %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisIRModal" modal_title=analysisIR_mod_title modal_iframe_url=results_url additional_info=add_info help_info_title=expl_info_title help_info=expl_info scenario=scenario %}
 
 {% endblock %}

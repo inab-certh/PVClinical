@@ -1,32 +1,33 @@
-{% extends 'patients/base.html' %}
-{% load staticfiles %}
+{% extends "app/base_site.html" %}
+{% load static %}
+{% load i18n %}
 {% load crispy_forms_tags %}
 
-{% block title %} Εσωτερικό σφάλμα συστήματος {% endblock %}
-{% block headext %}<script src="{% static 'patients/js/no-more-button.js' %}"></script>{% endblock %}
+{% block title %} {% trans "Εσωτερικό σφάλμα συστήματος" %} {% endblock %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block sidebar %}{% endblock sidebar %}
+
+{% block top_navigation %}{% endblock top_navigation %}
 
 {% block content %}
-	<div class="text-center col-6 offset-3">
-		<h1> Συνέβη κάποιο εσωτερικό σφάλμα συστήματος!</h1>
-		{% with request.resolver_match.kwargs.pat_visit_id as pat_visit_id %}
-			{% if pat_visit_id %}
-				<p>Σε περίπτωση που το σφάλμα συνέβη κατά την προσπάθεια προσπέλασης καρτέλας ενός ασθενούς, παρακαλώ βεβαιωθείτε ότι
-					η καρτέλα με τα <b>Δεδομένα εγγραφής</b> του συγκεκριμένου χρήστη είναι επαρκώς συμπληρωμένη!</p>
-				<a class="btn btn-secondary col-4" type="button" href={% url 'pmenu' pat_visit_id %}>
-					<i class="fas fa-backspace"></i>
-					<span class="d-none d-xl-block">
-						Επιστροφή
-					</span>
-				</a>
-			{% else %}
-				<a class="btn btn-secondary col-4" type="button" href="{{ request.META.HTTP_REFERER }}">
-					<i class="fas fa-backspace"></i>
-					<span class="d-none d-xl-block">
-						Επιστροφή
-					</span>
-				</a>
-			{% endif %}
-		{% endwith %}
+  <div class="col-md-12">
+    <div class="col-middle">
+      <div class="text-center text-center">
+        <h1 class="error-number">500</h1>
+        <h2>{% trans "Εσωτερικό σφάλμα συστήματος" %}</h2>
+        <p>{% trans "Εντοπίζουμε αυτού του είδους τα σφάλματα αυτόματα, ωστόσο αν το πρόβλημα επιμείνει, παρακαλούμε να επικοινωνήσετε μαζί μας. Προς το παρόν δοκιμάστε να ανανεώσετε τη σελίδα!" %} <a href="#">Ανανέωση</a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
 
-	</div>
-{% endblock %}
+{% block footer %}{% endblock footer %}
+
+{% block javascripts %}
+  {{ block.super }}
+{% endblock javascripts %}

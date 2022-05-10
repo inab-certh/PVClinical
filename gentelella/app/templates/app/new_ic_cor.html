@@ -1,0 +1,119 @@
+{% extends 'app/form_base.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load custom_tags %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    {{ form.media.css }}
+
+    <link href='{% static "vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" %}' rel="stylesheet">
+
+    <link href='{% static "build/css/new_ic_cor.css" %}' rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block javascripts %}
+    {{ block.super }}
+    <!-- Select 2 css -->
+	{{ form.media.js }}
+    <script src='{% static "build/js/new_ic_cor.js" %}'></script>
+{% endblock javascripts %}
+
+
+{% block title %} {% trans "Προσθήκη Συσχέτισης Αναφοράς Ατομικού Περιστατικού" %} {% endblock %}
+
+{% block formcontent %}
+    {{ form|as_crispy_errors }}
+
+    <h1 class="mb-3">{% trans "Προσθήκη Συσχέτισης Αναφοράς Ατομικού Περιστατικού" %}</h1>
+
+    <b>{% trans "* Εάν θέλετε να προσθέσετε μία νέα συσχέτιση αναφοράς ατομικού περιστατικού, ακολουθήστε τα επόμενα βήματα:" %}</b>
+    <br>
+    <br>
+    <div style="padding-left: 20px;">
+        <b>{% trans "Βήμα 1:" %}</b> {% trans "Συμπληρώστε το πεδίο 'Αναγνωριστικό Αναφοράς Ατομικού Περιστατικού'," %}<br>
+        <b>{% trans "Βήμα 2:" %}</b> {% trans "Επιλέξτε ένα σενάριο διερεύνησης," %}<br>
+        <b>{% trans "Βήμα 3:" %}</b> {% trans "Συμπληρώστε το ερωτηματολόγιο," %} <br>
+        <b>{% trans "Βήμα 4:" %}</b> {% trans "Πατήστε 'Αποθήκευση' για να αποθηκεύσετε τη νέα συσχέτιση αναφοράς ατομικού περιστατικού." %}
+    </div>
+    <br>
+    <br>
+
+    <input type="number" name="saveCtrl" value="0" hidden>
+
+
+    <div id="scTitleDiv" name="scTitleDiv" style="font-size: 150%;">{{ form.indiv_case_id|as_crispy_field }}</div>
+    <br>
+
+      <div class="scAccordion">
+        <div class="panel">
+            <div id="SelectExistScen" class="panel-body btn-dark collapsed" style="background-color:#73879C;" data-toggle="collapse"  href="#collapseScen" >
+              <b>{% trans "Επιλέξτε ένα από τα υπάρχοντα σενάρια" %}</b>
+            </div>
+            <div id="collapseScen" class="well panel-collapse collapse in">
+                {{ form.scenarios|as_crispy_field }}
+
+                <div style="margin-top:15px"></div>
+                <p>{% trans "* Εάν το σενάριο με το οποίο θέλετε να συσχετίσετε την αναφορά ατομικού περιστατικού, δεν υπάρχει στη λίστα των σεναρίων, δημιουργήστε ένα νέο σενάριο διερεύνησης." %}
+                </p>
+
+                <a id="addPatScenBtn" data-target="#addPatScenModal" data-toggle="modal" class="btn btn-primary col-4"><i class="fa fa-plus-square"></i><span class="hidden-xs">&nbsp;{% trans "Προσθέστε νέο Σενάριο Διερεύνησης" %}</span></a>
+            </div>
+        </div>
+      </div>
+
+    <div style="margin-top:40px"></div>
+
+    <button id="questModalBtn" type="button" data-url="{% url 'questionnaire' %}" class="btn btn-warning pull-left" style="margin-left: 10px;" {% if questbtn_disable %}disabled{% endif %}></i>&nbsp
+      <i class="fas fa-poll-h"></i> {% trans "Ερωτηματολόγιο" %}</span></button>
+
+    <br>
+        <div style="display:none;" class="mt-3">{{ form.questionnaires|as_crispy_field }}</div>
+    <br>
+    <br>
+    <br>
+    <div id="completedQuestDiv" class="success"><b>{% trans "Μόλις ολοκληρώσατε το ερωτηματολόγιο! Εάν θέλετε να αποθηκεύσετε την συγκεκριμένη" %}
+        {% trans "καταχώριση, μην ξεχάσετε να πατήσετε το κουμπί 'Αποθήκευση' πριν αλλάξετε σελίδα!" %}
+    </b></div>
+
+    {% trans "Ελλιπή στοιχεία" as warning_title %}
+    {% trans "Εντάξει" as ok_lbl%}
+    {% trans "Παρακαλώ συμπληρώστε το αναγνωριστικό αναφοράς ατομικού περιστατικού και ένα σενάριο διερεύνησης για να συνεχίσετε!" as warning_body %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="patManQuestFillInfoModal" modal_title=warning_title modal_body=warning_body dismiss_btn=ok_lbl %}
+
+<!--    {% trans "Ερωτηματολόγιο" as quest_mod_title %}-->
+<!--    {% url 'questionnaire' as quest_iframe_url%}-->
+<!--    {% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="questionnaireModal" modal_title=quest_mod_title modal_iframe_url=quest_iframe_url %}-->
+
+
+    {% include 'app/modals/patient_management_modals.html'%}
+{% endblock %}
+
+{% block toolbarbuttons %}
+    <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
+            <button class="save btn btn-primary col-xs-4" type="submit" %}>
+            <i class="fa fa-save"></i>
+            <span class="visible-lg">
+                {% trans "Αποθήκευση" %}
+            </span>
+
+            </button>
+
+        <a class="btn btn-dark col-xs-4" type="button"
+            href="{% url 'ic_management_workspace' %}">
+            <i class="fa fa-reply"></i>
+            <span class="visible-lg">
+                {% trans "Επιστροφή" %}
+            </span>
+        </a>
+
+    </div>
+{% endblock %}
+
+

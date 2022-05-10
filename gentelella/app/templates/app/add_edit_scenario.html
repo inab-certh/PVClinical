@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -29,8 +29,19 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block buttongroup %}
+<!--    <div class="sc-report-btn col-xs-6 col-sm-3">-->
+    <div class="pull-left">
+        {% if not scenario_id %}
+            <button class="btn btn-outline sc-report-btn" disabled>
+        {% else %}
+            <button class="btn btn-outline sc-report-btn" type="button" data-href="{% url 'final_report' scenario_id %}" >
+        {% endif %}
+            <i class="fas fa-file-pdf fa-2x"></i>
+        </button>
+    </div>
 
-    <div class="btn-group mb-3 dropdown pull-right">
+<!--    <div class="btn-group ws-menu mb-3 dropdown col-xs-12 col-sm-3 col-sm-offset-6">-->
+    <div class="btn-group ws-menu mb-3 dropdown pull-right">
         <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if not scenario_id %}disabled{% endif %} >
             {% trans "Περιβάλλοντα Εργασίας" %} <i class="fa fa-caret-right"></i>
         </button>
@@ -38,34 +49,40 @@
             <ul class="dropdown-menu dropdown-menu-right">
                 <!-- Dropdown menu links -->
                 <li>
-                    <a href="{% url 'ohdsi_workspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                    <span class="text-center">
-                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                        <img class="img-icon" src="{% static 'images/ohdsi.png' %}" alt="ohdsi-workspace">
-                    </span>
-                </a>
+                    <a href="{% url 'OpenFDAWorkspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                        </span>
+                    </a>
                 </li>
                 <li role="separator" class="divider"></li>
                 <li>
-                    <a href="{% url 'OpenFDAWorkspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
-                    <span class="text-center">
-                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                        <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
-                    </span>
-                </a>
+                    <a href="{% url 'ohdsi_workspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/ohdsi.png' %}" alt="ohdsi-workspace">
+                        </span>
+                    </a>
                 </li>
                 <li role="separator" class="divider"></li>
                 <li>
                     <a href="#" class="dropdown-item">
-                    <span class="text-center">
-                        <!--OpenFDA <i class="fa fa-angle-right"></i>-->
-                        <img class="img-icon dropdown-item" name="pubmed_image_{{ scenario_id }}" src="{% static 'images/PubMed.png' %}">
-                    </span>
-                </a>
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon dropdown-item" name="pubmed_image_{{ scenario_id }}" src="{% static 'images/PubMed.png' %}">
+                        </span>
+                    </a>
                 </li>
-
-
-
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'social_media_workspace' scenario_id %}" class="dropdown-item" name = "twitterBtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/twitter.png' %}" alt="twitter">
+                        </span>
+                    </a>
+                </li>
             </ul>
         {% endif %}
     </div>
@@ -77,7 +94,8 @@
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
-    <div id="scTitleDiv" name="scTitleDiv" class="form-h1">{{ form.title|as_crispy_field }}</div>
+    <h1 class="mb-3">{% trans "Σενάριο Διερεύνησης" %}</h1>
+    <div id="scTitleDiv" name="scTitleDiv" style="font-size: 150%;">{{ form.title|as_crispy_field }}</div>
 
     <div class="mt-3">{{ form.status|as_crispy_field }}</div>
     <div class="mt-5">
@@ -175,3 +193,11 @@
 
 {% endblock %}
 
+{% block modals %}
+  {{ block.super }}
+  {% trans "Επιβεβαίωση τροφοδότησης αναφοράς" as mod_title %}
+  {% trans "Η διαδικασία αυτή μπορεί να έχει μεγάλη διάρκεια! Είστε σίγουροι ότι επιθυμείτε να προχωρήσετε;" as mod_body%}
+  {% trans "Επιβεβαίωση" as main_lbl%}
+  {% trans "Ακύρωση" as dismiss_lbl %}
+  {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="genReportConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl %}
+{% endblock modals%}

@@ -28,7 +28,7 @@
   	text-align: center;
   	padding-top: 25%;
   	opacity: .83;
-	display: none;
+	display: inline-block;
 }
 
 .cssload-loader {
@@ -247,6 +247,10 @@
 .img-icon {
     width: 23%;
     min-width: 48px;
+	border: 1px solid #ddd;
+	/*border-width: 3px;*/
+  	/*border-style: solid;*/
+	/*border-image: linear-gradient(to left, #45504e, #eff5d6);*/
 }
 
 #medDRATree .soc,.hlgt,.hlt,.pt,.llt {
@@ -277,7 +281,7 @@
 /*}*/
 
 
-#scenariosTbl td {
+#scenariosTbl td, #patCasesTbl td {
     vertical-align: middle;
     text-align: center;
 }
@@ -311,7 +315,7 @@
 
 .select2-results__option .wrap:before {
     font-family:fontAwesome;
-    color: #ffffff;
+    color: inherit!important;
     content:"\f096";
     width:25px;
     height:25px;
@@ -326,8 +330,6 @@
 .select2-results__option[aria-selected=true] .wrap:before {
     content:"\f14a";
 }
-
-
 
 .synonymsEntity {
     width: 97%;
@@ -667,15 +669,15 @@ button.close {
 /*}*/
 
 .popover{
-	min-width:100px;
-	width:100%;
-	max-width: 60%;
+	min-width:10%;
+	width:50%;
+	max-width: 50%;
 	text-align: justify;
 }
 
 .popover-content {
 	max-height: 50rem;
-	padding: 1.5rem;
+	padding: 1.7rem;
 	overflow-y: auto;
 }
 
@@ -708,13 +710,27 @@ button.close {
 	direction: rtl;
 }
 
-.time-study-info {
+.time-study-info, .age_crit_info, .gender_crit_info {
     text-align: center;
-    background-color: rgba(52, 152, 219, 0.88);  /*#4d6f80;*/
-	border-color: rgba(52, 152, 219, 0.88);
     color: white;
     font-size: 1.4rem;
     font-weight: bolder;
+}
+
+.time-study-info {
+    background-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/  /*#4d6f80;*/
+	border-color: #337ab7; /*rgba(52, 152, 219, 0.88);*/
+}
+
+
+.age_crit_info {
+    background-color: rgba(75, 95, 113, 0.88);  /*#4d6f80;*/
+	border-color: rgba(75, 95, 113, 0.88);
+}
+
+.gender_crit_info {
+    background-color: rgba(236, 151, 31, 0.88);  /*#4d6f80;*/
+	background-color: rgba(236, 151, 31, 0.88);
 }
 
 .view-info-btn {
@@ -759,6 +775,7 @@ button.close {
     background-color: #738d9c;
     border-color: #5c7586
 }
+
 .btn-enlarge:hover,
 .btn-enlarge:focus,
 .btn-enlarge:active,
@@ -770,11 +787,18 @@ button.close {
 }
 
 .notesModal iframe.modalIframe {
-  width: 100%;
-  min-height: 80vh;
-  max-height: 800px;
-  border: none;
-  overflow: hidden;
+	width: 100%;
+  /*min-height: 80vh;*/
+  /*max-height: 800px;*/
+	border: none;
+  /*overflow: hidden;*/
+	min-height: 67vh;
+	max-height: 550px;
+	overflow: scroll;
+}
+
+#aggrUserNotes.notesModal .modal-dialog {
+	width: 78%;
 }
 
 #floater {
@@ -816,3 +840,288 @@ button.close {
 /*.icon-bar li {*/
 /*    margin: 1.2rem 0;*/
 /*}*/
+
+.btn-no-bg {
+	background-color: transparent;
+}
+
+#scTblTitle {
+	font-size: 1.9rem;
+	margin-top: 1rem;
+}
+
+.notesellipsis {
+    text-overflow: ellipsis;
+    display: block;
+    text-align:left;
+    width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+/*.modal-title {*/
+/*    width: 150em;*/
+/*    text-overflow: ellipsis;*/
+/*    display: block;*/
+/*    text-align:left;*/
+/*    white-space: nowrap;*/
+/*    overflow: hidden;*/
+/*}*/
+
+
+#notesTbl td {
+	vertical-align: middle;
+    text-align: left;
+}
+#notesTbl td.cen {
+	vertical-align: middle;
+    text-align: center;
+}
+#pubTbl td.cen {
+	vertical-align: middle;
+    text-align: center;
+}
+
+#pubMedNotesModal .note-title {
+	font-weight: bold;
+	font-size: medium;
+}
+
+#allNotesTbl .pm-notes-btn, #allNotesTbl .notes-btn {
+	background: transparent;
+}
+
+.iframe-container {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 900px;
+	padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+}
+
+/* Then style the iframe to fit in the container div with full height and width */
+iframe.social-iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/*#notesTbl td {*/
+/*    vertical-align: middle;*/
+/*    text-align: center;*/
+/*}*/
+
+.alert-geninfo {
+	text-align: center;
+}
+
+.scenario-info {
+	background-color: #73879C;
+	font-weight: bold;
+	font-size: large;
+	text-align: center;
+	color: white;
+	/*vertical-align: middle;*/
+}
+
+.scenario-info a {
+	color: white;
+}
+
+.breadcrumb-item.active>a {
+	color: grey;
+    pointer-events: none;
+}
+
+div#OpenFDA .panel .panel-body strong {
+	white-space:nowrap;
+}
+
+.btn-responsive {
+	white-space: normal !important;
+    word-wrap: break-word;
+}
+
+button:disabled+span {
+	opacity: .65;
+}
+
+button+span {
+	margin-left: 0.3rem;
+}
+
+input[type='checkbox']+span {
+	margin-left: 0.3rem;
+}
+
+#collapsepub>table td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+#collapsepub>table td:first-child {
+	border-left: 0px;
+}
+
+#collapsepub>table>td:last-child {
+	border: 0px;
+}
+
+#collapsepub #PubMedBtn[aria-expanded=true] .fa-plus {
+   display: none;
+}
+#collapsepub #PubMedBtn[aria-expanded=false] .fa-minus {
+   display: none;
+}
+
+#collapsepub #PubMedBtn.collapsed:after {
+	content: none;
+}
+
+#finalReport .container .panel-group table button {
+	border-radius: 30%;
+	background-color: #e8e6e6;
+}
+
+.table-light {
+	background-color: #f9f9f9;
+}
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
+	color: white;
+}
+
+form.ma-form h1, .x_panel .x_title h1 {
+	font-size: 28px;
+}
+
+.bs-switch {
+	position: relative;
+	width: 50px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none
+}
+
+.bs-switch .bs-switch-checkbox {
+	display: none
+}
+
+.bs-switch .bs-switch-label {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	border: 2px solid #e4e4e4;
+	border-radius: 20px;
+	cursor: pointer
+}
+
+.bs-switch .bs-switch-inner {
+	margin-left: -100%;
+	width: 200%;
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+	-webkit-transition-duration: 0.3s;
+	-moz-transition-duration: 0.3s;
+	-o-transition-duration: 0.3s;
+	transition-duration: 0.3s;
+	-webkit-transition-property: margin;
+	-moz-transition-property: margin;
+	-o-transition-property: margin;
+	transition-property: margin
+}
+
+.bs-switch .bs-switch-inner:before,
+.bs-switch .bs-switch-inner:after {
+	float: left;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	width: 50%;
+	height: 18px;
+	color: #fff;
+	font-size: 10px;
+	line-height: 1.8
+}
+
+.bs-switch .bs-switch-inner:before {
+	padding-left: 6px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	background-color: #2b5763; /*#2e9e89;*/
+	color: #fff;
+	/*content: "ON";*/
+	content: '\2713';
+	-ms-border-radius: 20px;
+	-o-border-radius: 20px
+}
+
+.bs-switch .bs-switch-inner:after {
+	padding-right: 6px;
+	background-color: #eee;
+	color: #999;
+	content: '\2717';
+	/*content: "OFF";*/
+	text-align: right
+}
+
+.bs-switch .bs-switch-switch {
+	position: absolute;
+	top: 0;
+	right: 28px;
+	bottom: 0;
+	margin: 2px;
+	width: 15px;
+	border: 2px solid #e4e4e4;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	background: #fff;
+	-webkit-transition-delay: 0s;
+	-moz-transition-delay: 0s;
+	-o-transition-delay: 0s;
+	transition-delay: 0s;
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+	-webkit-transition-duration: 0.3s;
+	-moz-transition-duration: 0.3s;
+	-o-transition-duration: 0.3s;
+	transition-duration: 0.3s;
+	-webkit-transition-property: all;
+	-moz-transition-property: all;
+	-o-transition-property: all;
+	transition-property: all;
+	-ms-border-radius: 15px;
+	-o-border-radius: 15px
+}
+
+.bs-switch.bs-switch-blank .bs-switch-inner:before,
+.bs-switch.bs-switch-blank .bs-switch-inner:after { content: "" }
+.bs-switch-checkbox:checked + .bs-switch-label .bs-switch-inner {
+	margin-left: 0
+}
+
+.bs-switch-checkbox:checked + .bs-switch-label .bs-switch-switch {
+	right: 0
+}
+
+.sc-report-btn {
+	padding: 0;
+}
+
+div.exceptions-errors>h1>button {
+	margin-top: 3px;
+}
