@@ -122,7 +122,8 @@ shinyServer(function(input, output, session) {
   # })
   
   output$paneltitle <- renderText({
-    i18n()$t("Drug Adverse Event Report Browser")
+    i18n()$t("")
+    # i18n()$t("Drug Adverse Event Report Browser")
     })
   
   output$variablesmodal <- renderText({
@@ -212,24 +213,24 @@ observeEvent( input$searchID, {
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
       con <- mongo("dict_fda", url = mongoConnection())
-      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
+      eventQuery <- SearchEventReports(q$t1, startdate = input$date1, enddate = input$date2)
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
       con <- mongo("dict_fda", url = mongoConnection())
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = input$date1, enddate = input$date2, q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
       con <- mongo("dict_fda", url = mongoConnection())
-      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(),q$dename)
+      drugQuery <- SearchDrugReports(q$t1, startdate = input$date1, enddate = input$date2,q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
     
     id_vector <- unlist(list(ids$safetyreportid))
     search_val$skip <- match(input$searchID, id_vector) + 1
-
+    
     myskip <- getskip()
     mydf <- getfullquery()
     numrecs <- mydf$df.total
@@ -242,6 +243,8 @@ observeEvent( input$searchID, {
     if (v1[2] == "patient.reaction.reactionmeddrapt"){
       t1[2] = q$ename
     }
+    t1[3] <- paste0('[', input$date1, '+TO+', input$date2, ']')
+    v1[3] <- 'receiptdate'
     myurl <- buildURL(v1, t1, limit = 1000, count = 'safetyreportid.exact')
     ids <-  fda_fetch_p(session, myurl)
     id_vector <- unlist(list(ids$results$term))
@@ -250,7 +253,7 @@ observeEvent( input$searchID, {
     mydf <- getfullquery()
     numrecs <- mydf$df.meta$results$total 
   }
-  # browser()
+  
   maxlim <- min(getopenfdamaxrecords(), numrecs)
   updateSliderInput( session, 'skip', value= min(myskip+2, maxlim), min=1, step= 1, max=maxlim)
   
@@ -379,23 +382,25 @@ getquery <- reactive({
   if (v1[2] == "patient.reaction.reactionmeddrapt"){
     t1[2] = q$ename
   }
+  t1[3] <- paste0('[', input$date1, '+TO+', input$date2, ']')
+  v1[3] <- 'receiptdate'
   myurl <- buildURL(v1, t1,  limit=1, skip=getskip())
   # browser()
   
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
       con <- mongo("dict_fda", url = mongoConnection())
-      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
+      eventQuery <- SearchEventReports(q$t1, startdate = input$date1, enddate = input$date2)
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
       con <- mongo("dict_fda", url = mongoConnection())
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2,startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2,startdate = input$date1, enddate = input$date2, q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
       con <- mongo("dict_fda", url = mongoConnection())
-      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+      drugQuery <- SearchDrugReports(q$t1, startdate = input$date1, enddate = input$date2, q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
@@ -458,23 +463,25 @@ getfullquery <- reactive({
   if (v1[2] == "patient.reaction.reactionmeddrapt"){
     t1[2] = q$ename
   }
+  t1[3] <- paste0('[', input$date1, '+TO+', input$date2, ']')
+  v1[3] <- 'receiptdate'
   myurl <- buildURL(v1, t1, limit=1)
  
  
   if (q$concomitant == FALSE){
     if (q$v1 == 'patient.reaction.reactionmeddrapt') {
       con <- mongo("dict_fda", url = mongoConnection())
-      eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
+      eventQuery <- SearchEventReports(q$t1, startdate = input$date1, enddate = input$date2)
       ids <- con$aggregate(eventQuery)
       con$disconnect()
     } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
       con <- mongo("dict_fda", url = mongoConnection())
-      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+      drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = input$date1, enddate = input$date2, q$dename)
       ids <- con$aggregate(drugeventQuery)
       con$disconnect()
     } else {
       con <- mongo("dict_fda", url = mongoConnection())
-      drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+      drugQuery <- SearchDrugReports(q$t1, startdate = input$date1, enddate = input$date2, q$dename)
       ids <- con$aggregate(drugQuery)
       con$disconnect()
     }
@@ -594,7 +601,7 @@ output$reporttable <- renderTable({
       mydfheader[ , 'receivedate'] <- format(mydfheader[ , 'receivedate'], "%m/%d/%y") 
     }
     
-    Report <- c( 'First_Received', 'Most_Recent')
+    Report <- c( 'First Received', 'Most Recent')
     Dates <- c( mydfheader$receivedate, mydfheader$receiptdate)
     mydf_p <- data.frame(Report, Dates)
     mydf <- mydf_p
@@ -682,16 +689,16 @@ output$patienttable <- renderTable({
   
   Patient <- c('Gender', 'Age', 'Weight', 'Outcome')
   if ( is.null(mydfpatient$Weight)){
-    mydfpatient$Weight <- "UNKNOWN"
+    mydfpatient$Weight <- "Unknown"
   }
   if ( is.null(mydfpatient$Age)){
-    mydfpatient$Age <- "UNKNOWN"
+    mydfpatient$Age <- "Unknown"
   }
   if ( is.null(mydfpatient$Gender)){
-    mydfpatient$Gender <- "UNKNOWN"
+    mydfpatient$Gender <- "Unknown"
   }
   if ( is.null(myserious)){
-    myserious <- "UNKNOWN"
+    myserious <- "Unknown"
   }
   Description <- c(mydfpatient$Gender, mydfpatient$Age, mydfpatient$Weight, myserious)
   mydf_p <- data.frame(Patient, Description)
@@ -1387,11 +1394,32 @@ output$downloadAllData <- downloadHandler(
     if (v1[2] == "patient.reaction.reactionmeddrapt"){
       t1[2] = q$ename
     }
-    myurl <- buildURL(v1, t1, limit=100)
+    t1[3] <- paste0('[', input$date1, '+TO+', input$date2, ']')
+    v1[3] <- 'receiptdate'
+    
+    # if (q$v1 == 'patient.reaction.reactionmeddrapt') {
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   eventQuery <- SearchEventReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date())
+    #   ids <- con$aggregate(eventQuery)
+    #   con$disconnect()
+    # } else if (q$v2 == 'patient.reaction.reactionmeddrapt'){
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   drugeventQuery <- SearchDrugEventReports(q$t1,q$t2, startdate = '1998-01-01', enddate = Sys.Date(), q$dename)
+    #   ids <- con$aggregate(drugeventQuery)
+    #   con$disconnect()
+    # } else {
+    #   con <- mongo("dict_fda", url = mongoConnection())
+    #   drugQuery <- SearchDrugReports(q$t1, startdate = '1998-01-01', enddate = Sys.Date(),q$dename)
+    #   ids <- con$aggregate(drugQuery)
+    #   con$disconnect()
+    # }
+    
+    
+    myurl <- buildURL(v1, t1, limit=1000)
     mydf <- fda_fetch_p(session, myurl)
     
     df <- mydf
-    
+    # browser()
     if ( is.data.frame(mydf$results$patient) )
     {
       mydf <- (mydf$results$patient)    
@@ -1633,14 +1661,18 @@ output$applinks <- renderText({
   return( makeapplinks(  getcururl() )  )
 })
 
+output$toDate <- renderUI({ 
+  HTML(stri_enc_toutf8(i18n()$t("to")))
+  
+})
 
 geturlquery <- reactive({
    q <- parseQueryString(session$clientData$url_search)
    # q<-NULL
    # q$v1<-"patient.drug.openfda.generic_name"
    # q$v2<-"patient.reaction.reactionmeddrapt"
-   # # q$t1<-"Omeprazole"
-   # # q$t2<-"Hypokalaemia"
+   # q$t1<-"Omeprazole"
+   # q$t2<-"Hypokalaemia"
    # q$t1<-"A02BC01"
    # q$t2<-"10012378"
    # q$hash <- "ksjdhfksdhfhsk"
