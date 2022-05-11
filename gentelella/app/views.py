@@ -3151,9 +3151,13 @@ def retr_del_session_pmcvars(request):
     quest_id = request.session.get("quest_id")
 
     data = {"sc_id": sc_id, "ic_id": ic_id, "quest_id": quest_id}
-    del request.session["ic_id"]
-    del request.session["scen_id"]
-    del request.session["quest_id"]
+
+    if ic_id:
+        del request.session["ic_id"]
+    if sc_id:
+        del request.session["scen_id"]
+    if quest_id:
+        del request.session["quest_id"]
 
     return JsonResponse(data)
 

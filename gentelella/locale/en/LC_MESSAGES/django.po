@@ -717,10 +717,9 @@ msgstr "Scenario Independent"
 
 #: app/templates/app/answers_detail.html:30
 msgid ""
-"Δοθείσες απαντήσεις στο ερωτηματολόγιο του αλγορίθμου Liverpool και σχετικό "
-"αποτέλεσμα"
+"Αποτελέσματα αλγορίθμου Liverpool"
 msgstr ""
-"Answers given to the Liverpool algorithm questionnaire and relevant result"
+"Liverpool algorithm results"
 
 #: app/templates/app/answers_detail.html:31
 #: app/templates/app/questionnaire.html:29
