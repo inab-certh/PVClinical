@@ -18,10 +18,13 @@ from django.urls import path
 from django.contrib import admin
 from django.views.i18n import JavaScriptCatalog
 
-from django.conf.urls.i18n import i18n_patterns
-from app.views import index
+# from django.conf.urls.i18n import i18n_patterns
+# from app.views import index
 
-
+js_info_dict = {
+    'domain': 'djangojs',
+    'packages': ('gentelella',),
+}
 # urlpatterns = [
 #     url(r'^(?P<filename>(robots.txt)|(humans.txt))$',
 #         index, name='home-files'),
@@ -36,7 +39,7 @@ urlpatterns = [
 
 
     # app/ -> Genetelella UI and resources
-    url(r'^app/', include('app.urls')),
+    # url(r'^app/', include('app.urls')),
     url(r'^', include('app.urls')),
 
 ]

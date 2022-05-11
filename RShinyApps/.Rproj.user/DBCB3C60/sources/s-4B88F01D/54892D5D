@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575896434301.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "54892D5D",
+    "lastKnownWriteTime" : 1574780538,
+    "last_content_update" : 1574780538,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/ChangePoint/server.R",
+    "project_path" : "ChangePoint/server.R",
+    "properties" : {
+        "cursorPosition" : "8,18",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 18,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

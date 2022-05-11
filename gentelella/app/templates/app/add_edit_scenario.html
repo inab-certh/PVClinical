@@ -1,6 +1,6 @@
 {% extends 'app/form_base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
 {% load custom_tags %}
@@ -8,7 +8,9 @@
 {% block stylesheets %}
     {{ block.super }}
     {{ form.media.css }}
-    <link href='{% static "vendors/bootstrap-treeview/dist/bootstrap-treeview.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendors/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css" %}' rel="stylesheet">
+    <link rel="stylesheet" href='{% static "vendors/vakata-jstree-3.3.9-0/dist/themes/default/style.min.css" %}'/>
+    <link href='{% static "vendors/select2-to-tree/src/select2totree.css" %}'  rel="stylesheet">
 {% endblock stylesheets %}
 
 
@@ -18,15 +20,82 @@
 	<!-- Select 2 css -->
 	{{ form.media.js }}
     <script src='{% static "build/js/scenario.js" %}'></script>
-    <script src='{% static "vendors/bootstrap-treeview/dist/bootstrap-treeview.min.js" %}'></script>
+    <script src='{% static "vendors/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js" %}'></script>
+    <script src='{% static "vendors/vakata-jstree-3.3.9-0/dist/jstree.min.js" %}'></script>
+    <script src='{% static "vendors/select2-to-tree/src/select2totree.js" %}'></script>
+    <script src='{% static "build/js/pv_literature.js" %}'></script>
 {% endblock %}
 
 {% block title %} {{title}} {% endblock %}
 
+{% block buttongroup %}
+<!--    <div class="sc-report-btn col-xs-6 col-sm-3">-->
+    <div class="pull-left">
+        {% if not scenario_id %}
+            <button class="btn btn-outline sc-report-btn" disabled>
+        {% else %}
+            <button class="btn btn-outline sc-report-btn" type="button" data-href="{% url 'final_report' scenario_id %}" >
+        {% endif %}
+            <i class="fas fa-file-pdf fa-2x"></i>
+        </button>
+    </div>
+
+<!--    <div class="btn-group ws-menu mb-3 dropdown col-xs-12 col-sm-3 col-sm-offset-6">-->
+    <div class="btn-group ws-menu mb-3 dropdown pull-right">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" {% if not scenario_id %}disabled{% endif %} >
+            {% trans "Περιβάλλοντα Εργασίας" %} <i class="fa fa-caret-right"></i>
+        </button>
+        {% if scenario_id %}
+            <ul class="dropdown-menu dropdown-menu-right">
+                <!-- Dropdown menu links -->
+                <li>
+                    <a href="{% url 'OpenFDAWorkspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/openFDA.png' %}" alt="openFDA">
+                        </span>
+                    </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'ohdsi_workspace' scenario_id %}" class="dropdown-item" name = "openFDABtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/ohdsi.png' %}" alt="ohdsi-workspace">
+                        </span>
+                    </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="#" class="dropdown-item">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon dropdown-item" name="pubmed_image_{{ scenario_id }}" src="{% static 'images/PubMed.png' %}">
+                        </span>
+                    </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                    <a href="{% url 'social_media_workspace' scenario_id %}" class="dropdown-item" name = "twitterBtn">
+                        <span class="text-center">
+                            <!--OpenFDA <i class="fa fa-angle-right"></i>-->
+                            <img class="img-icon" src="{% static 'images/twitter.png' %}" alt="twitter">
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+<br>
+{% endblock %}
+
+
+
 {% block formcontent %}
     {{ form|as_crispy_errors }}
 
-    <div id="scTitleDiv" name="scTitleDiv" class="form-h1">{{ form.title|as_crispy_field }}</div>
+    <h1 class="mb-3">{% trans "Σενάριο Διερεύνησης" %}</h1>
+    <div id="scTitleDiv" name="scTitleDiv" style="font-size: 150%;">{{ form.title|as_crispy_field }}</div>
 
     <div class="mt-3">{{ form.status|as_crispy_field }}</div>
     <div class="mt-5">
@@ -35,21 +104,25 @@
         <div id="drugsAccordion" class="scAccordion">
             <div class="panel">
                 <div class="panel-body btn-dark collapsed" data-toggle="collapse" data-parent="#drugsAccordion" href="#drugsNameCollapsible">
-                    {% trans "Αναζήτηση φαρμάκων" %}
+                    {% if form.drugs_fld.value %}
+                    <b>{% trans "Επιλεγμένα Φάρμακα:" %}</b> <em>{{ form.drugs_fld.value|join:", " }}</em>
+                    {% else %}
+                        {% trans "Εισαγωγή φαρμάκων" %}
+                    {% endif %}
                 </div>
                 <div class="well collapse" id="drugsNameCollapsible" data-synonyms-url="{% url 'drugs_synonyms' %}">
                     <div class="row">
-                        <div class="col-xs-6 parent-height">
+                        <div id="drugsEntity" class="col-xs-6 parent-height">
                             <div class="row">
                                 {{ form.drugs_fld|as_crispy_field }}
                             </div>
                             <div class="row text-center mt-3">
-                                <button type="button" class="btn btn-outline" onclick="moveToSelectedDrugs()"><i class="fa fa-angle-double-up fa-2x"></i></button>
+                                <button type="button" class="btn btn-outline" onclick="move_to_selected_drugs()"><i class="fa fa-angle-double-up fa-2x"></i></button>
                             </div>
 
                             <div class="row mt-3">
                                 <div class="center-block synonymsEntity">
-                                    <label for="#drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
+                                    <label for="drugsSynonyms" class="col-form-label ">{% trans "Συνώνυμα φαρμάκων:" %}</label>
                                     <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>
                                 </div>
 
@@ -86,11 +159,25 @@
         <div id="conditionsAccordion" class="scAccordion">
             <div class="panel">
                 <div class="panel-body btn-primary collapsed" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsNameCollapsible">
-                    {% trans "Αναζήτηση παθήσεων" %}
+                    {% if form.conditions_fld.value %}
+                    <b>{% trans "Επιλεγμένες Παθήσεις:" %}</b> <em>{{ form.conditions_fld.value|join:", " }}</em>
+                    {% else %}
+                        {% trans "Εισαγωγή παθήσεων" %}
+                    {% endif %}
                 </div>
                 <div class="well collapse" id="conditionsNameCollapsible">
                     {{ form.conditions_fld|as_crispy_field }}
+
+                    <div id="medDRATreeEntity">
+                    <!--<button  type="button" class="btn btn-outline btn-block" onclick="atcToSelectedDrugs()">-->
+                        <!--<i class="fa fa-angle-double-left"></i> <span class="visible-lg">{% trans "Μεταφορά" %}</span>-->
+                    <!--</button>-->
+                        <label for="medDRATree">{% trans "Ιεραρχική απεικόνιση κατά MedDRA:" %}</label>
+                        <div id="medDRATree">
+                        </div>
+                    </div>
                 </div>
+<!--                <select name="drugsSynonyms" id="drugsSynonyms" class="select2-multiple" multiple></select>-->
             </div>
             <!--<div class="panel">-->
                 <!--<div class="panel-body btn-dark" data-toggle="collapse" data-parent="#conditionsAccordion" href="#conditionsCodeCollapsible">-->
@@ -103,4 +190,14 @@
         </div>
 
     </div>
+
 {% endblock %}
+
+{% block modals %}
+  {{ block.super }}
+  {% trans "Επιβεβαίωση τροφοδότησης αναφοράς" as mod_title %}
+  {% trans "Η διαδικασία αυτή μπορεί να έχει μεγάλη διάρκεια! Είστε σίγουροι ότι επιθυμείτε να προχωρήσετε;" as mod_body%}
+  {% trans "Επιβεβαίωση" as main_lbl%}
+  {% trans "Ακύρωση" as dismiss_lbl %}
+  {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="genReportConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl %}
+{% endblock modals%}

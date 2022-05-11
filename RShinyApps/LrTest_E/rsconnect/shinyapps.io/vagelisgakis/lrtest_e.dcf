@@ -1,0 +1,10 @@
+name: LRTest_E
+title:
+username:
+account: Name of account to save or remove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1527311
+bundleId: 2652162
+url: https://Name of account to save or remove.shinyapps.io/lrtest_e/
+when: 1575889120.53645

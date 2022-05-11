@@ -1,0 +1,141 @@
+{% extends 'app/form_base.html' %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load custom_tags %}
+
+
+{% block javascripts %}
+    {{ block.super }}
+
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+    <script type="text/javascript">
+        var cp_id = "{{ cp_id }}";
+    </script>
+    <script src='{% static "build/js/pathways.js" %}'></script>
+    {% if read_only == 0 %}
+        <script>
+            $("#topPVLogo, div.nav_menu, div.left_col, form#languageForm").css({"display":"none"});;
+            $(".tile_count,.right_col").css({"background-color":"white"});
+        </script>
+    {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block sliding_toolbar %}
+    {% if read_only == 1 %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' sc_id=sc_id ws_id='OHDSI' wsview_id='pathways' %}", data-id="pathways_notes_OHDSI_{{ sc_id }}">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+
+    {% endif %}
+{% endblock %}
+
+{% block formcontent %}
+    {{ form|as_crispy_errors }}
+
+    <h1> {{ title }}</h1>
+    <div class="viewExplanation mt-3 mb-4">
+        {% blocktrans trimmed %}Το <strong>Μονοπάτι Ακολουθίας Συμβάντων (Cohort Pathway)</strong>,
+        ορίζεται ως η διαδικασία δημιουργίας μιας συγκεντρωτικής ακολουθίας των μεταβάσεων στις καταστάσεις
+        των επιλεγόμενων συμβάντων, που προκύπτουν στις ομάδες ατόμων επιλογής.
+        {% endblocktrans %}
+    </div>
+
+    <div class="mt-3 text-center">
+        <div class="mb-1"><strong>{% trans "Ρυθμίσεις ανάλυσης:"%}</strong></div>
+        {% for field in form %}
+        <div class="pathways-int-fld">
+<!--            <div>-->
+                {{ field.label }}
+<!--            </div>-->
+<!--            <div>-->
+                {{ field }}
+<!--            </div>-->
+<!--            <div>-->
+                {% with form.fields_descriptions|get_item:field.name as description %}
+                <a tabindex="0" class="btn btn-lg btn-outline" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-placement="top" title="{% trans field.label|remove_char:':' %}" data-content="{% trans description %}">
+                    <i class="fa fa-question-circle-o"></i>
+                </a>
+                {% endwith %}
+<!--            </div>-->
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+<!--    <div class="iframe-cnt">-->
+<!--        <iframe id="irframe" src="{{ results_url}}"></iframe>-->
+<!--    </div>-->
+
+{% endblock %}
+
+{% block toolbarbuttons %}
+        {% if read_only == 1 %}
+        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
+            <button id="editFormBtn" class="btn btn-primary col-xs-4" data-toggle="modal" data-target="#editCpModal" type="button">
+                <i class="fa fa-edit"></i>
+                <span class="visible-lg">
+                    {% trans "Επεξεργασία" %}
+                </span>
+            </button>
+
+            <button id="cpAnalysisBtn" class="btn btn-danger col-xs-4 d-{{visibility}}" data-toggle="modal" data-target="#analysisCpModal" type="button">
+                    <i class="fa fa-bar-chart"></i>
+                    <span class="visible-lg">
+                        {% trans "Ανάλυση" %}
+                     </span>
+            </button>
+
+
+            <a class="btn btn-dark col-xs-4" type="button"
+                href="{% url 'ohdsi_workspace' sc_id %}">
+                <i class="fa fa-reply"></i>
+                <span class="visible-lg">
+                    {% trans "Επιστροφή" %}
+                </span>
+            </a>
+        </div>
+        {% else %}
+        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
+            <button id="cpSaveBtn" class="btn btn-primary col-xs-4" type="submit">
+                <i class="fa fa-save"></i>
+                <span class="visible-sm">
+                    {% trans "Αποθήκευση" %}
+                </span>
+            </button>
+
+            <button id="cpCancelBtn" class="btn btn-danger col-xs-4" type="button" data-dismiss="modal" data-target="#editCpModal">
+                    <i class="fa fa-close"></i>
+                    <span class="visible-sm">
+                        {% trans "Ακύρωση" %}
+                     </span>
+            </button>
+        </div>
+        {% endif %}
+
+{% trans "Επεξεργασία παραμέτρων ανάλυσης" as edit_cp_mod_title %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="editCpModal" modal_title=edit_cp_mod_title modal_iframe_url=request.get_full_path|add:"/0" %}
+
+{% trans "Μονοπάτι Ακολουθίας Συμβάντων" as analysis_cp_mod_title %}
+{% include 'app/modals/parametric_modal.html' with modal_type="viewModal" modal_id="analysisCpModal" modal_title=analysis_cp_mod_title modal_iframe_url=results_url scenario=scenario %}
+
+{% endblock %}
+
+
+
+
+

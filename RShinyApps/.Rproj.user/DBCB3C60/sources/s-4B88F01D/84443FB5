@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575886808243.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "84443FB5",
+    "lastKnownWriteTime" : 1576487864,
+    "last_content_update" : 1576487864990,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/deployshinyapps.R",
+    "project_path" : "deployshinyapps.R",
+    "properties" : {
+        "cursorPosition" : "16,8",
+        "docOutlineVisible" : "0",
+        "scrollLine" : "4"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

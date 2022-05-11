@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1575889522270.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2F9C3661",
+    "lastKnownWriteTime" : 1576489550,
+    "last_content_update" : 1576489550415,
+    "path" : "C:/Users/evgak/source/repos/openfdashinyapps/sharedscripts/prr2.R",
+    "project_path" : "sharedscripts/prr2.R",
+    "properties" : {
+        "cursorPosition" : "13,16",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
