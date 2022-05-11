@@ -31,3 +31,8 @@ app/entrezpy/__pycache__/
 app/templatetags/__pycache__/
 media/
 staticfiles/
+
+gentelella/app/migrations
+gentelella/users/migrations
+app/migrations
+users/migrations
