@@ -1,3 +1,0 @@
-getkey <- function() {
-  return('')
-}
