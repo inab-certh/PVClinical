@@ -1,0 +1,76 @@
+.app {
+  &__container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+  &__menu-container {
+    width: 175px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    bottom: 0;
+    background-color: #003142;
+    border-right: solid 1px #888;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__main-window {
+    height: 100%;
+    flex-grow: 1;
+    overflow: auto;
+  }
+
+  &__menu {
+    padding: 0px;
+    margin-bottom: 0px;
+    flex-shrink: 1;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    & .panel {
+      border: 0px;
+    }
+
+    &-icon {
+      color: #fff;
+      margin-right: 7px;
+    }
+
+    &-title {
+      color: #fff;
+    }
+
+    &-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background-color: #003142;
+      border: none;
+      padding: 10px 7px;
+      font-size: 1.4rem;
+      text-decoration: none;
+
+      &:focus, &:hover, &--selected {
+        background-color: #005471 !important;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      @media (max-width: 1200px) {
+        padding: 5px 5px;
+      }
+
+      @media (max-height: 768px) {
+        padding: 5px 5px;
+      }
+    }
+  }
+}
+
+.modal-backdrop {
+  height: 100%;
+  z-index: 2;
+}
