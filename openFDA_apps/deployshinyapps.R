@@ -52,9 +52,9 @@ app <- c(
 
 #)
 
-rsconnect::setAccountInfo(name='Name of account to save or remove',
-                          token='User token for the account',
-                          secret='User secret for the account')
+rsconnect::setAccountInfo(name='<Name of account to save or remove>',
+                          token='<User token for the account>',
+                          secret='<User secret for the account>')
 for ( i in seq_along(app))
   {
   deployApp(paste(base, app[i],sep = ""), appName=app[i],forceUpdate = getOption("rsconnect.force.update.apps", TRUE))
