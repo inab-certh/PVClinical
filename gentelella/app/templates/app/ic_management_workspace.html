@@ -142,6 +142,8 @@
             $(".dataTables_filter input").val("").trigger( "keyup" );
             $("#resetPatCases").hide();
             $("#newCaseButton").show();
+            // Show columns that were hidden because of patient history button
+            $("#patCasesTbl tr th:hidden, #patCasesTbl tr td:hidden").show();
         });
 
         $("#patCasesTbl").on("click", "[id*=patHistBtn]", function () {
@@ -149,6 +151,9 @@
             $("#newCaseButton").hide();
             $(".dataTables_filter input").val($(this).data("patid")).trigger( "keyup" );
             $(".dataTables_filter").hide();
+            // Hide column from table
+            var column_to_hide = $(this).closest("td").index();
+            $(this).closest("table").find("tr :nth-child(" + (column_to_hide + 1) + ")").hide();
         });
 
         $("body").on("click", "[id^='answersDetailsBtn']", function () {

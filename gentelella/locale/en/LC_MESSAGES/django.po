@@ -279,13 +279,13 @@ msgstr ""
 
 #: app/forms.py:439 app/views.py:2971
 msgid ""
-"Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού "
-"μηχανισμού ΑΔΦ;"
+"Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού της "
+"ανεπιθύμητης ενέργειας φαρμάκου (ΑΕΦ);"
 msgstr ""
 "Is there any objective evidence supportive of the casual ADR mechanism?"
 
 #: app/forms.py:444 app/views.py:2973
-msgid "Υπήρξε εκ νέου θετική επαναπρόκληση;"
+msgid "Υπήρξε εκ νέου εμφάνιση της ΑΕΦ μετά την επαναχορήγηση του φαρμακου (θετική επαναπρόκληση);"
 msgstr "Was there a positive rechallenge?"
 
 #: app/forms.py:449 app/views.py:2974
