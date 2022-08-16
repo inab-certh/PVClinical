@@ -905,16 +905,18 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
                              [c.name.upper() for c in conditions] or [""]))
 
     #Create query string for PubMed with all combinations
-    if len(all_combs) > 1 and drugs and conditions:
+    if len(all_combs) >= 1 and drugs and conditions:
         string_list = [' AND '.join(item) for item in all_combs]
         final_string = ') OR ('.join(map(str, string_list))
         query = '(' + final_string + ')'
     elif drugs and not conditions:
-        query = ' AND '.join(map(str, drugs))
+        ldrugs = [d.name.upper() for d in drugs]
+        query = ' AND '.join(map(str, ldrugs))
     elif conditions and not drugs:
-        query = ' OR '.join(map(str, conditions))
+        lconditions = [c.name.upper() for c in conditions]
+        query = ' OR '.join(map(str, lconditions))
     else:
-        query = all_combs[0]
+        query = all_combs[0]γιτ
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
