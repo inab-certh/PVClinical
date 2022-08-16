@@ -916,7 +916,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
         lconditions = [c.name.upper() for c in conditions]
         query = ' OR '.join(map(str, lconditions))
     else:
-        query = all_combs[0]γιτ
+        query = all_combs[0]
 
     scenario = {"id": scenario_id,
                 "drugs": drugs,
