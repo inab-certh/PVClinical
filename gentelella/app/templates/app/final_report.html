@@ -23,8 +23,8 @@
     <div class="row tile_count">
         <div class="col-4 col-offset-6">
             <div class="x_panel">
-                <div class="x_title">
-                    <h2>{% trans "Ανασκόπηση" %}</h2>
+                <div class="x_title report_title">
+                    <h2>{% trans "Δημιουργία αναφοράς αποτελεσμάτων για το σενάριο" %}: {{ scenario.title }}</h2>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -35,19 +35,19 @@
                     </p>
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item">
-                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step1">{% trans "Βήμα 1" %}</button>
+                          <button type="button" class="btn btn-secondary">{% trans "Βήμα 1" %}</button>
                                 <i class="fas fa-long-arrow-alt-right fa-2x"></i>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step2" name="checkenable" id="resultBtn" disabled>{% trans "Βήμα 2" %}</button>
+                            <button type="button" class="btn btn-secondary" id="resultBtn" disabled>{% trans "Βήμα 2" %}</button>
                         </li>
                     </ul>
                         <div class="tab-content" id="pills-tabContent">
-                        <div class="collapse" id="step1" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <div id="step1" role="tabpanel" aria-labelledby="pills-home-tab">
                             <p> {% trans "Μπορείτε να επιλέξετε ποιες από τις παρακάτω πληροφορίες θέλετε να περιλαμβάνονται στη συνολική" %}
                                 {% trans "αναφορά αυτού του σεναρίου." %}</p>
                             <p> {% trans "Κάντε κλικ στο κουμπί δίπλα από κάθε προβολή για να δείτε το περιεχόμενό της και ελέγξτε" %}
-                                {% trans "ποιες πληροφορίες θέλετε για την τελική σας αναφορά ,επιλέγοντας το αντίστοιχο πλαίσιο ελέγχου." %}</p>
+                                {% trans "ποιες πληροφορίες θέλετε για την τελική σας αναφορά, επιλέγοντας το αντίστοιχο πλαίσιο ελέγχου." %}</p>
                         </div>
                         <div class="collapse" id="step2" role="tabpanel" aria-labelledby="pills-profile-tab">
                             <p>{% trans "Τώρα μπορείτε να επεξεργαστείτε την αναφορά σας και να συμπεριλάβετε" %}
@@ -93,7 +93,7 @@
                                                   <table class="table table-striped table-bordered table-report-special">
                                                     <tr>
                                                         {% if ir_id %}
-                                                            <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario_open }}">
+                                                            <td><button id="IrOHDSIBtn" data-target="#irModal" class="btn btn-secondary" data-toggle="modal" data-irid="{{ ir_id }}" data-scenario="{{ scenario.id }}">
                                                             <i class="fas fa-search-plus"></i></button><span> {% trans "Ρυθμός Επίπτωσης" %}</span></td>
                                                         {% else %}
                                                             <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
@@ -107,7 +107,7 @@
                                                     </tr>
                                                     <tr>
                                                         {% if char_id %}
-                                                    <td><button id="CharOHDSIBtn" data-target="#charModal" class="btn btn-secondary" data-toggle="modal" data-charid="{{ char_id }}" data-scenario="{{ scenario_open }}">
+                                                    <td><button id="CharOHDSIBtn" data-target="#charModal" class="btn btn-secondary" data-toggle="modal" data-charid="{{ char_id }}" data-scenario="{{ scenario.id }}">
                                                         <i class="fas fa-search-plus"></i></button><span> {% trans "Χαρακτηρισμός Πληθυσμού" %}</span></td>
                                                         {% else %}
                                                             <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
@@ -121,7 +121,7 @@
                                                     </tr>
                                                     <tr>
                                                       {% if cp_id %}
-                                                        <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario_open }}">
+                                                        <td><button id="PathOHDSIBtn" data-target="#pathModal" class="btn btn-secondary" data-toggle="modal" data-pathid="{{ cp_id }}" data-scenario="{{ scenario.id }}">
                                                         <i class="fas fa-search-plus"></i></button><span>{% trans "Μονοπάτι Ακολουθίας Συμβάντων" %}</span></td>
                                                       {% else %}
                                                         <td><button data-target="#noneModal" class="btn btn-secondary" data-toggle="modal">
@@ -415,7 +415,7 @@
                                 </div>
                             </div>
                             </div>
-                    <button type="button" class="btn btn-primary btn-responsive active" name="checkenable" id="proceed-report-btn"  disabled>
+                    <button type="button" class="btn btn-primary btn-responsive active" id="proceed-report-btn"  disabled>
                     <i class="fas fa-spinner"></i> &nbsp {% trans "Προχωρήστε στο βήμα 2 για να δείτε την κατάσταση της αναφοράς σας μέχρι τώρα." %}</button>
                 </div>
 
@@ -425,15 +425,15 @@
                     </p>
                     <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                         <li class="nav-item">
-                          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step11" id="link1">{% trans "Βήμα 1" %}</button>
+                          <button type="button" class="btn btn-secondary" id="link1">{% trans "Βήμα 1" %}</button>
                                 <i class="fas fa-long-arrow-alt-left fa-2x"></i>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#step21" name="checkenable" >{% trans "Βήμα 2" %}</button>
+                            <button type="button" class="btn btn-secondary">{% trans "Βήμα 2" %}</button>
                         </li>
                     </ul>
                         <div class="tab-content" id="pills-tabContent1">
-                        <div class="collapse" id="step11" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <div id="step11" role="tabpanel" aria-labelledby="pills-home-tab">
                            <p></p>
                         </div>
                         <div class="collapse" id="step21" role="tabpanel" aria-labelledby="pills-profile-tab">
@@ -454,7 +454,7 @@
                      </div>
                     <br>
                     <button type="button" class="btn btn-primary active" id="downloadReportBtn">
-                    <i class="fas fa-spinner"></i> &nbsp {% trans "Λήψη της τελικής αναφοράς" %}</button>
+                    <i class="fas fa-download"></i> &nbsp {% trans "Λήψη της τελικής αναφοράς" %}</button>
 
                 </div>
             </div>
@@ -512,7 +512,6 @@
             "#gen_chart": "gen_chart_rep", "#cp_all": "cp_all_rep"
         }
 
-
         $(Object.keys(el_name_to_value).join(", ")).on("change", function(){
             if($(this).is(':checked')){
                 all_notes[$(this).attr("id").replace("note", "")] = el_name_to_value["#"+$(this).attr("id")];
@@ -533,7 +532,7 @@
 
 
     // $("#closeIr").click(function() {
-    //     var scid={{scenario_open}};
+    //     var scid={{scenario.id}};
     //     var note_val="";
     //
     //
@@ -558,7 +557,7 @@
     // });
 
     // $("#closeChar").click(function() {
-    //     var scid={{scenario_open}};
+    //     var scid={{scenario.id}};
     //     var note_val="";
     //
     //
@@ -584,7 +583,7 @@
     // });
 
     // $("#closePath").click(function() {
-    //     var scid={{scenario_open}};
+    //     var scid={{scenario.id}};
     //     var note_val="";
     //
     //
@@ -610,7 +609,7 @@
     // });
 
     $("#proceed-report-btn, #resultBtn").click(function() {
-        var scid={{scenario_open}};
+        var scid={{scenario.id}};
         var note_val="";
 
         $("#loaderOverlay").fadeIn();
@@ -647,7 +646,7 @@
 
     $("#downloadReportBtn").click(function() {
         $("#loaderOverlay").fadeIn();
-        var scid={{scenario_open}};
+        var scid={{scenario.id}};
 
         var extra_notes=$("#editFnote").val();
 

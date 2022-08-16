@@ -68,6 +68,7 @@ urlpatterns = [
     path("aggr-notes/<str:lang>", views.aggregated_notes, name='aggregated_notes'),
     path("notes/<int:sc_id>", views.allnotes, name='allnotes'),
     path("notes", views.allnotes, name='allnotes'),
+    path("del-note", views.delete_note_obj, name='del_note'),
     path("social-media/<int:sc_id>", views.social_media, name='social_media_workspace'),
 
     path("final_report", views.final_report, name='final_report'),

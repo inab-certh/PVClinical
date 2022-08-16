@@ -600,20 +600,12 @@ def incidence_rates(request, sc_id, ir_id, view_type="", read_only=1):
             }
             return render(request, 'app/ir.html', context, status=400)
 
-
-    # elif request.method == 'DELETE':
-    #     return delete_db_rec(ohdsi_workspace)
-
     # GET request method
     else:
-        # if "ohdsi-workspace" in http_referer:
-        #     sc_id = http_referer.rsplit('/', 1)[-1]
         irform = IRForm(label_suffix="", ir_options=ir_options, read_only=read_only)
-        # irform["sc_id"].initial = sc_id
-        # update_ir(ir_id)
+
 
     results_url = "{}/#/iranalysis/{}?{}".format(settings.OHDSI_ATLAS, ir_id, view_type)
-    # ir_resp = requests.get(ir_url)
 
     additional_info = {}
     additional_info["time-study-info"] = "{} {} {} {}".format(
@@ -692,20 +684,6 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
             lambda f: f.get("name") == "Drug Group Era Long Term", ohdsi_wrappers.get_char_analysis_features())))
         rstatus, rjson = ohdsi_wrappers.update_char(char_id, **char_options)
 
-        # if rstatus == 200:
-        #     messages.success(
-        #         request,
-        #         _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
-        #     return HttpResponseRedirect(reverse('edit_char', args=(sc_id, char_id,)))
-        # else:
-        #     messages.error(
-        #         request,
-        #         _("Συνέβη κάποιο σφάλμα. Παρακαλώ προσπαθήστε ξανά!"))
-        #     status_code = 500
-
-    # delete_switch = "enabled" if ir_exists else "disabled"
-
-
     if request.method == 'POST':
         # sc_id = sc_id or request.POST.get("sc_id")
         char_form = CharForm(request.POST, label_suffix="", char_options=char_options, read_only=read_only)
@@ -732,9 +710,6 @@ def characterizations(request, sc_id, char_id, view_type="", read_only=1):
                 request,
                 _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
             status_code = 400
-
-    # elif request.method == 'DELETE':
-    #     return delete_db_rec(ohdsi_workspace)
 
     # GET request method
     else:
@@ -975,19 +950,7 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
             if page_id == None:
                 page_id = 1
 
-                # for j in all_combs:
-                #     if j[1]:
-                #         query = j[0] +' AND '+ j[1]
-                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
-                #         if results != {}:
-                #             records.update(results[0])
-                #             total_results = total_results + results[1]
-                #     else:
-                #         query = j[0]
-                #         results = pubmed_search(query, 0, 10, access_token, begin, last)
-                #         if results != {}:
-                #             records.update(results[0])
-                #             total_results = total_results + results[1]
+
                 results = pubmed_search(query, 0, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
@@ -997,17 +960,6 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
                 start = 10*page_id - 10
 
-                # for j in all_combs:
-                #     if j[1]:
-                #         query = j[0] +' AND '+ j[1]
-                #         results = pubmed_search(query, start, 10, access_token, begin, last)
-                #         records.update(results[0])
-                #         total_results = results[1]
-                #     else:
-                #         query = j[0]
-                #         results = pubmed_search(query, start, 10, access_token, begin, last)
-                #         records.update(results[0])
-                #         total_results = results[1]
                 results = pubmed_search(query, start, 10, access_token, begin, last, request.user)
                 if results != {}:
                     records.update(results[0])
@@ -1028,7 +980,6 @@ def pubMed_view(request, scenario_id=None, page_id=None, first=None, end=None):
 
         except Exception as e:
             print(e)
-            # previous_url = request.META.get('HTTP_REFERER')
 
             url = '/'
             return redirect(url)
@@ -1295,13 +1246,13 @@ def paper_notes_view(request, scenario_id=None, first=None, end=None, page_id=No
 
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-def keep_notes(request, ws_id, wsview_id, sc_id=None ):
+def keep_notes(request, ws_id, wsview_id, sc_id=None):
     """ Add or edit notes as a user for a specific view in a workspace of a scenario
     :param request: request
-    :param sc_id: the specific scenario's id.
-    Can be None in the cases of drug exposure and condition occurence views in OHDSI workspace
     :param ws_id:  the workspace's id
     :param wsview_id: the workspace's view id
+    :param sc_id: the specific scenario's id.
+    Can be None in the cases of drug exposure and condition occurence views in OHDSI workspace
     :return: the form view
     """
 
@@ -1336,21 +1287,17 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
             nf.scenario = tmp_scenario
             nf.wsview = wsview_id
 
-            # clean_content = notes_form.cleaned_data.get("content")
-
-            # notes_form.content = clean_content
-
             nf.save()
 
             messages.success(
                 request,
-                _("Η ενημέρωση του συστήματος πραγματοποιήθηκε επιτυχώς!"))
+                _("Επιτυχής αποθήκευση!"))
             return HttpResponseRedirect(reverse('keep_notes', args=tuple(filter(None,(sc_id, ws_id, wsview_id)))))
 
         else:
             messages.error(
                 request,
-                _("Η ενημέρωση του συστήματος απέτυχε λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
+                _("Αποτυχία αποθήκευσης, λόγω λαθών στη φόρμα εισαγωγής. Παρακαλώ προσπαθήστε ξανά!"))
             status_code = 400
 
     # GET request method
@@ -1368,6 +1315,23 @@ def keep_notes(request, ws_id, wsview_id, sc_id=None ):
     }
 
     return render(request, 'app/notes.html', context, status=status_code)
+
+def delete_note_obj(request):
+    """ Delete note object
+    :param request: request
+    :param note_id: the id of the note to be deleted
+    :return: httpResponse of the deletion attempt
+    """
+    try:
+        note_id = request.GET.get("note_id", None)
+        nobj = Notes.objects.get(id=note_id)
+        return delete_db_rec(nobj)
+    except Notes.DoesNotExist:
+        resp_status = 400
+        resp_message = _("Δυστυχώς η διαγραφή αυτή, δεν ήταν δυνατόν να ολοκληρωθεί!")
+
+        return HttpResponse(content=resp_message,
+                            status=resp_status)
 
 
 @login_required()
@@ -1437,178 +1401,6 @@ def aggregated_notes(request, lang):
     return render(request, 'app/notes_aggregated.html', context)
 
 
-# @login_required()
-# @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
-# def allnotes(request):
-#     """ Add, edit or view aggregated the notes kept for user's scenarios (version in use)
-#     :param request: request
-#     :return: the form view
-#     """
-#
-#     if not request.META.get('HTTP_REFERER'):
-#         return forbidden_redirect(request)
-#
-#     tmp_user = User.objects.get(username=request.user)
-#
-#     lista_scenarios=[]
-#     scenarios = {'id': 14}
-#     try:
-#         for scenario in scenarios:
-#             scenarios[scenario] = Scenario.objects.filter(owner_id=tmp_user)
-#             lista_scenarios = list(scenarios['id'])
-#     except Scenario.DoesNotExist:
-#         lista_scenarios = None
-#
-#     list_pub_scenarios = []
-#     pub_scenarios = {'id': 14}
-#     try:
-#         for sc in pub_scenarios:
-#             pub_scenarios[sc] = PubMed.objects.filter(user=tmp_user)
-#             list_pub_scenarios = list(pub_scenarios['id'])
-#     except PubMed.DoesNotExist:
-#         list_pub_scenarios = None
-#
-#
-#     lista_id_scenarios = []
-#     lista_title_scenarios = []
-#     for i in range(len(lista_scenarios)):
-#         lista_id_scenarios.append(lista_scenarios[i].id)
-#         lista_title_scenarios.append(lista_scenarios[i].title)
-#
-#     list_pubscen_title = []
-#     list_pubscen_sc = []
-#     for i in range(len(list_pub_scenarios)):
-#         for j in range(len(lista_scenarios)):
-#             if list_pub_scenarios[i].scenario_id_id == lista_scenarios[j].id:
-#                 list_pubscen_title.append(lista_scenarios[j].title)
-#                 list_pubscen_sc.append(lista_scenarios[j].id)
-#
-#     dictpub_sc_id_title = {}
-#     dictpub_sc_id_title = dict(zip(list_pubscen_sc, list_pubscen_title))
-#
-#     notesforexample1 = []
-#     notesforexample = []
-#     pubmedexample = []
-#
-#     if Notes.objects.filter(user=tmp_user) != "":
-#
-#         lista_notes = []
-#         notes = {'id': 14}
-#         for note in notes:
-#             notes[note] = Notes.objects.filter(user=tmp_user)
-#             lista_notes = list(notes['id'])
-#
-#         lista_notes_scid = []
-#         lista_notes_workspace = []
-#         lista_notes_view = []
-#
-#         for i in range(len(lista_notes)):
-#             lista_notes_scid.append(lista_notes[i].scenario_id)
-#
-#         lista_notes_scid_without = []
-#         lista_title_scenarios_without = []
-#         lista_notes_content_without = []
-#
-#         for i in range(len(lista_id_scenarios)):
-#             for j in range(len(lista_notes_scid)):
-#                 if lista_id_scenarios[i] == lista_notes_scid[j]:
-#                     lista_notes_view.append(lista_notes[j].wsview)
-#                     lista_notes_content_without.append(lista_notes[j].content)
-#                     lista_notes_scid_without.append(lista_notes[j].scenario_id)
-#                     lista_title_scenarios_without.append(lista_scenarios[i].title)
-#                     lista_notes_workspace.append(lista_notes[j].workspace)
-#
-#         dict_sc_id_title = dict(zip(lista_notes_scid_without, lista_title_scenarios_without))
-#
-#         notesforexample = []
-#         work = ""
-#         wsview_title = ""
-#         scenario_title = ""
-#
-#         for n in Notes.objects.filter(user=tmp_user).order_by('-note_datetime'):
-#             if n.scenario_id != None:
-#                 work = {v: k for k, v in settings.WORKSPACES.items()}.get(n.workspace)
-#                 # if n.workspace == 1:
-#                 #     work = 'OHDSI'
-#                 # if n.workspace == 2:
-#                 #     work = 'OpenFDA'
-#                 # if n.workspace == 3:
-#                 #     work = 'PubMed'
-#                 if n.wsview == 'ir':
-#                     wsview_title = 'Incidence Rate'
-#                 elif n.wsview == 'char':
-#                     wsview_title = 'Cohort Caracterization'
-#                 elif n.wsview == 'pathways':
-#                     wsview_title = 'Cohort Pathways'
-#                     # edw prepei na mpoun kai ta onomata twn wsview tou OpenFDA analoga me to pws apofasisoume na ta emfanizoume
-#                 else:
-#                     wsview_title = n.wsview
-#
-#
-#                 for key in dict_sc_id_title:
-#                     if n.scenario_id == key:
-#
-#                         scenario_title = dict_sc_id_title[key]
-#
-#                 notesforexample.append({
-#                     "workspace": work,
-#                     "content": n.content,
-#                     "wsview": n.wsview,
-#                     "wsview_title": wsview_title,
-#                     "scenario": n.scenario_id,
-#                     "scenario_title": scenario_title,
-#                     "note_datetime": n.note_datetime,
-#                 })
-#                 pubmedexample = []
-#                 if PubMed.objects.filter(user=tmp_user) != "":
-#                     for p in PubMed.objects.filter(user=tmp_user).order_by('-pubdate'):
-#                         for key in dictpub_sc_id_title:
-#                              if p.scenario_id_id == key:
-#                                 scenario_title = dictpub_sc_id_title[key]
-#                         pubmedexample.append({
-#                             "workspace": 'PubMed',
-#                             "notes": p.notes,
-#                             "wsview": p.title,
-#                             "title": p.title,
-#                             "scenario_id": p.scenario_id_id,
-#                             "scenario_title": scenario_title,
-#                             "pubmeddate": p.pubdate,
-#                             "abstract": p.abstract,
-#                             "pmid": p.pid,
-#                             "authors": p.authors,
-#                             "created": p.created
-#                         })
-#
-#                 notesforexample1 = []
-#                 for n in Notes.objects.order_by('-note_datetime').all():
-#                     if n.scenario_id == None:
-#                         if n.workspace == 1:
-#                             work = 'OHDSI'
-#                         if n.workspace == 2:
-#                             work = 'OpenFDA'
-#                         if n.workspace == 3:
-#                             work = 'PubMed'
-#                         if n.wsview == 'de':
-#                             wsview_title = 'Drug Exposure'
-#                         elif n.wsview == 'co':
-#                             wsview_title = 'Condition Occurence'
-#
-#                         notesforexample1.append({
-#                             "scenario": None,
-#                             "note_datetime": n.note_datetime,
-#                             "workspace": work,
-#                             "content": n.content,
-#                             "wsview": n.wsview,
-#                             "wsview_title": wsview_title
-#
-#                         })
-#
-#         # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample , 'pubmedexample': pubmedexample}
-#         # return render(request, 'app/all_notes_OLD.html', context)
-#
-#     context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
-#     return render(request, 'app/all_notes_OLD.html', context)
-
 @login_required()
 @user_passes_test(lambda u: is_doctor(u) or is_nurse(u) or is_pv_expert(u))
 def allnotes(request):
@@ -1625,73 +1417,9 @@ def allnotes(request):
     rev_workspaces = {v: k for k, v in settings.WORKSPACES.items()}
 
     user_notes = [{
-        "scenario": unote.scenario, "note_datetime": unote.note_datetime,
-        "workspace": rev_workspaces.get(unote.workspace),
-        "wsview": unote.wsview, "content": unote.content
+        "id": unote.id, "scenario": unote.scenario, "note_datetime": unote.note_datetime,
+        "workspace": rev_workspaces.get(unote.workspace), "wsview": unote.wsview, "content": unote.content
     } for unote in Notes.objects.filter(user=tmp_user).order_by('-note_datetime')]
-
-
-
-    # for n in user_notes:
-
-
-    #             notesforexample.append({
-    #                 "workspace": work,
-    #                 "content": n.content,
-    #                 "wsview": n.wsview,
-    #                 "wsview_title": wsview_title,
-    #                 "scenario": n.scenario_id,
-    #                 "scenario_title": scenario_title,
-    #                 "note_datetime": n.note_datetime,
-    #             })
-    #             pubmedexample = []
-    #             if PubMed.objects.filter(user=tmp_user) != "":
-    #                 for p in PubMed.objects.filter(user=tmp_user).order_by('-pubdate'):
-    #                     for key in dictpub_sc_id_title:
-    #                          if p.scenario_id_id == key:
-    #                             scenario_title = dictpub_sc_id_title[key]
-    #                     pubmedexample.append({
-    #                         "workspace": 'PubMed',
-    #                         "notes": p.notes,
-    #                         "wsview": p.title,
-    #                         "title": p.title,
-    #                         "scenario_id": p.scenario_id_id,
-    #                         "scenario_title": scenario_title,
-    #                         "pubmeddate": p.pubdate,
-    #                         "abstract": p.abstract,
-    #                         "pmid": p.pid,
-    #                         "authors": p.authors,
-    #                         "created": p.created
-    #                     })
-    #
-    #             notesforexample1 = []
-    #             for n in Notes.objects.order_by('-note_datetime').all():
-    #                 if n.scenario_id == None:
-    #                     if n.workspace == 1:
-    #                         work = 'OHDSI'
-    #                     if n.workspace == 2:
-    #                         work = 'OpenFDA'
-    #                     if n.workspace == 3:
-    #                         work = 'PubMed'
-    #                     if n.wsview == 'de':
-    #                         wsview_title = 'Drug Exposure'
-    #                     elif n.wsview == 'co':
-    #                         wsview_title = 'Condition Occurence'
-    #
-    #                     notesforexample1.append({
-    #                         "scenario": None,
-    #                         "note_datetime": n.note_datetime,
-    #                         "workspace": work,
-    #                         "content": n.content,
-    #                         "wsview": n.wsview,
-    #                         "wsview_title": wsview_title
-    #
-    #                     })
-    #
-    #     # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample , 'pubmedexample': pubmedexample}
-    #     # return render(request, 'app/all_notes_OLD.html', context)
-    #
-    # context = {'notesforexample1': notesforexample1, 'notesforexample': notesforexample, 'pubmedexample':pubmedexample}
 
     context = {"user_notes": user_notes, "abbrv_views": settings.ABBRV_VIEWS}
     return render(request, 'app/all_notes.html', context)
@@ -2106,19 +1834,13 @@ def final_report(request, scenario_id=None):
     found_files = list(filter(lambda fname: fname.startswith(twitter_hash), existing_files))
     twitter_data_exist = (len(found_files) != 0)
 
-    # # Clear again
-    # requests.delete("{}delete-media-files".format(
-    #     settings.SHINY_SCREENSHOTS_ENDPOINT.replace("media/", "")),
-    #     auth=HTTPBasicAuth(settings.SHINY_SHOTS_SERVICES_USER, settings.SHINY_SHOTS_SERVICES_PASS),
-    #     params={"hashes": [twitter_hash]})
-
     try:
         twitter_notes = Notes.objects.get(user=sc.owner, scenario=sc.id, workspace=4, wsview="sm")
         twitter_notes = twitter_notes.content
     except:
         twitter_notes = None
 
-    context = {"scenario_open": scenario_open, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
+    context = {"scenario": sc, "OPENFDA_SHINY_ENDPOINT": settings.OPENFDA_SHINY_ENDPOINT,
                "drug_condition_hash": drug_condition_hash, "notes_openfda1": notes_openfda1, "ir_id": ir_id,
                "char_id": char_id, "cp_id": cp_id, "ir_notes": ir_notes, "char_notes": char_notes,
                "pathways_notes": pathways_notes, "char_generate": char_generate, "cp_generate": cp_generate,
@@ -3151,9 +2873,13 @@ def retr_del_session_pmcvars(request):
     quest_id = request.session.get("quest_id")
 
     data = {"sc_id": sc_id, "ic_id": ic_id, "quest_id": quest_id}
-    del request.session["ic_id"]
-    del request.session["scen_id"]
-    del request.session["quest_id"]
+
+    if ic_id:
+        del request.session["ic_id"]
+    if sc_id:
+        del request.session["scen_id"]
+    if quest_id:
+        del request.session["quest_id"]
 
     return JsonResponse(data)
 
@@ -3242,9 +2968,11 @@ def answers_detail(request, pk, scen_id, ic_id):
                 (_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;"), _("Όχι"), _("Ναι")),
                 (_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;"),
                  _("Υψηλή ή Αβέβαιο"), _("Χαμηλή")),
-                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;"),
+                (_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού της "
+                   "ανεπιθύμητης ενέργειας φαρμάκου (ΑΕΦ);"),
                  _("Όχι"), _("Ναι")),
-                (_("Υπήρξε εκ νέου θετική επαναπρόκληση;"), _("Όχι"), _("Ναι")),
+                (_("Υπήρξε εκ νέου εμφάνιση της ΑΕΦ μετά την επαναχορήγηση του φαρμακου (θετική επαναπρόκληση);"),
+                 _("Όχι"), _("Ναι")),
                 (_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;"),
                  _("Όχι"), _("Ναι")),
                 (_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;"),
@@ -3325,3 +3053,4 @@ def social_media(request, sc_id):
     }
 
     return render(request, 'app/social_media_workspace.html', context)
+

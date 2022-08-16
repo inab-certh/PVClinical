@@ -1,0 +1,12 @@
+<loading data-bind="visible:loading()" params="status: 'export in progress'"></loading>
+
+<div data-bind="css: classes(), visible: !loading()">
+    <div data-bind="css: classes('content')">
+        <!-- ko if: canExport() -->
+            <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
+        <!-- /ko -->
+        <!-- ko if: !canExport() -->
+            <div data-bind="css: classes('error-message'), text: $component.errorMessage()"></div>
+        <!-- /ko -->
+    </div>
+</div>

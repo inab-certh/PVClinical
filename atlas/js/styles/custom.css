@@ -1,0 +1,250 @@
+
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7!important;
+    border-color: #2e6da4!important;
+}
+
+.btn-success {
+    color: #E9EDEF;
+    background-color: #4B5F71!important;
+    border-color: #364B5F!important;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.btn {
+    display: inline-block!important;
+    padding: 6px 12px!important;
+    margin-bottom: 0!important;
+    font-size: 14px!important;
+    font-weight: 400!important;
+    line-height: 1.42857143!important;
+    text-align: center!important;
+    white-space: nowrap!important;
+    vertical-align: middle!important;
+    -ms-touch-action: manipulation!important;
+    touch-action: manipulation!important;
+    cursor: pointer!important;
+    -webkit-user-select: none!important;
+    -moz-user-select: none!important;
+    -ms-user-select: none!important;
+    user-select: none!important;
+    background-image: none!important;
+    border: 1px solid transparent!important;
+    border-radius: 4px!important;
+}
+
+.modal-header {
+    background-color: #19242F!important;
+    color: #fff!important;
+    border-bottom: none!important;
+    font-size: 14px!important;
+    padding: 7px!important;
+}
+
+.ir-analysis-results__tbl tr:nth-child(odd),ir-analysis-report table .sourceTable tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.ir-analysis-results__tbl th,ir-analysis-report table th {
+    background-color: #fff;
+    color: #2A3F54;
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.471;
+
+}
+
+.ir-analysis-results__tbl td,ir-analysis-report table td {
+    margin: auto 0!important;
+}
+
+.ir-analysis-results__tbl-col {
+    white-space: normal!important;
+}
+
+.ir-analysis-results__tbl-container,. ir-analysis-results__tbl-container-- {
+    overflow-x:auto;
+}
+
+div.characterization-view-edit {
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+}
+
+user-bar {
+    display: none;
+}
+
+heading-title {
+    display: none;
+}
+
+ul.nav.nav-tabs {
+    display: none!important;
+}
+
+.app__menu-container {
+    display: none!important;
+}
+
+div.asset-heading {
+    display: none!important;
+}
+
+ul.nav-tabs li:nth-child(1) {
+    display: none!important;
+}
+
+ul.nav-tabs li:nth-child(2) {
+    display: none!important;
+}
+
+ul.nav-tabs li:nth-child(3) {
+    display: none!important;
+}
+ul.nav-tabs li:nth-child(4) {
+    display: none!important;
+}
+
+ir-analysis-results>div>div:nth-child(1) {
+    display:none;
+}
+
+.characterization-view-edit tabs div.tabs>div>span,
+.characterization-view-edit tabs .tabs .tabs__header,
+.characterization-view-edit-executions__title,
+.characterization-view-edit-executions__heading label {
+    display: none;
+}
+
+.characterization-view-edit-executions__heading {
+    background: #EDEDED;
+    border-bottom: 1px solid #D9DEE4;
+    margin-bottom: 10px;
+}
+
+.characterization-view-edit-executions__heading ul {
+    margin: auto!important;
+    margin-left: -4rem!important;
+}
+
+.characterization-view-edit-executions__action-list {
+    margin-left: 0!important;
+}
+
+.characterization-view-edit-executions__heading ul>li {
+    margin: 0.5rem!important;
+}
+
+
+.characterization-view-edit .panel-heading {
+    color: #fff!important;
+    background-color: #337ab7!important;
+    border-color: #2e6da4!important;
+}
+
+.axis text {
+    font-family: arial;
+    font-size: 1.1rem!important;
+}
+
+.characterization-view-edit-results__table-wrapper {
+    flex-grow: 0!important;
+}
+
+.characterization-view-edit-results__chart-wrapper {
+    flex-grow: 0!important;
+}
+
+.characterization-view-edit-results__table-wrapper, .characterization-view-edit-results__chart-wrapper {
+    flex-shrink: 0!important;
+    flex-basis: 300px!important;
+}
+
+.pathways-manager tabs .tabs .tabs__header,
+.pathway-executions__heading label,
+.pathways-manager tabs .tabs .pathway-executions__title {
+    display: none;
+}
+
+.pathway-results .panel-heading {
+    color: #fff!important;
+    background-color: #337ab7!important;
+    border-color: #2e6da4!important;
+}
+
+
+.pathway-executions__heading {
+    background: #EDEDED;
+    border-bottom: 1px solid #D9DEE4;
+    margin-bottom: 10px;
+}
+
+.pathway-executions__heading ul {
+    margin: auto!important;
+    margin-left: -4rem!important;
+}
+
+.pathway-executions__action-list {
+    margin-left: 0!important;
+}
+
+.pathway-executions__heading ul>li {
+    margin: 0.5rem!important;
+}
+
+.data-sources .reportControls {
+    display: none;
+}
+
+.data-sources #report .report .treemap ul.nav.nav-tabs,
+.data-sources #report .report .treemap ul.nav.nav-tabs li:nth-child(1),
+.data-sources #report .report .treemap ul.nav.nav-tabs li:nth-child(2) {
+    display: block!important;
+}
+
+.characterization-view-edit-results__filter .visualizations-filter-panel__list-item:nth-child(3) {
+    display: none;
+}
+
+.characterization-view-edit-results .characterization-view-edit-results__toolbar,
+.pathway-results .pathway-results__toolbar {
+    display: none;
+}
+
+.characterization-view-edit-results__report-table .characterization-view-edit-results__col-explore,
+.characterization-view-edit-results__report-table .characterization-view-edit-results__col-explore+th,
+.characterization-view-edit-results__report-table .characterization-view-edit-results__col-explore+td,
+.characterization-view-edit-results__report-table .characterization-view-edit-results__col-explore~.characterization-view-edit-results__col-dist-std-diff
+{
+    display: none;
+}
+
+.characterization-view-edit-executions__action:nth-child(2),
+.characterization-view-edit-executions__action:nth-child(3),
+.pathway-executions__action:nth-child(2),
+.pathway-executions__action:nth-child(3) {
+    display: none;
+}
+
+.characterization-view-edit-executions__heading ul,
+.pathway-executions__heading ul {
+    margin: auto!important;
+    padding-inline-start: 0!important;
+    margin-left: 0;
+}
+
+td.ir-analysis-results__tbl-col--view-reports button:nth-child(1) {
+    display:none!important;
+}
+
+.app__container {
+    font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+}
+

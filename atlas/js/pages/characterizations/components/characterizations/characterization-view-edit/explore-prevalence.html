@@ -1,0 +1,43 @@
+<div data-bind="css: classes()">
+    <loading data-bind="visible: loading()" params="status: 'Loading prevalence stats...'"></loading>
+    <div>Cohort: <span data-bind="text: cohortName"></span></div>
+    <div data-bind="visible: exploring() && !loading()">
+        <div data-bind="css: classes('exploring-pane')">
+            <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-close'})"></i>
+            <span data-bind="text: exploringTitle, css: classes('exploring-title')"></span>
+        </div>
+    </div>
+    <!-- ko ifnot: loading() -->
+    <table data-bind="
+        dataTable: {
+					data: relations().stats,
+					options: {
+						autoWidth: false,
+						order: [1, 'desc'],
+						columns: relations().columns,
+						buttons: $component.getButtonsConfig(),
+						dom: 'Blftipr',
+					}
+        }
+    ">
+        <thead>
+            <!-- ko if: relations().stratas.length > 1 -->
+            <tr>
+                <th rowspan="2">Relation</th>
+                <th rowspan="2">Distance</th>
+                <th rowspan="2">Concept name</th>
+                <!-- ko foreach: relations().stratas -->
+                    <th colspan="2" data-bind="text: $data"></th>
+                <!-- /ko -->
+            </tr>
+            <tr>
+                <!-- ko foreach: relations().stratas -->
+                    <th>Count</th>
+                    <th>Pct</th>
+                <!-- /ko -->
+            </tr>
+            <!-- /ko -->
+        </thead>
+    </table>
+    <!-- /ko -->
+</div>
