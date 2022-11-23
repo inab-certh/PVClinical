@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-22 16:58+0200\n"
+"POT-Creation-Date: 2021-06-02 10:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,21 +18,73 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: app/static/build/js/scenario.js:7
-msgid "Διαλέξτε τουλάχιστον 2 χαρακτήρα"
-msgstr "Please enter 2 or more characters"
+#: app/static/build/js/all_notes.js:62
+msgid "Αποτυχία αποθήκευσης"
+msgstr "Save failed"
 
-#: app/static/build/js/scenario.js:114
+#: app/static/build/js/all_notes.js:65
+msgid "Επιτυχής αποθήκευση"
+msgstr "Saved successfully"
+
+#: app/static/build/js/scenario.js:104
 msgid "Επιλέξατε "
 msgstr "You have selected "
 
-#: app/static/build/js/scenario.js:114
+#: app/static/build/js/scenario.js:104
 msgid " από "
 msgstr " from "
 
-#: app/static/build/js/scenario.js:114
+#: app/static/build/js/scenario.js:104
 msgid " συνώνυμα"
 msgstr " synonyms"
+
+#: app/static/build/js/social_media.js:22
+msgid "Επιτυχής εκκίνηση"
+msgstr "Successful initiation"
+
+#: app/static/build/js/social_media.js:24
+msgid ""
+"Η διεργασία εξόρυξης δεδομένων ξεκίνησε επιτυχώς! Για να τη σταματήσετε, "
+"πατήστε το σχετικό κουμπί λήξης."
+msgstr ""
+"Data extraction process has been successfully initiated! To stop it, please "
+"press the relevant termination button"
+
+#: app/static/build/js/social_media.js:32
+msgid "Αποτυχία εκκίνησης"
+msgstr "Initiation failure"
+
+#: app/static/build/js/social_media.js:33
+msgid ""
+"Συνέβη κάποιο σφάλμα! Δυστυχώς, δεν ήταν εφικτή η εκκίνηση διεργασίας "
+"εξόρυξης δεδομένων."
+msgstr ""
+"An error has occurred! Unfortunately, the data extraction process could not "
+"be initiated."
+
+#: app/static/build/js/social_media.js:49
+msgid "Επιτυχής παύση"
+msgstr "Successfully stopped"
+
+#: app/static/build/js/social_media.js:51
+msgid ""
+"Η διεργασία εξόρυξης δεδομένων διακόπηκε επιτυχώς! Για να την "
+"επανεκκινήσετε, πατήστε το σχετικό κουμπί έναρξης."
+msgstr ""
+"Data extraction process has been successfully stopped! To reinitiate it, please "
+"press the relevant start button"
+
+#: app/static/build/js/social_media.js:59
+msgid "Αποτυχία παύσης"
+msgstr "Failed to stop process"
+
+#: app/static/build/js/social_media.js:60
+msgid ""
+"Συνέβη κάποιο σφάλμα! Δυστυχώς, δεν ήταν εφικτή η διακοπή διεργασίας "
+"εξόρυξης δεδομένων."
+msgstr ""
+"An error has occurred! Unfortunately, the data extraction process could not "
+"be stopped."
 
 #: app/static/vendors/Chart.js/dist/Chart.bundle.min.js:11
 msgid ""
@@ -90,3 +142,6 @@ msgid ""
 "toIsoString() is deprecated. Please use toISOString() instead (notice the "
 "capitals)"
 msgstr ""
+
+#~ msgid "Διαλέξτε τουλάχιστον 2 χαρακτήρες"
+#~ msgstr "Please enter 2 or more characters"

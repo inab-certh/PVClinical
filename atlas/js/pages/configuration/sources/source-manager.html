@@ -1,0 +1,153 @@
+<heading-title params="name: $component.sourceCaption(), icon: 'database', theme: 'dark'"></heading-title>
+<div data-bind="if:$component.hasAccess, css: classes()">
+	<loading data-bind="visible:loading()"></loading>
+	<div data-bind="visible: !loading()">
+			<!-- ko if: selectedSource() != null -->
+			<div data-bind="if:$component.canReadSource">
+					<div class="asset-heading">
+						<div class="input-group">
+							<input type="text" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: !isNameCorrect() }"/>
+							<div class="input-group-btn" role="group">
+									<button class="btn btn-success" title="Save"
+													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">
+											<i class="fa fa-save"></i></button>
+									<button class="btn btn-primary" title="Close" data-bind="click: close"><i
+													class="fa fa-times"></i></button>
+									<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+							</div>
+						</div>
+						<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+							<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+							<label>Source name is empty.</label>
+						</div>
+					</div>
+					<div class="pad-10">
+							<div class="panel panel-primary">
+									<div class="panel-body">
+											<div class="source-params" style="width: 100%">
+													<div class="source-row">
+															<div class="control-group" style="width: 50%">
+																	<label for="sourceKey">Source Key:</label>
+																	<div class="form-group">
+																			<input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit() && canEditKey()" class="form-control" type="text" id="sourceKey"/>
+																	</div>
+															</div>
+															<div class="control-group" style="width: 50%">
+																	<label for="dialect">Source dialect:</label>
+																	<div class="form-group">
+																			<select title="Source dialect" class="form-control" data-bind="options: $component.options.dialectOptions, optionsText: 'name', optionsValue: 'id', value: $component.selectedSource().dialect, enable: canEdit()" id="dialect" />
+																	</div>
+															</div>
+													</div>
+													<div class="source-row">
+														<div class="control-group" style="flex-grow: 1">
+																<label for="connectionString">Connection string:</label>
+																<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
+														</div>
+													</div>
+                                                <div data-bind="visible: fieldsVisibility.realmWarning" class="source-manager__error">
+													<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
+													<label>"KrbRealm" is empty. Please specify it in the following format: "KrbRealm=[value];"</label>
+												</div>
+                                                <div data-bind="visible: fieldsVisibility.hostWarning" class="source-manager__error">
+													<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
+													<label>"KrbHostFQDN" is empty. Please specify it in the following format: "KrbHostFQDN=[value];"</label>
+												</div>
+												<div class="source-row">
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.username">
+														<label>Username:</label>
+														<div class="form-group">
+															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
+														</div>
+                                                        <div data-bind="visible: fieldsVisibility.userWarning" class="source-manager__error">
+															<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
+															<label>"Username" is empty.</label>
+														</div>
+													</div>
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.password">
+														<label>Password:</label>
+														<div class="form-group">
+															<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
+														</div>
+													</div>
+													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.krbAuthSettings">
+														<label>KrbAdminServer:</label>
+														<div class="form-group">
+															<input title="KrbAdminServer" data-bind="textInput: selectedSource().krbAdminServer, enable: canEdit()" class="form-control" type="text"/>
+														</div>
+													</div>
+												</div>
+											<div data-bind="visible: fieldsVisibility.krbAuthSettings">
+												<div class="source-row">
+                                                    <div class="source-manager__control-group control-group">
+                                                        <label>KrbRealm:</label>
+                                                        <div class="form-group">
+                                                            <input title="KrbRealm was parsed from jdbc link" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
+                                                        </div>
+                                                    </div>
+													<div class="source-manager__control-group control-group">
+														<label>KrbHostFQDN:</label>
+														<div class="form-group">
+															<input title="KrbHostFQDN was parsed from jdbc link" data-bind="textInput: krbHostFQDN, disable: true" class="form-control" type="text"/>
+														</div>
+													</div>
+												</div>
+												<div class="control-group source-manager__auth-title">
+													<label>Kerberos authentication method:</label>
+												</div>
+												<label>
+													<input type="radio" value="keytab" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
+													<span class="source-manager__radio-btn-label">Keytab</span>
+												</label>
+												<div data-bind="visible: fieldsVisibility.showKrbKeyfile()" class="source-manager__keytab">
+													<input type="file" id="keyfile" name="keytab" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
+													<span data-bind="text: selectedSource().keyfileName, visible: !fieldsVisibility.krbFileInput()"></span>
+													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeyfile">Remove</button>
+												 </div>
+												<label class="source-manager__pwd-label">
+													<input type="radio" value="password" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
+													<span class="source-manager__radio-btn-label">User name and password</span>
+												</label>
+												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKrbKeyfile()">
+													<label>Password:</label>
+													<div class="form-group">
+														<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
+													</div>
+												</div>
+												</div>
+											</div>
+											<div data-bind="visible: fieldsVisibility.bigQueryAuthSettings">
+												<div class="source-row">
+													<div data-bind="css: classes({element: 'auth-title', extra: 'control-group'})">
+														<label>Service account key file (OAuthPvtKeyPath)</label>
+													</div>
+													<div data-bind="css: classes('keytab')">
+														<input type="file" name="keyfileFile" id="keyfile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
+														<span data-bind="text: selectedSource().keyfileName, hidden: fieldsVisibility.bqFileInput()"></span>
+														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeyfile">Remove</button>
+													</div>
+												</div>
+											</div>
+											<div class="panel panel-primary">
+													<div class="panel-heading">Source daimons</div>
+													<div class="panel-body">
+															<table class="padded">
+																	<tbody data-bind="foreach: selectedSource().daimons">
+																			<td data-bind="text:daimonType"></td>
+																			<td><input type="checkbox" data-bind="checked: enabled, enable: $component.canEdit()" /></td>
+																			<td><input type="text" data-bind="textInput: tableQualifier, enable: $component.canEdit() && $data.enabled, attr: { title: daimonType + ' table qualifier' }" /></td>
+																	</tbody>
+															</table>
+													</div>
+											</div>
+									</div>
+							</div>
+					</div>
+			</div>
+
+			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canReadSource"></access-denied>
+			<!-- /ko -->
+	</div>
+</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.hasAccess"></access-denied>

@@ -1,0 +1,832 @@
+{% extends "app/base_site.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %} LiteratureWorkspace {% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <!-- jQuery custom content scroller -->
+    <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+    <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+      <link href="/static/build/css/pv_literature.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+
+{% block content %}
+ <div class="right_col" role="main">
+
+        <div class="row my-1">
+            <div class="col col-sm-12">
+                <div>
+                    <div class="tab-content" style="margin-left: 20px;">
+                        <div class="tab-pane active" role="tabpanel" id="tab-1">
+                             <legend class="legend-margins">
+                                <p class="DrugEventParameter">{{ scenario.title }}</p>
+                             </legend>
+<!--                            <div class="row drug-events-selection-row">-->
+<!--                                <div class="col drugSelectionCol">-->
+<!--                                    <div id="drugCheckBoxes">-->
+<!--                                        <fieldset>-->
+<!--                                            <legend class="legend-margins">-->
+<!--                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="drugsAllCheckBox" onclick="toggleAllDECheckboxes('drugsAllCheckBox')" {% if scenario.drugs|length == 1 %} disabled {% endif %}>-->
+<!--                                                <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>-->
+<!--                                            </legend>-->
+<!--                                            {% for drug in scenario.drugs %}-->
+<!--                                                <div class="custom-control custom-checkbox custom-control-inline"-->
+<!--                                                     href="#tab-1">-->
+<!--                                                    <input type="checkbox" id="customCheck1" class="custom-control-input drugchkBox {{ drug.name }}" name="drugCheckBox" value="{{ drug.name }}" checked>-->
+<!--                                                    <label class="custom-control-label"-->
+<!--                                                           for="customCheck1">{{ drug.name }}</label>-->
+<!--                                                </div>-->
+<!--                                            {% endfor %}-->
+
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="row drug-events-selection-row mt-2">-->
+<!--                                <div class="col eventSelectionCol">-->
+<!--                                    <div id="eventCheckBoxes">-->
+<!--                                        <fieldset>-->
+
+<!--                                            <legend class="legend-margins">-->
+<!--                                                <input type="checkbox" id="customCheckBox" class="custom-control-input" name="eventsAllCheckBox" onclick="toggleAllDECheckboxes('eventsAllCheckBox')" {% if scenario.conditions|length == 1 %} disabled {% endif %}>-->
+<!--                                                <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>-->
+<!--                                            </legend>-->
+<!--                                            {% for condition in scenario.conditions %}-->
+<!--                                                <div class="custom-control custom-checkbox custom-control-inline"-->
+<!--                                                     href="#tab-1">-->
+<!--                                                    <input type="checkbox" id="customCheck1" class="custom-control-input conditionchkBox" name="eventCheckBox" value="{{ condition.name }}" checked>-->
+<!--                                                    <label class="custom-control-label"-->
+<!--                                                           for="customCheck1">{{ condition.name }}</label>-->
+<!--                                                </div>-->
+<!--                                            {% endfor %}-->
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="tab-pane" role="tabpanel" id="tab-2">-->
+<!--                            <div class="row drug-events-selection-row">-->
+<!--                                <div class="col drugSelectionCol">-->
+<!--                                    <div id="drugRadios">-->
+<!--                                        <fieldset>-->
+
+<!--                                        <div  class="custom-control custom-checkbox custom-control-inline drugs-div"-->
+<!--                                                     href="#tab-2">-->
+<!--                                        <span class="DrugEventParameter">{% trans  'Φάρμακα' %}</span>-->
+<!--                                            {% for drug in scenario.drugs %}-->
+<!--                                                   <div class="float-left drug-event-radio ml-2">-->
+<!--                                                    <input type="radio" id="drugRadioInline{{ drug.id }}"-->
+<!--                                                           class="custom-control-input {{ drug.name }}" name="drugRadio"-->
+<!--                                                           value="{{ drug.name }}" checked/>-->
+<!--                                                    <span class="custom-control-label"-->
+<!--                                                           for="customRadioInline1">{{ drug.name }}</span>-->
+<!--                                                   </div>-->
+<!--                                                {% endfor %}-->
+
+<!--                                        </div>-->
+
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="row drug-events-selection-row mt-1">-->
+<!--                                <div class="col eventSelectionCol">-->
+<!--                                    <div id="eventRadios">-->
+<!--                                        <fieldset>-->
+<!--                                            <div  class="custom-control custom-checkbox custom-control-inline drugs-div"-->
+<!--                                                     href="#tab-2">-->
+<!--                                            <span class="DrugEventParameter">{% trans 'Ανεπιθύμητες ενέργειες' %}</span>-->
+<!--                                            {% for condition in scenario.conditions %}-->
+<!--                                                <div class="float-left drug-event-radio">-->
+<!--                                                    <input type="radio" id="eventRadioInline{{ condition.id }}"-->
+<!--                                                           class="custom-control-input" name="eventRadio"-->
+<!--                                                           value="{{ condition.name }}" checked/>-->
+<!--                                                    <span class="custom-control-label"-->
+<!--                                                           for="customRadioInline1">{{ condition.name }}</span>-->
+<!--                                                </div>-->
+
+<!--                                            {% endfor %}-->
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                        </div>
+                {% if dates|length > 0 %}
+                        <div style="float: left; width: 300px; pointer-events: none;" class="input-group in-daterange">
+                            <input type="text" class="form-control" value='{{ dates.0 }}'>
+                            <div class="input-group-addon">to</div>
+                            <input type="text" class="form-control" value='{{ dates.1 }}'>
+                        </div>
+                 {% else %}
+                         <div style="float: left; width: 300px; pointer-events: none;" class="input-group input-daterange">
+                            <input type="text" class="form-control" value=1900>
+                            <div class="input-group-addon">to</div>
+                            <input type="text" class="form-control" value=2022>
+                        </div>
+                {% endif %}
+
+                 <button style="height: 33px" class="glyphicon glyphicon-calendar" id="dateUpdate" data-target="#dateModal"></button>
+                 <div style="display:none;" id="scenario_id">{{ scenario.id }}</div>
+                <div style="float: right; color: #2A3F54;">Total results: {{ results }}</div>
+                {% if records.items %}
+                    <div class="tab-content">
+
+                        <div id="analytic" class="mt-3">
+                            <table id="papers" class="table table-striped table-bordered display" >
+                                           <thead>
+                                                  <tr>
+                                                    <th></th>
+                                                    <th style="text-align: center">{% trans 'Τίτλος' %}</th>
+<!--                                                    <th style="text-align: center">Date</th>-->
+                                                    <th style="text-align: center">{% trans 'Σημαντικότητα' %}</th>
+<!--                                                      <th>Abstract</th>-->
+<!--                                                    <th style="text-align: center">Details</th>-->
+                                                    <th style="text-align: center">{% trans 'Σημειώσεις' %}</th>
+                                                      <th style="text-align: center">{% trans 'Αποθήκευση' %}</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for _, rec in records.items %}
+
+                                                 <tr  id="row_{{ forloop.counter0 }}" name="row_{{ forloop.counter0 }}" class="{{ rec.drug }}_{{ rec.condition }}">
+                                <td  name="add_{{ forloop.counter0 }}"><i class="glyphicon glyphicon-plus add_button" name="icon"></i></td>
+                                                     <td style="display: none" name="drug_{{ forloop.counter0 }}">{{ rec.drug }}</td>
+                                                     <td style="display: none" name="condition_{{ forloop.counter0 }}">{{ rec.condition }}</td>
+                                                    <td id="paper_title" name="title_{{ forloop.counter0 }}">{{ rec.title }}</td>
+
+
+
+                                                     {% if rec.relevance == "" %}
+                                                        <td style="text-align: center" id="relevance">
+                                                            <div class="custom-control custom-radio custom-control-inline">
+                                                                <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="relevant_{{ forloop.counter0 }}">
+                                                                <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" class="relevant">
+                                                                </label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+                                                            </div>
+                                                            <div class="custom-control custom-radio custom-control-inline">
+                                                               <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="irrelevant_{{ forloop.counter0 }}">
+                                                                <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" class="irrelevant" >
+                                                               </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+                                                            </div>
+                                                            <div class="custom-control custom-radio custom-control-inline">
+                                                                <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="uncertain_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}" class="uncertain">
+                                                                </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+                                                            </div>
+<!--                                                            <br/>-->
+<!--                                                            <p> </p>-->
+<!--                                                            <textarea style="display: none" name="notes_{{ forloop.counter0 }}" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                            <p> </p>-->
+<!--                                                            <a style="display: none" name="save_{{ forloop.counter0 }}" href= '#' class="btn btn-dark ">Save</a>-->
+<!--                                                            <p> </p>-->
+                                                        </td>
+                                                    {% else %}
+                                                         {% if rec.relevance == "True" %}
+                                                             <td style="text-align: center" id="relevance">
+                                                                 <div class="custom-control custom-radio custom-control-inline" name="label_{{ forloop.counter0 }}">
+                                                                     <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x">
+                                                                        <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" checked>
+                                                                    </label><br>
+                                                                 </div>
+                                                                 <div class="custom-control custom-radio custom-control-inline">
+                                                                     <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" >
+                                                                    </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+                                                                 </div>
+                                                                 <div class="custom-control custom-radio custom-control-inline">
+                                                                     <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}">
+                                                                    </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+                                                                 </div>
+<!--                                                                 <br/>-->
+<!--                                                                 <p> </p>-->
+<!--                                                                 <textarea style="display: none" name="notes_{{ forloop.counter0 }}" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none" name="save_{{ forloop.counter0 }}" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+                                                             </td>
+                                                         {% elif rec.relevance == "False" %}
+                                                              <td style="text-align: center" id="relevance">
+                                                                  <div class="custom-control custom-radio custom-control-inline">
+                                                                      <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                  <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" >
+                                                                    <span></span></label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+                                                                  </div>
+                                                                  <div class="custom-control custom-radio custom-control-inline">
+                                                                    <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}"  checked>
+                                                                   </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+                                                                  </div>
+                                                                  <div class="custom-control custom-radio custom-control-inline">
+                                                                      <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                        <input style="display: none" type="radio" id="Not sure_{{ forloop.counter0 }}" value="Not sure" name="relevance_{{ forloop.counter0 }}" >
+                                                                    </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+                                                                  </div>
+<!--                                                                  <br/>-->
+<!--                                                                  <p> </p>-->
+<!--                                                                 <textarea style="display: none" name="notes_{{ forloop.counter0 }}" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none"  name="save_{{ forloop.counter0 }}" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+                                                             </td>
+                                                         {% else %}
+                                                             <td style="text-align: center" id="relevance">
+                                                             <div class="custom-control custom-radio custom-control-inline">
+                                                                 <label for="Relevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-ok-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Relevant_{{ forloop.counter0 }}" value="True" name="relevance_{{ forloop.counter0 }}" >
+                                                               </label><br>
+<!--                                                            <label for="Relevant"><img src="{% static 'images/checkmark.png' %}"></label><br>-->
+                                                             </div>
+                                                             <div class="custom-control custom-radio custom-control-inline">
+                                                                 <label for="Irrelevant_{{ forloop.counter0 }}" class="glyphicon glyphicon-remove-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Irrelevant_{{ forloop.counter0 }}" value="False" name="relevance_{{ forloop.counter0 }}" >
+                                                                </label><br>
+<!--                                                            <label for="Irrelevant"><img src="{% static 'images/not.png' %}"></label><br>-->
+                                                             </div>
+                                                             <div class="custom-control custom-radio custom-control-inline">
+                                                                 <label for="Not sure_{{ forloop.counter0 }}" class="glyphicon glyphicon-question-sign fa-2x" name="label_{{ forloop.counter0 }}">
+                                                                    <input style="display: none" type="radio" id="Not sure" value="Not sure_{{ forloop.counter0 }}" name="relevance_{{ forloop.counter0 }}"  checked>
+                                                                </label><br>
+<!--                                                            <label for="Not sure"><img src="{% static 'images/questionmark.png' %}"></label>-->
+                                                             </div>
+                                                                 <br/>
+<!--                                                                 <textarea style="display: none" name="notes_{{ forloop.counter0 }}" placeholder="Enter your notes here">{{ rec.notes }}</textarea>-->
+<!--                                                                <p> </p>-->
+<!--                                                                <a style="display: none" name="save_{{ forloop.counter0 }}" href= '#' class="btn btn-dark">Save</a>-->
+<!--                                                                <p> </p>-->
+                                                             </td>
+                                                         {% endif %}
+                                                    {% endif %}
+                                                    <td>
+                                                         <a type="button" name='notes_button_{{ forloop.counter0 }}' class="glyphicon glyphicon-edit btn btn-secondary notemod" id="notes_button" data-toggle="modal" data-target="#exampleModal_{{ forloop.counter0 }}"> </a>
+
+                                                        <div class="modal" tabindex="-1" role="dialog" id="exampleModal_{{ forloop.counter0 }}">
+                                                          <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                              <div class="modal-header">
+                                                                <h4 class="modal-title">{% trans 'Σημειώσεις' %}: {{ rec.title }}</h4>
+                                                                </button>
+                                                              </div>
+                                                              <div class="modal-body">
+                                                                <textarea style="width: 100%; height: 300px; resize: none;" name='notes_{{ forloop.counter0 }}'
+                                                                  placeholder="{% trans 'Προσθέστε τις σημειώσεις σας εδώ' %}">{% if rec.notes %}{{ rec.notes.content }}{% endif %}</textarea>
+                                                              </div>
+                                                              <div class="modal-footer">
+                                                                <button data-dismiss="modal" class="glyphicon glyphicon-ok lg closemod"></button>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+
+
+                                                    </td>
+                                                     <td>
+                                                          <a id="save_notes" name="save_{{ forloop.counter0 }}" href= '#' class="btn btn-secondary glyphicon glyphicon-floppy-disk"></a>
+                                                     </td>
+                                                </tr>
+                                                <tr style="display: none"  name="second_{{ forloop.counter0 }}">
+                                                    <td id="empty_cell"></td>
+                                                    <td colspan="4" class="paper_details">
+                                                        <div id="detail_cell">
+                                                                <strong>{% trans 'Σύνοψη' %}:</strong> <p id="abstract"  class="abstract" name="abstract_{{ forloop.counter0 }}">{{ rec.abstract }}</p>
+                                                                <strong>{% trans 'Συγγραφείς' %}:</strong> <span class="authors" name="authors_{{ forloop.counter0 }}">{{ rec.authors }}</span>
+<!--                                                            </td>-->
+                                                                <br/>
+                                                              <strong>{% trans 'Ημερομηνία' %}: </strong><span name="pubdate_{{ forloop.counter0 }}">{{ rec.pubmeddate }}</span>
+                                                                    <br/>
+
+                                                                <strong>{% trans 'Περισσότερες πληροφορίες' %}</strong>
+                                                                <br/>
+                                                                <div id="identifiers">
+                                                                           {% if  rec.pmcid and rec.url and not rec.documents%}
+                                                                            <p>
+                                                                                 <strong>PMCID: </strong> {{ rec.pmcid }}
+                                                                                   <br/>
+                                                                                 <strong>PMID: </strong> {{ rec.pmid }}
+                                                                                   <br/>
+                                                                                  <strong>DOI: </strong><a name= "url_{{ forloop.counter0 }}" href="https://doi.org/{{ rec.idlist }}">
+                                                                                {{ rec.idlist }}</a>
+
+                                                                                    <br/>
+                                                                                {% if scenario.id and page_id > 1 and dates.0 != dates.1 %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id  first=dates.0 end=dates.1 page_id=page_id %}" class="pdf_mendeley">
+                                                                                {% elif scenario.id and page_id > 1 and dates.0 == dates.1 %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id page_id=page_id %}" class="pdf_mendeley">
+                                                                                {% else %}
+                                                                                   <form method="post" id="form_{{ forloop.counter0 }}" action="{% url 'paper_notes' scenario_id=scenario.id %}" class="pdf_mendeley">
+                                                                                {% endif %}
+                                                                                        {% csrf_token %}
+                                                                                        <textarea style="display: none" id="abstract_{{ forloop.counter0 }}" name="abstract" form="form_{{ forloop.counter0 }}">{{ rec.abstract }}</textarea>
+                                                                                        <input style="display: none" id="pmid_{{ forloop.counter0 }}" name="pmid" type="text" value="{{ rec.pmid }}">
+                                                                                        <input style="display: none" id="doi_{{ forloop.counter0 }}" name="doi" type="text" value="{{ rec.idlist }}">
+                                                                                        <input style="display: none" id="title_{{ forloop.counter0 }}" name="title" type="text" value="{{ rec.title }}">
+                                                                                        <input style="display: none" id="authors_{{ forloop.counter0 }}" name="authors" type="text" value="{{ rec.authors }}">
+                                                                                        <input style="display: none" id="pmcid_{{ forloop.counter0 }}" name="pmcid" type="text" value="{{ rec.pmcid }}">
+                                                                                       <input style="display: none" id="relevance_{{ forloop.counter0 }}" name="relevance" type="text" value="{{ rec.relevance }}">
+                                                                                       <input style="display: none" id="notes_{{ forloop.counter0 }}" name="notes" type="text" value="{% if rec.notes %}{{ rec.notes.content }}{% endif %}">
+                                                                                        <input style="display: none" id="med_{{ forloop.counter0 }}" name="med" type="text" value="{{ rec.med }}">
+                                                                                       <input style="display: none" id="pubdate__{{ forloop.counter0 }}" name="pubdate" type="text" value="{{ rec.pubdate }}">
+                                                                                       <input style="display: none" id="scenarioid" name="scenarioid" type="text" value="{{ scenario.id }}">
+                                                                                         <input  type="image" id="more_{{ forloop.counter0 }}" class="pdf_mendeley" value="PDF" src="{% static 'images/pdf_view.png' %}">
+
+                                                                                    </form>
+                                                                          <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                             {% elif rec.pmcid and rec.documents and rec.url %}
+                                                                               <strong>PMCID: </strong>{{ rec.pmcid }}
+                                                                                <br/>
+                                                                                <strong>PMID: </strong> {{ rec.pmid }}
+                                                                                    <br/>
+                                                                                  <strong>DOI: </strong><a name= "url_{{ forloop.counter0 }}" href="https://doi.org/{{ rec.idlist }}">
+                                                                                {{ rec.idlist }}</a>
+                                                                               <br/>
+                                                                                <br/>
+                                                                               <a id="view_mendeley" name="view_{{ forloop.counter0 }}" href= '{{ rec.documents }}' class="btn read_button"><img src="{% static 'images/documents.png' %}" alt="Read to Mendeley"> Read</a>
+                                                                                <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                             {% elif rec.idlist %}
+                                                                              <strong>PMID: </strong> {{ rec.pmid }}
+                                                                               <br/>
+                                                                               <strong>DOI: </strong><a name= "url_{{ forloop.counter0 }}" href="https://doi.org/{{ rec.idlist }}">
+                                                                                {{ rec.idlist }}</a>
+                                                                                <br/>
+                                                                        <br/>
+                                                                       <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
+                                                                              target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                            {% else %}
+                                                                               <strong>PMID: </strong> {{ rec.pmid }}
+                                                                            <br/>
+                                                                        <br/>
+                                                                           <a id="view_paper" class="btn link_button" name= "url_{{ forloop.counter0 }}" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ rec.pmid }}"
+                                                                               target="_blank"><img src="{% static 'images/pubmed_link.png' %}" alt="View paper"></a>
+                                                                            {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                               </td>
+                                                        <a style="display: none" name="pdf_{{ forloop.counter0 }}" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{{ rec.pmcid }}/pdf/"
+                                                                          >PDF</a>
+                                                        <td style="display: none" name="author_{{ forloop.counter0 }}">{{ rec.authors }}</td>
+
+                                                        <td name="pmid_{{ forloop.counter0 }}" style="display: none">{{ rec.pmid }}</td>
+                                                        <td name="med_{{ forloop.counter0 }}" style="display: none">{{ rec.med }}</td>
+                                                        <td name="doi_{{ forloop.counter0 }}" style="display: none">{{ rec.idlist }}</td>
+
+                                             </tr>
+
+
+                                        </div>
+
+                                  </div>
+
+
+                                    {% endfor %}
+
+                                            </tbody>
+                                          </table>
+                    {% if dates|length == 0 %}
+                        {% if pages|length >= 3 %}
+                            {% if pages|length >= page_id %}
+                                {% if page_id == pages|length %}
+
+                                            <ul class="pagination justify-content-center mb-4 float-right">
+
+                                                    <li class="page-item">
+                                                      <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                      <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                                    </li>
+        <!--                                            <li class="page-item">-->
+        <!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+        <!--                                            </li>-->
+        <!--                                            <li class="page-item">-->
+        <!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+        <!--                                            </li>-->
+                                                     <li class="page-item disabled">
+                                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                                      </li>
+                                             </ul>
+                                 {% elif page_id > 1 %}
+
+                                        <ul class="pagination justify-content-center mb-4" >
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
+                                             <li class="page-item">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                            </ul>
+
+
+                                {% else %}
+
+                                    <ul class="pagination justify-content-center mb-4 float-right">
+                                            <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
+                                             <li class="page-item">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                     </ul>
+
+                                {% endif %}
+
+                            {% endif %}
+                        {% elif pages|length == 2 %}
+                             <ul class="pagination justify-content-center mb-4 float-right">
+
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                            </li>
+                                            <li class="page-item disabled">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                     </ul>
+                        {% else %}
+                                    <ul class="pagination justify-content-center mb-4 float-right">
+                                            <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id }}'>{{ page_id }}</a>
+                                            </li>
+                                            <li class="page-item disabled">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                     </ul>
+                        {% endif %}
+
+
+
+                    {% endif %}
+                  {% if dates|length > 0 %}
+                    {% if pages|length >= 3 %}
+                        {% if pages|length > page_id %}
+                            {% if page_id == pages|length %}
+
+                                    <ul class="pagination justify-content-center mb-4 float-right">
+
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                            </li>
+<!--                                            <li class="page-item">-->
+<!--                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                            </li>-->
+                                             <li class="page-item disabled">
+                                                  <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                              </li>
+                                     </ul>
+                             {% elif page_id > 1 %}
+
+                                    <ul class="pagination justify-content-center mb-4" >
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                        </li>-->
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                        </li>-->
+                                         <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                        </ul>
+
+
+                            {% else %}
+
+                                <ul class="pagination justify-content-center mb-4 float-right">
+                                        <li class="page-item disabled">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>-->
+<!--                                        </li>-->
+<!--                                        <li class="page-item">-->
+<!--                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:2 }}'>{{ page_id|add:2 }}</a>-->
+<!--                                        </li>-->
+                                         <li class="page-item">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+
+                            {% endif %}
+
+                        {% endif %}
+                    {% elif pages|length == 2 %}
+                         <ul class="pagination justify-content-center mb-4 float-right">
+
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{{ page_id|add:1 }}</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+                    {% else %}
+                                <ul class="pagination justify-content-center mb-4 float-right">
+                                        <li class="page-item disabled">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:"-1" }}'>{% trans 'Προηγούμενη' %}</a>
+                                        </li>
+                                        <li class="page-item">
+                                          <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id }}'>{{ page_id }}</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                              <a class='page-link' href='/LiteratureWorkspace/{{ scenario.id }}/{{ dates.0 }}/{{ dates.1 }}/{{ page_id|add:1 }}'>{% trans 'Επόμενη' %}</a>
+                                          </li>
+                                 </ul>
+                    {% endif %}
+
+
+
+                {% endif %}
+               {% else %}
+                     <p>{% trans 'Δεν υπάρχουν αποτελέσματα' %}</p>
+                {% endif %}
+                        </div>
+                    </div>
+                </div>
+           </div>
+
+{% endblock content %}
+{% block javascripts %}
+    {{ block.super }}
+    <!-- jQuery custom content scroller -->
+<!--   <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>-->
+     <script src="/static/build/js/pv_literature.js"></script>
+    <script>
+        var language = $('#curLang').attr('data-lang');
+        var lang='gr'
+        if(language=='Greek')
+        {
+            lang='gr'
+        }
+        else{
+            lang='en'
+        }
+        var scenarioConditionsLength = '{{ scenario.conditions|length   }}';
+        var scenarioDrugsLength = '{{ scenario.drugs|length  }}';
+        var scenarioDrugs = '{{ scenario.drugs }}';
+        var scenarioConditions = '{{ scenario.conditions }}';
+        //var shinnyAppsUrl = 'https://openfda.shinyapps.io/';
+        // var shinnyAppsUrl = '{{ shiny_endpoint }}';
+        // var shinnyAppsQueryUrl = '';
+        // var app = 'QuickViewDrugEvent';
+        var drug = '';
+        var event = '';
+        var drugsChecked = [];
+        var eventsChecked = [];
+        // getCheckedElementOfRadios();
+        // var AppParametersDict = {
+        //     "QuickViewDrugEvent": ["Drug", "Event"],
+        //     "QuickViewDrug": ["Drug"],
+        //     "QuickViewEvent": ["Event"],
+        //     "Dash": ["Drug"],
+        //     "RR_D": ["Drug"],
+        //     "RR_E": ["Event"],
+        //     "LabelView": ["Drug", "Event"],
+        //     "DynPRR": ["Drug", "Event"],
+        //     "ChangePoint": ["Drug", "Event"],
+        //     "ReportView": ["Drug"],
+        //     "LabelView": ["Drug"],
+        //     "LrTest": ["Drug"],
+        //     "LrTest_E": ["Event"],
+        //     "DrugEnforceView": ["Event"]
+        // };
+        // var OnlyDrugApplications = ["QuickViewDrug", "Dash", "RR_D",  "LrTest", "ReportView"];
+        // var OnlyEventApplications = ["QuickViewEvent", "RR_E", "LrTest_E"];
+        // var DrugEventApplications = ["QuickViewDrugEvent", "DynPRR", "ChangePoint", "ReportView"];
+        // var activeParameters = []
+        // scenarioConditionsLength > 0 ? activeParameters.push("Event") : null;
+        // scenarioDrugsLength > 0 ? activeParameters.push("Drug") : null;
+        // var sessionAppId = app; //sessionStorage.getItem("shinnyAppId");
+        // if(scenarioConditionsLength>0 && scenarioDrugsLength>0)
+        // {
+        //     app='QuickViewDrugEvent';
+        //     if(sessionAppId!=null && DrugEventApplications.includes(sessionAppId)){
+        //         app=sessionAppId;
+        //         DrugEventApplications.forEach(function(item){
+        //             console.log(item);
+        //             document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+        //         });
+        //         document.getElementById(app).className += " active";
+        //     }
+        // }
+        // else if(scenarioConditionsLength>0)
+        // {
+        //     app='QuickViewEvent';
+        //     if(sessionAppId!=null && OnlyEventApplications.includes(sessionAppId)){
+        //         app=sessionAppId;
+        //         OnlyEventApplications.forEach(function(item){
+        //             document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+        //         });
+        //         document.getElementById(app).className += " active";
+        //     }
+        // }
+        // else{
+        //     app='QuickViewDrug';
+        //     if(sessionAppId!=null && OnlyDrugApplications.includes(sessionAppId)){
+        //         app=sessionAppId;
+        //         OnlyDrugApplications.forEach(function(item){
+        //             document.getElementById(item).className=document.getElementById(item).className.replace(" active", "");
+        //         });
+        //         document.getElementById(app).className += " active";
+        //     }
+        // }
+
+    </script>
+    <script>
+        $(document).ready(function() {
+            $(".page-link").click(function(){
+                $("#loaderOverlay").fadeIn();
+            });
+            $( window ).load(function() {
+                $("#loaderOverlay").fadeOut();
+            });
+
+        });
+
+    </script>
+    <script>
+         $(document).ready(function() {
+
+            $("td[name^='add_']").click(function(){
+                var loop_it = $(this).attr('name').replace("add_", "");
+                $("tr[name^='second_"+loop_it+"']").toggle();
+                var iSelector = $(this).find('i');
+                if(iSelector.hasClass('glyphicon-plus')) {
+                    iSelector.removeClass('glyphicon-plus');
+                    iSelector.addClass('glyphicon-minus');
+                }
+                else if(iSelector.hasClass('glyphicon-minus')) {
+                    iSelector.removeClass('glyphicon-minus');
+                    iSelector.addClass('glyphicon-plus');
+                }
+            });
+
+
+
+
+         });
+
+    </script>
+    <script>
+    $(document).ready(function() {
+        $("a[name^='save_']").click(function () {
+            console.log("Link starting with save_");
+            var loop_it = $(this).attr('name').replace("save_", "");
+            var title = $("td[name^='title_"+loop_it+"']").text();
+            var relevance = $("input[name^='relevance_"+loop_it+"']:checked").val();
+            var pmid = $("td[name^='pmid_"+loop_it+"']").text();
+            var url = $("a[name^='url_"+loop_it+"']").attr("href");
+            var abstract = $("p[name^='abstract_"+loop_it+"']").text();
+            var notes = $("textarea[name^='notes_"+loop_it+"']").val();
+            var pubmeddate = $("span[name^='pubdate_"+loop_it+"']").text();
+            var authors = $("td[name^='author_"+loop_it+"']").text();
+            var med = $("td[name^='med_"+loop_it+"']").text();
+            var scenario_id = $("#scenario_id").text();
+            
+
+
+            $.ajax({
+                url: '{% url "save_pubmed_input" %}',
+                data: {
+                  'scenario_id': scenario_id,
+                  'title': title,
+                  'pubmeddate' : pubmeddate,
+                  'relevance' : relevance,
+                  'pmid' : pmid,
+                  'url' : url,
+                  'abstract' : abstract,
+                  'notes' : notes,
+                  'authors' : authors,
+                  'med': med
+                },
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.message === 'Failure') {
+                        $("#pubMedSaveInfoModal .modal-body").text(gettext("Αποτυχία αποθήκευσης"));
+                        $("#pubMedSaveInfoModal").modal("show");
+                    } else {
+                        $("#pubMedSaveInfoModal .modal-body").text(gettext("Επιτυχής αποθήκευση"));
+                        $("#pubMedSaveInfoModal").modal("show");
+                    }
+                }
+                });
+        });
+    });
+    </script>
+     <script>
+       $(document).ready(function() {
+           var recordslength = '{{ records|length }}'
+
+        for (var i = 0; i < recordslength; i++) {
+            // $("tr[name='row_" + i + "'] input[type='radio']:checked").parent().css('color', '#B8B8B8');
+            $("tr[name='row_" + i + "'] input[id^='Relevant_']:checked").parent().css('color', '#008000');
+            $("tr[name='row_" + i + "'] input[id^='Irrelevant_']:checked").parent().css('color', '#bf2b27');
+
+            if(!$("tr[name='row_" + i + "'] input[id^='Relevant_']").is(':checked') && !$("tr[name='row_" + i + "'] input[id^='Irrelevant_']").is(':checked')){
+                $("tr[name='row_" + i + "'] input[type='radio']:checked").parent().css('color', '#FFA500');
+            }
+
+        }
+           $('input[name^="relevance_"]').click(function () {
+               var loop_it = $(this).attr('name').replace("relevance_", "");
+               var reltype = $(this).attr('id').split("_");
+               if (reltype[0] == 'Relevant') {
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#008000');
+               } else if (reltype[0] == 'Irrelevant'){
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#bf2b27');
+               } else {
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']").parent().css('color','#2A3F54');
+                   $("tr[name='row_"+loop_it+"'] input[type='radio']:checked").parent().css('color','#FFA500');
+               }
+
+           });
+        });
+
+         $(document).ready(function() {
+             $('.input-daterange input').each(function() {
+                $(this).datepicker({
+                    format: "yyyy",
+                    viewMode: "years",
+                    minViewMode: "years"
+                });
+                $(this).datepicker('setDate', new Date());
+            });
+         });
+
+        $(function() {
+            $('body').on('mousedown', '.modal', function() {
+                $(this).addClass('draggable').parents().on('mousemove', function(e) {
+                    e.preventDefault();
+                    $('.draggable').offset({
+                        top: e.pageY - $('.draggable').outerHeight() /8,
+                        left: e.pageX - $('.draggable').outerWidth() /8
+                    }).on('mouseup', function() {
+                        $(this).removeClass('draggable');
+                    });
+                });
+            }).on('mouseup', function() {
+                $('.draggable').removeClass('draggable');
+            });
+        });
+
+
+     </script>
+
+
+
+{% endblock javascripts %}

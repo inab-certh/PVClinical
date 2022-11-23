@@ -1,0 +1,73 @@
+{% extends 'app/base_site.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block javascripts %}
+    {{ block.super }}
+
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+
+    <script src='{% static "build/js/data_sources.js" %}'></script>
+
+<!--    <script>-->
+
+<!--    </script>-->
+<!--    <script src='{% static "build/js/data_source_views.js" %}'></script>-->
+{% endblock %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    <div class="right_col" role="main">
+    <!-- top tiles -->
+		<div class="row tile_count">
+		  <div>
+			  <div class="x_panel">
+				<div class="x_title data-sources-view col-xs-10 col-xs-offset-1">
+                    <h1> {% block view_title %}{{title}}{% endblock %}</h1>
+                    <div class="row">
+                        <div class="viewExplanation mt-3 mb-3 col-xs-10 col-xs-offset-1">
+                            {% block view_content_txt %}{% endblock view_content_txt %}
+                        </div>
+                    </div>
+
+                    {% block toolbarbuttons %}
+                        <div class="btn-group col-xs-10 col-lg-8 col-xs-offset-3 mt-3" role="group" aria-label="Toolbar buttons">
+                            <button class="enlarge-btn btn btn-enlarge col-xs-4" data-toggle="modal" data-target={% block modal_target %}{% endblock modal_target %} type="button">
+                                <i class="fas fa-search-plus"></i>
+                                <span class="visible-lg">
+                                    {% trans "Μεγένθυση" %}
+                                </span>
+                            </button>
+
+                            <a class="btn btn-dark col-xs-4" type="button" href="{{ request.META.HTTP_REFERER }}">
+                                <i class="fa fa-reply"></i>
+                                <span class="visible-lg">
+                                    {% trans "Επιστροφή" %}
+                                </span>
+                            </a>
+                        </div>
+                    {% endblock toolbarbuttons %}
+                    <div class="iframe-box mt-1">
+                        <iframe src={% block iframe_url %}{% endblock iframe_url %} allowfullscreen>
+                            {% trans "Ο περιηγητής σας δεν υποστηρίζει πλαίσια (iframes). Για να δείτε αυτήν τη σελίδα, χρησιμοποιήστε κάποιο κατάλληλο πρόγραμμα περιήγησης." %}
+                        </iframe>
+                    </div>
+
+
+
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block modals %}
+{% endblock modals %}

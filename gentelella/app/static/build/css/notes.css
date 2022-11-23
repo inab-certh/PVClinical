@@ -1,0 +1,18 @@
+#message_container.success,  #message_container.error{
+	font-weight: bold;
+	font-size: large;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+#message_container.success {
+	color: #2b5763;
+}
+
+#message_container.error {
+	color: #bf2b27;
+}
+
+.django-ckeditor-widget {
+	width: 97%;
+}

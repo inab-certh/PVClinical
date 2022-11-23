@@ -1,26 +1,95 @@
-<div class="modal fade" id={{ modal_id }} tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+{% load i18n %}
+<div class="modal fade {{ modal_type }}" id="{{ modal_id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog {% if modal_type == 'viewModal' %}modal-lg{% endif %}">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">{{ modal_title }}</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title col-xs-11" id="myModalLabel">{{ modal_title }}</h4>
+                <button type="button" class="close col-xs-1" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
+                {% if modal_type == "viewModal" and scenario %}
+                    <div class="container alert scenario-info">
+                        {% trans "Σενάριο" %}: {{ scenario.title }}
+                        <a class="has-popover ml-1" href="" data-html="true" data-content="
+                          <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+                                  <thead>
+                                    <tr>
+
+                                      <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>
+                                      <th>{% trans 'Πάθηση/Παθήσεις' %}</th>
+
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>
+                                        <table>
+                                          {% for d in scenario.drugs.all %}
+                                            <tr>
+                                              <td>{% firstof d.name d.code %}</td>
+                                            </tr>
+                                          {% endfor %}
+                                        </table>
+                                      </td>
+
+                                      <td>
+                                        <table>
+                                          {% for c in scenario.conditions.all %}
+                                            <tr>
+                                              <td>{% firstof c.name c.code %}</td>
+                                            </tr>
+                                          {% endfor %}
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                          </table>
+                        " data-placement="left" data-container="body" data-width="100%">
+                          <i class="fa fa-info-circle"></i>
+                        </a>
+
+                    </div>
+                {% endif %}
+                {% if additional_info %}
+                    {% for key,val in additional_info.items %}
+                    <div class="container alert {{ key }}">{{ val }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if help_info %}
+                    <a tabindex="0" class="view-info-btn btn btn-lg btn-outline pull-right" role="button" data-trigger="focus" data-container="body" data-toggle="popover" data-html="true" data-placement="left" title="{{ help_info_title }}" data-content="{{ help_info }}">
+                        <i class="fa fa-question-circle-o"></i>
+                    </a>
+                {% endif %}
+
                 {{ modal_body }}
-            </div>
-            <div class="modal-footer">
-                <button id="dismissBtn" type="button" data-record=""
-	                {% if modal_id == "\"confirmModal\"" %} class="btn btn-default"
-	                {% else %} class="btn btn-primary" {% endif %}
-	                data-dismiss="modal">{{ dismiss_btn }}
-                </button>
-                {% if modal_id == "\"confirmModal\"" %}
-                	<button type="button" class="btn btn-primary" 
-                		id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
-                		{{ main_btn }}
-                	</button>
+                {% if modal_iframe_url or modal_type == 'notesModal' %}
+                    {% if modal_type == 'dataSourcesModal' %}
+                        <iframe src="" data-src={{modal_iframe_url}} class="modalIframe" allowfullscreen>
+                    {% else %}
+                        <iframe src="{{modal_iframe_url}}" class="modalIframe" allowfullscreen>
+                    {% endif %}
+                        {% trans "Ο περιηγητής σας δεν υποστηρίζει πλαίσια (iframes). Για να δείτε αυτήν τη σελίδα, χρησιμοποιήστε κάποιο κατάλληλο πρόγραμμα περιήγησης." %}
+                    </iframe>
                 {% endif %}
             </div>
+            {% if modal_type != "viewModal" %}
+                <div class="modal-footer">
+                        {% if modal_type == "infoModal" %}
+                            <button id="dismissBtn" type="button" data-record="" class="btn btn-primary" data-dismiss="modal">
+                                {{ dismiss_btn }}
+                            </button>
+                        {% elif modal_type == "confirmModal" %}
+                            <button id="dismissBtn" type="button" data-record="" class="btn btn-default" data-dismiss="modal">
+                                {{ dismiss_btn }}
+                            </button>
+
+                            <button type="button" class="btn btn-primary" id="confirmBtn" data-toggle="modal" data-target={{data_target}}>
+                                {{ main_btn }}
+                            </button>
+                        {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
