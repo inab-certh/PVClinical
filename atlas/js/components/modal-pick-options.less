@@ -1,0 +1,56 @@
+.modal-pick-options {
+  &__content {
+    padding: 2rem;
+  }
+
+  &__section {
+    margin-bottom: 2rem;
+    flex: 0 0 50%;
+  }
+  
+  &__header {
+    margin: 0 0 1rem;
+    color: black;
+    font-weight: 600;
+  }
+  
+  &__sections {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__list-item:not(:last-child) {
+    margin-bottom: .75rem;
+  }
+
+  &__option {
+    margin: 0;
+  }
+
+  &__option-checkbox {
+    position: relative;
+    top: -2px;
+    vertical-align: middle;
+  }
+
+  &__option-text {
+    margin: 0;
+    margin-left: .5rem;
+    vertical-align: middle;
+  }
+
+  &__btn-list {
+    text-align: right;
+    margin-top: 1.5rem;
+  }
+}

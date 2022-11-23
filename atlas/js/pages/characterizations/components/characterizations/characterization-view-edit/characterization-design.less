@@ -1,0 +1,135 @@
+.characterization-design {
+
+  &__descr {
+    font-size: 1.4rem;
+    margin: 1rem 0 1rem;
+    text-align: justify;
+  }
+
+  &__linked-entities {
+    padding: 1rem 0rem;
+  }
+
+  //
+
+  &__col-feature-id {
+    width: 10%;
+  }
+
+  &__col-feature-name {
+    width: 35%;
+  }
+
+  &__col-feature-descr {
+    width: 45%;
+  }
+
+  &__col-feature-remove {
+    width: 10%;
+  }
+
+  //
+
+  &__col-param-name {
+    width: 45%;
+  }
+
+  &__col-param-value {
+    width: 45%;
+  }
+
+  &__col-param-remove {
+    width: 10%;
+  }
+
+  //
+
+  .modal-body {
+    padding: 0;
+  }
+
+  &__feature-analyses-list {
+    max-height: calc(80vh - 5rem);
+    overflow-y: auto;
+    padding: 1rem;
+
+    .feFilter {
+      padding-right: 1rem;
+    }
+
+    .dt-btn {
+      display: none;
+    }
+
+    .faceted-data-table-wrapper {
+      padding-left: 0rem;
+    }
+  }
+
+  &__strata-title {
+    margin: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+  }
+
+  &__strata-delete {
+    margin-left: .75rem;
+    margin-top: .1rem;
+    margin-bottom: .1rem;
+  }
+
+  &__strata-heading {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+
+  &__strata-name {
+    display: block;
+    border-radius: 4px;
+    margin-bottom: 0;
+  }
+
+  &__strata {
+    margin: 1rem 0;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 1rem;
+  }
+
+  &__stratified-by {
+    margin-top: 1rem;
+  }
+
+  &__strata-checkbox {
+    padding: 6px 0;
+    display: block;
+    margin-bottom: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+  }
+
+  &__button-panel {
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 1rem 2rem;
+    > .btn {
+      margin-left: 0.5rem;
+    }
+  }
+
+  &__feature-analyses-modal {
+    width: 100rem;
+
+    .dataTables_scrollBody {
+      border-bottom: solid 1px #ccc !important;
+    }
+
+    table.dataTable {
+      border-bottom: none !important;
+    }
+  }
+
+}

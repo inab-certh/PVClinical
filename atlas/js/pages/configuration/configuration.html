@@ -1,0 +1,123 @@
+<heading-title params="name: 'Configuration', icon: 'cogs', theme: 'dark'"></heading-title>
+<div data-bind="if: $component.hasPageAccess(), css: classes({ extra: 'paddedWrapper' })">
+		<div data-bind="if: $component.initializationCompleted()">
+			<div data-bind="with:config.api">
+				<div class="configureHeader">
+					<div class="left">
+						<div data-bind="if:available==true">
+							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+						</div>
+
+						<div data-bind="if:available==false">
+							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+						</div>
+
+						<span class="serviceName" data-bind="text:name"></span> (
+						<span class="serviceUrl" data-bind="text:url"></span>)
+					</div>
+					<div class="right">
+						<div class="padded priority" data-bind="if:$component.canChangePriority">
+							<div class="priority-label">Change source priorities in: </div><select class="form-control configuration__source-select" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
+						</div>
+						<span class="btn btn-sm btn-primary" data-bind="click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">New Source</span>
+					</div>
+				</div>
+				<div data-bind="if: $component.config.useExecutionEngine" class="configureHeader">
+					<div class="left">
+						<div data-bind="if:isExecutionEngineAvailable()==true">
+							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+						</div>
+
+						<div data-bind="if:isExecutionEngineAvailable()==false">
+							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+						</div>
+
+						<span class="serviceName">Execution engine</span>
+					</div>
+				</div>
+				<div data-bind="if:available==false">
+					<div class="error" data-bind="text:xhr.statusText"></div>
+				</div>
+				<table data-bind="if:$component.sources().length > 0" class="configureSourceTable">
+					<thead>
+						<th></th>
+						<th>Source Name [Source Key]</th>
+						<th>Table Qualifiers</th>
+						<th>Dialect</th>
+						<th>Vocabulary Version</th>
+						<th>Evidence</th>
+						<th>Record Counts (RC / DRC)</th>
+						<th>Incidence</th>
+						<th data-bind="if: $component.canCheckConnection($data)">Check connection</th>
+                        <th>Refresh cache</th>
+					</thead>
+					<tbody data-bind="foreach:$component.sources()">
+						<tr>
+							<td><i class="fa" data-bind="if:!initialized, attr: { title : error }, css: { 'fa-check-circle': initialized, 'fa-exclamation-circle': !initialized }"></i>
+								<span data-bind="text:error"></span>
+							</td>
+							<td>
+								<div data-bind="if:$component.canReadSource($data)"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
+								<div data-bind="ifnot:$component.canReadSource($data)"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
+							</td>
+							<td>
+								<div data-bind="foreach:daimons">
+									<div data-bind="text:daimonType + ': ' + tableQualifier"></div>
+								</div>
+							</td>
+							<td data-bind="text:sourceDialect"></td>
+							<!-- ko if: $component.hasSourceAccess(sourceKey) -->
+								<td class="configureRadio">
+									<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl, click: $component.updateVocabPriority">
+									<span data-bind="text:version"></span>
+								</td>
+								<td class="configureRadio">
+									<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl, click: $component.updateEvidencePriority">
+								</td>
+								<td class="configureRadio">
+									<input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:$component.sharedState.resultsUrl, click: $component.updateResultsPriority">
+								</td>
+								<td class="configureCheckbox">
+									<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
+								</td>
+							<!-- /ko -->
+							<!-- ko if: !$component.hasSourceAccess(sourceKey) -->
+								<td colspan="4" class="text-center">Access denied</td>
+							<!-- /ko -->
+							<td data-bind="if: $component.canCheckConnection($data)">
+								<button data-bind="css: $component.getCheckButtonStyles($data).buttonClass, click: function(){$component.checkSourceConnection($data);}" class="connection-check-button btn btn-sm">
+									<i data-bind="css : $component.getCheckButtonStyles($data).iconClass" class="fa"></i>
+									check
+								</button>
+							</td>
+                            <td data-bind="if: $component.canRefreshSourceCache($data)">
+                                <button data-bind="css: $component.getRefreshCacheButtonStyles($data).buttonClass, click: function(){$component.refreshSourceCache($data);}" class="connection-check-button btn btn-sm">
+                                    <i data-bind="css : $component.getRefreshCacheButtonStyles($data).iconClass" class="fa"></i>
+                                    refresh
+                                </button>
+                            </td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div data-bind="if: isInProgress()" class="text-center">
+					<loading params="theme: 'light'" />
+			</div>
+			<div>
+				<div class="configuration__command-pane">
+					<div class="configuration__padded">
+						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</a>
+					</div>
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasPageAccess">
+						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
+					</div>
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
+						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">Import Users from LDAP/AD</a>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.hasPageAccess"></access-denied>
+
