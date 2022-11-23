@@ -436,12 +436,13 @@ class QuestionnaireForm(forms.ModelForm):
     q7 = forms.ChoiceField(
         choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label=_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού ΑΔΦ;")
+        label=_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού της "
+                "ανεπιθύμητης ενέργειας φαρμάκου (ΑΕΦ);")
     )
     q8 = forms.ChoiceField(
         choices=((True, _("Ναι")), (False, _("Όχι"))),
         widget=forms.RadioSelect(), required=False,
-        label=_("Υπήρξε εκ νέου θετική επαναπρόκληση;")
+        label=_("Υπήρξε εκ νέου εμφάνιση της ΑΕΦ μετά την επαναχορήγηση του φαρμακου (θετική επαναπρόκληση);")
     )
     q9 = forms.ChoiceField(
         choices=((True, _("Ναι")), (False, _("Όχι"))),

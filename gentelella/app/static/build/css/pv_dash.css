@@ -1125,3 +1125,9 @@ form.ma-form h1, .x_panel .x_title h1 {
 div.exceptions-errors>h1>button {
 	margin-top: 3px;
 }
+
+.x_title.report_title>h2 {
+	text-overflow: unset;
+	overflow: unset;
+	white-space: normal;
+}

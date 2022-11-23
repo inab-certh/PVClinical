@@ -40,6 +40,7 @@
                             <th>{% trans "Φόρμα" %}</th>
                             <th >{% trans "Περιεχομενο" %}</th>
                             <th>{% trans "Επεξεργασία" %}</th>
+                            <th>{% trans "Διαγραφή" %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -58,14 +59,19 @@
                             <td><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
                             <td class="cen">
                                 {% if note.scenario %}
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
-                                    <i class="fa fa-edit"></i>
-                                </button>
+                                    <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                 {% else %}
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
-                                    <i class="fa fa-edit"></i>
-                                </button>
+                                    <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                 {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-outline delete-note-btn" data-toggle="modal" data-target="#noteDeleteConfirmModal" id="delNote{{forloop.counter}}" data-noteid="{{ note.id }}" type="button">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -101,18 +107,72 @@
     </div>
 </div>
 
+
 {% endblock content %}
+
+{% block modals %}
+    {{ block.super }}
+    {% trans "Επιβεβαίωση διαγραφής" as mod_title %}
+    {% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
+    {% trans "Επιβεβαίωση" as main_lbl%}
+    {% trans "Ακύρωση" as dismiss_lbl %}
+    {% trans "Εντάξει" as ok_lbl%}
+    {% trans "Πληροφορίες" as info_title %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="noteDeleteConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#noteDeleteInfoModal" %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="noteDeleteInfoModal" dismiss_btn=ok_lbl %}
+{% endblock modals%}
 
 {% block javascripts %}
 {{ block.super }}
 <script src="/static/build/js/all_notes.js"></script>
 <script>
     $(function() {
-        $(".delete-sc-btn").on("click", function () {
-            // On trash can button click, pass record id to modal confirm btn
-            $("#confirmBtn").data("record", $(this).data("scid"));
+        $("#allNotesTbl").on("click", "[id*=delNote]", function() {
+            var note_id= $(this).data("noteid");
+            console.log(note_id);
 
-        })
+            $("#noteDeleteConfirmModal #confirmBtn").click(function() {
+                $("#loaderOverlay").fadeIn();
+
+                $.ajax({
+                        url: "{% url 'del_note' %}",
+                        data: {"note_id": note_id},
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
+                        }
+                })
+                    .always(function(xhr){
+                        console.log(xhr.status);
+                        $('#noteDeleteConfirmModal').modal('hide');
+                    })
+                    .done(function(data) {
+                        $("#loaderOverlay").fadeOut();
+                        $("#noteDeleteInfoModal .modal-body").text("{% trans 'Επιτυχής διαγραφή!'%}");
+                        $("#noteDeleteInfoModal").modal("show");
+
+                        /* Info modal is already open */
+                        $("#noteDeleteInfoModal").on("hidden.bs.modal", function (e) {
+                            window.location.replace("{% url 'allnotes' %}");
+                            //location.reload();
+                        });
+
+                        $("#dismissBtn").on("click", function () {
+                            $("#noteDeleteConfirmModal").modal("hide");
+                        });
+
+                    })
+                    .fail(function(resp){
+                        $("#noteDeleteInfoModal .modal-body").text("{% trans 'Αποτυχία διαγραφής!'%}");
+                        //$("#noteDeleteInfoModal .modal-body").text(resp.responseText);
+                        $('#noteDeleteInfoModal').modal("show");
+                        $('#noteDeleteInfoModal').on("hidden.bs.modal", function (e) {
+                            location.reload();
+
+                        });
+                    });
+            });
+        });
+
     });
 </script>
 
