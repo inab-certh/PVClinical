@@ -87,4 +87,4 @@ On our repository we provide a sample WSGI file ( `gentelella/gentelella/wsgi.py
 
 ###### License
 Licensed under the Apache License, Version 2.0 (the "License") modified with
-Commons Clause Restriction -- see the LICENSE file for details
+Commons Clause Restriction -- see the [LICENSE](LICENSE) file for details
