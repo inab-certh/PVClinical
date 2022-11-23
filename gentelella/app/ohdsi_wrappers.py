@@ -504,8 +504,10 @@ def create_cs_coh(concepts_names, domain):
     return concepts_cohort_name
 
 
-def create_ir(target_cohorts, outcome_cohorts, **options):
+def create_ir(owner, sid, target_cohorts, outcome_cohorts, **options):
     """ Create ir wrapper
+    :param owner: scenario owner
+    :param sid: scenario id
     :param target_cohorts: a list of the target cohorts (id, name, etc.)
     :param outcome_cohorts: a list of the outcome cohorts (id, name, etc.)
     :param **options: the various options concerning option of the ir study (i.e. age, gender, study period etc.)
@@ -519,7 +521,8 @@ def create_ir(target_cohorts, outcome_cohorts, **options):
     }
 
     # The name of the ir to be created
-    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)), domain="ir")
+    ir_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + outcome_cohorts)), owner=owner,
+                                  sid=sid, domain="ir")
 
     status_code, exists_json = exists(ir_name, "ir")
     # print(status_code, exists_json)
@@ -781,8 +784,10 @@ def add_update_ir(ir_id, **options):
     return response.status_code, resp_json
 
 
-def create_char(cohorts, **options):
+def create_char(owner, sid, cohorts, **options):
     """ Create char wrapper
+    :param owner: scenario owner
+    :param sid: scenario id
     :param cohorts: a list of the cohorts (id, name, etc.) for the characterization
     :param **options: the various options concerning option of the analysis (i.e. analysis features)
     :return: the status_code and the json data of the response
@@ -795,7 +800,7 @@ def create_char(cohorts, **options):
     }
 
     # The name of the char to be created
-    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)), "char")
+    char_name = name_entities_group(list(map(lambda c: c.get("name"), cohorts)), owner=owner, sid=sid, domain="char")
 
     status_code, exists_json = exists(char_name, "cohort-characterization")
     # print(status_code, exists_json)
@@ -925,8 +930,10 @@ def get_char_analysis_features():
     return feat_resp.json().get("content")
 
 
-def create_cp(target_cohorts, event_cohorts, **options):
+def create_cp(owner, sid, target_cohorts, event_cohorts, **options):
     """ Create cp wrapper
+    :param owner: scenario owner
+    :param sid: scenario id
     :param target_cohorts: a list of the target cohorts (id, name, etc.)
     :param event_cohorts: a list of the event cohorts (id, name, etc.)
     :param **options: the various options concerning option of the cp analysis (i.e. name,
@@ -941,7 +948,8 @@ def create_cp(target_cohorts, event_cohorts, **options):
     }
 
     # The name of the ir to be created
-    cp_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + event_cohorts)), "cp")
+    cp_name = name_entities_group(list(map(lambda c: c.get("name"), target_cohorts + event_cohorts)), owner=owner,
+                                  sid=sid,  domain="cp")
 
     status_code, exists_json = exists(cp_name, "pathway-analysis")
 
@@ -1046,14 +1054,102 @@ def add_update_cp(cp_id, **options):
     return response.status_code, resp_json
 
 
-def name_entities_group(entities_names, domain=""):
+def name_entities_group(entities_names, domain="", owner="", sid=""):
     """ Give a unique name to a group of OHDSI entities (i.e. concept sets, cohorts etc.)
     :param entities_names: a list of the entities names
     :domain: the name of the domain the entities belong to
+    :param owner: scenario owner
+    :param sid: scenario id
     :return: the name of the group
     """
-    name_sec_part = hashlib.md5("_".join(entities_names).encode('utf-8')).hexdigest() if len(entities_names) > 1 \
-        else " ".join(entities_names)
+    name_sec_part = hashlib.md5("{}-{}-{}".format(owner, sid, "_".join(entities_names)).encode('utf-8')
+                                ).hexdigest() if len(entities_names) > 1 else " ".join(entities_names)
     return "{}{}{}{}".format(domain if domain not in name_sec_part else "",
                              "s" if len(entities_names) > 1 and domain not in ["ir", "char", "cp"] else "",
                          " - " if domain not in name_sec_part else "", name_sec_part)
+
+
+def generate_ir_analysis(ir_id, **options):
+    """ Helper function for generating ir analysis
+    :param ir_id: the id of the incidence rate analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if ir_id:
+        response = requests.get("{}/ir/{}/execute/{}".format(settings.OHDSI_ENDPOINT, ir_id, settings.OHDSI_CDM_NAME),
+                                headers=headers)
+
+    return response.status_code if response else 500
+
+
+def delete_ir_analysis(ir_id, **options):
+    """ Helper function for deleting ir analysis
+    :param ir_id: the id of the incidence rate analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if ir_id:
+        response = requests.delete("{}/ir/{}/info/{}".format(settings.OHDSI_ENDPOINT, ir_id, settings.OHDSI_CDM_NAME),
+                                headers=headers)
+
+    return response.status_code if response else 400
+
+
+def generate_char_analysis(char_id, **options):
+    """ Helper function for generating ir analysis
+    :param char_id: the id of the characterization analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if char_id:
+        response = requests.post("{}/cohort-characterization/{}/generation/{}".format(settings.OHDSI_ENDPOINT, char_id,
+                                                                                      settings.OHDSI_CDM_NAME),
+                                 headers=headers)
+
+    return response.status_code if response else 500
+
+
+def generate_cp_analysis(cp_id, **options):
+    """ Helper function for generating ir analysis
+    :param cp_id: the id of the pathway analysis
+    :param **options:  the various options concerning option of the ir analysis
+    :return: the status_code and the json data of the response
+    """
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        # "api-key": "{}".format(settings.OHDSI_APIKEY),
+    }
+
+    response = None
+    if cp_id:
+        response = requests.post("{}/pathway-analysis/{}/generation/{}".format(settings.OHDSI_ENDPOINT, cp_id,
+                                                                                      settings.OHDSI_CDM_NAME),
+                                 headers=headers)
+
+    return response.status_code if response else 500

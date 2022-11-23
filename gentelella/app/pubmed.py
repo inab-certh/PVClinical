@@ -1,8 +1,8 @@
-import entrezpy.conduit
+from app.entrezpy import conduit
 import json
 import xml.etree.ElementTree
-import entrezpy.base.result
-import entrezpy.base.analyzer
+from app.entrezpy.base import result
+from app.entrezpy.base import analyzer
 import re
 
 
@@ -30,8 +30,8 @@ class PubmedRecord:
         self.user = ""
 
 
-class PubmedResult(entrezpy.base.result.EutilsResult):
-    """Derive class entrezpy.base.result.EutilsResult to store Pubmed queries.
+class PubmedResult(result.EutilsResult):
+    """Derive class result.EutilsResult to store Pubmed queries.
   Individual Pubmed records are implemented in :class:`PubmedRecord` and
   stored in :ivar:`pubmed_records`.
 
@@ -44,26 +44,26 @@ class PubmedResult(entrezpy.base.result.EutilsResult):
         self.pubmed_records = {}
 
     def size(self):
-        """Implement virtual method :meth:`entrezpy.base.result.EutilsResult.size`
+        """Implement virtual method :meth:`result.EutilsResult.size`
     returning the number of stored data records."""
         return len(self.pubmed_records)
 
     def isEmpty(self):
-        """Implement virtual method :meth:`entrezpy.base.result.EutilsResult.isEmpty`
+        """Implement virtual method :meth:`result.EutilsResult.isEmpty`
     to query if any records have been stored at all."""
         if not self.pubmed_records:
             return True
         return False
 
     def get_link_parameter(self, reqnum=0):
-        """Implement virtual method :meth:`entrezpy.base.result.EutilsResult.get_link_parameter`.
+        """Implement virtual method :meth:`result.EutilsResult.get_link_parameter`.
     Fetching a pubmed record has no intrinsic elink capabilities and therefore
     should inform users about this."""
         print("{} has no elink capability".format(self))
         return {}
 
     def dump(self):
-        """Implement virtual method :meth:`entrezpy.base.result.EutilsResult.dump`.
+        """Implement virtual method :meth:`result.EutilsResult.dump`.
 
     :return: instance attributes
     :rtype: dict
@@ -81,21 +81,21 @@ class PubmedResult(entrezpy.base.result.EutilsResult):
 
 
 
-class PubmedAnalyzer(entrezpy.base.analyzer.EutilsAnalyzer):
-    """Derived class of :class:`entrezpy.base.analyzer.EutilsAnalyzer` to analyze and
+class PubmedAnalyzer(analyzer.EutilsAnalyzer):
+    """Derived class of :class:`analyzer.EutilsAnalyzer` to analyze and
   parse PubMed responses and requests."""
 
     def __init__(self):
         super().__init__()
 
     def init_result(self, response, request):
-        """Implemented virtual method :meth:`entrezpy.base.analyzer.init_result`.
+        """Implemented virtual method :meth:`analyzer.init_result`.
     This method initiate a result instance when analyzing the first response"""
         if self.result is None:
             self.result = PubmedResult(response, request)
 
     def analyze_error(self, response, request):
-        """Implement virtual method :meth:`entrezpy.base.analyzer.analyze_error`. Since
+        """Implement virtual method :meth:`analyzer.analyze_error`. Since
     we expect XML errors, just print the error to STDOUT for
     logging/debugging."""
         print(json.dumps({__name__: {'Response': {'dump': request.dump(),
@@ -103,7 +103,7 @@ class PubmedAnalyzer(entrezpy.base.analyzer.EutilsAnalyzer):
 
 
     def analyze_result(self, response, request):
-        """Implement virtual method :meth:`entrezpy.base.analyzer.analyze_result`.
+        """Implement virtual method :meth:`analyzer.analyze_result`.
     Parse PubMed  XML line by line to extract authors and citations.
     xml.etree.ElementTree.iterparse
     (https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.iterparse)

@@ -1,0 +1,49 @@
+.panel {
+	/* margin-bottom: 10px; */
+}
+.panel-default {
+	border-color: #888;
+}
+.panel-table {
+	min-width: 800px;
+}
+.panel-default .panel-heading {
+	/* background-color: #ddd; */
+}
+
+.panel-heading {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: 12px;
+}
+/* Report Styles */
+
+.reportTitle {
+	font-size: 14px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+#wrapper {
+	padding: 5px;
+	width: 98%;
+}
+.clear {
+	clear: both;
+}
+
+.report table {
+	width: 100%;
+}
+
+#condition_table tr {
+	cursor: pointer;
+}
+th.data-sources {
+	white-space: nowrap;
+}
+.numeric {
+	text-align: right;
+}
+#report .evidenceVisualization circle {
+    fill: #333;
+}

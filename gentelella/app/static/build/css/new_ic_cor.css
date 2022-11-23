@@ -1,0 +1,17 @@
+.popover {
+    max-width: 40%;
+}
+
+.popover.right {
+    margin-left: 20%;
+}
+
+.btn>span.hidden-xs, .btn>span.visible-lg {
+	color: white;
+}
+
+#completedQuestDiv.success {
+    color: #2b5763;
+    margin: auto;
+    width: 70%;
+}

@@ -3,6 +3,7 @@ import re
 from datetime import date
 
 from django import forms
+from django_select2.forms import Select2Widget
 from django_select2.forms import Select2TagWidget
 from django.utils.translation import gettext_lazy as _
 
@@ -14,6 +15,8 @@ from app.models import Drug
 from app.models import Condition
 from app.models import Notes
 from app.models import Scenario
+from app.models import IndividualCase
+from app.models import Questionnaire
 from app.models import Status
 from app.retrieve_meddata import KnowledgeGraphWrapper
 
@@ -27,6 +30,18 @@ class CustomSelect2TagWidget(Select2TagWidget):
         self.attrs.setdefault('data-tags', 'true')
         self.attrs.setdefault('data-url', '')
         self.attrs.setdefault('data-minimum-input-length', 2)
+        return super().build_attrs(*args, **kwargs)
+
+
+class PMSelect2TagWidget(Select2TagWidget):
+    """ Class allowing data-tokens with spaces"""
+
+    def build_attrs(self, *args, **kwargs):
+        self.attrs.setdefault('data-token-separators', [","])
+        # self.attrs.setdefault('data-width', '50%')
+        self.attrs.setdefault('data-tags', 'true')
+        self.attrs.setdefault('data-url', '')
+        self.attrs.setdefault('data-minimum-input-length', 0)
         return super().build_attrs(*args, **kwargs)
 
 
@@ -111,8 +126,9 @@ class ScenarioForm(forms.Form):
 
         if selected_drugs:
             # Split each one of selected drugs, find ATC part with Regexp and check if it is in valid ATC codes
+            # Free text drugs are accepted, only if they have a valid ATC code. Rejected otherwise
             valid_drugs = list(filter(lambda sd: list(filter(
-                lambda d: re.findall("[A-Z]\d{2}[A-Z]{2}\d{2}", d),
+                lambda d: re.findall("[A-Z]\d{2}[A-Z]{2}\d{2}", d) or [None],
                 sd.split(" - "))).pop() in drugs_codes, selected_drugs))
 
             if 'drugs_fld' in self._errors:
@@ -121,12 +137,13 @@ class ScenarioForm(forms.Form):
             self.cleaned_data["drugs_fld"] = valid_drugs
 
         selected_conditions = dict(self.data).get("conditions_fld")
+
         conditions_names = list(map(lambda el: el.name, self.all_conditions))
         conditions_codes = list(map(lambda el: el.code, self.all_conditions))
 
         if selected_conditions:
             # If not found index is -1, max is used to assure that in case one of the two splitted parts
-            # was found, then this part was chosen to find suspected drug
+            # was found, then this part was chosen to find suspected condition/event
             conditions_indexes = [(max(list(map(lambda el: conditions_names.index(el) if el in conditions_names \
                 else conditions_codes.index(el) if el in conditions_codes else -1, sd.split(" - ")
                                                 )))) for sd in selected_conditions]
@@ -179,8 +196,8 @@ class IRForm(forms.Form):
                                  widget=forms.Select)
 
 
-    age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
-    ext_age = forms.IntegerField(label=_(""), required=False, initial=None, min_value=0, max_value=200)
+    age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
+    ext_age = forms.IntegerField(label="", required=False, initial=None, min_value=0, max_value=200)
 
     genders = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "gender-fld"}),
                                         initial=[],
@@ -227,6 +244,10 @@ class IRForm(forms.Form):
     def is_valid(self):
         self.fields.get("study_start_date").required = self.data.get("add_study_window")
         self.fields.get("study_end_date").required = self.data.get("add_study_window")
+
+        if not self.data.get("genders"):
+            self.add_error(None, _("Δεν έχει οριστεί συγκεκριμένο κριτήριο για το φύλο!"))
+
         return super(IRForm, self).is_valid()
 
     def clean(self):
@@ -235,6 +256,9 @@ class IRForm(forms.Form):
         if not self.cleaned_data.get("add_study_window"):
             self.cleaned_data["study_start_date"] = None
             self.cleaned_data["study_start_date"] = None
+
+        if self.cleaned_data.get("age_crit") not in ["bt", "!bt"]:
+            self.cleaned_data["ext_age"] = None
 
         return self.cleaned_data
 
@@ -275,7 +299,8 @@ class CharForm(forms.Form):
 
         for k in self.fields.keys():
             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
-            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+            self.fields[k].widget.attrs["disabled"] = bool(self.read_only)
+
 
 class PathwaysForm(forms.Form):
     combination_window = forms.ChoiceField(choices=[(i,i) for i in [1, 3, 5, 7, 10, 14, 30]], initial=0, required=False,
@@ -306,7 +331,7 @@ class PathwaysForm(forms.Form):
             ok = k.replace("_", " ").title().replace(" ", "")
             ok = ok[0].lower() + ok[1:]
             self.initial[k] = self.options.get(ok)
-            self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+            self.fields[k].widget.attrs["disabled"] = bool(self.read_only)
 
 
 # class TinyMCEWidget(TinyMCE):
@@ -316,7 +341,7 @@ class PathwaysForm(forms.Form):
 
 class NotesForm(forms.ModelForm):
     content = forms.CharField(label="", required=False,
-                              widget=CKEditorWidget(attrs={'required': False,}))
+                              widget=CKEditorWidget(attrs={"required": False,}))
 
     # content = forms.CharField(
     #     label="",
@@ -326,34 +351,121 @@ class NotesForm(forms.ModelForm):
     #     )
     # )
 
-
     class Meta:
         model = Notes
-        fields = ['content']
+        fields = ["content"]
 
 
-# class SocialMediaForm(forms.Form):
-#
-#     features = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"class": "char-features-fld"}),
-#                                         initial=[],
-#                                         label=_("Χαρακτηριστικά ανάλυσης:"),
-#                                         required=False,
-#                                         choices=[])
-#
-#     def __init__(self, *args, **kwargs):
-#         self.options = kwargs.pop("char_options")
-#         self.read_only = kwargs.pop("read_only")
-#         super(CharForm, self).__init__(*args, **kwargs)
-#
-#         analysis_features = ohdsi_wrappers.get_char_analysis_features()
-#
-#         self.features_descriptions = dict([(el.get("name"), el.get("description")) for el in analysis_features])
-#         avail_features = ["Drug Group Era Long Term", "Charlson Index",
-#                           "Demographics Age Group", "Demographics Gender"]
-#
-#         self.fields["features"].choices = sorted([(f.get("id"), f.get("name")) for f in analysis_features
-#                                                   if f.get("name") in avail_features], key=lambda x: x[1])
-#
-#         for k in self.fields.keys():
-#             self.initial[k] = self.options.get(k)  # if self.options else [c[1] for c in self.fields["features"].choices]
-#             self.fields[k].widget.attrs['disabled'] = bool(self.read_only)
+class IndividualCaseForm(forms.ModelForm):
+    # drugs_fld = forms.MultipleChoiceField(choices=[],
+    #                                       required=False,
+    #                                       label=_("Φάρμακο/Φάρμακα:"),
+    #                                       widget=CustomSelect2TagWidget)
+
+    scenarios = forms.MultipleChoiceField(
+        choices=[],
+        required=True,
+        widget=PMSelect2TagWidget, label=''
+    )
+    # scenarios = forms.ChoiceField(choices=Scenario.objects.all(), required=True,
+    #                                    label=_("Σενάριο:"), widget=Select2Widget)
+
+    questionnaires = forms.IntegerField()
+
+    class Meta:
+        model = IndividualCase
+        fields = ["indiv_case_id", "scenarios", "questionnaires"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super(IndividualCaseForm, self).__init__(*args, **kwargs)
+        self.fields["indiv_case_id"].label = _("Αναγνωριστικό Αναφοράς Ατομικού Περιστατικού:")
+        self.fields["scenarios"].choices = [(sc.pk, sc.title) for sc in Scenario.objects.filter(owner=self.user
+                                                                                                ).order_by("title")]
+
+    def clean_questionnaires(self):
+        """ Overriding - extending clean_questionnaires module for questionnaires that have just been created
+        """
+
+        return Questionnaire.objects.filter(id=self.cleaned_data.get("questionnaires"))
+
+    def is_valid(self):
+        """ Overriding-extending is_valid module
+        """
+
+        super(IndividualCaseForm, self).is_valid()
+
+        if (not self.cleaned_data.get("indiv_case_id")) or not self.cleaned_data.get("scenarios"):
+            self.add_error(None, _("Τα πεδία που αφορούν το αναγνωριστικό αναφοράς ατομικού περιστατικού και το συσχετιζόμενο " 
+                                   "σενάριο πρέπει να συμπληρωθούν σωστά, και υποχρεωτικά και τα δύο"))
+
+        return not self._errors
+
+
+class QuestionnaireForm(forms.ModelForm):
+    q1 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Υποψιάζεστε κάποια ανεπιθύμητη δράση φαρμάκου;")
+    )
+    q2 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Το συμβάν εμφανίστηκε μετά τη χορήγηση του φαρμάκου ή την αύξηση της δόσης;")
+    )
+    q3 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Τα προϋπάρχοντα συμπτώματα επιδεινώθηκαν από το φάρμακο;")
+    )
+    q4 = forms.ChoiceField(
+        choices=((True, _("Ναι ή Μη προσδιορίσιμο")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Βελτιώθηκε το συμβάν (± θεραπεία) όταν διακόπηκε το φάρμακο ή μειώθηκε η δόση;")
+    )
+    q5 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Σχετίστηκε το συμβάν με μακροχρόνια αναπηρία ή βλάβη;")
+    )
+    q6 = forms.ChoiceField(
+        choices=((True, _("Χαμηλή")), (False, _("Υψηλή ή Αβέβαιο"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Ποια είναι η πιθανότητα το συμβάν να οφείλεται σε υποκείμενο νόσημα;")
+    )
+    q7 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Υπάρχουν αντικειμενικά στοιχεία που να υποστηρίζουν την ύπαρξη αιτιολογικού μηχανισμού της "
+                "ανεπιθύμητης ενέργειας φαρμάκου (ΑΕΦ);")
+    )
+    q8 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Υπήρξε εκ νέου εμφάνιση της ΑΕΦ μετά την επαναχορήγηση του φαρμακου (θετική επαναπρόκληση);")
+    )
+    q9 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Υπάρχει ιστορικό του ίδιου συμβάντος με αυτό το φάρμακο στον συγκεκριμένο ασθενή;")
+    )
+    q10 = forms.ChoiceField(
+        choices=((True, _("Ναι")), (False, _("Όχι"))),
+        widget=forms.RadioSelect(), required=False,
+        label=_("Έχει υπάρξει προηγούμενη αναφορά του συγκεκριμένου συμβάντος με αυτό το φάρμακο;")
+    )
+
+    class Meta:
+        model = Questionnaire
+
+        fields = ("q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10")
+
+    def __init__(self, *args, **kwargs):
+        super(QuestionnaireForm, self).__init__(*args, **kwargs)
+        for i in range(1, 11):
+            self.fields["q{}".format(i)].label = "{}. {}".format(i, self.fields["q{}".format(i)].label)
+
+    def save(self, commit=True):
+        return super(QuestionnaireForm, self).save(commit=commit)
+
+
