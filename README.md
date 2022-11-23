@@ -85,6 +85,6 @@ On our repository we provide a sample WSGI file ( `gentelella/gentelella/wsgi.py
 [@Dimstella](https://github.com/Dimstella)
 [@ckakalou](https://github.com/ckakalou)
 
-###### License
+## License
 Licensed under the Apache License, Version 2.0 (the "License") modified with
 Commons Clause Restriction -- see the [LICENSE](LICENSE.txt) file for details
