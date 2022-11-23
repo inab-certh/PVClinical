@@ -1,0 +1,44 @@
+<heading-title params="name: 'Home', icon: 'home', theme: 'dark'"></heading-title>
+
+<div class="paddedWrapper">
+	<div class="home-welcome">
+		<div class="heading">Welcome to ATLAS.</div>
+		<div> ATLAS is an open source application developed as a part of <a href="http://www.ohdsi.org" target="_new">OHDSI</a> intended to provide a unified interface to patient level data and analytics.</div>
+	</div>
+	<div class="home-documentation">
+		<div class="heading">Documentation</div>
+		<a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas"><i class="fa fa-fw fa-3x fa-book" aria-hidden="true"></i></a>The ATLAS user guide can be found <a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas">here</a>.
+	</div>
+
+	<div class="heading">
+		Getting Started
+	</div>
+	<div class="home-getting-started">
+		<div>
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: $root.currentCohortDefinition() != undefined || !canCreateCohort()}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
+		</div>
+		<div>
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: !canSearch()}">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world
+		</div>
+	</div>
+
+	<div class="heading">Release Notes</div>
+	<div class="release-notes">
+		<div class="paddedWrapper">
+			<a href="https://github.com/OHDSI/Atlas/releases" target="_new">ATLAS Version 2.7.2 Release Notes</a>
+			<br/>
+			<a href="https://github.com/OHDSI/WebAPI/releases" target="_new">WebAPI Version 2.7.2 Release Notes</a>
+		</div>
+
+		<div class="paddedWrapper">
+			<br/>This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions:
+		</div>
+
+		<div class="paddedWrapper github-issue-container" data-bind="foreach:github_status">
+			<div class="github-issue">
+				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
+				<img class="github-avatar" data-bind="attr:{src: user.avatar_url}" />
+			</div>
+		</div>
+	</div>
+</div>

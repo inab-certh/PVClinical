@@ -1,0 +1,125 @@
+body{
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
+  color:#667!important;
+  /*color:#73879C!important;
+  font-style: italic!important;
+  "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important*/
+}
+.popover{
+  max-width: 100%!important;
+  width:500px!important;
+}
+.shiny-plot-output, .datatables {
+  color:#667!important;
+}
+.tooltip > .tooltip-inner {
+  background-color: #FFFFFF;
+  color: #000000;
+  border: 1px solid black;
+  padding: 15px;
+  font-size: 12px;
+  opacity:1;
+   width:500px!important;
+}
+
+.js-plotly-plot .plotly, .js-plotly-plot .plotly div {
+  font-family:"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif!important;
+}
+
+#safetyreportid-label {
+  font-weight: 100!important;
+}
+
+#currec{
+  font-size: 13px;
+}
+
+.action-button {
+   background-color:#2A3F54;
+   border-color: :#2A3F54;
+  color: #FFFFFF;
+}
+
+.btn-info {
+  background-color:#2A3F54;
+   border-color: :#2A3F54;
+  color: #FFFFFF;
+}
+
+/* Tooltip on top */
+ .tooltip-arrow {
+   background-color: blue;
+  border-bottom: 1px red;
+}
+.tooltip{
+  top: -74px; left: 144px; display: block; width:500px!important;
+  opacity:1;
+}
+
+.nav.nav-tabs>li.active>a {
+    color: blue!important;
+}
+a {
+    color: #5A738E!important;
+    text-decoration: none!important;
+    text-decoration-line: none!important;
+    text-decoration-style: initial!important;
+    text-decoration-color: initial!important;
+}
+.plotly{
+  margin-top:40px;
+  /*height:280px!important;*/
+}
+.loader {
+  background:#2A3F54;
+  color:#2A3F54;
+}
+
+.paneltitle {
+  font-size: 25px;
+}
+
+#cpmeanplot img{
+  /*padding-right:20px;
+  width:420px!important;
+  height:350px!important;*/
+}
+.dataTables_length, .dataTables_filter, .paginate_button, .paginate_button a,a.paginate_button, .dataTables_info, .dataTables_paginate, .dataTables_wrapper .dataTables_paginate .paginate_button  {
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+  color:#667!important;
+  font-size:13px!important;
+}
+.dataTable, .plotly{
+  font-size:13px!important;
+}
+.dygraph-legend{
+  font-size:13px !important;
+}
+.dygraph-title{
+  color:#667!important;
+  font-size:13px !important;
+  font-weight: normal!important;
+}
+
+.datatables label,th{
+  font-weight:normal!important; 
+}
+.dataTable td,th{
+  color:#5A738E!important;
+}
+.btn.btn-info {
+  margin-bottom:20px;
+  pointer-events: none;
+}
+.alert-info{
+  width:80%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.custom-title {
+  font-family: Arial!important;
+}

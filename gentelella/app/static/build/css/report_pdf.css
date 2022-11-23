@@ -26,13 +26,13 @@ table       { margin-bottom: 1em; width:50%; }
 th          { font-weight: bold; }
 thead th    { background: #bcc8d4; }
 th,td,caption { padding: 4px 10px 4px 5px; }
-p { font-weight: bold; }
+/*p { font-weight: bold; }*/
 
 .view_title {
   page-break-inside: avoid;
   font-size: 20px;
   font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
 }
 
 .info_title {
@@ -43,55 +43,56 @@ p { font-weight: bold; }
   background-color: #bcc8d4;
   padding: 20px;
   font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
  }
 
 .drug_event {
   padding-left: 10px;
   font-size: 26px;
   font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
   text-align: center;
 }
 
 .workspace {
-  width: 100%;
-  color: #0d0d0d;
-  font-size: 20px;
-  text-align: center;
-  background-color: #bcc8d4;
-  padding: 25px;
-  font-weight: bold;
-  page-break-before: always;
-  font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    color: #0d0d0d;
+    font-size: 20px;
+    text-align: center;
+    background-color: #bcc8d4;
+    padding: 25px;
+    margin-top: 100px;
+    font-weight: bold;
+    page-break-before: always;
+    /*font-family: Arial, Helvetica, sans-serif;*/
   }
 #review {
  text-align: center;
  color: #0d0d0d;
  font-weight: bold;
  font-size: 36px;
- font-family: Arial, Helvetica, sans-serif;
+ /*font-family: Arial, Helvetica, sans-serif;*/
  }
 
  subt {
   font-size: 16px;
   font-weight: bold;
   margin-left: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
  }
 
 subt1 {
   font-size: 18px;
   font-weight: bold;
   margin-left: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
  }
 
 div.pers-info {
     padding: 1.7rem;
     color: #0d0d0d;
     width: 100%;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
 }
 
 div.pers-info>span.pers-label {
@@ -122,13 +123,19 @@ div.pers-info>span.pers-val {
   word-break: keep-all;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
+}
+
+.notes_content>p {
+    font-weight: unset;
 }
 
 .details{
- font-family: Arial, Helvetica, sans-serif;
- padding-left: 20px;
- font-size: 16px;
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 16px;
+    text-align: justify;
 }
 
 .fig{
@@ -137,15 +144,15 @@ div.pers-info>span.pers-val {
   font-weight: bold;
   font-style: bold;
   padding-left: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
  }
 
 .final-note{
     word-wrap: break-word;
     font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
     padding-left: 20px;
-    padding-left: 20px;
+    padding-right: 20px;
     padding-top: 40px;
 }
 
@@ -161,7 +168,7 @@ textarea {
 
 .paper_title {
   font-size: 19px;
-  font-family: Arial, Helvetica, sans-serif;
+  /*font-family: Arial, Helvetica, sans-serif;*/
   padding-left: 20px;
 }
 
@@ -176,8 +183,19 @@ textarea {
 
 div.report-citation {
     font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
 	margin: 1rem 1rem;
+}
+
+div.report-citation .pub-authors {
+    word-break: normal;
+    /*overflow:hidden;*/
+    /*white-space:nowrap;*/
+    /*text-overflow: " et al.";*/
+}
+
+div.report-citation div {
+    display: inline;
 }
 
 /*.workspace + .tg > div > img {*/
@@ -186,4 +204,5 @@ div.report-citation {
 
 #editFnote {
     margin-top: 2rem;
+    border-radius: 5px;
 }

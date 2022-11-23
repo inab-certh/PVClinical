@@ -1,86 +1,24 @@
 {% load flags %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load custom_tags %}
 
 
-
 {% block stylesheets %}
-<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
-<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
-<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
-<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
-<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href='{% static "vendors/fontawesome-free-5.15.1-web/css/all.css" %}' rel="stylesheet">
-<link href='{% static "vendors/font-awesome/css/font-awesome.min.css" %}' rel="stylesheet">
-<link href='{% static "vendors/bootstrap/dist/css/bootstrap.min.css" %}' rel="stylesheet">
-<link href='{% static "vendors/bootstrap-daterangepicker/daterangepicker.css" %}' rel="stylesheet">
+<link href="{% static 'vendors/fontawesome-free-5.15.1-web/css/all.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+
+<link href="{% static 'build/css/questionnaire.css' %}" rel="stylesheet">
 
 
-
-<style>
-ul li::marker {
-  color: white;
-}
-p{
-    font-size: 16px;
-    font-weight: bold;
-    font-family: Arial;
-    color: #535353;
-    padding-top:10px;
-}
-ul{
-class="form-inline"
-    font-size: 14px;
-    font-weight: bold;
-    font-family: Arial;
-    color: #535353;
-}
-
-#info{
-    text-align: left;
-    margin-top:20px;
-}
-
-.quest_title{
-        font-size: 18px;
-        font-weight: bold;
-        font-family: Arial;
-        color: #535353;
-        margin-bottom:20px;
-    }
-    .result{
-       color: #C8C8C8;
-
-    }
-      box-sizing: border-box;
-}
-
-.row {
-  display: flex;
-  margin-left:-5px;
-  margin-right:-5px;
-}
-
-.column {
-  flex: 50%;
-  padding: 5px;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-}
-
-th, td {
-  text-align: left;
-  padding: 16px;
-  font-size: 20px;
-
-}
-</style>
 {% endblock stylesheets %}
 
 
@@ -88,35 +26,35 @@ th, td {
 {% block content %}
 <div style="padding-left:20px">
     <div id="info" class="text-muted font-13 m-b-30"> <i class="fas fa-info-circle fa-1.5x"></i>
-                                The following questions based on liverpool algorithm for
-                                determining the likelihood of whether an ADR (adverse drug reaction) is actually due
-                                to the drug rather than the result of other factors.
+        {% trans "Οι ακόλουθες ερωτήσεις βασίζονται στον αλγόριθμο Liverpool, προκειμένου να προσδιοριστεί η πιθανότητα, κάποια ανεπιθύμητη δράση να οφείλεται στο φάρμακο λήψης, και όχι σε κάποιον άλλο παράγοντα" %}
+        (<a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0028096" target="_blank">Development and Inter-Rater Reliability of the Liverpool Adverse Drug Reaction Causality Assessment Tool</a>).
     </div>
 <br>
 
-    <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp Questions:</div>
+    <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp {% trans "Ερωτήσεις" %}:</div>
     <form method="POST" class="post-form">
         {% csrf_token %}
 
         {{ form.as_p }}
     <br>
     <br>
-        <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp Result:</div>
+        <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp {% trans "Αποτέλεσμα" %}:</div>
 
     <div class="row">
       <div class="column">
         <table>
           <tr>
-            <th class="result" id="resultDef"><i class="fas fa-check"></i>Definite</th>
-            <th class="result" id="resultPro"><i class="fas fa-check"></i>&nbsp  Probable </th>
-            <th class="result" id="resultPo"><i class="fas fa-check"></i>&nbsp  Possible</th>
-            <th class="result" id="resultUn"><i class="fas fa-check"></i>&nbsp  Unlikely</th>
+            <th class="result" id="resultDef"><i class="fas fa-check"></i> {% trans "Βέβαιο" %}</th>
+            <th class="result" id="resultPro"><i class="fas fa-check"></i> {% trans "Πιθανό" %} </th>
+            <th class="result" id="resultPo"><i class="fas fa-check"></i> {% trans "Ενδεχόμενο" %}</th>
+            <th class="result" id="resultUn"><i class="fas fa-check"></i> {% trans "Απίθανο" %}</th>
 
           </tr>
         </table></div></div>
     <br>
     <br>
-        <button  id="save_questionnaire" type="submit" class="save btn btn-primary">Save</button>
+        <button  id="saveQuestionnaire" type="submit" class="save btn btn-primary" disabled>
+            <i class="fa fa-save"></i><span class="hidden-xs"> {% trans "Αποθήκευση" %}</span></button>
     </form>
     <br>
 
@@ -125,432 +63,6 @@ th, td {
 {% endblock %}
 
 {% block javascripts%}
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-<script>
-$(document).ready(function(){
-
-var result="";
-
-    $("[type='radio']").prop("disabled", true);
-    $("#id_q1_0").prop("disabled", false);
-    $("#id_q1_1").prop("disabled", false);
-    $("ul").css("color", "#C8C8C8");
-    $("#id_q1").css("color", "#535353");
-    $("p").find("label").css("color", "#C8C8C8");
-    $("p").find("label[for=id_q1_0]").css("color", "#535353");
-    $("button").prop("disabled", false);
-
-       $("#id_q1_0").change(function () {
-
-        $("#id_q2_0").prop("disabled", false);
-        $("#id_q2_1").prop("disabled", false);
-        $("#id_q2").css("color", "#535353");
-        $("label[for=id_q2_0]").css("color", "#535353");
-        $("label[for=id_q2_1]").css("color", "#535353");
-        $("#resultUn").css("color", "#C8C8C8");
-    });
-
-    $("#id_q1_1").change(function () {
-
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("label[for=id_q2_0]").css("color", "#C8C8C8");
-        $("label[for=id_q2_1]").css("color", "#C8C8C8");
-        $(document).scrollTop($(document).height());
-        $("#resultUn").css("color", "#535353");
-        result=$("#resultUn").text();
-
-
-    });
-
-    $("#id_q2_0").change(function () {
-        name2=$(this).data('name');
-
-        $("#id_q4_0").prop("disabled", false);
-        $("#id_q4_1").prop("disabled", false);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("label[for=id_q4_0]").css("color", "#535353");
-        $("label[for=id_q4_1]").css("color", "#535353");
-        $("label[for=id_q3_0]").css("color", "#C8C8C8");
-        $("label[for=id_q3_1]").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-    });
-
-    $("#id_q2_1").change(function () {
-
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", false);
-        $("#id_q3_1").prop("disabled", false);
-        $("label[for=id_q4_0]").css("color", "#C8C8C8");
-        $("label[for=id_q4_1]").css("color", "#C8C8C8");
-        $("label[for=id_q3_0]").css("color", "#535353");
-        $("label[for=id_q3_1]").css("color", "#535353");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-    });
-
-
-    $("#id_q3_1").change(function () {
-
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#resultUn").css("color", "#535353");
-        $("label[for=id_q4_0]").css("color", "#C8C8C8");
-        $("label[for=id_q4_1]").css("color", "#C8C8C8");
-        $(document).scrollTop($(document).height());
-        result=$("#resultUn").text();
-
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-
-    });
-
-    $("#id_q3_0").change(function () {
-
-        $("#id_q4_0").prop("disabled", false);
-        $("#id_q4_1").prop("disabled", false);
-        $("label[for=id_q4_0]").css("color", "#535353");
-        $("label[for=id_q4_1]").css("color", "#535353");
-        $("#resultUn").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-
-    });
-
-    $("#id_q4_0").change(function () {
-
-        $("#id_q6_0").prop("disabled", false);
-        $("#id_q6_1").prop("disabled", false);
-        $("label[for=id_q6_0]").css("color", "#535353");
-        $("label[for=id_q6_1]").css("color", "#535353");
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("label[for=id_q5_0]").css("color", "#C8C8C8");
-        $("label[for=id_q5_1]").css("color", "#C8C8C8");
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-    });
-
-    $("#id_q4_1").change(function () {
-
-        $("#id_q5_0").prop("disabled", false);
-        $("#id_q5_1").prop("disabled", false);
-        $("label[for=id_q5_0]").css("color", "#535353");
-        $("label[for=id_q5_1]").css("color", "#535353");
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("label[for=id_q6_0]").css("color", "#C8C8C8");
-        $("label[for=id_q6_1]").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-
-    });
-
-
-    $("#id_q5_0").change(function () {
-
-        $("#id_q6_0").prop("disabled", false);
-        $("#id_q6_1").prop("disabled", false);
-        $("label[for=id_q6_0]").css("color", "#535353");
-        $("label[for=id_q6_1]").css("color", "#535353");
-        $("#resultPo").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-    });
-
-    $("#id_q5_1").change(function () {
-
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("label[for=id_q6_0]").css("color", "#C8C8C8");
-        $("label[for=id_q6_1]").css("color", "#C8C8C8");
-        $("#resultPo").css("color", "#535353");
-        $(document).scrollTop($(document).height());
-        result=$("#resultPo").text();
-
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-    });
-
-    $("#id_q6_0").change(function () {
-
-        $("#id_q8_0").prop("disabled", false);
-        $("#id_q8_1").prop("disabled", false);
-        $("label[for=id_q8_0]").css("color", "#535353");
-        $("label[for=id_q8_1]").css("color", "#535353");
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-        $("label[for=id_q7_0]").css("color", "#C8C8C8");
-        $("label[for=id_q7_1]").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-    });
-
-    $("#id_q6_1").change(function () {
-
-        $("#id_q7_0").prop("disabled", false);
-        $("#id_q7_1").prop("disabled", false);
-        $("label[for=id_q7_0]").css("color", "#535353");
-        $("label[for=id_q7_1]").css("color", "#535353");
-        $("#id_q8_0").prop("disabled", true);
-        $("#id_q8_1").prop("disabled", true);
-        $("label[for=id_q8_0]").css("color", "#C8C8C8");
-        $("label[for=id_q8_1]").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-    });
-
- $("#id_q7_0").change(function () {
-
-        $("#id_q9_0").prop("disabled", false);
-        $("#id_q9_1").prop("disabled", false);
-        $("label[for=id_q9_0]").css("color", "#535353");
-        $("label[for=id_q9_1]").css("color", "#535353");
-        $("#resultPo").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-    });
-
- $("#id_q7_1").change(function () {
-
-        $("#id_q9_0").prop("disabled", true);
-        $("#id_q9_1").prop("disabled", true);
-        $("label[for=id_q9_0]").css("color", "#C8C8C8");
-        $("label[for=id_q9_1]").css("color", "#C8C8C8");
-        $("#resultPo").css("color", "#535353");
-        $(document).scrollTop($(document).height());
-        result=$("#resultPo").text();
-
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-    });
-
- $("#id_q8_0").change(function () {
-
-        $("#id_q9_0").prop("disabled", true);
-        $("#id_q9_1").prop("disabled", true);
-        $("label[for=id_q9_0]").css("color", "#C8C8C8");
-        $("label[for=id_q9_1]").css("color", "#C8C8C8");
-        $("#resultDef").css("color", "#535353");
-        $(document).scrollTop($(document).height());
-        result=$("#resultDef").text();
-
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-    });
-
-$("#id_q8_1").change(function () {
-
-    $("#id_q9_0").prop("disabled", false);
-    $("#id_q9_1").prop("disabled", false);
-    $("label[for=id_q9_0]").css("color", "#535353");
-    $("label[for=id_q9_1]").css("color", "#535353");
-    $("#resultDef").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-});
-
- $("#id_q9_0").change(function () {
-
-        $("#id_q10_0").prop("disabled", true);
-        $("#id_q10_1").prop("disabled", true);
-        $("label[for=id_q10_0]").css("color", "#C8C8C8");
-        $("label[for=id_q10_1]").css("color", "#C8C8C8");
-        $("#resultDef").css("color", "#535353");
-        $(document).scrollTop($(document).height());
-        result=$("#resultDef").text();
-
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-        $("#id_q8_0").prop("disabled", true);
-        $("#id_q8_1").prop("disabled", true);
-    });
-
- $("#id_q9_1").change(function () {
-
-        $("#id_q10_0").prop("disabled", false);
-        $("#id_q10_1").prop("disabled", false);
-        $("label[for=id_q10_0]").css("color", "#535353");
-        $("label[for=id_q10_1]").css("color", "#535353");
-        $("#resultDef").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-        $("#id_q8_0").prop("disabled", true);
-        $("#id_q8_1").prop("disabled", true);
-    });
-
- $("#id_q10_0").change(function () {
-
-        $("#resultPro").css("color", "#535353");
-        $("#resultPo").css("color", "#C8C8C8");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-        $("#id_q8_0").prop("disabled", true);
-        $("#id_q8_1").prop("disabled", true);
-        $("#id_q9_0").prop("disabled", true);
-        $("#id_q9_1").prop("disabled", true);
-
-    });
-
- $("#id_q10_1").change(function () {
-
-        $("#resultPro").css("color", "#C8C8C8");
-        $("#resultPo").css("color", "#535353");
-        $("#id_q1_0").prop("disabled", true);
-        $("#id_q1_1").prop("disabled", true);
-        $("#id_q2_0").prop("disabled", true);
-        $("#id_q2_1").prop("disabled", true);
-        $("#id_q3_0").prop("disabled", true);
-        $("#id_q3_1").prop("disabled", true);
-        $("#id_q4_0").prop("disabled", true);
-        $("#id_q4_1").prop("disabled", true);
-        $("#id_q5_0").prop("disabled", true);
-        $("#id_q5_1").prop("disabled", true);
-        $("#id_q6_0").prop("disabled", true);
-        $("#id_q6_1").prop("disabled", true);
-        $("#id_q7_0").prop("disabled", true);
-        $("#id_q7_1").prop("disabled", true);
-        $("#id_q8_0").prop("disabled", true);
-        $("#id_q8_1").prop("disabled", true);
-        $("#id_q9_0").prop("disabled", true);
-        $("#id_q9_1").prop("disabled", true);
-
-    });
-
-    $("#save_questionnaire").click(function() {
-            $("input").prop("disabled", false);
-
-    });
-
-            });
-
-
-</script>
-
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'build/js/questionnaire.js' %}"></script>
 {% endblock javascripts%}

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 
 from app.retrieve_meddata import KnowledgeGraphWrapper
@@ -19,7 +20,7 @@ class AppConfig(AppConfig):
     def ready(self):
         knw = KnowledgeGraphWrapper()
         knw.cache_drugs()
-        # knw.cache_conditions()
+        knw.cache_conditions()
 
         domains = ["drug", "condition"]
 

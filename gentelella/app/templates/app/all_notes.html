@@ -1,6 +1,7 @@
 {% extends "app/base_site.html" %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 
 
 {% block title %} AllNotes {% endblock title %}
@@ -39,69 +40,41 @@
                             <th>{% trans "Φόρμα" %}</th>
                             <th >{% trans "Περιεχομενο" %}</th>
                             <th>{% trans "Επεξεργασία" %}</th>
+                            <th>{% trans "Διαγραφή" %}</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for note in notesforscenario %}
-                        {% if note.workspace != PubMed %}
+                        {% for note in user_notes %}
+                        {% firstof  abbrv_views|get_item:note.wsview note.wsview as note_wsview %}
                         <tr>
-                            <td>{{ note.scenario_title }}</td>
+                        {% trans note_wsview as trans_note_wsview %}
+                            <td>{% if note.scenario %}{{ note.scenario.title }}{% else %}{% trans "Ανεξάρτητο Σεναρίου" %}{% endif %}</td>
 
                             <td>{{ note.note_datetime}}</td>
 
                             <td class="cen">{{ note.workspace }}</td>
 
-                            <td ><p class="notesellipsis">{{ note.wsview_title }}</p></td>
+                            <td ><p class="notesellipsis">{{ note_wsview }}</p></td>
 
                             <td><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
                             <td class="cen">
-                                <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
-                                    <i class="fa fa-edit"></i>
-                                </button>
+                                {% if note.scenario %}
+                                    <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' sc_id=note.scenario.id ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}_{{ note.scenario.id }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                {% else %}
+                                    <button class="btn notes-btn btn-white" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}" data-id="{{ note.workspace|trans_to:'en'|underscore_char:' ' }}_notes_{{ note_wsview|trans_to:'en'|underscore_char:' ' }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                {% endif %}
                             </td>
-                        </tr>
-                        {% endif%}
-                        {% endfor %}
-
-                        {% for note in notespubmed %}
-                        <tr>
-                            <td>{{ note.scenario_title }}</td>
-
-                            <td>{{ note.created }}</td>
-
-                            <td class="cen">{{ note.workspace }}</td>
-
-                            <td><p class="notesellipsis"> {{ note.title }} </p></td>
-
-                            <td><p class="notesellipsis"> {{ note.notes}}  </p></td>
-
-                            <td class="cen">
-                                <button  class="btn pm-notes-btn btn-white" type="button" name="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}"  id="pubMedNotesBtn{{ note.pmid }}_{{ note.scenario_id }}" data-toggle="modal" data-target="#pubMedNotesModal">
-                                    <i class="fa fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-                        {% for note in notesfornonescen %}
-                        <tr>
-                            <td>{{ note.scenario }}</td>
-
-                            <td>{{ note.note_datetime}}</td>
-
-                            <td class="cen">{{ note.workspace }}</td>
-
-                            <td><p class="notesellipsis">{{ note.wsview_title }}</p></td>
-
-                            <td ><p class="notesellipsis"> {{ note.content|striptags|safe }}</p></td>
-
-                            <td class="cen">
-                                <button class="btn notes-btn btn-white" type="button" data-url="{% url 'keep_notes' ws_id=note.workspace wsview_id=note.wsview %}", data-id="{{ note.workspace }}_notes_{{ note.wsview|cut:' ' }}_{{ note.scenario }}">
-                                    <i class="fa fa-edit"></i>
+                            <td>
+                                <button class="btn btn-outline delete-note-btn" data-toggle="modal" data-target="#noteDeleteConfirmModal" id="delNote{{forloop.counter}}" data-noteid="{{ note.id }}" type="button">
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
                         {% endfor %}
-
                         </tbody>
                     </table>
                 </div>
@@ -134,37 +107,91 @@
     </div>
 </div>
 
+
 {% endblock content %}
 
-                {% block javascripts %}
-                {{ block.super }}
-                <script src="/static/build/js/all_notes.js"></script>
-                <script>
-                    $(function() {
-                        $(".delete-sc-btn").on("click", function () {
-                            // On trash can button click, pass record id to modal confirm btn
-                            $("#confirmBtn").data("record", $(this).data("scid"));
+{% block modals %}
+    {{ block.super }}
+    {% trans "Επιβεβαίωση διαγραφής" as mod_title %}
+    {% trans "Είστε σίγουροι ότι επιθυμείτε τη διαγραφή της παρούσας καταχώρισης από το σύστημα;" as mod_body%}
+    {% trans "Επιβεβαίωση" as main_lbl%}
+    {% trans "Ακύρωση" as dismiss_lbl %}
+    {% trans "Εντάξει" as ok_lbl%}
+    {% trans "Πληροφορίες" as info_title %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="confirmModal" modal_id="noteDeleteConfirmModal" modal_title=mod_title modal_body=mod_body main_btn=main_lbl dismiss_btn=dismiss_lbl data_target="#noteDeleteInfoModal" %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="infoModal" modal_id="noteDeleteInfoModal" dismiss_btn=ok_lbl %}
+{% endblock modals%}
 
-                        })
-                    });
-                </script>
+{% block javascripts %}
+{{ block.super }}
+<script src="/static/build/js/all_notes.js"></script>
+<script>
+    $(function() {
+        $("#allNotesTbl").on("click", "[id*=delNote]", function() {
+            var note_id= $(this).data("noteid");
+            console.log(note_id);
 
-                <script src="/static/build/js/pv_literature.js"></script>
-                <script>
-                    var acc = document.getElementsByClassName("accordion");
-                    var i;
+            $("#noteDeleteConfirmModal #confirmBtn").click(function() {
+                $("#loaderOverlay").fadeIn();
 
-                    for (i = 0; i < acc.length; i++) {
-                        acc[i].addEventListener("click", function() {
-                            this.classList.toggle("active");
-                            var panel = this.nextElementSibling;
-                            if (panel.style.display === "block") {
-                                panel.style.display = "none";
-                            } else {
-                                panel.style.display = "block";
-                            }
+                $.ajax({
+                        url: "{% url 'del_note' %}",
+                        data: {"note_id": note_id},
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", $('input[name=csrfmiddlewaretoken]').val());
+                        }
+                })
+                    .always(function(xhr){
+                        console.log(xhr.status);
+                        $('#noteDeleteConfirmModal').modal('hide');
+                    })
+                    .done(function(data) {
+                        $("#loaderOverlay").fadeOut();
+                        $("#noteDeleteInfoModal .modal-body").text("{% trans 'Επιτυχής διαγραφή!'%}");
+                        $("#noteDeleteInfoModal").modal("show");
+
+                        /* Info modal is already open */
+                        $("#noteDeleteInfoModal").on("hidden.bs.modal", function (e) {
+                            window.location.replace("{% url 'allnotes' %}");
+                            //location.reload();
                         });
-                    }
-                </script>
 
-                {% endblock javascripts %}
+                        $("#dismissBtn").on("click", function () {
+                            $("#noteDeleteConfirmModal").modal("hide");
+                        });
+
+                    })
+                    .fail(function(resp){
+                        $("#noteDeleteInfoModal .modal-body").text("{% trans 'Αποτυχία διαγραφής!'%}");
+                        //$("#noteDeleteInfoModal .modal-body").text(resp.responseText);
+                        $('#noteDeleteInfoModal').modal("show");
+                        $('#noteDeleteInfoModal').on("hidden.bs.modal", function (e) {
+                            location.reload();
+
+                        });
+                    });
+            });
+        });
+
+    });
+</script>
+
+<script src="/static/build/js/pv_literature.js"></script>
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
+
+{% endblock javascripts %}
