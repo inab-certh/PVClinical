@@ -1,6 +1,6 @@
 {% extends 'app/base_site.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 
@@ -11,6 +11,12 @@
 {% block title %} {{title}} {% endblock %}
 {% block javascripts %}
     {{ block.super }}
+	<script>
+		$(".modalIframe").load(function () {
+			$(this).contents().find("body").css({"background-color": "transparent"});
+			$(this).contents().find("footer").css({"padding": "0 1rem"});
+		});
+	</script>
 {% endblock %}
 
 {% block content %}
@@ -36,9 +42,53 @@
 							{% endfor %}
 						{% endif %}
 
+						{% if scenario %}
+							<div class="scenario-info scenario-details">
+								{% trans "Σενάριο" %}: {{ scenario.title }}
+								<a class="has-popover ml-1" href="" data-html="true" data-content="
+								  <table class='table table-striped table-bordered dt-responsive dt-multilingual nowrap' cellspacing='0' width='100%'>
+										  <thead>
+											<tr>
+
+											  <th>{% trans 'Φάρμακο/Φάρμακα' %}</th>
+											  <th>{% trans 'Πάθηση/Παθήσεις' %}</th>
+
+											</tr>
+										  </thead>
+										  <tbody>
+											<tr>
+											  <td>
+												<table>
+												  {% for d in scenario.drugs.all %}
+													<tr>
+													  <td>{% firstof d.name d.code %}</td>
+													</tr>
+												  {% endfor %}
+												</table>
+											  </td>
+
+											  <td>
+												<table>
+												  {% for c in scenario.conditions.all %}
+													<tr>
+													  <td>{% firstof c.name c.code %}</td>
+													</tr>
+												  {% endfor %}
+												</table>
+											  </td>
+											</tr>
+										  </tbody>
+								  </table>
+								" data-placement="left" data-container="body" data-width="100%">
+								  <i class="fa fa-info-circle"></i>
+								</a>
+							</div>
+						{% endif %}
+
 						{% block formcontent %}
 						{% endblock %}
 
+						{% block toolbarbuttons %}
 						<div class="btn-group col-xs-10 col-lg-8 col-xs-offset-1 col-lg-offset-2 mt-4" role="group" aria-label="Toolbar buttons">
 							<button class="btn btn-primary col-xs-4" type="submit">
 							<i class="fa fa-save"></i>
@@ -49,7 +99,7 @@
 							</button>
 
 							<button class="btn btn-danger col-xs-4 d-{{visibility}}" {{delete_switch}} data-toggle="modal"
-									data-target="#confirmModal" type="button">
+									data-target="#scDeleteConfirmModal" type="button">
 									<i class="fa fa-eraser"></i>
 									<span class="visible-lg">
 										{% trans "Διαγραφή" %}
@@ -66,6 +116,7 @@
 							</a>
 
 						</div>
+						{% endblock %}
 					</form>
 				</div>
 			  </div>

@@ -1,0 +1,20 @@
+<heading-title params="name: 'Concept Sets', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+
+<div data-bind="css: classes({ extra: 'flexed' }), if: isAuthenticated() && hasAccess()">
+    <tabs params="
+        componentParams: $component.componentParams,
+        tabs: [
+            {
+                title: 'List',
+                componentName: 'conceptsets-list',
+                componentParams: componentParams,
+            },
+            {
+                title: 'Export',
+                componentName: 'conceptsets-export',
+                componentParams: componentParams,
+            }
+    ]"></tabs>
+</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

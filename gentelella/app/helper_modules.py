@@ -1,6 +1,9 @@
-import json
+import requests
+
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import HttpResponse
+
+from bs4 import BeautifulSoup
 
 
 def is_in_group(user, group):
@@ -102,10 +105,14 @@ def get_atc_children(parent, level, codes):
     children = list(set(filter(lambda el: el.startswith(parent), atc_by_level(level+1, codes))))
     # print(children)
 
+    # Show checkboxes only for level 4 and 5 of ATCs
     if level==4:
-        return sorted(list(map(lambda el: {"text": el}, children)), key = lambda v: v["text"])
+        return sorted(list(map(lambda el: {"text": el, "hideCheckbox": False, "selectable": True},
+                               children)), key = lambda v: v["text"])
 
     return sorted([{"text": ch,
+                    "selectable": level==3,
+                    "hideCheckbox": level!=3,
                     "nodes": get_atc_children(ch, level+1, codes)} for ch in children],
                   key = lambda v: v["text"])
 
@@ -121,7 +128,8 @@ def atc_hierarchy_tree(codes):
 
     # Append to/create the ATC tree for the specific codes (of drugs) we have
     for root in levels[0]:
-        atc_tree.append({"text": root, "nodes": get_atc_children(root, 1, codes)})
+        atc_tree.append({"text": root, "selectable": False, "hideCheckbox": True,
+                         "nodes": get_atc_children(root, 1, codes)})
 
     return atc_tree
 
@@ -219,4 +227,75 @@ def medDRA_hierarchy_tree(conditions):
 
     return medDRA_tree
 
+#Returns the PMCID code from MubMed papers
 
+def getPMCID(handle):
+    """ With a second query search PMC library for the PMCID of the papers.
+    :param handle: the response from PMC library
+    :return: PMCID if exists
+    """
+    html_response = handle.read()
+
+    soup = BeautifulSoup(html_response)
+    for script in soup(["script", "style"]):
+        script.extract()
+    text = soup.get_text()
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    listtxt = text.split('\n')
+    if 'pubmed_pmc' in listtxt:
+        pmcid = listtxt[-1]
+    else:
+        pmcid = " "
+    return pmcid
+
+
+def mendeley_pdf(access_token, title):
+    """ Search for the pdf of the results papers in user's Mendeley library.
+    :param access_token: user's access token
+    :param title: title of the search paper
+    :return: pdf link to mendeley library
+    """
+    access_token = access_token
+    response_doc = requests.get(
+        'https://api.mendeley.com/documents',
+        params={'title': title},
+        headers={'Authorization': 'Bearer {}'.format(access_token),
+                 'Accept': 'application/vnd.mendeley-document.1+json'},
+    )
+
+    document_id = []
+    doc = response_doc.json()
+    for item in doc:
+        document_id = item['id']
+        response_file = requests.get(
+            'https://api.mendeley.com/files',
+            params={'document_id': document_id},
+            headers={'Authorization': 'Bearer {}'.format(access_token),
+                     'Accept': 'application/vnd.mendeley-file.1+json'},
+        )
+        file = response_file.json()
+        for item in file:
+            file_id = item['id']
+
+        mendeley_pdf = 'https://www.mendeley.com/reference-manager/reader/' + document_id + '/' + file_id
+
+        return mendeley_pdf
+
+
+def sort_report_screenshots(ss_lst):
+    """ Sorting report screenshots according to our needs
+    :param ss_lst: the screenshots' list
+    :return: the sorted list
+    """
+
+    # The list should be ordered according to specific beginning of words
+    beginning_order_lst = ["irtable_", "irall_", "charlson_table_", "charlson_chart_", "demograph_table_",
+                           "demograph_chart_", "drug_table_", "drug_chart_", "gen_table_", "gen_chart_", "pre_table_",
+                           "pre_chart_", "pw_"]
+
+    return sorted(ss_lst, key=lambda x: int("".join(
+        map(lambda el: str(el[0]) if x.startswith(el[1]) else "", enumerate(beginning_order_lst)))))

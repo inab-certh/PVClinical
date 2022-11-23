@@ -39,6 +39,7 @@ $(function() {
 
 
     $("[name='drugs_fld']").change(function () {
+        $("#loaderOverlay").fadeIn();
         var selected = $(this).val();
 
         if(selected===null) {
@@ -57,17 +58,15 @@ $(function() {
         var checked_atcs = $("#atcTree").treeview('getChecked');
         var atcs_to_uncheck = checked_atcs.filter(function (ch_atc) {
             return ch_atc.text.length==7 && selected_atcs.indexOf(ch_atc.text) == -1;
-        })
+        });
 
-        $("#atcTree").treeview('uncheckNode', [atcs_to_uncheck]);
+        if(atcs_to_uncheck.length!==0) {
+            $("#atcTree").treeview('uncheckNode', [atcs_to_uncheck]);
+        }
 
-
-        var nodes_to_check = $("li.node-atcTree").map(function () {
-            var root = $("#atcTree").treeview('getNode', $(this).data("nodeid"));
-            return _getChildren(root).filter(function (node) {
+        var nodes_to_check = $("#atcTree").treeview("getNodes").filter(function (node) {
                 return (selected_atcs.indexOf(node.text) != -1);
-            });
-        }).toArray();
+        });
 
         $("#atcTree").treeview('checkNode', [nodes_to_check, {silent: true}]);
 
@@ -92,13 +91,12 @@ $(function() {
 
                 // Change synonyms and send trigger
                 $("#drugsSynonyms").html(options_arr).trigger("change");
-                console.log($("#drugsSynonyms"));
-
               },
               error: function (data) {
                 console.log("error "+data);
             }
         });
+        $("#loaderOverlay").fadeOut();
     });
 
     $("#drugsSynonyms").select2MultiCheckboxes({
@@ -122,16 +120,19 @@ $(function() {
         // If there is no parent, return empty array
         if (node.parentId === undefined) return [];
         var ancestors = [];
-
         while (node.parentId!=undefined) {
-            var parent = $("#atcTree").treeview('getNode', [node.parentId, {silent: true}]);
-            ancestors.push(parent);
+            var parent = $("#atcTree").treeview("getNodes").filter(function (cnode) {
+                return node.parentId ===  cnode.nodeId;
+            })[0];
+            // var parent = $("#atcTree").treeview("findNodes", ["^"+node.parentId+"$", "nodeId"])[0];
+            if(parent.selectable) {
+                ancestors.push(parent);
+            }
             node = parent;
-        };
 
+        }
         return ancestors;
     }
-
 
     $("#atcTree").treeview({
         data: atc_tree,
@@ -187,23 +188,27 @@ $(function() {
             check_nodes = check_nodes.concat(children_nodes);
 
             var siblings = $("#atcTree").treeview('getSiblings', [node, {silent: true}]);
-            var checked_siblings = siblings.length!=0?siblings.filter(function (s) {
+            var checked_siblings = siblings.length!==0?siblings.filter(function (s) {
                 return s.state.checked;
             }):[];
 
             if(siblings.length === checked_siblings.length) {
                 if(node.parentId!=undefined){
-                    var par = $("#atcTree").treeview('getNode', node.parentId);
-                    check_nodes.push(par);
+                    var par = $("#atcTree").treeview("findNodes", ["^"+node.parentId+"$", "nodeId"])[0];
+                    if(par.selectable === true){
+                        check_nodes.push(par);
+                    }
+
                 }
             }
 
             // Some are already checked, so just check the ones not already checked
-            var to_be_checked = check_nodes.length!=0?check_nodes.filter(function (n) {
+            var to_be_checked = check_nodes.length!==0?check_nodes.filter(function (n) {
                 return !n.state.checked;
             }):[];
-
-            $("#atcTree").treeview('checkNode', [to_be_checked]);
+            if(to_be_checked.length!==0) {
+                $("#atcTree").treeview('checkNode', [to_be_checked, {silent: true}]);
+            }
 
             /* Get only whole atc codes checked, find equivalent drugs and transfer
             those drugs to drugs' select2 box as selected drugs
@@ -212,18 +217,28 @@ $(function() {
             //         return $(this).val()}).toArray();
 
             // Add parent node in children_nodes_list
-            var candidate_nodes = children_nodes;
+            var candidate_nodes = children_nodes.map(function (node){
+                return node.nodeId;
+            });
             candidate_nodes.push(node.nodeId);
 
             // Selected node(s) at the last level atc code hierarchy, 7 digits value
             var selected_atcs_ids = candidate_nodes.filter(function (nodeId) {
-                return $("#atcTree").treeview('getNode', nodeId).text.length == 7;
+                var all_nodes = $("#atcTree").treeview("getNodes");
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$","nodeId"])[0].text.length == 7;
+                return all_nodes.filter(function (node){
+                    return node.nodeId === nodeId && node.text.length === 7;
+                });
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$","nodeId"])[0].text.length == 7;
             });
 
             var selected_atcs = selected_atcs_ids.map(function (nodeId) {
-                return $("#atcTree").treeview('getNode', nodeId).text
+                var all_nodes = $("#atcTree").treeview("getNodes");
+                return all_nodes.filter(function (node){
+                    return node.nodeId === nodeId;
+                })[0].text;
+                // return $("#atcTree").treeview("findNodes", ["^"+nodeId+"$", "nodeId"])[0].text;
             });
-            // console.log(selected_atcs);
 
             var selected_drugs_by_atc = all_drugs.filter(function (drug) {
                 return selected_atcs.indexOf(drug.split(' - ').pop()) != -1;
@@ -253,23 +268,26 @@ $(function() {
             $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
         },
         onNodeUnchecked: function (event, node) {
-
-            var children_nodes = _.map(_getChildren(node), 'nodeId');
-            $("#atcTree").treeview('uncheckNode', [children_nodes, {silent: true}]);
-
+            // $("#atcTree").treeview('uncheckNode', [children_nodes, {silent: true}]);
+            var uncheck_nodes = _getChildren(node);
             var ancestors = _getAncestors(node);
 
             // Some ancestors might already be unchecked
-            var to_be_unchecked = ancestors.length!=0?ancestors.filter(function (a) {
+            uncheck_nodes = uncheck_nodes.concat(ancestors.length!==0?ancestors.filter(function (a) {
                 return a.state.checked;
+            }):[]);
+
+            // Some to_be_unchecked nodes might already be unchecked
+            uncheck_nodes = uncheck_nodes.length!==0?uncheck_nodes.filter(function (n) {
+                return n.state.checked;
             }):[];
 
-            $("#atcTree").treeview('uncheckNode', [to_be_unchecked, {silent:true}]);
+            $("#atcTree").treeview('uncheckNode', [uncheck_nodes, {silent: true}]);
 
             // Append selected drugs to drugs_fld box
             var selected_fld_drugs = $("[name='drugs_fld']").val()==null?[]:$("[name='drugs_fld']").val();
             selected_fld_drugs = selected_fld_drugs.filter(function (drug) {
-                return drug.indexOf(node.text) == -1;
+                return drug.indexOf(node.text) === -1;
             });
 
             $("[name='drugs_fld']").val(selected_fld_drugs).trigger("change");
@@ -281,8 +299,8 @@ $(function() {
     $("[name='drugs_fld']").trigger("change");
 
     var medDRA_tree = get_medDRA_tree();
+
     var refresh = true;
-    // console.log(medDRA_tree);
     $("#loaderOverlay").fadeIn();
     $("#medDRATree").jstree({
         "core": {
@@ -297,10 +315,10 @@ $(function() {
                 }
     })
         .bind("ready.jstree", function (event, data) {
-            $("#loaderOverlay").fadeOut();
             var init_sel_conditions = get_conditions_ids($("[name='conditions_fld']").val());
             init_sel_conditions = init_sel_conditions?init_sel_conditions:[];
             check_open_leaves(init_sel_conditions);
+            $("#loaderOverlay").fadeOut();
         });
 
     var cur_sel_conditions = [];
@@ -320,8 +338,6 @@ $(function() {
         var new_sel_conditions = cur_sel_conditions.filter(
             x => prev_sel_conditions.indexOf(x) === -1);
 
-        // console.log("desel_conditions: "+ desel_conditions)
-
         // $("#medDRATree").jstree("deselect_node", desel_conditions);
         uncheck_close_leaves(desel_conditions);
         check_open_leaves(new_sel_conditions);
@@ -330,19 +346,16 @@ $(function() {
     $('#medDRATree')
       // listen for event
     .on('changed.jstree', function (e, data) {
-        // console.log(refresh);
-        // console.log(data.selected);
+
         $("#loaderOverlay").fadeIn();
         var i, j, r = [];
-        // console.log(e);
-        // console.log(data.selected.length);
-        // console.log($("[name='conditions_fld']").val().length);
+
         if (refresh) {
             for(i = 0, j = data.selected.length; i < j; i++) {
                 var node_txt = data.instance.get_node(data.selected[i]).text;
                 if(r.indexOf(node_txt) === -1){
                     r.push(node_txt);
-                    // console.log(data.instance.get_node(data.selected[i]).text);
+
                     if($("option:contains('"+node_txt+"')").length===0) {
                         $("[name='conditions_fld']").append(
                             "<option id=\""+node_txt+"\">"+node_txt+"</option>");
@@ -350,8 +363,6 @@ $(function() {
 
                 }
             }
-
-            // console.log(data.selected);
 
             $("[name='conditions_fld']").val(r).trigger("change");
 
@@ -404,6 +415,8 @@ $(function() {
         to retrieve all drugs */
         var conds_nodes_ids=[];
 
+        // $("#loaderOverlay").fadeIn();
+
         conditions = conditions?conditions:[];
 
         $.ajax({
@@ -420,7 +433,6 @@ $(function() {
             async: false
         }).done(function(data) {
             conds_nodes_ids = data.conds_nodes_ids;
-            // console.log(conds_nodes_ids);
         }).fail(function () {
             conds_nodes_ids = [];
         });
@@ -487,4 +499,3 @@ function move_to_selected_drugs() {
     // var all_selected_drugs = all_selected_drugs.concat(selected_synonyms.filter((item) => all_selected_drugs.indexOf(item) == -1));
     $("[name='drugs_fld']").val(all_selected_drugs).trigger("change");
 }
-

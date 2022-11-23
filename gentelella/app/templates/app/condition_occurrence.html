@@ -1,0 +1,45 @@
+{% extends 'app/data_source_views.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block javascripts %}
+    {{ block.super }}
+
+	<!-- Select 2 css -->
+	{{ form.media.js }}
+<!--    <script src='{% static "build/js/ir.js" %}'></script>-->
+{% endblock %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} {{title}} {% endblock %}
+{% block view_title %}{{ title }}{% endblock view_title %}
+{% block sliding_toolbar %}
+    <div id="floater">
+       <button class="btn notes-btn btn-dark" type="button" data-url="{% url 'keep_notes' ws_id='OHDSI' wsview_id='co' %}", data-id="co_notes_OHDSI">
+            <i class="fas fa-notes-medical fa-2x"></i>
+            <span class="visible-lg">
+                {% trans "Σημειώσεις" %}
+            </span>
+        </button>
+    </div>
+{% endblock %}
+{% block view_content_txt %}
+    {% blocktrans trimmed %}
+        Η λειτουργικότητα <strong>Εκδήλωση Κατάστασης</strong>, αποτελεί ένα βοηθητικό
+        εργαλείο για την απόκτηση μιας γενικής εικόνας, όσον αφορά
+        την κατανομή του συνολικού πληθυσμού, για τον οποίο υπάρχει η σχετική πληροφορία
+        στο σύστημα, ως προς την εμφάνιση κάποιας από τις διάφορες πιθανές καταστάσεις
+        υγείας (ασθένεια, ανεπιθύμητη δράση, παρενέργεια κ.ο.κ.).
+    {% endblocktrans %}
+{% endblock view_content_txt %}
+{% block iframe_url %}"{{ co_url }}"{% endblock iframe_url %}
+
+{% block modal_target %}"#conditionOccurrenceModal"{% endblock modal_target %}
+
+{% block modals %}
+    {% trans "Εκδήλωση Κατάστασης" as dsModalTitle %}
+    {% include 'app/modals/parametric_modal.html' with modal_type="dataSourcesModal" modal_id="conditionOccurrenceModal" modal_title=dsModalTitle modal_iframe_url=co_url %}
+{% endblock modals %}

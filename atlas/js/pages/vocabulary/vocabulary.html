@@ -1,0 +1,19 @@
+<div data-bind="css: classes()">
+	<div data-bind="css: classes('header')">
+		<heading-title params="name: 'Search', icon: 'search', theme: 'dark'"></heading-title>
+	</div>
+	<tabs params="
+		componentParams: $component.routerParams,
+		tabs: [
+			{
+				title: 'Search',
+				componentName: 'vocabulary-search',
+				componentParams: searchParams,
+			},
+			{
+				title: 'Import',
+				componentName: 'vocabulary-import',
+				componentParams: { model: $component.model },
+			}
+	]"></tabs>
+</div>

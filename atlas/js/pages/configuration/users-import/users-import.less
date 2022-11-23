@@ -1,0 +1,50 @@
+.users-import {
+  &__group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__row {
+    display: flex;
+
+    &--footer {
+      justify-content: flex-end;
+    }
+
+    * {
+      margin-left: 0.5rem;
+    }
+  }
+  &__finish {
+    padding: 5rem 0;
+    text-align: center;
+  }
+  &__link {
+    cursor: pointer;
+  }
+  &__provider-buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  &__connection-details {
+    max-height: 30rem;
+    overflow: auto;
+    margin-top: 1rem;
+  }
+  &__info-message {
+    margin-bottom: 1rem;
+
+    &--success {
+      color: green;
+    }
+    &--failed {
+      color: red;
+    }
+  }
+  &__helpIcon, th &__helpIcon {
+    margin-left: 0.5rem;
+    font-size: 1.5em;
+    color: #000080;
+  }
+}
