@@ -1,0 +1,260 @@
+div.chartcontainer {
+	line-height: 0px;
+}
+
+div.offscreen {
+	position:absolute;
+	top:10px;
+	left: 10px;
+	border:solid 1px red;
+}
+/* Legend Styles */
+
+.legend {
+	padding: 5px;
+	font: 10px arial;
+}
+/* general bar styles */
+
+.area {
+	fill: rgb(68, 68, 136);
+}
+.bar {
+	fill: #768EA0;
+}
+/* Barchart styles */
+
+.barlabel {
+	font-family: arial;
+	font-size: 8px;
+}
+/* Boxplot styles */
+
+.boxplot {
+	font: 10px arial;
+}
+.boxplot .median {
+	stroke: #1f77b4;
+}
+.boxplot line {
+	stroke: #1f77b4;
+	stroke-width: 1px;
+}
+.boxplot rect,
+.boxplot circle {
+	fill: rgba(31, 119, 180, 0.2);
+	stroke: #1f77b4;
+	stroke-width: 1px;
+}
+.boxplot .whisker {
+	stroke-dasharray: 3, 3;
+	stroke: #1f77b4;
+}
+.boxplot .outlier {
+	fill: none;
+	stroke: #1f77b4;
+}
+
+table.boxplotValues tr td
+{
+	text-align: right;
+	padding: 0px 3px;
+	color:#fff;
+	font-size:11px;
+}
+
+.lineplot .line {
+	fill: none;
+	stroke: #1f77b4;
+	stroke-width: 1px;
+}
+.g-trellis .x-guide path.domain,
+.g-trellis .y-guide path.domain {
+	fill: none;
+	stroke: none;
+}
+.g-trellis .x-guide .tick line {
+	stroke: #ccc;
+	stroke-width: .6;
+}
+.g-trellis .y-guide .tick line {
+	stroke: #ccc;
+	stroke-width: .6;
+}
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+}
+
+.axis text {
+	font-family: arial;
+	font-size: 1em;
+}
+
+.axislabel, .axislabel text {
+	font-family: arial;
+	font-size: 1.2rem;
+}
+
+@media(max-width:1440px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.1em;
+  }
+}
+
+@media(max-width:1280px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.3em;
+  }
+}
+
+@media(max-width:1024px) {
+  .axis text {
+    font-family: arial;
+    font-size: 1.5em;
+  }
+  .axislabel, .axislabel text {
+    display:none;
+    font-family: arial;
+  }
+}
+
+@media(max-width:800px) {
+  .axis text {
+    display:none;
+    font-family: arial;
+    font-size: 2em;
+  }
+}
+
+table.data td:first-child {
+	text-align: right;
+}
+table.data td {
+	padding-left: 3px;
+	padding-right: 3px;
+	white-space: nowrap;
+}
+.g-overlay {
+	fill: none;
+	pointer-events: all;
+}
+.g-label-value,
+.g-label-year {
+	font-size: 1.2em;
+}
+.trellisLegend {
+	font-size: 1em;
+	font-family: arial;
+	/* margin: 10px; */
+}
+.grouper {
+	fill: none;
+	stroke: white;
+	stroke-width: 2px;
+	display: none;
+}
+#treemap_container svg {
+	shape-rendering: 'crispEdges';
+}
+.treemap_legend {
+	font-size: 10px;
+}
+
+.focus
+{
+	opacity: 0;
+}
+
+/* chart tooltips */
+
+.d3-tip {
+	font-size: 10px;
+	padding: 5px 10px 5px 10px;
+	background: rgba(0,49,66,.6);
+	color: #fff;
+	border-radius: 0px;
+	pointer-events: none !important;
+	max-width: 400px;
+	z-index: 999 !important;	
+}
+/* Creates a small triangle extender for the tooltip */
+
+.d3-tip:after {
+	box-sizing: border-box;
+	display: inline;
+	font-size: 10px;
+	width: 100%;
+	line-height: 1;
+	color: rgba(0, 0, 0, 0.8);
+	position: absolute;
+	pointer-events: none;
+}
+/* Northward tooltips */
+
+.d3-tip.n:after {
+	content: "\25BC";
+	margin: -2px 0 0 0;
+	top: 100%;
+	left: 0;
+	text-align: center;
+}
+/* Eastward tooltips */
+
+.d3-tip.e:after {
+	content: "\25C0";
+	margin: -4px 0 0 0;
+	top: 50%;
+	left: -8px;
+}
+/* Southward tooltips */
+
+.d3-tip.s:after {
+	content: "\25B2";
+	margin: 0 0 1px 0;
+	top: -8px;
+	left: 0;
+	text-align: center;
+}
+/* Westward tooltips */
+
+.d3-tip.w:after {
+	content: "\25B6";
+	margin: -4px 0 0 -1px;
+	top: 50%;
+	left: 100%;
+}
+
+
+
+/* zoomScatter, inset */
+
+.zoom-scatter .dot {
+	opacity: 0.8;
+	stroke-width: .4;
+	fill: white;
+}
+.zoom-scatter .dot.inset {
+	opacity: 0.7;
+}
+.zoom-scatter .dot.inset.out-of-zoom {
+	opacity: 0.1;
+}
+.zoom-scatter rect.inset-border {
+	fill: white;
+	stroke: black;
+	stroke-width: 0.3;
+}
+.zoom-scatter rect.inset-focus {
+	stroke: #f19119;
+	fill-opacity: 0;
+	stroke-width: 0.3;
+}
+
+.zoom-scatter .refline {
+	stroke:#003142;
+	stroke-width: 0.3;
+}

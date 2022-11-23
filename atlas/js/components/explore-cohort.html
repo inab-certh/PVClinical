@@ -1,0 +1,70 @@
+<ul class="nav nav-pills" data-bind="foreach: sources">
+	<li role="presentation" 
+			data-bind="
+				css: { active: $component.sourceKey() == sourceKey }, 
+				click: $component.getBreakdown.bind(sourceKey)">
+					<a data-bind="text: sourceName"></a>
+	</li>
+</ul>
+<div class="tab-content">
+    <div data-bind="visible: loading" class="loading">loading</div>
+	<div data-bind="visible: (loading() == false && $component.breakdown().length > 0)">
+		<div class="paddedWrapper">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="row">
+						<faceted-datatable-cf-profile class="feFilter col-xs-2" id="explore-cohort-table" params="{
+								recs: $component.filteredRecs,
+								facets: $component.facets,
+								columns: $component.columns, 
+								facetsOnly: true,
+							}"></faceted-datatable-cf-profile>
+						<div class="col-xs-8 col-xs-offset-2">
+							<div data-bind="text:$component.membersChosen" />
+							<div data-bind="foreach:$component.facets">
+								<div data-bind="text:$component.selectedDesc($data)" />
+							</div>
+							<div data-bind="if: !$component.someMembers().length">
+								Fetching first <span data-bind="text:$component.defaultFetchMax"/> members
+							</div>
+							<div data-bind="if: $component.someMembers().length">
+								<span data-bind="text:$component.someMembers().length === $component.defaultFetchMax 
+																	? 'First' : 'Found'"/>
+								<span data-bind="text:$component.someMembers().length"/> members:
+							</div>
+							<div data-bind="foreach:$component.someMembers">
+								<a data-bind="text:personId, attr: {href: url}" target="_blank" />
+							</div>
+						</div>
+					</div>
+						<!--
+							order: [[3,'asc']],
+							searchFilter: $component.searchHighlight,
+							rowClick: $component.datatableRowClickCallback,
+						-->
+				</div>
+				<div class="col-xs-9">
+
+					<div id="modalNoMembers" class="modal fade">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									This cohort has no members available to view. Please check the generation status in the Cohort Definition section of Atlas.
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div data-bind="visible: (loading() == false && $component.breakdown().length <= 0)">
+		<div class="paddedWrapper">
+            This cohort has no members available to view for the selected data source. Please ensure that you have generated the cohort using the Generation tab.
+        </div>        
+    </div>
+</div>

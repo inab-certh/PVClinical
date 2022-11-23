@@ -1,1 +1,0 @@
-{"active_set":"Publish Content Issues","sets":[{"base_path":"C:/RProjects/deployshiny/dash/","markers":[{"column":1,"line":39,"log_line":-1,"log_path":"","message":"The browser() debugging function should be removed.","path":"C:/RProjects/deployshiny/dash/ui.R","show_error_list":true,"type":1}],"name":"Publish Content Issues"}]}

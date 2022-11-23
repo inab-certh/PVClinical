@@ -1,0 +1,596 @@
+{% extends "app/base_site.html" %}
+{% load i18n %}
+{% load static %}
+
+
+{% block title %} Questionnaire {% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+<link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    .quest_title{
+        font-size: 20px;
+        font-weight: bold;
+        font-family: Arial;
+        color: #535353;
+
+    }
+    .quest{
+        font-size: 16px;
+        font-weight: bold;
+        font-family: Arial;
+        padding-top:20px;
+        padding-bottom:20px;
+    }
+    form{
+        color: #C8C8C8;
+    }
+    .result{
+       color: #C8C8C8;
+
+    }
+
+    * {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.column {
+  flex: 50%;
+  padding: 5px;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+  font-size: 20px;
+
+}
+
+</style>
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="right_col" role="main">
+    <div class="row tile_count">
+        <div class="col-4 col-offset-6">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>{% trans "Ερωτηματολόγιο" %}</h2>
+                    <div class="clearfix"></div>
+                        <div class="x_content">
+                            <br>
+                            <p class="text-muted font-13 m-b-30"> <i class="fas fa-info-circle fa-1.5x"></i>
+                                This workspace provides a questionnaire based on liverpool algorithm for
+                                determining the likelihood of whether an ADR (adverse drug reaction) is actually due
+                                to the drug rather than the result of other factors.
+                            </p>
+                            <br>
+                            <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp Questions:</div>
+                            <form>
+                            <div class="quest_form1" style="color: #535353;">
+                                <div class="quest">1. Do you suspect an adverse drug reaction?</div>
+                                <input type="radio" id="q11" name="yesorno1" data-name="quest1" value="yes"> &nbsp<label for="q11">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q12" name="yesorno1" data-name="quest1" value="no"> &nbsp<label for="q12">No</label>
+                            </div>
+
+                            <div class="quest_form2">
+                                <div class="quest">2. Did the event appear after the drug was administered or dose increased ?</div>
+                                <input type="radio" id="q21" name="yesorno2" data-name="quest2" value="yes" disabled> &nbsp<label for="q21">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q22" name="yesorno2" data-name="quest2" value="no" disabled> &nbsp<label for="q22">No</label>
+                            </div>
+
+                            <div class="quest_form3">
+                                <div class="quest">3. Were pre-existing symptoms exacerbated by the drug ?</div>
+                                <input type="radio" id="q31" name="yesorno3" data-name="quest3" value="yes" disabled> &nbsp<label for="q31">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q32" name="yesorno3" data-name="quest3" value="no" disabled> &nbsp<label for="q32">No</label>
+                            </div>
+
+                            <div class="quest_form4">
+                                <div class="quest">4. Did the event improve( ± treatment ) when the drug was stopped or dose reduced ?</div>
+                                <input type="radio" id="q41" name="yesorno4" data-name="quest4" value="yes" disabled> &nbsp<label for="q41">Yes or Unassessable*</label> &nbsp &nbsp
+                                <input type="radio" id="q42" name="yesorno4" data-name="quest4" value="no" disabled> &nbsp<label for="q42">No</label>
+                            </div>
+
+                            <div class="quest_form5">
+                                <div class="quest">5. Was the event associated with long-lasting disability or impairment ?</div>
+                                <input type="radio" id="q51" name="yesorno5" data-name="quest5" value="yes" disabled> &nbsp<label for="q51">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q52" name="yesorno5" data-name="quest5" value="no" disabled> &nbsp<label for="q52">No</label>
+                            </div>
+
+                            <div class="quest_form6">
+                                <div class="quest">6. What is the probability that the event was due to an underlying disease ?</div>
+                                <input type="radio" id="q61" name="yesorno6" data-name="quest6" value="yes" disabled> &nbsp<label for="q61">Low</label> &nbsp &nbsp
+                                <input type="radio" id="q62" name="yesorno6" data-name="quest6" value="no" disabled> &nbsp<label for="q62">High or Unsure</label>
+                            </div>
+
+                            <div class="quest_form7">
+                                <div class="quest">7. Is there any objective evidence supportive of the casual ADR mechanism ?</div>
+                                <input type="radio" id="q71" name="yesorno7" data-name="quest7" value="yes" disabled> &nbsp<label for="q71">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q72" name="yesorno7" data-name="quest7" value="no" disabled> &nbsp<label for="q72">No</label>
+                            </div>
+
+                            <div class="quest_form8">
+                                <div class="quest">8. Was there a positive rechallenge?</div>
+                                <input type="radio" id="q81" name="yesorno8" data-name="quest8" value="yes" disabled> &nbsp<label for="q81">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q82" name="yesorno8" data-name="quest8" value="no" disabled> &nbsp<label for="q82">No</label>
+                            </div>
+
+                            <div class="quest_form9">
+                                <div class="quest">9. Is there a past history of the same event with this drug in this patient?</div>
+                                <input type="radio" id="q91" name="yesorno9" data-name="quest9" value="yes" disabled> &nbsp<label for="q91">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q92" name="yesorno9" data-name="quest9" value="no" disabled> &nbsp<label for="q92">No</label>
+                            </div>
+
+                            <div class="quest_form10">
+                                <div class="quest">10. Has the event previously been reported with this drug?</div>
+                                <input type="radio" id="q101"name="yesorno10" data-name="quest10" value="yes" disabled> &nbsp<label for="q101">Yes</label> &nbsp &nbsp
+                                <input type="radio" id="q102" name="yesorno10" data-name="quest10" value="no" disabled> &nbsp<label for="q102">No</label>
+                            </div>
+                            </form>
+                            <br>
+                            <div class="quest_title"> <i class="fas fa-angle-right "></i> &nbsp Result:</div>
+
+                            <div class="row">
+                              <div class="column">
+                                <table>
+                                  <tr>
+                                    <th class="result" id="resultDef"><i class="fas fa-check"></i>&nbsp  Definite </th>
+                                    <th class="result" id="resultPro"><i class="fas fa-check"></i>&nbsp  Probable </th>
+                                    <th class="result" id="resultPo"><i class="fas fa-check"></i>&nbsp  Possible</th>
+                                    <th class="result" id="resultUn"><i class="fas fa-check"></i>&nbsp  Unlikely</th>
+
+                                  </tr>
+                                </table></div></div>
+                            <br>
+                            <br>
+                            <button type="button" data-toggle="popover" data-trigger="hover"
+                            class="btn btn-primary active has-popover" data-content="&#9432; &nbsp Press the
+                            button above to see the justification for the final result and the course of the
+                            above questions." data-placement="right" data-width="50%">Flowchart</button>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% endblock content %}
+
+
+
+{% block javascripts%}
+
+{{ block.super }}
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+});
+</script>
+
+<script>
+
+$(document).ready(function(){
+var name1;
+var name2;
+var name3;
+var name4;
+var name5;
+var name6;
+var name7;
+var name8;
+var name9;
+var name10;
+
+    $("#q11").change(function () {
+        name1=$(this).data('name');
+
+        $("#q21").prop("disabled", false);
+        $("#q22").prop("disabled", false);
+        $(".quest_form2").css("color", "#535353");
+        $("#resultUn").css("color", "#C8C8C8");
+    });
+
+
+
+    $("#q12").change(function () {
+        name1=$(this).data('name');
+
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $(".quest_form2").css("color", "#C8C8C8");
+        $(document).scrollTop($(document).height());
+        $("#resultUn").css("color", "#535353");
+
+    });
+
+    $("#q21").change(function () {
+        name2=$(this).data('name');
+
+        $("#q41").prop("disabled", false);
+        $("#q42").prop("disabled", false);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $(".quest_form4").css("color", "#535353");
+        $(".quest_form3").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+    });
+
+    $("#q22").change(function () {
+        name2=$(this).data('name');
+
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q31").prop("disabled", false);
+        $("#q32").prop("disabled", false);
+        $(".quest_form4").css("color", "#C8C8C8");
+        $(".quest_form3").css("color", "#535353");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+    });
+
+
+    $("#q32").change(function () {
+        name3=$(this).data('name');
+
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#resultUn").css("color", "#535353");
+        $(".quest_form4").css("color", "#C8C8C8");
+        $(document).scrollTop($(document).height());
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+
+    });
+
+    $("#q31").change(function () {
+        name3=$(this).data('name');
+
+        $("#q41").prop("disabled", false);
+        $("#q42").prop("disabled", false);
+        $(".quest_form4").css("color", "#535353");
+        $("#resultUn").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+
+    });
+
+    $("#q41").change(function () {
+        name4=$(this).data('name');
+
+        $("#q61").prop("disabled", false);
+        $("#q62").prop("disabled", false);
+        $(".quest_form6").css("color", "#535353");
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $(".quest_form5").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+    });
+
+    $("#q42").change(function () {
+        name4=$(this).data('name');
+
+        $("#q51").prop("disabled", false);
+        $("#q52").prop("disabled", false);
+        $(".quest_form5").css("color", "#535353");
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $(".quest_form6").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+
+    });
+
+
+    $("#q51").change(function () {
+        name5=$(this).data('name');
+
+        $("#q61").prop("disabled", false);
+        $("#q62").prop("disabled", false);
+        $(".quest_form6").css("color", "#535353");
+        $("#resultPo").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+    });
+
+    $("#q52").change(function () {
+        name5=$(this).data('name');
+
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $(".quest_form6").css("color", "#C8C8C8");
+        $("#resultPo").css("color", "#535353");
+        $(document).scrollTop($(document).height());
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+    });
+
+    $("#q61").change(function () {
+        name6=$(this).data('name');
+
+        $("#q81").prop("disabled", false);
+        $("#q82").prop("disabled", false);
+        $(".quest_form8").css("color", "#535353");
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+        $(".quest_form7").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+    });
+
+    $("#q62").change(function () {
+        name6=$(this).data('name');
+
+        $("#q71").prop("disabled", false);
+        $("#q72").prop("disabled", false);
+        $(".quest_form7").css("color", "#535353");
+        $("#q81").prop("disabled", true);
+        $("#q82").prop("disabled", true);
+        $(".quest_form8").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+    });
+
+ $("#q71").change(function () {
+     name7=$(this).data('name');
+
+        $("#q91").prop("disabled", false);
+        $("#q92").prop("disabled", false);
+        $(".quest_form9").css("color", "#535353");
+        $("#resultPo").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+    });
+
+ $("#q72").change(function () {
+     name7=$(this).data('name');
+
+        $("#q91").prop("disabled", true);
+        $("#q92").prop("disabled", true);
+        $(".quest_form9").css("color", "#C8C8C8");
+        $("#resultPo").css("color", "#535353");
+        $(document).scrollTop($(document).height());
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+    });
+
+ $("#q81").change(function () {
+        name8=$(this).data('name');
+
+        $("#q91").prop("disabled", true);
+        $("#q92").prop("disabled", true);
+        $(".quest_form9").css("color", "#C8C8C8");
+        $("#resultDef").css("color", "#535353");
+        $(document).scrollTop($(document).height());
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+    });
+
+$("#q82").change(function () {
+    name8=$(this).data('name');
+
+    $("#q91").prop("disabled", false);
+    $("#q92").prop("disabled", false);
+    $(".quest_form9").css("color", "#535353");
+    $("#resultDef").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+});
+
+ $("#q91").change(function () {
+     name9=$(this).data('name');
+
+        $("#q101").prop("disabled", true);
+        $("#q102").prop("disabled", true);
+        $(".quest_form10").css("color", "#C8C8C8");
+        $("#resultDef").css("color", "#535353");
+        $(document).scrollTop($(document).height());
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+    $("#q81").prop("disabled", true);
+    $("#q82").prop("disabled", true);
+    });
+
+ $("#q92").change(function () {
+     name9=$(this).data('name');
+
+        $("#q101").prop("disabled", false);
+        $("#q102").prop("disabled", false);
+        $(".quest_form10").css("color", "#535353");
+        $("#resultDef").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+    $("#q81").prop("disabled", true);
+    $("#q82").prop("disabled", true);
+    });
+
+ $("#q101").change(function () {
+     name10=$(this).data('name');
+
+        $("#resultPro").css("color", "#535353");
+        $("#resultPo").css("color", "#C8C8C8");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+    $("#q81").prop("disabled", true);
+    $("#q82").prop("disabled", true);
+        $("#q91").prop("disabled", true);
+        $("#q92").prop("disabled", true);
+    });
+
+ $("#q102").change(function () {
+     name10=$(this).data('name');
+
+        $("#resultPro").css("color", "#C8C8C8");
+        $("#resultPo").css("color", "#535353");
+        $("#q11").prop("disabled", true);
+        $("#q12").prop("disabled", true);
+        $("#q21").prop("disabled", true);
+        $("#q22").prop("disabled", true);
+        $("#q31").prop("disabled", true);
+        $("#q32").prop("disabled", true);
+        $("#q41").prop("disabled", true);
+        $("#q42").prop("disabled", true);
+        $("#q51").prop("disabled", true);
+        $("#q52").prop("disabled", true);
+        $("#q61").prop("disabled", true);
+        $("#q62").prop("disabled", true);
+        $("#q71").prop("disabled", true);
+        $("#q72").prop("disabled", true);
+    $("#q81").prop("disabled", true);
+    $("#q82").prop("disabled", true);
+        $("#q91").prop("disabled", true);
+        $("#q92").prop("disabled", true);
+
+    });
+
+            });
+
+</script>
+
+
+{% endblock javascripts%}

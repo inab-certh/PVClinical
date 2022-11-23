@@ -1,0 +1,34 @@
+<div data-bind="css: classes()">
+	<div data-bind="css: classes('header')">
+		<!-- ko foreach: $component.tabs -->
+			<!-- ko if: $data.title && $data.title.length > 0 -->
+				<span
+					data-bind="css: $component.classes({
+						element: 'header-title',
+						modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
+					}),
+					click: () => $component.selectTab($index(), $data)"
+				>
+					<div data-bind="text: $data.title"></div>
+					<!-- ko if: $data.hasBadge -->
+						<div data-bind="css: $component.classes('header-badge')">
+							<div data-bind="
+								component: {
+									name: `${$data.componentName}-badge`,
+									params: $data.componentParams
+								}
+								"></div>
+							</div>
+					<!-- /ko -->
+			</span>
+			<!-- /ko -->
+		<!-- /ko -->
+	</div>
+	<div data-bind="css: classes('tab')">
+		<!-- ko foreach: $component.previouslyLoadedTabs -->
+			<div data-bind="visible: $component.selectedTab() == $data">
+				<div data-bind='component: { name: $component.tabs()[$data].componentName, params: $component.tabs()[$data].componentParams }'></div>
+			</div>
+		<!-- /ko -->
+	</div>
+</div>

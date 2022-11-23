@@ -1,6 +1,8 @@
 $(function() {
-    $(window).load(function(){
-        $("#loaderOverlay").fadeOut();
+    $(window).on("load", function(){
+        if(!window.location.pathname.includes("edit-scenario")) {
+            $("#loaderOverlay").fadeOut();
+        }
     });
 
     $('.has-popover').popover({'trigger':'manual'
@@ -48,7 +50,7 @@ $(function() {
     $("[data-toggle='popover']").popover();
     $("body").on("click", ".notes-btn", function () {
         var mod_url = $(this).data("url");
-        var mod_id = $(this).data("id");
+        var mod_id = $(this).data("id").replace(/\W/g, '');
         $(".notesModal").attr("id", mod_id);
         $(".notesModal iframe").attr("src", mod_url);
         $("#" + mod_id).modal("show");
@@ -93,4 +95,45 @@ $(function() {
         }
     });
 
+    $(window).load(function() {
+        var prev_active_breadcrumb = $("ol>.breadcrumb-item.active").prev();
+        var prev_active_bc_a=prev_active_breadcrumb.find("a");
+        if(prev_active_bc_a && prev_active_bc_a.attr("href")===window.location.href) {
+            prev_active_bc_a.attr("href", $("form>div.btn-group>a.btn-dark").attr("href"));
+        }
+    });
+
+
+    $(document).on("click", "button.sc-report-btn", function (){
+        $("#genReportConfirmModal").modal("show");
+        var new_location = $(this).attr("data-href");
+        $(document).on("click", "#genReportConfirmModal #confirmBtn", function() {
+            $("#genReportConfirmModal").modal("hide");
+            $("#loaderOverlay").fadeIn();
+            window.location = new_location;
+        }
+        );
+    });
+
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function refresh_page() {
+    $("#loaderOverlay").fadeIn();
+    window.location.reload();
+}

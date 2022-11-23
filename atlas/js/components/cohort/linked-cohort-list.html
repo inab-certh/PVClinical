@@ -1,0 +1,22 @@
+<linked-entity-list params="
+	title: $component.title,
+	descr: $component.descr,
+	newItemLabel: $component.newItemLabel,
+	newItemAction: $component.newItemAction,
+	data: $component.data,
+	columns: $component.columns,
+	removeCohort: removeCohort
+"></linked-entity-list>
+
+<atlas-modal params="
+	showModal: $component.showModal,
+	title: 'Choose a Cohort definition',
+	data: {
+		cohortSelected: $component.cohortSelected,
+		classes: $component.classes,
+	}
+">
+	<cohort-definition-browser data-bind="css: classes('modal-cohort-list')" 
+														 params="cohortDefinitionSelected: data => cohortSelected(data)">
+	</cohort-definition-browser>
+</atlas-modal>
